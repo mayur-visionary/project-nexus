@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Nexus · Mavlers Sales Operations</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Inter',BlinkMacSystemFont,sans-serif;background:#F2F2F2;color:#434343;min-height:100vh}
+:root{
+  --black:#111111;--dark:#434343;--mid:#696969;--light:#9A9A9A;--pale:#D0D0D0;
+  --off:#F2F2F2;--white:#FFFFFF;--border:#E2E2E2;
+  --yellow:#FFDA30;--yd1:#DDB800;--yd2:#A88C00;--yl1:#FFE870;--ybg:#FFFBEA;
+  --o1:#FFDA30;--o2:#DDB800;--o3:#434343;--o4:#888888;
+}
+
+/* ── Loading ── */
+#ls{position:fixed;inset:0;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:300;transition:opacity .5s}
+#ls.out{opacity:0;pointer-events:none}
+.spin{width:36px;height:36px;border:3px solid rgba(255,218,48,.15);border-top-color:var(--yellow);border-radius:50%;animation:spin .85s linear infinite;margin-bottom:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#ls-name{color:var(--white);font-size:17px;font-weight:700;margin-bottom:4px}
+#ls-name span{color:var(--yellow)}
+#ls-step{color:rgba(255,255,255,.4);font-size:12px}
+#ls-prog{width:220px;height:2px;background:rgba(255,218,48,.15);border-radius:1px;margin-top:16px;overflow:hidden}
+#ls-bar{height:2px;background:var(--yellow);border-radius:1px;width:0%;transition:width .4s ease}
+#ls-count{color:rgba(255,218,48,.6);font-size:11px;margin-top:8px;min-height:16px}
+
+/* ── Header ── */
+.hdr{background:var(--black);color:var(--white)}
+.hdr-in{max-width:1320px;margin:0 auto;padding:20px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.hdr-brand{display:flex;align-items:center;gap:16px}
+.brand-stack{}
+.brand-name{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.mavlers-txt{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.38)}
+.ydot{width:4px;height:4px;border-radius:50%;background:var(--yellow);flex-shrink:0}
+.project-lbl{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--yellow)}
+.nexus-ttl{font-size:26px;font-weight:800;color:var(--white);letter-spacing:-.02em;line-height:1}
+.ops-sub{font-size:12px;color:rgba(255,255,255,.35);margin-top:3px}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding-top:4px}
+.h-status{display:flex;align-items:center;gap:6px}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .5s;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.stxt{font-size:11px;color:rgba(255,255,255,.4);font-weight:500}
+.last-sync{font-size:10px;color:rgba(255,255,255,.25)}
+
+/* ── Filter bar ── */
+.fbar{background:#1A1A1A;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+.fbar-in{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fl{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.3);white-space:nowrap;font-weight:600}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.25);color:var(--yellow);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;outline:none;font-weight:600}
+.fsel option{background:#1A1A1A;color:var(--white)}
+.otog-wrap{display:flex;gap:5px;flex-wrap:wrap}
+.otog{position:relative}
+.otog input{position:absolute;opacity:0;width:0;height:0}
+.otog label{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);font-size:11px;font-weight:600;color:rgba(255,255,255,.4);cursor:pointer;transition:all .18s;user-select:none}
+.otog input:checked+label{color:var(--black)}
+.obadge{width:14px;height:14px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:var(--black);flex-shrink:0}
+.sync-btn{margin-left:auto;padding:7px 18px;border-radius:7px;border:none;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all .2s;text-transform:uppercase;letter-spacing:.05em}
+.sync-btn.go{background:var(--yellow);color:var(--black)}
+.sync-btn.go:hover{background:var(--yl1)}
+.sync-btn:disabled{background:rgba(255,218,48,.2);color:rgba(255,218,48,.35);cursor:not-allowed}
+.yellow-rule{height:3px;background:linear-gradient(90deg,var(--yellow) 0%,var(--yl1) 50%,transparent 100%)}
+
+/* ── Error banner ── */
+.err-banner{background:#1A1A1A;border-bottom:2px solid #555;padding:10px 28px;font-size:12px;color:#ccc;display:none}
+.err-banner strong{color:var(--yellow)}
+
+/* ── Main ── */
+.main{max-width:1320px;margin:0 auto;padding:20px 28px 48px}
+.sec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--light);font-weight:700;margin-bottom:10px}
+
+/* ── KPI grid ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--white);border-radius:10px;padding:16px 18px;border:1px solid var(--border);border-top:3px solid var(--yellow);transition:box-shadow .2s}
+.kpi:hover{box-shadow:0 4px 20px rgba(0,0,0,.07)}
+.kpi.d1{border-top-color:var(--yd1)}.kpi.g1{border-top-color:var(--dark)}.kpi.g2{border-top-color:var(--mid)}
+.kpi-ico{font-size:16px;margin-bottom:8px}
+.kpi-lbl{font-size:9.5px;color:var(--light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:600}
+.kpi-val{font-size:20px;font-weight:800;color:var(--dark);line-height:1}
+.kpi-sub{font-size:10.5px;color:var(--light);margin-top:5px}
+
+/* ── Charts ── */
+.chart-row{display:grid;grid-template-columns:280px 1fr;gap:14px;margin-bottom:20px}
+.card{background:var(--white);border-radius:10px;border:1px solid var(--border);padding:18px 20px}
+.card-ttl{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:2px}
+.card-sub{font-size:11px;color:var(--light);margin-bottom:16px}
+.orow{margin-bottom:15px}.orow:last-child{margin-bottom:0}
+.orow-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.ometa{display:flex;align-items:center;gap:7px}
+.oav{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:800;flex-shrink:0}
+.oname{font-size:12px;color:var(--dark);font-weight:700}
+.ocnt{font-size:10px;color:var(--light)}
+.orev{font-size:12px;font-weight:800;color:var(--dark)}
+.opct{font-size:10px;color:var(--light)}
+.btrack{height:5px;background:var(--off);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.bfill{height:5px;border-radius:3px;transition:width .9s cubic-bezier(.34,1.2,.64,1)}
+
+/* ── Table ── */
+.tcard{background:var(--white);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+.tcard-hdr{padding:13px 18px;border-bottom:1px solid var(--off);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tcard-ttl h3{font-size:13px;font-weight:800;color:var(--dark)}
+.tcard-ttl p{font-size:11px;color:var(--light);margin-top:2px}
+.tf-row{display:flex;gap:5px;flex-wrap:wrap}
+.tf{padding:4px 11px;border-radius:6px;border:1px solid var(--border);font-size:11px;font-weight:600;cursor:pointer;background:var(--white);color:var(--mid);transition:all .15s}
+.tf.on{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+colgroup .c1{width:222px}.c2{width:162px}.c3{width:120px}.c4{width:110px}.c5{width:54px}
+thead th{padding:9px 16px;background:var(--off);text-align:left;font-size:9.5px;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap}
+thead th:hover{background:#E8E8E8;color:var(--dark)}
+tbody tr{border-bottom:1px solid var(--off)}
+tbody tr:hover td{background:var(--ybg)!important}
+tbody td{padding:9px 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mono{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--dark)}
+.amt{text-align:right;font-family:'SF Mono','Fira Code',monospace;font-weight:700}
+.cred td{background:#F9F9F9!important}
+.warn-ico{font-size:10px;margin-right:3px;color:var(--mid)}
+.hs-a{color:var(--yd1);text-decoration:none;font-size:14px;font-weight:700}
+.hs-a:hover{color:var(--yellow)}
+.pgs{padding:11px 18px;border-top:1px solid var(--off);display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
+.pg{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--white);font-size:11px;cursor:pointer;color:var(--mid);display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s}
+.pg:hover{background:var(--ybg);border-color:var(--yellow)}
+.pg.on{background:var(--yellow);color:var(--black);border-color:var(--yellow)}
+.empty{text-align:center;padding:36px;color:var(--light);font-size:13px}
+
+/* ── Footer ── */
+.footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.footer-left{font-size:11px;color:var(--light);line-height:1.7}
+.footer-right{opacity:.55}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.tag.y{background:var(--yellow);color:var(--black)}
+.tag.g{background:var(--off);color:var(--mid);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<!-- ══ LOADING ══ -->
+<div id="ls">
+  <div class="spin"></div>
+  <div id="ls-name">Project <span>Nexus</span></div>
+  <div id="ls-step">Connecting to HubSpot...</div>
+  <div id="ls-prog"><div id="ls-bar"></div></div>
+  <div id="ls-count"></div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <div class="hdr-brand">
+        <svg width="38" height="32" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div class="brand-stack">
+          <div class="brand-name">
+            <span class="mavlers-txt">Mavlers</span>
+            <div class="ydot"></div>
+            <span class="project-lbl">Project Nexus</span>
+          </div>
+          <div class="nexus-ttl">Sales Operations</div>
+          <div class="ops-sub">Invoice bookings · HubSpot live · Invoice app automation</div>
+        </div>
+      </div>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="sdot" id="sdot" style="background:#DDB800;animation:none"></div>
+          <span class="stxt" id="stxt">Loading...</span>
+        </div>
+        <div class="last-sync" id="last-sync"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fbar">
+    <div class="fbar-in">
+      <span class="fl">Booking month</span>
+      <select class="fsel" id="msel">
+        <option value="jan-2026">Jan 2026</option>
+        <option value="feb-2026">Feb 2026</option>
+        <option value="mar-2026">Mar 2026</option>
+        <option value="apr-2026">Apr 2026</option>
+        <option value="may-2026" selected>May 2026</option>
+        <option value="jun-2026">Jun 2026</option>
+        <option value="jul-2026">Jul 2026</option>
+        <option value="aug-2026">Aug 2026</option>
+        <option value="sep-2026">Sep 2026</option>
+        <option value="oct-2026">Oct 2026</option>
+        <option value="nov-2026">Nov 2026</option>
+        <option value="dec-2026">Dec 2026</option>
+      </select>
+      <span class="fl">Deal owners</span>
+      <div class="otog-wrap" id="otog-wrap"></div>
+      <button class="sync-btn go" id="fbtn" onclick="doSync()">&#8635; Sync HubSpot</button>
+    </div>
+  </div>
+  <div class="yellow-rule"></div>
+</div>
+
+<!-- ══ ERROR BANNER ══ -->
+<div class="err-banner" id="err-banner">
+  <strong>HubSpot sync error:</strong> <span id="err-msg"></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="sec-lbl">Key metrics</div>
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi"><div class="kpi-ico">📊</div><div class="kpi-lbl">Net bookings</div><div class="kpi-val">—</div></div>
+    <div class="kpi d1"><div class="kpi-ico">📈</div><div class="kpi-lbl">Gross revenue</div><div class="kpi-val">—</div></div>
+    <div class="kpi g1"><div class="kpi-ico">↩</div><div class="kpi-lbl">Credit notes</div><div class="kpi-val">—</div></div>
+    <div class="kpi g2"><div class="kpi-ico">◎</div><div class="kpi-lbl">Avg deal size</div><div class="kpi-val">—</div></div>
+    <div class="kpi"><div class="kpi-ico">★</div><div class="kpi-lbl">Top performer</div><div class="kpi-val">—</div></div>
+  </div>
+
+  <div class="sec-lbl">Performance breakdown</div>
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-ttl">Revenue by owner</div>
+      <div class="card-sub" id="ob-sub">Gross bookings</div>
+      <div id="ob-bars"><div class="empty" style="padding:20px;font-size:12px">Loading...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Daily booking activity</div>
+      <div class="card-sub" id="tl-sub">Revenue by close date</div>
+      <div style="position:relative;height:195px">
+        <canvas id="tlc" role="img" aria-label="Daily revenue chart">Daily revenue timeline.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Deal records</div>
+  <div class="tcard">
+    <div class="tcard-hdr">
+      <div class="tcard-ttl"><h3>All deals</h3><p id="tmeta">—</p></div>
+      <div class="tf-row" id="tf-row"></div>
+    </div>
+    <div class="twrap">
+      <table>
+        <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+        <thead id="dth"></thead>
+        <tbody id="dtb"><tr><td colspan="5" class="empty">Fetching live data from HubSpot...</td></tr></tbody>
+      </table>
+    </div>
+    <div class="pgs" id="pgs"></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">
+      Pipeline: Invoice app automation &nbsp;·&nbsp; Stage: Invoice sent / booking &nbsp;·&nbsp; <span id="footer-src"></span>
+    </div>
+    <div class="footer-right">
+      <svg height="16" viewBox="50 147 1280 240" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+        <polygon fill="#434343" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+        <path fill="#434343" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+        <polygon fill="#434343" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+        <rect fill="#434343" x="732.2" y="147.9" width="49.5" height="235.5"/>
+        <path fill="#434343" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+        <path fill="#434343" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+        <path fill="#434343" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ════ CONFIG ════
+const WORKER_URL = "https://project-nexus.mayur-562.workers.dev";
+const PIPELINE = "115832232", STAGE = "205348626", PORTAL = "2700725";
+
+// ════ OWNERS ════
+const OWN = {
+  "37344296":{name:"Kalgi Shah",       initials:"KS", color:"#FFDA30", tc:"#111111"},
+  "46156316":{name:"Flintoff Mehta",   initials:"FM", color:"#DDB800", tc:"#111111"},
+  "31730801":{name:"Vikram Sahi",      initials:"VS", color:"#434343", tc:"#FFFFFF"},
+  "24817892":{name:"Sheldon Fernandes",initials:"SF", color:"#888888", tc:"#FFFFFF"}
+};
+
+// ════ STATE ════
+let deals=[], tf="all", sk="amount", sd="desc", pg=1;
+const PER=10;let tlc=null;
+
+// ════ HELPERS ════
+const $=id=>document.getElementById(id);
+const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2}).format(n);
+const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1000?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
+const fmtDate=d=>{if(!d)return"—";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}};
+const dealURL=id=>`https://app.hubspot.com/contacts/${PORTAL}/record/0-3/${id}`;
+const selMonth=()=>$("msel").value;
+const selMonthLbl=()=>$("msel").options[$("msel").selectedIndex].text;
+const selOwners=()=>Object.keys(OWN).filter(id=>{const e=$("ot-"+id);return e&&e.checked;});
+const setBar=p=>$("ls-bar").style.width=p+"%";
+const setStep=t=>$("ls-step").textContent=t;
+const setCount=t=>$("ls-count").textContent=t;
+
+// ════ OWNER TOGGLES ════
+function initToggles(){
+  $("otog-wrap").innerHTML=Object.entries(OWN).map(([id,o])=>`
+    <div class="otog">
+      <input type="checkbox" id="ot-${id}" checked>
+      <label for="ot-${id}">
+        <span class="obadge" style="background:${o.color};color:${o.tc}">${o.initials}</span>
+        ${o.name.split(" ")[0]}
+      </label>
+    </div>`).join("");
+  Object.entries(OWN).forEach(([id,o])=>{
+    const inp=$("ot-"+id),lbl=inp.nextElementSibling;
+    const upd=()=>{
+      if(inp.checked){lbl.style.background=o.color+"28";lbl.style.borderColor=o.color+"77";lbl.style.color="#FFFFFF";}
+      else{lbl.style.background="";lbl.style.borderColor="rgba(255,255,255,.15)";lbl.style.color="rgba(255,255,255,.4)";}
+    };
+    inp.addEventListener("change",upd);upd();
+  });
+}
+
+// ════ HUBSPOT API FETCH (via Cloudflare Worker proxy) ════
+async function fetchFromHubSpot(month, ownerIds) {
+  const allDeals = [];
+  let after = null;
+  let page = 0;
+
+  do {
+    page++;
+    setStep(`Fetching page ${page} from HubSpot...`);
+    setBar(20 + page * 15);
+
+    const body = {
+      filterGroups: [{
+        filters: [
+          { propertyName: "pipeline",    operator: "EQ", value: PIPELINE },
+          { propertyName: "dealstage",   operator: "EQ", value: STAGE },
+          { propertyName: "invoice_booking_month__invoice_app_", operator: "EQ", value: month },
+          { propertyName: "hubspot_owner_id", operator: "IN", values: ownerIds }
+        ]
+      }],
+      properties: ["dealname","amount_in_home_currency","hubspot_owner_id","closedate"],
+      limit: 200,
+      sorts: [{ propertyName: "amount_in_home_currency", direction: "DESCENDING" }]
+    };
+    if (after) body.after = after;
+
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`HubSpot responded ${res.status}: ${err.substring(0,200)}`);
+    }
+
+    const data = await res.json();
+    const batch = (data.results || []).map(r => ({
+      id:       String(r.id || ""),
+      dealname: r.properties?.dealname || "",
+      amount:   parseFloat(r.properties?.amount_in_home_currency || 0) || 0,
+      owner_id: String(r.properties?.hubspot_owner_id || ""),
+      closedate:(r.properties?.closedate || "").split("T")[0]
+    }));
+
+    allDeals.push(...batch);
+    setCount(`${allDeals.length} deal${allDeals.length!==1?"s":""} retrieved...`);
+    after = data.paging?.next?.after || null;
+
+  } while (after);
+
+  return allDeals;
+}
+
+// ════ SYNC ════
+async function doSync() {
+  const btn=$("fbtn"), errBanner=$("err-banner");
+  const owners=selOwners(), month=selMonth(), mLbl=selMonthLbl();
+
+  if (!owners.length) { alert("Select at least one deal owner."); return; }
+
+  btn.disabled=true; btn.textContent="⟳ Syncing...";
+  errBanner.style.display="none";
+  $("sdot").style.background="#DDB800"; $("sdot").style.animation="none";
+  $("stxt").textContent="Syncing...";
+  setBar(10); setStep("Connecting to HubSpot...");
+
+  // Show loading screen on re-sync
+  const ls=$("ls");
+  ls.classList.remove("out");
+  ls.style.display="flex";
+  ls.style.opacity="1";
+
+  try {
+    const fetched = await fetchFromHubSpot(month, owners);
+
+    deals = fetched;
+    tf="all"; pg=1;
+    $("ob-sub").textContent=`Gross bookings · ${mLbl}`;
+    $("tl-sub").textContent=`Revenue by close date · ${mLbl}`;
+
+    setBar(100); setStep("Done!");
+    setTimeout(() => {
+      ls.classList.add("out");
+      setTimeout(() => ls.style.display="none", 500);
+    }, 400);
+
+    const now = new Date();
+    $("sdot").style.background="#FFDA30";
+    $("sdot").style.animation="pulse 2.5s ease-in-out infinite";
+    $("stxt").textContent=`Live · ${deals.length} deal${deals.length!==1?"s":""} · ${mLbl}`;
+    $("last-sync").textContent=`Synced at ${now.toLocaleTimeString()}`;
+
+    renderAll();
+
+  } catch(e) {
+    console.error("[NEXUS]", e);
+    ls.classList.add("out");
+    setTimeout(()=>ls.style.display="none",500);
+    $("err-msg").textContent=e.message;
+    errBanner.style.display="block";
+    $("sdot").style.background="#888888"; $("sdot").style.animation="none";
+    $("stxt").textContent="Sync failed";
+  } finally {
+    btn.disabled=false; btn.className="sync-btn go"; btn.textContent="⟳ Sync HubSpot";
+  }
+}
+
+// ════ METRICS ════
+function mets(){const pos=deals.filter(d=>d.amount>0),neg=deals.filter(d=>d.amount<0);return{net:deals.reduce((s,d)=>s+d.amount,0),gross:pos.reduce((s,d)=>s+d.amount,0),credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?pos.reduce((s,d)=>s+d.amount,0)/pos.length:0,count:deals.length,credCnt:neg.length};}
+function ostats(){const g=deals.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return Object.entries(OWN).map(([id,o])=>{const od=deals.filter(d=>d.owner_id===id),p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return{...o,id,posRev:p,count:od.length,share:g>0?p/g*100:0};}).sort((a,b)=>b.posRev-a.posRev);}
+function tline(){const m={};deals.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));}
+
+// ════ RENDER KPIs ════
+function renderKPIs(){
+  if(!deals.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1" class="empty">No deals found for these filters.</div>`;return;}
+  const m=mets(),os=ostats(),top=os.find(o=>o.posRev>0)||os[0];
+  $("kpi-grid").innerHTML=[
+    {lbl:"Net bookings",  val:fmtUSD(m.net),              sub:`${m.count} deals total`,   ico:"📊",cls:""},
+    {lbl:"Gross revenue", val:fmtUSD(m.gross),             sub:"before credits",           ico:"📈",cls:"d1"},
+    {lbl:"Credit notes",  val:fmtUSD(Math.abs(m.credits)), sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"↩",cls:"g1"},
+    {lbl:"Avg deal size", val:fmtUSD(m.avg),               sub:"positive deals",           ico:"◎",cls:"g2"},
+    {lbl:"Top performer", val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"★",cls:""}
+  ].map(c=>`<div class="kpi ${c.cls}"><div class="kpi-ico">${c.ico}</div><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`).join("");
+}
+
+// ════ RENDER OWNER BARS ════
+function renderBars(){
+  if(!deals.length){$("ob-bars").innerHTML=`<div class="empty" style="padding:16px">No data</div>`;return;}
+  const os=ostats(),mx=Math.max(...os.map(o=>o.posRev),1);
+  $("ob-bars").innerHTML=os.map(o=>`
+    <div class="orow">
+      <div class="orow-hd">
+        <div class="ometa"><div class="oav" style="background:${o.color};color:${o.tc}">${o.initials}</div>
+          <div><div class="oname">${o.name}</div><div class="ocnt">${o.count} deal${o.count!==1?"s":""}</div></div>
+        </div>
+        <div style="text-align:right"><div class="orev">${fmtUSD(o.posRev)}</div><div class="opct">${o.share.toFixed(1)}%</div></div>
+      </div>
+      <div class="btrack"><div class="bfill" style="background:${o.color};width:${(o.posRev/mx*100).toFixed(1)}%"></div></div>
+    </div>`).join("");
+}
+
+// ════ RENDER TIMELINE ════
+function renderTimeline(){
+  const ctx=$("tlc").getContext("2d");
+  if(tlc){tlc.destroy();tlc=null;}
+  const data=tline();if(!data.length)return;
+  tlc=new Chart(ctx,{type:"line",data:{labels:data.map(d=>d.label),datasets:[{label:"Revenue",data:data.map(d=>d.value),borderColor:"#FFDA30",backgroundColor:"rgba(255,218,48,0.08)",borderWidth:2,pointRadius:3,pointBackgroundColor:"#FFDA30",fill:true,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.y)},bodyFont:{size:11},titleFont:{size:11}}},scales:{x:{ticks:{font:{size:9},color:"#9A9A9A",maxRotation:45,autoSkip:true},grid:{color:"rgba(0,0,0,0.04)"}},y:{ticks:{font:{size:9},color:"#9A9A9A",callback:v=>fmtShort(v)},grid:{color:"rgba(0,0,0,0.04)"}}}}});
+}
+
+// ════ RENDER TABLE ════
+function renderTable(){
+  const fil=deals.filter(d=>tf==="all"||d.owner_id===tf);
+  const srt=[...fil].sort((a,b)=>{const m=sd==="asc"?1:-1;if(sk==="amount")return m*(a.amount-b.amount);if(sk==="closedate")return m*(a.closedate||"").localeCompare(b.closedate||"");return m*(a.dealname||"").localeCompare(b.dealname||"");});
+  const tot=Math.max(1,Math.ceil(srt.length/PER));if(pg>tot)pg=tot;
+  const paged=srt.slice((pg-1)*PER,pg*PER);
+  $("tmeta").textContent=`${fil.length} deal${fil.length!==1?"s":""} · Page ${pg} of ${tot}`;
+  const tabs=[["all","All owners"],...Object.entries(OWN).map(([id,o])=>[id,o.name.split(" ")[0]])];
+  $("tf-row").innerHTML=tabs.map(([id,lbl])=>`<button class="tf${tf===id?" on":""}" onclick="setTF('${id}')">${lbl}</button>`).join("");
+  const ar=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
+  $("dth").innerHTML=`<tr>${[["dealname","Deal name"],["owner_id","Owner"],["amount","Amount"],["closedate","Close date"]].map(([k,l])=>`<th onclick="srt2('${k}')">${l}${ar(k)}</th>`).join("")}<th style="text-align:center">HubSpot</th></tr>`;
+  $("dtb").innerHTML=paged.length?paged.map((d,i)=>{
+    const o=OWN[d.owner_id],neg=d.amount<0,big=d.amount>=5000;
+    const bg=i%2===0?"#fff":"#F7F7F7",ac=neg?"#888888":big?"#111111":"#434343",fw=big?"800":"600";
+    return`<tr${neg?' class="cred"':''}>
+      <td style="background:${bg}">${neg?'<span class="warn-ico">⚠</span>':''}<span class="mono">${d.dealname}</span></td>
+      <td style="background:${bg}">${o?`<span style="display:inline-flex;align-items:center;gap:5px"><span style="width:19px;height:19px;border-radius:4px;background:${o.color};display:inline-flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:${o.tc}">${o.initials}</span><span style="font-size:12px;font-weight:600">${o.name}</span></span>`:'—'}</td>
+      <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
+      <td style="color:#696969;background:${bg}">${fmtDate(d.closedate)}</td>
+      <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a">↗</a></td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="5" class="empty">No deals match this filter.</td></tr>`;
+  $("pgs").innerHTML=Array.from({length:tot},(_,i)=>i+1).map(p=>`<button class="pg${pg===p?" on":""}" onclick="goPg(${p})">${p}</button>`).join("");
+}
+
+// ════ RENDER ALL ════
+function renderAll(){
+  renderKPIs();renderBars();renderTimeline();renderTable();
+  const neg=deals.filter(d=>d.amount<0),m=mets();
+  $("footer-src").innerHTML=`<span class="tag y">● Live · HubSpot</span>${neg.length?` &nbsp;·&nbsp; ⚠ ${neg.length} credit note(s) totalling ${fmtUSD(m.credits)}`:""}`;
+}
+
+// ════ INTERACTIONS ════
+function setTF(id){tf=id;pg=1;renderTable();}
+function srt2(k){if(sk===k)sd=sd==="asc"?"desc":"asc";else{sk=k;sd="desc";}pg=1;renderTable();}
+function goPg(p){pg=p;renderTable();}
+
+// ════ BOOT — fetch on load ════
+initToggles();
+doSync();
+</script>
+</body>
+</html>
