@@ -103,7 +103,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(142px,1fr));gap:10px;margin-bottom:18px}
 .kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:pointer}
 .kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
-.kpi.k2{border-top-color:#DDB800}.kpi.k3{border-top-color:#696969}.kpi.k4{border-top-color:#9A9A9A}.kpi.k5{border-top-color:#FFDA30}.kpi.k6{border-top-color:#434343}.kpi.k7{border-top-color:#C0C0C0}
+.kpi.k2{border-top-color:#DDB800}.kpi.k3{border-top-color:#696969}.kpi.k4{border-top-color:#9A9A9A}.kpi.k5{border-top-color:#FFDA30}.kpi.k6{border-top-color:#434343}.kpi.k7{border-top-color:#C0C0C0}.kpi.k8{border-top-color:#FFDA30}.kpi.k9{border-top-color:#DDB800}
 .kpi-ico{font-size:14px;margin-bottom:7px}
 .kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
 .kpi-val{font-size:19px;font-weight:800;color:#434343;line-height:1}
@@ -293,40 +293,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="One Time">One Time</option>
         <option value="Recurring">Recurring</option>
       </select>
-
-      <div class="vdiv"></div>
-      <span class="fl">Service</span>
-      <select class="fsel" id="svc-sel" onchange="onFilterChange()">
-        <option value="">All Verticals</option>
-        <option value="CRM">CRM</option>
-        <option value="Search">Search</option>
-        <option value="Email">Email</option>
-        <option value="Web">Web</option>
-        <option value="Design">Design</option>
-        <option value="SFMC">SFMC</option>
-        <option value="Data Entry">Data Entry</option>
-        <option value="NA">NA</option>
-      </select>
-
-      <div class="vdiv"></div>
-      <span class="fl">Services Detail</span>
-      <select class="fsel" id="svcd-sel" onchange="onFilterChange()">
-        <option value="">All Services</option>
-        <option value="Search - SEO">Search - SEO</option>
-        <option value="Search - SEM">Search - SEM</option>
-        <option value="Search - Paid Social">Paid Social</option>
-        <option value="Design - Email">Design - Email</option>
-        <option value="Design - Landing Page">Design - LP</option>
-        <option value="Design - Digital Asset">Design - Asset</option>
-        <option value="Development - Landing Page">Dev - Landing Page</option>
-        <option value="Development - OpenSource">Dev - OpenSource</option>
-        <option value="Development - Email">Dev - Email</option>
-        <option value="Campaign - Automation">Campaign - Auto</option>
-        <option value="Campaign - Adhoc Campaigns">Campaign - Adhoc</option>
-        <option value="Campaign - Retainer Campaigns">Campaign - Retainer</option>
-        <option value="Campaign - Audit">Campaign - Audit</option>
-        <option value="Mobile App">Mobile App</option>
-      </select>
     </div>
   </div>
   <div class="yellow-rule"></div>
@@ -391,7 +357,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="pgs" id="pgs"></div>
   </div>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION &nbsp;&nbsp;
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION &nbsp;&nbsp
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -565,6 +531,7 @@ function view(){
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
     if(drill.amount_sign==="negative"&&d.amount>=0)return false;
     if(drill.amount_sign==="positive"&&d.amount<=0)return false;
+    if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
     return true;
   });
 }
@@ -573,7 +540,7 @@ function updateChips(){
   const chips=$("drill-chips");
   const entries=Object.entries(drill);
   if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
-  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount"};
+  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Geo Head"};
   const displayVal=(k,v)=>k==="owner"?ownerName(v):k==="amount_sign"?v==="negative"?"Credits Only":"Positive Only":v;
   chips.innerHTML=entries.map(([k,v])=>`
     <div class="dchip">
@@ -582,7 +549,7 @@ function updateChips(){
       <span class="dchip-x" onclick="clearDrill('${k}')">✕</span>
     </div>`).join("")+
     `<button class="drill-clear" onclick="clearAllDrills()">Clear All</button>
-     <span class="drill-info">Showing filtered view. Click ✕ to remove</span>`;
+     <span class="drill-info">Showing filtered view — click ✕ to remove</span>`;
   chips.classList.add("show");
 }
 
@@ -592,7 +559,7 @@ async function doSync(force=false){
   isSyncing=true;
   const errBar=$("err-bar");
   const owners=selOwners(), geo=$("geo-sel").value, geoHead=$("geohead-sel").value;
-  const itype=$("itype-sel").value, svc=$("svc-sel").value, svcd=$("svcd-sel").value;
+  const itype=$("itype-sel").value;
   const months=getMonths();
   if(!owners.length){$("sdot").style.background="#9A9A9A";$("stxt").textContent="NO OWNERS SELECTED";isSyncing=false;return;}
   errBar.style.display="none";
@@ -610,8 +577,7 @@ async function doSync(force=false){
     if(geo) filters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
     if(geoHead) filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype) filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
-    if(svc) filters.push({propertyName:"service_vertical__dashboard_",operator:"EQ",value:svc});
-    if(svcd) filters.push({propertyName:"services",operator:"EQ",value:svcd});
+
 
     const allDeals=[]; let after=null;
     do{
@@ -621,8 +587,7 @@ async function doSync(force=false){
           "closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_",
           "invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_",
           "payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_",
-          "geo_head__invoice_app_","service_vertical__dashboard_","services",
-          "invoice_booking_month__invoice_app_"],
+          "geo_head__invoice_app_","invoice_booking_month__invoice_app_"],
         limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]
       };
       if(after)body.after=after;
@@ -644,8 +609,7 @@ async function doSync(force=false){
           wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",
           geo:r.properties?.geo__invoice_app_||"—",
           geo_head:r.properties?.geo_head__invoice_app_||"—",
-          svc_vertical:r.properties?.service_vertical__dashboard_||"—",
-          services:r.properties?.services||"—"
+
         });
       });
       after=data.paging?.next?.after||null;
@@ -680,7 +644,12 @@ function mets(){
   const v=view(), pos=v.filter(d=>d.amount>0), neg=v.filter(d=>d.amount<0);
   const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
   const geos=new Set(pos.filter(d=>d.geo&&d.geo!=="—").map(d=>d.geo));
-  return{net:v.reduce((s,d)=>s+d.amount,0),gross:pos.reduce((s,d)=>s+d.amount,0),credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?pos.reduce((s,d)=>s+d.amount,0)/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size};
+  const gross=pos.reduce((s,d)=>s+d.amount,0);
+  // Revenue concentration: top 3 clients %
+  const cmap={};pos.filter(d=>d.client&&d.client!=="—").forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
+  const top3rev=Object.values(cmap).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
+  const conc=gross>0?Math.round(top3rev/gross*100):0;
+  return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?gross/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc};
 }
 function ostats(){
   const v=view(), g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
@@ -692,6 +661,16 @@ function geostats(){
   const geos=["US","UK","AU/NZ","Other"];
   return geos.map(geo=>{const od=v.filter(d=>geo==="Other"?!["US","UK","AU/NZ"].includes(d.geo||""):d.geo===geo);const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};}).filter(g=>g.count>0).sort((a,b)=>b.posRev-a.posRev);
 }
+function geoheadstats(){
+  const v=view(), g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
+  const hmap={};
+  v.filter(d=>d.amount>0&&d.geo_head&&d.geo_head!=="—").forEach(d=>{
+    if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};
+    hmap[d.geo_head].rev+=d.amount; hmap[d.geo_head].count++;
+  });
+  return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
+}
+
 function topClients(){
   const v=view(), map={};
   v.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
@@ -712,16 +691,25 @@ function invTypes(){
 function renderKPIs(){
   const v=view();
   if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1" class="empty">No deals for the selected filters${Object.keys(drill).length?" (drill-down active)":""}.</div>`;return;}
-  const m=mets(), os=ostats(), top=os.find(o=>o.posRev>0)||os[0];
+  const m=mets(), os=ostats(), top=os.find(o=>o.posRev>0)||null;
+  const gss=geostats(), tr=gss.find(g=>g.posRev>0)||null;
+  const ghs=geoheadstats(), tgh=ghs[0]||null;
+  const gss=geostats(), tr=gss.find(g=>g.posRev>0)||null;
+  const ghs=geoheadstats(), tgh=ghs.find(g=>g.rev>0)||null;
   $("kpi-grid").innerHTML=[
-    {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deals total`,ico:"📊",cls:"",tip:"Total net bookings for period"},
-    {lbl:"Gross Revenue",val:fmtUSD(m.gross),sub:"before credits",ico:"📈",cls:"k2",action:"sortTable()",tip:"Click to sort table by amount"},
-    {lbl:"Credit Notes",val:fmtUSD(Math.abs(m.credits)),sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"↩",cls:"k3",action:"drillCredits()",tip:"Click to view credit notes only"},
+        {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deal${m.count!==1?"s":""}`,ico:"📊",cls:"",tip:"Total net bookings"},
+    {lbl:"Gross Revenue",val:fmtUSD(m.gross),sub:"before credits",ico:"📈",cls:"k2",action:"sortTable()",tip:"Sort table by amount"},
+    {lbl:"Credit Notes",val:fmtUSD(Math.abs(m.credits)),sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"↩",cls:"k3",action:"drillCredits()",tip:"View credit notes only"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",ico:"◎",cls:"k4",tip:"Average deal size"},
-    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"★",cls:"k5",action:`top&&setDrill('owner','${top?top.id:""}')`,tip:"Click to drill into top performer"},
-    {lbl:"Unique Clients",val:String(m.clients),sub:"active this period",ico:"🏢",cls:"k6",action:"scrollToClients()",tip:"Click to jump to client chart"},
-    {lbl:"Regions Active",val:String(m.geos),sub:"US · UK · AU/NZ",ico:"🌐",cls:"k7",action:"drillTopRegion()",tip:"Click to drill into leading region"}
-  ].map(c=>`<div class="kpi ${c.cls}" onclick="${c.action||''}" title="${c.tip||''}" style="${c.action?'cursor:pointer':''}""><div class="kpi-ico">${c.ico}</div><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`).join("");
+    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"★",cls:"k5",action:top?"setDrill('owner','"+top.id+"')":null,tip:"Drill into top performer"},
+    {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% of revenue`:"active this period",ico:"🏢",cls:"k6",action:"scrollToClients()",tip:"Jump to clients chart"},
+    {lbl:"Top Region",val:tr?tr.geo:"—",sub:tr?`${fmtShort(tr.posRev)} · ${tr.share.toFixed(0)}%`:"—",ico:"🌍",cls:"k7",action:tr?"setDrill('region','"+tr.geo+"')":null,tip:"Drill into top region"},
+    {lbl:"Top Geo Head",val:tgh?tgh.head.split(" ")[0]:"—",sub:tgh?`${fmtShort(tgh.rev)} · ${tgh.count} deals`:"—",ico:"👤",cls:"k8",action:tgh?"setDrill('geo_head','"+tgh.head+"')":null,tip:"Drill into this geo head"},
+    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",ico:"◈",cls:"k9",tip:"% revenue from top 3 clients"}
+  ].map(c=>{
+    const clickable=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:''
+    return `<div class="kpi ${c.cls}"${clickable} title="${c.tip||''}" tabindex="${c.action?0:-1}"><div class="kpi-ico">${c.ico}</div><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`
+  }).join("");
 }
 
 // ════ RENDER OWNER BARS ════
@@ -894,7 +882,7 @@ function resetAll(){
   $("svc-sel").value="";
   $("svcd-sel").value="";
   $("custom-range").classList.remove("show");
-  // Re-select all owners
+  // Re-select all ownersf
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   updateOwnerLabel();
   // Clear all drill-downs
