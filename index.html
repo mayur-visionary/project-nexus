@@ -176,20 +176,7 @@ tbody td{padding:9px 16px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="fbar">
     <div class="fbar-in">
       <span class="fl">Booking month</span>
-      <select class="fsel" id="msel">
-        <option value="jan-2026">Jan 2026</option>
-        <option value="feb-2026">Feb 2026</option>
-        <option value="mar-2026">Mar 2026</option>
-        <option value="apr-2026">Apr 2026</option>
-        <option value="may-2026" selected>May 2026</option>
-        <option value="jun-2026">Jun 2026</option>
-        <option value="jul-2026">Jul 2026</option>
-        <option value="aug-2026">Aug 2026</option>
-        <option value="sep-2026">Sep 2026</option>
-        <option value="oct-2026">Oct 2026</option>
-        <option value="nov-2026">Nov 2026</option>
-        <option value="dec-2026">Dec 2026</option>
-      </select>
+      <select class="fsel" id="msel"></select>
       <span class="fl">Deal owners</span>
       <div class="otog-wrap" id="otog-wrap"></div>
       <button class="sync-btn go" id="fbtn" onclick="doSync()">&#8635; Sync HubSpot</button>
@@ -506,6 +493,30 @@ function srt2(k){if(sk===k)sd=sd==="asc"?"desc":"asc";else{sk=k;sd="desc";}pg=1;
 function goPg(p){pg=p;renderTable();}
 
 // ════ BOOT — fetch on load ════
+function initMonths() {
+  const MONTHS_FULL  = ["january","february","march","april","may","june",
+                        "july","august","september","october","november","december"];
+  const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun",
+                        "Jul","Aug","Sep","Oct","Nov","Dec"];
+  const now   = new Date();
+  const sel   = document.getElementById("msel");
+  // Show rolling 24 months, most recent first
+  // Default to previous month (most recently closed period)
+  for (let i = 0; i < 24; i++) {
+    const d     = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const month = d.getMonth();
+    const year  = d.getFullYear();
+    const value = `${MONTHS_FULL[month]}-${year}`;
+    const label = `${MONTHS_SHORT[month]} ${year}`;
+    const opt   = document.createElement("option");
+    opt.value   = value;
+    opt.textContent = label;
+    if (i === 1) opt.selected = true; // default: previous month
+    sel.appendChild(opt);
+  }
+}
+
+initMonths();
 initToggles();
 doSync();
 </script>
