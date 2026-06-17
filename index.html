@@ -240,7 +240,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="this-quarter">This Quarter</option>
         <option value="last-quarter">Last Quarter</option>
         <option value="this-fy">This FY</option>
-        <option value="custom">Custom Range ▾</option>
+        <option value="custom">Custom ▾</option>
       </select>
       <div class="custom-range" id="custom-range">
         <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
@@ -357,7 +357,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="pgs" id="pgs"></div>
   </div>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION &nbsp;&nbsp
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION &nbsp;&nbsp;
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -693,8 +693,6 @@ function renderKPIs(){
   if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1" class="empty">No deals for the selected filters${Object.keys(drill).length?" (drill-down active)":""}.</div>`;return;}
   const m=mets(), os=ostats(), top=os.find(o=>o.posRev>0)||null;
   const gss=geostats(), tr=gss.find(g=>g.posRev>0)||null;
-  const ghs=geoheadstats(), tgh=ghs[0]||null;
-  const gss=geostats(), tr=gss.find(g=>g.posRev>0)||null;
   const ghs=geoheadstats(), tgh=ghs.find(g=>g.rev>0)||null;
   $("kpi-grid").innerHTML=[
         {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deal${m.count!==1?"s":""}`,ico:"📊",cls:"",tip:"Total net bookings"},
@@ -882,7 +880,7 @@ function resetAll(){
   $("svc-sel").value="";
   $("svcd-sel").value="";
   $("custom-range").classList.remove("show");
-  // Re-select all ownersf
+  // Re-select all owners
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   updateOwnerLabel();
   // Clear all drill-downs
@@ -893,10 +891,25 @@ function resetAll(){
 }
 
 // ════ BOOT ════
-initMonthSelects();
-initOwners();
-$("period-sel").value="last-month";
-doSync(true);
+window.addEventListener("DOMContentLoaded", function() {
+  try {
+    initMonthSelects();
+    initOwners();
+    // Force Last Month as default — do NOT rely on HTML selected attr
+    const ps = $("period-sel");
+    if (ps) {
+      ps.value = "last-month";
+      // Ensure custom range hidden
+      const cr = $("custom-range");
+      if (cr) cr.classList.remove("show");
+    }
+    doSync(true);
+  } catch(bootErr) {
+    console.error("Nexus boot error:", bootErr);
+    $("stxt").textContent = "BOOT ERROR — CHECK CONSOLE";
+    $("sdot").style.background = "#696969";
+  }
+});
 </script>
 </body>
 </html>
