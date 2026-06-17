@@ -1,11 +1,9 @@
 export async function onRequestPost(context) {
   try {
     const token = context.env.HUBSPOT_TOKEN;
-
     if (!token) {
-      return new Response(JSON.stringify({ error: "HUBSPOT_TOKEN not set in environment" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" }
+      return new Response(JSON.stringify({ error: "HUBSPOT_TOKEN not configured" }), {
+        status: 500, headers: { "Content-Type": "application/json" }
       });
     }
 
@@ -29,8 +27,7 @@ export async function onRequestPost(context) {
 
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
+      status: 500, headers: { "Content-Type": "application/json" }
     });
   }
 }
