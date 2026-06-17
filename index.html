@@ -14,142 +14,170 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 
 /* ── Header ── */
 .hdr{background:#434343}
-.hdr-in{max-width:1400px;margin:0 auto;padding:18px 28px 0}
-.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px}
-.hdr-text{}
-.hdr-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.hdr-eyebrow-lbl{font-size:10px;font-weight:700;letter-spacing:.18em;color:rgba(255,255,255,.4)}
-.hdr-dot{width:3px;height:3px;border-radius:50%;background:#FFDA30;flex-shrink:0}
-.hdr-pn{font-size:10px;font-weight:700;letter-spacing:.18em;color:#FFDA30}
-.hdr-title{font-size:22px;font-weight:800;color:#fff;letter-spacing:.04em;text-transform:uppercase}
-.hdr-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
-.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-top:2px}
-.h-status{display:flex;align-items:center;gap:6px}
+.hdr-eyebrow{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.38);text-transform:uppercase}
+.hdr-dot{width:3px;height:3px;border-radius:50%;background:#FFDA30}
+.hdr-pn{font-size:9px;font-weight:700;letter-spacing:.16em;color:#FFDA30;text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.05em}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.32);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:12px;padding-top:4px}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
-.stxt{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.04em;text-transform:uppercase}
-.last-sync{font-size:9px;color:rgba(255,255,255,.22);font-weight:500;letter-spacing:.03em}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.last-sync{font-size:9px;color:rgba(255,255,255,.22);font-weight:500}
+.refresh-btn{padding:5px 12px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.15);border-color:rgba(255,218,48,.5)}
+.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
 
 /* ── Filter bar ── */
-.fbar{background:#333333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
-.fbar-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.3);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.3);color:#FFDA30;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em}
+.fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+.fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);white-space:nowrap}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 9px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s}
+.fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.55)}
 .fsel option{background:#333;color:#fff}
 
-/* ── Custom multi-select dropdown ── */
-.ms-wrap{position:relative}
-.ms-btn{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);font-size:11px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
-.ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
-.ms-btn .arrow{font-size:8px;color:rgba(255,255,255,.4);margin-left:2px}
-.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:220px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.35);z-index:100;display:none;overflow:hidden;max-height:320px;overflow-y:auto}
-.ms-dropdown.open{display:block}
-.ms-all{padding:8px 12px;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between}
-.ms-all span{color:#FFDA30;cursor:pointer;font-size:10px;font-weight:600}
-.ms-all span:hover{text-decoration:underline}
-.ms-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background .12s}
-.ms-item:hover{background:rgba(255,255,255,.07)}
-.ms-item input{width:13px;height:13px;accent-color:#FFDA30;cursor:pointer}
-.ms-item label{font-size:11px;font-weight:500;color:rgba(255,255,255,.75);cursor:pointer;flex:1}
+/* Period presets */
+.period-pills{display:flex;gap:4px;flex-wrap:wrap}
+.pp{padding:5px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .18s;white-space:nowrap}
+.pp:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.pp.act{background:#FFDA30;color:#111;border-color:#FFDA30}
+.custom-range{display:none;align-items:center;gap:6px}
+.custom-range.show{display:flex}
+.range-sep{font-size:9px;color:rgba(255,255,255,.3);font-weight:600}
 
-.sync-btn{margin-left:auto;padding:7px 18px;border-radius:7px;border:none;font-size:10px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;text-transform:uppercase;letter-spacing:.1em;transition:all .2s;background:#FFDA30;color:#111;font-family:'Montserrat',sans-serif}
-.sync-btn:hover{background:#FFE870}
-.sync-btn:disabled{background:rgba(255,218,48,.25);color:rgba(255,218,48,.4);cursor:not-allowed}
-.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30 0%,#FFE870 50%,transparent 100%)}
+/* Owner multi-select */
+.ms-wrap{position:relative}
+.ms-btn{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.65);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
+.ms-btn:hover{border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1)}
+.ms-arrow{font-size:8px;color:rgba(255,255,255,.35);margin-left:2px}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:240px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:200;display:none;overflow:hidden;max-height:360px;overflow-y:auto}
+.ms-dropdown.open{display:block}
+.ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
+.ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase}
+.ms-actions{display:flex;gap:8px}
+.ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.ms-act:hover{text-decoration:underline}
+.ms-group-hdr{padding:7px 12px 4px;font-size:8.5px;font-weight:800;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;border-top:1px solid rgba(255,255,255,.06)}
+.ms-group-hdr:first-child{border-top:none}
+.ms-item{display:flex;align-items:center;gap:8px;padding:6px 12px;cursor:pointer;transition:background .12s}
+.ms-item:hover{background:rgba(255,255,255,.07)}
+.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
+.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.7);cursor:pointer;flex:1}
+
+.vdiv{width:1px;height:20px;background:rgba(255,255,255,.12);flex-shrink:0}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
 /* ── Error ── */
-.err-wrap{max-width:1400px;margin:0 auto;padding:10px 28px 0}
+.err-wrap{max-width:1440px;margin:0 auto;padding:10px 28px 0}
 .err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;margin-top:10px;font-weight:500}
 .err-bar strong{color:#FFDA30}
 
 /* ── Main ── */
-.main{max-width:1400px;margin:0 auto;padding:20px 28px 48px}
+.main{max-width:1440px;margin:0 auto;padding:20px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
 
 /* ── KPI ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:11px;margin-bottom:20px}
-.kpi{background:#fff;border-radius:10px;padding:15px 16px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:box-shadow .2s;cursor:default}
-.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
-.kpi.k2{border-top-color:#DDB800}.kpi.k3{border-top-color:#696969}.kpi.k4{border-top-color:#9A9A9A}.kpi.k5{border-top-color:#FFDA30}.kpi.k6{border-top-color:#434343}
-.kpi-ico{font-size:15px;margin-bottom:8px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:box-shadow .2s}
+.kpi:hover{box-shadow:0 4px 16px rgba(67,67,67,.1)}
+.kpi.k2{border-top-color:#DDB800}.kpi.k3{border-top-color:#696969}.kpi.k4{border-top-color:#9A9A9A}.kpi.k5{border-top-color:#FFDA30}.kpi.k6{border-top-color:#434343}.kpi.k7{border-top-color:#C0C0C0}
+.kpi-ico{font-size:14px;margin-bottom:7px}
 .kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
-.kpi-val{font-size:20px;font-weight:800;color:#434343;line-height:1}
+.kpi-val{font-size:19px;font-weight:800;color:#434343;line-height:1}
 .kpi-sub{font-size:10px;color:#9A9A9A;margin-top:4px;font-weight:500}
 
 /* ── Charts ── */
-.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.chart-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px}
-.card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:18px 20px}
-.card-ttl{font-size:12px;font-weight:800;color:#434343;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px}
+.chart-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:16px}
+.card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:16px 18px}
+.card-ttl{font-size:11px;font-weight:800;color:#434343;margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
 .card-sub{font-size:10px;color:#9A9A9A;margin-bottom:14px;font-weight:500}
 
-/* Owner bars */
-.orow{margin-bottom:14px}.orow:last-child{margin-bottom:0}
-.orow-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+/* Bars */
+.orow{margin-bottom:12px}.orow:last-child{margin-bottom:0}
+.orow-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .ometa{display:flex;align-items:center;gap:6px}
-.oav{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#111;flex-shrink:0;background:#FFDA30}
-.oname{font-size:11px;color:#434343;font-weight:700}
-.ocnt{font-size:10px;color:#9A9A9A;font-weight:500}
-.orev{font-size:11px;font-weight:800;color:#434343}
-.opct{font-size:10px;color:#9A9A9A;font-weight:500}
-.btrack{height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden;border:1px solid #E2E2E2}
+.oav{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:#111;flex-shrink:0;background:#FFDA30}
+.oname{font-size:10.5px;color:#434343;font-weight:700}
+.ocnt{font-size:9.5px;color:#9A9A9A;font-weight:500}
+.orev{font-size:10.5px;font-weight:800;color:#434343}
+.opct{font-size:9.5px;color:#9A9A9A;font-weight:500}
+.btrack{height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden;border:1px solid #E8E8E8}
 .bfill{height:4px;border-radius:2px;transition:width .9s cubic-bezier(.34,1.2,.64,1);background:#FFDA30}
+.bfill.grey{background:#434343}
 
-/* Client bars */
-.cbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.cbar-name{font-size:10px;font-weight:600;color:#434343;width:130px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cbar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.cbar-name{font-size:9.5px;font-weight:600;color:#434343;width:120px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cbar-track{flex:1;height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden}
-.cbar-fill{height:4px;background:#434343;border-radius:2px;transition:width .7s ease}
-.cbar-val{font-size:10px;font-weight:700;color:#434343;width:60px;text-align:right;flex-shrink:0}
+.cbar-fill{height:4px;background:#FFDA30;border-radius:2px;transition:width .7s ease}
+.cbar-val{font-size:9.5px;font-weight:700;color:#434343;width:56px;text-align:right;flex-shrink:0}
+
+/* Geo bars */
+.gbar-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.gbar-badge{font-size:9px;font-weight:800;color:#111;background:#FFDA30;padding:3px 8px;border-radius:4px;width:52px;text-align:center;flex-shrink:0}
+.gbar-track{flex:1;height:6px;background:#F2F2F2;border-radius:3px;overflow:hidden}
+.gbar-fill{height:6px;border-radius:3px;transition:width .7s ease}
+.gbar-info{text-align:right;flex-shrink:0;width:80px}
+.gbar-rev{font-size:10px;font-weight:800;color:#434343}
+.gbar-cnt{font-size:9px;color:#9A9A9A;font-weight:500}
 
 /* ── Table ── */
-.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:0}
-.tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.tcard-ttl h3{font-size:12px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.04em}
+.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
+.tcard-hdr{padding:11px 16px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tcard-ttl h3{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
 .tcard-ttl p{font-size:10px;color:#9A9A9A;margin-top:2px;font-weight:500}
-.tf-row{display:flex;gap:5px;flex-wrap:wrap}
-.tf{padding:4px 10px;border-radius:6px;border:1px solid #E2E2E2;font-size:10px;font-weight:700;cursor:pointer;background:#fff;color:#696969;transition:all .15s;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.tf-row{display:flex;gap:4px;flex-wrap:wrap}
+.tf{padding:3px 9px;border-radius:5px;border:1px solid #E2E2E2;font-size:9px;font-weight:700;cursor:pointer;background:#fff;color:#696969;transition:all .15s;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.05em}
 .tf.on{background:#FFDA30;color:#111;border-color:#FFDA30}
 .twrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif}
-thead th{padding:8px 14px;background:#F7F7F7;text-align:left;font-size:9px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E2E2E2;cursor:pointer;user-select:none;white-space:nowrap}
-thead th:hover{background:#EEEEEE;color:#434343}
-tbody tr{border-bottom:1px solid #F7F7F7}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:900px}
+thead th{padding:8px 13px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;cursor:pointer;user-select:none;white-space:nowrap}
+thead th:hover{background:#EEE;color:#434343}
+tbody tr{border-bottom:1px solid #F5F5F5}
 tbody tr:hover td{background:#FFFBEA!important}
-tbody td{padding:9px 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
-.mono{font-family:'Montserrat',monospace;font-size:10px;font-weight:600;color:#434343}
+tbody td{padding:8px 13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.mono{font-family:'Montserrat',monospace;font-size:10px;font-weight:700;color:#434343}
 .amt{text-align:right;font-weight:800;font-size:11px}
 .cred td{background:#FAFAFA!important}
-.warn-ico{font-size:10px;margin-right:3px;color:#9A9A9A}
-.hs-a{color:#DDB800;text-decoration:none;font-size:14px;font-weight:700}
+.geo-tag{font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:3px;color:#111}
+.geo-US{background:#FFDA30}
+.geo-UK{background:#DDB800}
+.geo-AUNZ{background:#434343;color:#FFDA30}
+.geo-Other{background:#E2E2E2;color:#696969}
+.inv-tag{font-size:8.5px;font-weight:600;padding:2px 6px;border-radius:3px;background:#F2F2F2;color:#696969}
+.hs-a{color:#DDB800;text-decoration:none;font-size:13px;font-weight:700}
 .hs-a:hover{color:#FFDA30}
-.pgs{padding:10px 18px;border-top:1px solid #F2F2F2;display:flex;justify-content:center;gap:5px;flex-wrap:wrap}
-.pg{width:28px;height:28px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
+.pgs{padding:10px 16px;border-top:1px solid #F2F2F2;display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
 .pg:hover{background:#FFFBEA;border-color:#FFDA30}
 .pg.on{background:#FFDA30;color:#111;border-color:#FFDA30}
-.empty{text-align:center;padding:36px;color:#9A9A9A;font-size:12px;font-weight:500}
-
-/* ── Badge ── */
-.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
-.badge-y{background:#FFDA30;color:#111}
-.badge-g{background:#F2F2F2;color:#696969;border:1px solid #E2E2E2}
-.badge-type{background:#F2F2F2;color:#696969;font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px}
+.empty{text-align:center;padding:32px;color:#9A9A9A;font-size:12px;font-weight:500}
 
 /* ── Footer ── */
-.footer{text-align:center;margin-top:18px;padding-top:18px;border-top:1px solid #E2E2E2}
-.footer-main{font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
-.footer-main span{color:#9A9A9A;font-weight:600}
+.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+.footer span{color:#9A9A9A;font-weight:800}
+
+/* Loading skeleton */
+.loading-overlay{position:fixed;inset:0;background:rgba(67,67,67,.15);backdrop-filter:blur(1px);z-index:100;display:none;align-items:center;justify-content:center;pointer-events:none}
+.loading-overlay.show{display:flex}
+.loading-spinner{width:32px;height:32px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+
+<div class="loading-overlay" id="lo"><div class="loading-spinner"></div></div>
 
 <!-- ══ HEADER ══ -->
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
       <div class="hdr-brand">
-        <!-- Mavlers full wordmark SVG -->
-        <svg height="32" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+        <svg height="30" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
           <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
@@ -157,26 +185,21 @@ tbody td{padding:9px 14px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
           <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
           <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
-          <!-- M mark -->
           <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
           <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
         </svg>
-        <div class="hdr-text">
-          <div class="hdr-eyebrow">
-            <span class="hdr-eyebrow-lbl">Sales Operations</span>
-            <div class="hdr-dot"></div>
-            <span class="hdr-pn">Project Nexus</span>
-          </div>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-pn">Project Nexus</span></div>
           <div class="hdr-title">Sales Operations</div>
           <div class="hdr-sub">Where HubSpot data becomes decisions</div>
         </div>
       </div>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="sdot" id="sdot" style="background:#DDB800"></div>
-          <span class="stxt" id="stxt">Connecting...</span>
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#DDB800"></div><span id="stxt">Connecting...</span></div>
+          <div class="last-sync" id="last-sync"></div>
         </div>
-        <div class="last-sync" id="last-sync"></div>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)" title="Force refresh">⟳ Refresh</button>
       </div>
     </div>
   </div>
@@ -184,81 +207,111 @@ tbody td{padding:9px 14px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <!-- Filter bar -->
   <div class="fbar">
     <div class="fbar-in">
-      <span class="fl">Booking Month</span>
-      <select class="fsel" id="msel"></select>
 
-      <span class="fl">Deal Owners</span>
+      <!-- Period presets -->
+      <span class="fl">Period</span>
+      <div class="period-pills" id="period-pills">
+        <button class="pp" data-period="this-month" onclick="setPeriod('this-month')">This Month</button>
+        <button class="pp" data-period="last-month" onclick="setPeriod('last-month')">Last Month</button>
+        <button class="pp" data-period="this-quarter" onclick="setPeriod('this-quarter')">This Quarter</button>
+        <button class="pp" data-period="last-quarter" onclick="setPeriod('last-quarter')">Last Quarter</button>
+        <button class="pp" data-period="this-fy" onclick="setPeriod('this-fy')">This FY</button>
+        <button class="pp" data-period="custom" onclick="setPeriod('custom')">Custom ▾</button>
+      </div>
+      <div class="custom-range" id="custom-range">
+        <select class="fsel" id="from-sel" onchange="onFilterChange()"></select>
+        <span class="range-sep">→</span>
+        <select class="fsel" id="to-sel" onchange="onFilterChange()"></select>
+      </div>
+
+      <div class="vdiv"></div>
+
+      <!-- Geo filter -->
+      <span class="fl">Region</span>
+      <select class="fsel" id="geo-sel" onchange="onFilterChange()">
+        <option value="">All Regions</option>
+        <option value="US">🇺🇸 US</option>
+        <option value="UK">🇬🇧 UK</option>
+        <option value="AU/NZ">🇦🇺 AU/NZ</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <div class="vdiv"></div>
+
+      <!-- Deal owners -->
+      <span class="fl">Owners</span>
       <div class="ms-wrap" id="ms-wrap">
         <div class="ms-btn" id="ms-btn" onclick="toggleMS(event)">
           <span id="ms-label">All Owners</span>
-          <span class="arrow">▼</span>
+          <span class="ms-arrow">▼</span>
         </div>
         <div class="ms-dropdown" id="ms-dropdown">
-          <div class="ms-all">
-            <span>OWNERS</span>
-            <span onclick="selectAll()">Select All</span>
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Deal Owners</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAll()">Select All</span>
+              <span class="ms-act" onclick="deselectAll()">Deselect All</span>
+            </div>
           </div>
           <div id="ms-list"></div>
         </div>
       </div>
 
+      <div class="vdiv"></div>
+
+      <!-- Invoice type -->
       <span class="fl">Invoice Type</span>
-      <select class="fsel" id="itype-sel">
+      <select class="fsel" id="itype-sel" onchange="onFilterChange()">
         <option value="">All Types</option>
         <option value="One Time">One Time</option>
         <option value="Recurring">Recurring</option>
       </select>
 
-      <button class="sync-btn" id="fbtn" onclick="doSync()">&#8635; Sync HubSpot</button>
     </div>
   </div>
   <div class="yellow-rule"></div>
 </div>
 
-<!-- Error -->
 <div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div></div>
 
 <!-- ══ MAIN ══ -->
 <div class="main">
 
-  <!-- KPIs -->
   <div class="sec">Key Metrics</div>
   <div class="kpi-grid" id="kpi-grid"></div>
 
-  <!-- Charts row 1 -->
   <div class="sec">Performance Breakdown</div>
-  <div class="chart-row">
+  <div class="chart-row-3">
     <div class="card">
-      <div class="card-ttl">Revenue By Owner</div>
+      <div class="card-ttl">Revenue by Owner</div>
       <div class="card-sub" id="ob-sub">Gross bookings</div>
       <div id="ob-bars"></div>
     </div>
     <div class="card">
+      <div class="card-ttl">Revenue by Region</div>
+      <div class="card-sub" id="geo-sub">Geo breakdown</div>
+      <div id="geo-bars"></div>
+    </div>
+    <div class="card">
       <div class="card-ttl">Daily Booking Activity</div>
-      <div class="card-sub" id="tl-sub">Revenue by close date</div>
-      <div style="position:relative;height:195px">
-        <canvas id="tlc" role="img" aria-label="Daily revenue chart">Daily revenue chart.</canvas>
-      </div>
+      <div class="card-sub" id="tl-sub">By close date</div>
+      <div style="position:relative;height:195px"><canvas id="tlc" role="img" aria-label="Daily revenue">.</canvas></div>
     </div>
   </div>
 
-  <!-- Top clients -->
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Top Clients by Revenue</div>
-      <div class="card-sub" id="cl-sub">Gross bookings · top 10</div>
+      <div class="card-sub" id="cl-sub">Top 10 · gross bookings</div>
       <div id="cl-bars"></div>
     </div>
     <div class="card">
       <div class="card-ttl">Invoice Type Breakdown</div>
       <div class="card-sub" id="it-sub">By invoice pattern</div>
-      <div style="position:relative;height:195px">
-        <canvas id="itc" role="img" aria-label="Invoice type chart">Invoice type breakdown.</canvas>
-      </div>
+      <div style="position:relative;height:195px"><canvas id="itc" role="img" aria-label="Invoice type">.</canvas></div>
     </div>
   </div>
 
-  <!-- Table -->
   <div class="sec">Deal Records</div>
   <div class="tcard">
     <div class="tcard-hdr">
@@ -268,38 +321,94 @@ tbody td{padding:9px 14px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="twrap">
       <table>
         <thead id="dth"></thead>
-        <tbody id="dtb"><tr><td colspan="8" class="empty">Fetching live data from HubSpot...</td></tr></tbody>
+        <tbody id="dtb"><tr><td colspan="9" class="empty">Loading live data from HubSpot...</td></tr></tbody>
       </table>
     </div>
     <div class="pgs" id="pgs"></div>
   </div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <div class="footer-main">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; <span>A JAM-STACK APPLICATION</span></div>
-  </div>
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; <span>A JAM-STACK APPLICATION</span></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ════ OWNER REGISTRY ════
-const OWN = {
-  "17738843":"Jaydeep Soni","17739173":"Tanuj Gupta","17739548":"Darshan Modi",
-  "18144037":"Kartik Gondalia","19799470":"Jebin Joy","24817892":"Sheldon Fernandes",
-  "31730801":"Vikram Sahi","34558123":"Kaustubh Agrawal","37344296":"Kalgi Shah",
-  "37762663":"Malav Modi","38568120":"Baspin Thomas","39929211":"Nital Shah",
-  "41490632":"Mukund Basita","41593885":"Pankaj Suryavanshi","42663191":"Dhaval Damania",
-  "45776165":"Hitaishi Bhogayata","46153051":"Ayush Rathi","46156316":"Flintoff Mehta"
+// ════ OWNER REGISTRY — grouped by geo ════
+const OWNER_GROUPS = {
+  "US": [
+    {id:"38568120",name:"Baspin Thomas"},{id:"46153051",name:"Ayush Rathi"},
+    {id:"42663191",name:"Dhaval Damania"},{id:"34558123",name:"Kaustubh Agrawal"},
+    {id:"41490632",name:"Mukund Basita"},{id:"17738843",name:"Jaydeep Soni"},
+    {id:"17739548",name:"Darshan Modi"},{id:"284770744",name:"US Team Member 1"},
+    {id:"240935328",name:"US Team Member 2"},{id:"86147905",name:"US Team Member 3"},
+    {id:"89530815",name:"US Team Member 4"},{id:"916030451",name:"US Team Member 5"}
+  ],
+  "UK": [
+    {id:"37344296",name:"Kalgi Shah"},{id:"46156316",name:"Flintoff Mehta"},
+    {id:"31730801",name:"Vikram Sahi"},{id:"24817892",name:"Sheldon Fernandes"},
+    {id:"82030736",name:"UK Team Member 1"},{id:"82911376",name:"UK Team Member 2"}
+  ],
+  "AU/NZ": [
+    {id:"176516495",name:"AU/NZ Member 1"},{id:"263464861",name:"AU/NZ Member 2"},
+    {id:"78831011",name:"AU/NZ Member 3"},{id:"467997340",name:"AU/NZ Member 4"}
+  ]
 };
-const ALL_OWNER_IDS = Object.keys(OWN).sort((a,b)=>OWN[a].localeCompare(OWN[b]));
+const ALL_OWNERS = Object.values(OWNER_GROUPS).flat();
+const OWN = Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
+const ALL_IDS = ALL_OWNERS.map(o=>o.id);
+const GEO_COLORS = {"US":"#FFDA30","UK":"#DDB800","AU/NZ":"#434343","Other":"#9A9A9A"};
 
 // ════ CONFIG ════
 const PIPELINE="115832232", STAGE="205348626", PORTAL="2700725";
 
+// ════ MONTH HELPERS ════
+const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
+const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function monthVal(d){return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;}
+function monthLbl(d){return`${MSHRT[d.getMonth()]} ${d.getFullYear()}`;}
+
+function getMonthsForPeriod(period, fromVal, toVal){
+  const now=new Date();
+  const cm=now.getMonth(), cy=now.getFullYear();
+  switch(period){
+    case"this-month": return[monthVal(now)];
+    case"last-month": return[monthVal(new Date(cy,cm-1,1))];
+    case"this-quarter":{const s=Math.floor(cm/3)*3;return[0,1,2].map(i=>monthVal(new Date(cy,s+i,1)));}
+    case"last-quarter":{
+      let s=(Math.floor(cm/3)-1)*3, y=cy;
+      if(s<0){s+=12;y--;}
+      return[0,1,2].map(i=>monthVal(new Date(y,s+i,1)));
+    }
+    case"this-fy": return MFULL.map(m=>`${m}-${cy}`);
+    case"custom":{
+      if(!fromVal||!toVal)return[monthVal(new Date(cy,cm-1,1))];
+      const [fm,fy]=fromVal.split("-"),  [tm,ty]=toVal.split("-");
+      const from=new Date(parseInt(fy),MFULL.indexOf(fm),1);
+      const to=new Date(parseInt(ty),MFULL.indexOf(tm),1);
+      const months=[];
+      const cur=new Date(from);
+      while(cur<=to&&months.length<24){months.push(monthVal(cur));cur.setMonth(cur.getMonth()+1);}
+      return months;
+    }
+    default: return[monthVal(now)];
+  }
+}
+
+function periodLabel(period, months){
+  if(period==="custom"&&months.length>0){
+    const f=months[0].split("-"), t=months[months.length-1].split("-");
+    const fl=`${MSHRT[MFULL.indexOf(f[0])]} ${f[1]}`;
+    const tl=`${MSHRT[MFULL.indexOf(t[0])]} ${t[1]}`;
+    return fl===tl?fl:`${fl} — ${tl}`;
+  }
+  const labels={"this-month":"This Month","last-month":"Last Month","this-quarter":"This Quarter","last-quarter":"Last Quarter","this-fy":"This FY","custom":"Custom"};
+  return labels[period]||period;
+}
+
 // ════ STATE ════
-let deals=[], tFilter="all", sk="amount", sd="desc", pg=1;
+let deals=[], tFilter="all", sk="amount", sd="desc", pg=1, curPeriod="last-month";
 const PER=10;
-let tlcChart=null, itcChart=null;
+let tlcChart=null, itcChart=null, debTimer=null;
 
 // ════ HELPERS ════
 const $=id=>document.getElementById(id);
@@ -307,98 +416,105 @@ const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",m
 const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1000?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
 const fmtDate=d=>{if(!d)return"—";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}};
 const dealURL=id=>`https://app.hubspot.com/contacts/${PORTAL}/record/0-3/${id}`;
-const ownerName=id=>OWN[String(id)]||("ID:"+id);
-const selMonth=()=>$("msel").value;
-const selMonthLbl=()=>$("msel").options[$("msel").selectedIndex]?.text||"";
-const selOwners=()=>ALL_OWNER_IDS.filter(id=>{const e=$("ow-"+id);return !e||e.checked;});
+const ownerName=id=>OWN[String(id)]||`Mbr-${String(id).slice(-4)}`;
+const selOwners=()=>ALL_IDS.filter(id=>{const e=$("ow-"+id);return !e||e.checked;});
+const selGeo=()=>$("geo-sel").value;
 const selIType=()=>$("itype-sel").value;
 
-// ════ MONTH SELECTOR ════
-function initMonths(){
-  const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
-  const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const now=new Date(), sel=$("msel");
-  for(let i=0;i<24;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
-    const m=d.getMonth(), y=d.getFullYear();
-    const opt=document.createElement("option");
-    opt.value=`${MFULL[m]}-${y}`;
-    opt.textContent=`${MSHRT[m]} ${y}`;
-    if(i===0) opt.selected=true;
-    sel.appendChild(opt);
-  }
+// ════ MONTH DROPDOWNS (for custom range) ════
+function initMonthSelects(){
+  const now=new Date();
+  [$("from-sel"),$("to-sel")].forEach((sel,idx)=>{
+    for(let i=23;i>=0;i--){
+      const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+      const opt=document.createElement("option");
+      opt.value=monthVal(d); opt.textContent=monthLbl(d);
+      if((idx===0&&i===1)||(idx===1&&i===0)) opt.selected=true;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+// ════ PERIOD PILLS ════
+function setPeriod(p){
+  curPeriod=p;
+  document.querySelectorAll(".pp").forEach(el=>el.classList.remove("act"));
+  document.querySelector(`[data-period="${p}"]`).classList.add("act");
+  $("custom-range").classList.toggle("show",p==="custom");
+  onFilterChange();
 }
 
 // ════ OWNER MULTI-SELECT ════
 function initOwners(){
   const list=$("ms-list");
-  list.innerHTML=ALL_OWNER_IDS.map(id=>`
-    <div class="ms-item">
-      <input type="checkbox" id="ow-${id}" checked onchange="updateOwnerLabel()">
-      <label for="ow-${id}">${OWN[id]}</label>
-    </div>`).join("");
+  list.innerHTML=Object.entries(OWNER_GROUPS).map(([geo,owners])=>`
+    <div class="ms-group-hdr">📍 ${geo}</div>
+    ${owners.map(o=>`
+      <div class="ms-item">
+        <input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()">
+        <label for="ow-${o.id}">${o.name}</label>
+      </div>`).join("")}`).join("");
 }
 
-function toggleMS(e){
-  e.stopPropagation();
-  $("ms-dropdown").classList.toggle("open");
-}
-
-function selectAll(){
-  ALL_OWNER_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
-  updateOwnerLabel();
-}
-
+function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
+function selectAll(){ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onFilterChange();}
+function deselectAll(){ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
+function onOwnerChange(){updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),600);}
 function updateOwnerLabel(){
   const sel=selOwners();
-  $("ms-label").textContent=sel.length===ALL_OWNER_IDS.length?"All Owners":
-    sel.length===0?"No Owners Selected":
-    sel.length===1?OWN[sel[0]]:
-    `${sel.length} Selected`;
+  $("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;
 }
+document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");});
 
-document.addEventListener("click",e=>{
-  if(!$("ms-wrap").contains(e.target)) $("ms-dropdown").classList.remove("open");
-});
+// ════ AUTO-TRIGGER ════
+function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ SYNC ════
-async function doSync(){
-  const btn=$("fbtn"), errBar=$("err-bar");
-  const owners=selOwners(), month=selMonth(), mLbl=selMonthLbl(), itype=selIType();
+let isSyncing=false;
+async function doSync(force=false){
+  if(isSyncing&&!force)return;
+  isSyncing=true;
+  const errBar=$("err-bar");
+  const owners=selOwners(), geo=selGeo(), itype=selIType();
+  const months=getMonthsForPeriod(curPeriod,$("from-sel").value,$("to-sel").value);
+  const pLabel=periodLabel(curPeriod,months);
 
-  if(!owners.length){alert("Select at least one deal owner.");return;}
-  btn.disabled=true; btn.textContent="⟳ Syncing...";
+  if(!owners.length){$("sdot").style.background="#9A9A9A";$("stxt").textContent="NO OWNERS SELECTED";isSyncing=false;return;}
+
   errBar.style.display="none";
   $("sdot").style.background="#DDB800"; $("stxt").textContent="SYNCING...";
+  $("lo").classList.add("show");
+  $("rfbtn").disabled=true;
 
   try{
-    const filters=[
+    const baseFilters=[
       {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
       {propertyName:"dealstage",operator:"EQ",value:STAGE},
-      {propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:month},
+      months.length===1
+        ?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}
+        :{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
       {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
     ];
-    if(itype) filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    if(geo) baseFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
+    if(itype) baseFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
 
-    const allDeals=[];
-    let after=null;
-
+    const allDeals=[]; let after=null;
     do{
       const body={
-        filterGroups:[{filters}],
+        filterGroups:[{filters:baseFilters}],
         properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id",
           "closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_",
           "invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_",
-          "payment_process_via_wallet_yes___no__invoice_app_","invoice_booking_month__invoice_app_"],
+          "payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_",
+          "geo_head__invoice_app_","invoice_booking_month__invoice_app_"],
         limit:200,
         sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]
       };
       if(after) body.after=after;
 
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-      if(!res.ok) throw new Error("HubSpot API "+res.status);
+      if(!res.ok) throw new Error("API "+res.status);
       const data=await res.json();
-
       (data.results||[]).forEach(r=>{
         allDeals.push({
           id:String(r.id),
@@ -408,25 +524,27 @@ async function doSync(){
           owner_id:String(r.properties?.hubspot_owner_id||""),
           closedate:(r.properties?.closedate||"").split("T")[0],
           client:r.properties?.contact_name__invoice_app_||"—",
-          invoice_no:r.properties?.invoice_number||"",
           inv_type:r.properties?.invoice_type__invoice_app_||"—",
           inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",
           order_type:r.properties?.order_type||"—",
-          wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No"
+          wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",
+          geo:r.properties?.geo__invoice_app_||"—",
+          geo_head:r.properties?.geo_head__invoice_app_||"—"
         });
       });
-
       after=data.paging?.next?.after||null;
     } while(after);
 
-    deals=allDeals;
-    tFilter="all"; pg=1;
-    $("ob-sub").textContent=`Gross bookings · ${mLbl}`;
-    $("tl-sub").textContent=`Revenue by close date · ${mLbl}`;
-    $("cl-sub").textContent=`Gross bookings · top 10 · ${mLbl}`;
-    $("it-sub").textContent=`By invoice pattern · ${mLbl}`;
+    deals=allDeals; tFilter="all"; pg=1;
+    const sub=`${pLabel}${geo?" · "+geo:""}${itype?" · "+itype:""}`;
+    $("ob-sub").textContent=`Gross bookings · ${sub}`;
+    $("geo-sub").textContent=`By region · ${sub}`;
+    $("tl-sub").textContent=`By close date · ${sub}`;
+    $("cl-sub").textContent=`Top 10 · ${sub}`;
+    $("it-sub").textContent=`By pattern · ${sub}`;
     renderAll();
-    $("sdot").style.background="#FFDA30"; $("stxt").textContent=`LIVE · ${deals.length} DEALS · ${mLbl.toUpperCase()}`;
+    $("sdot").style.background="#FFDA30";
+    $("stxt").textContent=`LIVE · ${deals.length} DEALS · ${pLabel.toUpperCase()}`;
     $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
 
   }catch(e){
@@ -435,76 +553,61 @@ async function doSync(){
     errBar.style.display="block";
     $("sdot").style.background="#696969"; $("stxt").textContent="SYNC FAILED";
   }finally{
-    btn.disabled=false; btn.textContent="⟳ Sync HubSpot";
+    $("lo").classList.remove("show");
+    $("rfbtn").disabled=false;
+    isSyncing=false;
   }
 }
 
 // ════ METRICS ════
 function mets(){
-  const pos=deals.filter(d=>d.amount>0), neg=deals.filter(d=>d.amount<0);
-  const clients=new Set(deals.filter(d=>d.amount>0&&d.client&&d.client!=="—").map(d=>d.client));
-  return{
-    net:deals.reduce((s,d)=>s+d.amount,0),
-    gross:pos.reduce((s,d)=>s+d.amount,0),
-    credits:neg.reduce((s,d)=>s+d.amount,0),
-    avg:pos.length?pos.reduce((s,d)=>s+d.amount,0)/pos.length:0,
-    count:deals.length, credCnt:neg.length,
-    clients:clients.size
-  };
+  const pos=deals.filter(d=>d.amount>0),neg=deals.filter(d=>d.amount<0);
+  const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
+  const geos=new Set(pos.filter(d=>d.geo&&d.geo!=="—").map(d=>d.geo));
+  return{net:deals.reduce((s,d)=>s+d.amount,0),gross:pos.reduce((s,d)=>s+d.amount,0),credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?pos.reduce((s,d)=>s+d.amount,0)/pos.length:0,count:deals.length,credCnt:neg.length,clients:clients.size,geos:geos.size};
 }
-
 function ostats(){
   const g=deals.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
-  const ownerIds=[...new Set(deals.map(d=>d.owner_id))];
-  return ownerIds.map(id=>{
-    const od=deals.filter(d=>d.owner_id===id);
-    const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
-    return{id,name:ownerName(id),posRev:p,count:od.length,share:g>0?p/g*100:0};
-  }).sort((a,b)=>b.posRev-a.posRev);
+  const ids=[...new Set(deals.map(d=>d.owner_id))];
+  return ids.map(id=>{const od=deals.filter(d=>d.owner_id===id),p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return{id,name:ownerName(id),posRev:p,count:od.length,share:g>0?p/g*100:0};}).sort((a,b)=>b.posRev-a.posRev);
 }
-
+function geostats(){
+  const g=deals.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
+  const geos=["US","UK","AU/NZ","Other"];
+  return geos.map(geo=>{const od=deals.filter(d=>{const dg=d.geo||"—";return geo==="Other"?!["US","UK","AU/NZ"].includes(dg):dg===geo;});const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};}).filter(g=>g.count>0).sort((a,b)=>b.posRev-a.posRev);
+}
 function topClients(){
-  const map={};
-  deals.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{
-    map[d.client]=(map[d.client]||0)+d.amount;
-  });
+  const map={};deals.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
   return Object.entries(map).map(([name,rev])=>({name,rev})).sort((a,b)=>b.rev-a.rev).slice(0,10);
 }
-
 function tline(){
-  const m={};
-  deals.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
+  const m={};deals.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
 }
-
 function invTypes(){
-  const m={};
-  deals.filter(d=>d.amount>0).forEach(d=>{
-    const t=d.inv_type||"Other";
-    m[t]=(m[t]||0)+d.amount;
-  });
-  return m;
+  const m={};deals.filter(d=>d.amount>0).forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
 }
 
 // ════ RENDER KPIs ════
 function renderKPIs(){
   if(!deals.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1" class="empty">No deals found for the selected filters.</div>`;return;}
-  const m=mets(), os=ostats(), top=os.find(o=>o.posRev>0)||os[0];
+  const m=mets(),os=ostats(),top=os.find(o=>o.posRev>0)||os[0];
   $("kpi-grid").innerHTML=[
-    {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deal${m.count!==1?"s":""} total`,ico:"📊",cls:""},
+    {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deals total`,ico:"📊",cls:""},
     {lbl:"Gross Revenue",val:fmtUSD(m.gross),sub:"before credits",ico:"📈",cls:"k2"},
     {lbl:"Credit Notes",val:fmtUSD(Math.abs(m.credits)),sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"↩",cls:"k3"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",ico:"◎",cls:"k4"},
     {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"★",cls:"k5"},
-    {lbl:"Unique Clients",val:String(m.clients),sub:"active this period",ico:"🏢",cls:"k6"}
+    {lbl:"Unique Clients",val:String(m.clients),sub:"active this period",ico:"🏢",cls:"k6"},
+    {lbl:"Regions Active",val:String(m.geos),sub:"US · UK · AU/NZ",ico:"🌐",cls:"k7"}
   ].map(c=>`<div class="kpi ${c.cls}"><div class="kpi-ico">${c.ico}</div><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`).join("");
 }
 
 // ════ RENDER OWNER BARS ════
 function renderOwnerBars(){
-  if(!deals.length){$("ob-bars").innerHTML=`<div class="empty" style="padding:12px">No data</div>`;return;}
-  const os=ostats(), mx=Math.max(...os.map(o=>o.posRev),1);
-  $("ob-bars").innerHTML=os.map(o=>`
+  if(!deals.length){$("ob-bars").innerHTML=`<div class="empty" style="padding:10px">No data</div>`;return;}
+  const os=ostats(),mx=Math.max(...os.map(o=>o.posRev),1);
+  $("ob-bars").innerHTML=os.slice(0,8).map(o=>`
     <div class="orow">
       <div class="orow-hd">
         <div class="ometa"><div class="oav">${o.name.split(" ").map(w=>w[0]).join("").substring(0,2)}</div>
@@ -516,10 +619,22 @@ function renderOwnerBars(){
     </div>`).join("");
 }
 
+// ════ RENDER GEO BARS ════
+function renderGeoBars(){
+  if(!deals.length){$("geo-bars").innerHTML=`<div class="empty" style="padding:10px">No data</div>`;return;}
+  const gs=geostats(),mx=Math.max(...gs.map(g=>g.posRev),1);
+  $("geo-bars").innerHTML=gs.map(g=>`
+    <div class="gbar-row">
+      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU/NZ"?"#FFDA30":"#111"}">${g.geo}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};width:${(g.posRev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(g.posRev)}</div><div class="gbar-cnt">${g.count} deals · ${g.share.toFixed(1)}%</div></div>
+    </div>`).join("");
+}
+
 // ════ RENDER CLIENT BARS ════
 function renderClientBars(){
-  if(!deals.length){$("cl-bars").innerHTML=`<div class="empty" style="padding:12px">No data</div>`;return;}
-  const clients=topClients(), mx=Math.max(...clients.map(c=>c.rev),1);
+  if(!deals.length){$("cl-bars").innerHTML=`<div class="empty" style="padding:10px">No data</div>`;return;}
+  const clients=topClients(),mx=Math.max(...clients.map(c=>c.rev),1);
   $("cl-bars").innerHTML=clients.map(c=>`
     <div class="cbar-row">
       <div class="cbar-name" title="${c.name}">${c.name}</div>
@@ -533,18 +648,18 @@ function renderTimeline(){
   const ctx=$("tlc").getContext("2d");
   if(tlcChart){tlcChart.destroy();tlcChart=null;}
   const data=tline();if(!data.length)return;
-  tlcChart=new Chart(ctx,{type:"line",data:{labels:data.map(d=>d.label),datasets:[{label:"Revenue",data:data.map(d=>d.value),borderColor:"#FFDA30",backgroundColor:"rgba(255,218,48,0.08)",borderWidth:2,pointRadius:3,pointBackgroundColor:"#FFDA30",fill:true,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.y)},bodyFont:{family:"Montserrat",size:11},titleFont:{family:"Montserrat",size:11}}},scales:{x:{ticks:{font:{family:"Montserrat",size:9},color:"#9A9A9A",maxRotation:45,autoSkip:true},grid:{color:"rgba(0,0,0,0.04)"}},y:{ticks:{font:{family:"Montserrat",size:9},color:"#9A9A9A",callback:v=>fmtShort(v)},grid:{color:"rgba(0,0,0,0.04)"}}}}});
+  tlcChart=new Chart(ctx,{type:"line",data:{labels:data.map(d=>d.label),datasets:[{label:"Revenue",data:data.map(d=>d.value),borderColor:"#FFDA30",backgroundColor:"rgba(255,218,48,0.07)",borderWidth:2,pointRadius:2,pointBackgroundColor:"#FFDA30",fill:true,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.y)},bodyFont:{family:"Montserrat",size:11},titleFont:{family:"Montserrat",size:11}}},scales:{x:{ticks:{font:{family:"Montserrat",size:8},color:"#9A9A9A",maxRotation:45,autoSkip:true},grid:{color:"rgba(0,0,0,0.03)"}},y:{ticks:{font:{family:"Montserrat",size:8},color:"#9A9A9A",callback:v=>fmtShort(v)},grid:{color:"rgba(0,0,0,0.03)"}}}}});
 }
 
-// ════ RENDER INVOICE TYPE CHART ════
-function renderInvTypeChart(){
+// ════ RENDER INV TYPE CHART ════
+function renderInvChart(){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
   const types=invTypes();
-  const labels=Object.keys(types), vals=Object.values(types);
+  const labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length)return;
   const colors=["#FFDA30","#DDB800","#A88C00","#434343","#696969","#9A9A9A"];
-  itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:colors.slice(0,labels.length),borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:10},color:"#434343",boxWidth:12,padding:10}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
+  itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:colors.slice(0,labels.length),borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
 }
 
 // ════ RENDER TABLE ════
@@ -555,6 +670,7 @@ function renderTable(){
     if(sk==="amount")return m*(a.amount-b.amount);
     if(sk==="closedate")return m*(a.closedate||"").localeCompare(b.closedate||"");
     if(sk==="client")return m*(a.client||"").localeCompare(b.client||"");
+    if(sk==="geo")return m*(a.geo||"").localeCompare(b.geo||"");
     return m*(a.dealname||"").localeCompare(b.dealname||"");
   });
   const tot=Math.max(1,Math.ceil(srt.length/PER));
@@ -562,43 +678,44 @@ function renderTable(){
   const paged=srt.slice((pg-1)*PER,pg*PER);
   $("tmeta").textContent=`${fil.length} deal${fil.length!==1?"s":""} · Page ${pg} of ${tot}`;
 
-  const tabs=[["all","All Owners"],...ostats().map(o=>[o.id,o.name.split(" ")[0]])];
+  const tabs=[["all","All"],...ostats().slice(0,6).map(o=>[o.id,o.name.split(" ")[0]])];
   $("tf-row").innerHTML=tabs.map(([id,lbl])=>`<button class="tf${tFilter===id?" on":""}" onclick="setTF('${id}')">${lbl}</button>`).join("");
 
-  const arr=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
+  const ar=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
   $("dth").innerHTML=`<tr>
-    <th onclick="sortBy('dealname')">Deal Name${arr("dealname")}</th>
-    <th onclick="sortBy('client')">Client${arr("client")}</th>
+    <th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th>
+    <th onclick="sortBy('client')">Client${ar("client")}</th>
     <th>Owner</th>
-    <th onclick="sortBy('amount')" style="text-align:right">Amount${arr("amount")}</th>
+    <th onclick="sortBy('geo')">Region${ar("geo")}</th>
+    <th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th>
     <th>Type</th>
     <th>Pattern</th>
-    <th onclick="sortBy('closedate')">Close Date${arr("closedate")}</th>
-    <th style="text-align:center">HubSpot</th>
+    <th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th>
+    <th style="text-align:center">↗</th>
   </tr>`;
 
   $("dtb").innerHTML=paged.length?paged.map((d,i)=>{
-    const nm=ownerName(d.owner_id), neg=d.amount<0, big=d.amount>=5000;
-    const bg=i%2===0?"#fff":"#F9F9F9", ac=neg?"#9A9A9A":big?"#111":"#434343", fw=big?"800":"600";
+    const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
+    const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
+    const geo=d.geo||"—",geoClass=geo==="AU/NZ"?"geo-AUNZ":"geo-"+(geo.replace(/\//g,""));
     return`<tr${neg?' class="cred"':''}>
-      <td style="background:${bg}">${neg?'<span class="warn-ico">⚠</span>':''}<span class="mono">${d.dealname}</span></td>
-      <td style="background:${bg};font-size:11px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
-      <td style="background:${bg}"><span style="font-size:11px;font-weight:600;color:#434343">${nm}</span></td>
+      <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
+      <td style="background:${bg}"><span class="geo-tag ${geoClass}">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
-      <td style="background:${bg}"><span class="badge-type">${d.inv_type}</span></td>
-      <td style="background:${bg}"><span class="badge-type">${d.inv_pattern}</span></td>
-      <td style="color:#696969;background:${bg};font-size:11px;font-weight:500">${fmtDate(d.closedate)}</td>
-      <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" title="Open in HubSpot">↗</a></td>
+      <td style="background:${bg}"><span class="inv-tag">${d.inv_type}</span></td>
+      <td style="background:${bg}"><span class="inv-tag">${d.inv_pattern}</span></td>
+      <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(d.closedate)}</td>
+      <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a">↗</a></td>
     </tr>`;
-  }).join(""):`<tr><td colspan="8" class="empty">No deals match this filter.</td></tr>`;
+  }).join(""):`<tr><td colspan="9" class="empty">No deals match this filter.</td></tr>`;
 
   $("pgs").innerHTML=Array.from({length:tot},(_,i)=>i+1).map(p=>`<button class="pg${pg===p?" on":""}" onclick="goPg(${p})">${p}</button>`).join("");
 }
 
 // ════ RENDER ALL ════
-function renderAll(){
-  renderKPIs(); renderOwnerBars(); renderClientBars(); renderTimeline(); renderInvTypeChart(); renderTable();
-}
+function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
 
 // ════ INTERACTIONS ════
 function setTF(id){tFilter=id;pg=1;renderTable();}
@@ -606,9 +723,9 @@ function sortBy(k){if(sk===k)sd=sd==="asc"?"desc":"asc";else{sk=k;sd="desc";}pg=
 function goPg(p){pg=p;renderTable();}
 
 // ════ BOOT ════
-initMonths();
+initMonthSelects();
 initOwners();
-doSync();
+setPeriod("last-month");
 </script>
 </body>
 </html>
