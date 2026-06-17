@@ -1,12 +1,21 @@
 export async function onRequestPost(context) {
   try {
+    const token = context.env.HUBSPOT_TOKEN;
+
+    if (!token) {
+      return new Response(JSON.stringify({ error: "HUBSPOT_TOKEN not set in environment" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
     const body = await context.request.json();
 
-    const hs = await fetch('https://api.hubapi.com/crm/v3/objects/deals/search', {
-      method: 'POST',
+    const hs = await fetch("https://api.hubapi.com/crm/v3/objects/deals/search", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer pat-na1-f45d6711-9421-4477-a317-327e5a8c3f12'
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(body)
     });
@@ -15,13 +24,13 @@ export async function onRequestPost(context) {
 
     return new Response(JSON.stringify(data), {
       status: hs.status,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
 
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
   }
 }
