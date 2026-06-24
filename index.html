@@ -573,13 +573,13 @@ async function doSync(force=false){
 
     const allDeals=[];let after=null;
     do{
-      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","customer_type"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
+      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],client:r.properties?.contact_name__invoice_app_||"—",inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",ctype:r.properties?.customer_type||""});
+        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],client:r.properties?.contact_name__invoice_app_||"—",inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—"});
       });
       after=data.paging?.next?.after||null;
     }while(after);
@@ -599,7 +599,7 @@ async function doSync(force=false){
     if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     const prevAll=[];let pafter=null;
     do{
-      const pb={filterGroups:[{filters:prevFilters}],properties:["contact_name__invoice_app_","amount_in_home_currency","customer_type"],limit:200};
+      const pb={filterGroups:[{filters:prevFilters}],properties:["contact_name__invoice_app_","amount_in_home_currency"],limit:200};
       if(pafter)pb.after=pafter;
       const pr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pb)});
       if(pr.ok){const pd=await pr.json();(pd.results||[]).forEach(r=>{prevAll.push({client:r.properties?.contact_name__invoice_app_||"—",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0});});pafter=pd.paging?.next?.after||null;}else{pafter=null;}
@@ -636,9 +636,11 @@ function mets(){
   const cmap={};pos.filter(d=>d.client&&d.client!=="—").forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
   const top3=Object.values(cmap).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
   const conc=gross>0?Math.round(top3/gross*100):0;
-  const newPos=pos.filter(d=>d.ctype==="New"&&d.client&&d.client!=="—");
-  const newClients=new Set(newPos.map(d=>d.client));
-  const newRev=newPos.reduce((s,d)=>s+d.amount,0);
+  // New clients = appeared in current period but NOT in previous equivalent period
+  const prevClientSet=new Set(prevDeals.filter(d=>d.amount>0&&d.client&&d.client!=="—").map(d=>d.client));
+  const newClientDeals=pos.filter(d=>d.client&&d.client!=="—"&&!prevClientSet.has(d.client));
+  const newClients=new Set(newClientDeals.map(d=>d.client));
+  const newRev=newClientDeals.reduce((s,d)=>s+d.amount,0);
   const newPct=gross>0?Math.round(newRev/gross*100):0;
   return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?gross/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—",newClients:newClients.size,newRev,newPct};
 }
@@ -695,19 +697,19 @@ function renderKPIs(){
   const gss=geostats(),tr=gss.find(g=>g.posRev>0)||null;
   const ghs=geoheadstats(),tgh=ghs.find(g=>g.rev>0)||null;
   const cards=[
-    {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deal${m.count!==1?"s":""}`,ico:"📊",tip:"Total net bookings"},
-    {lbl:"Gross Revenue",val:fmtUSD(m.gross),sub:"before credits",ico:"📈",tip:"Sort table by amount",action:"sortTable()"},
-    {lbl:"Credit Notes",val:fmtUSD(Math.abs(m.credits)),sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"↩",tip:"View credit notes only",action:"drillCredits()"},
-    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",ico:"◎",tip:"Average deal size"},
-    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"★",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
-    {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",ico:"🏢",tip:"Jump to clients chart",action:"scrollToClients()"},
-    {lbl:"New Clients",val:String(m.newClients),sub:m.newRev?fmtShort(m.newRev)+" revenue":"this period",ico:"🆕",tip:"First-time clients this period",action:"scrollToClients()"},
-    {lbl:"New vs Repeat",val:m.newPct?m.newPct+"%":"—",sub:"revenue from new clients",ico:"◑",tip:"Share of revenue from new clients"},
-    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",ico:"◈",tip:"Revenue concentration"}
+    {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deal${m.count!==1?"s":""}`,ico:"",tip:"Total net bookings"},
+    {lbl:"Gross Revenue",val:fmtUSD(m.gross),sub:"before credits",ico:"",tip:"Sort table by amount",action:"sortTable()"},
+    {lbl:"Credit Notes",val:fmtUSD(Math.abs(m.credits)),sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"",tip:"View credit notes only",action:"drillCredits()"},
+    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",ico:"",tip:"Average deal size"},
+    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
+    {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",ico:"",tip:"Jump to clients chart",action:"scrollToClients()"},
+    {lbl:"New Clients",val:String(m.newClients),sub:m.newRev?fmtShort(m.newRev)+" revenue":"this period",ico:"",tip:"First-time clients this period",action:"scrollToClients()"},
+    {lbl:"New vs Repeat",val:m.newPct?m.newPct+"%":"—",sub:"revenue from new clients",ico:"",tip:"Share of revenue from new clients"},
+    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",ico:"",tip:"Revenue concentration"}
   ];
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
-    return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-ico">${c.ico}</div><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
+    return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
   }).join("");
 }
 
