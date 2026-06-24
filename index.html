@@ -123,13 +123,15 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 .card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:15px 17px}
 .card-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.drill-notice{font-size:9px;font-weight:700;color:#434343;background:#FFDA30;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em;display:none;margin-bottom:10px}
+.drill-notice.show{display:block}
 .card-sub{font-size:10px;color:#9A9A9A;margin-bottom:12px;font-weight:500}
 
 /* Owner bars */
-.orow{margin-bottom:11px;cursor:pointer;border-radius:6px;padding:4px 6px;transition:background .15s}
+.orow{margin-bottom:11px;cursor:pointer;border-radius:6px;padding:4px 6px;transition:all .15s;position:relative}
 .orow:last-child{margin-bottom:0}
 .orow:hover{background:#FFFBEA}
-.orow.drill-active{background:#FFFBEA;outline:1px solid #FFDA30}
+.orow.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
 .orow-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .ometa{display:flex;align-items:center;gap:6px}
 .oav{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:#111;flex-shrink:0;background:#FFDA30}
@@ -143,7 +145,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 /* Geo bars */
 .gbar-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:background .15s}
 .gbar-row:hover{background:#FFFBEA}
-.gbar-row.drill-active{background:#FFFBEA;outline:1px solid #FFDA30}
+.gbar-row.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
 .gbar-badge{font-size:9px;font-weight:800;color:#111;padding:3px 7px;border-radius:4px;width:50px;text-align:center;flex-shrink:0}
 .gbar-track{flex:1;height:6px;background:#F2F2F2;border-radius:3px;overflow:hidden}
 .gbar-fill{height:6px;border-radius:3px;transition:width .7s ease}
@@ -154,7 +156,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 /* Client bars */
 .cbar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;cursor:pointer;padding:3px 6px;border-radius:5px;transition:background .15s}
 .cbar-row:hover{background:#FFFBEA}
-.cbar-row.drill-active{background:#FFFBEA;outline:1px solid #FFDA30}
+.cbar-row.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
 .cbar-name{font-size:9.5px;font-weight:600;color:#434343;width:115px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cbar-track{flex:1;height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden}
 .cbar-fill{height:4px;background:#FFDA30;border-radius:2px;transition:width .7s ease}
@@ -204,18 +206,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .lo.show{display:flex}
 .spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── Declining clients bars ── */
-.dbar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;cursor:pointer;padding:3px 6px;border-radius:5px;transition:background .15s}
-.dbar-row:hover{background:#FFF5F5}
-.dbar-row.drill-active{background:#FFF5F5;outline:1px solid #434343}
-.dbar-name{font-size:9.5px;font-weight:600;color:#434343;width:115px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dbar-track{flex:1;height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden}
-.dbar-fill{height:4px;background:#434343;border-radius:2px;transition:width .7s ease}
-.dbar-info{text-align:right;flex-shrink:0;width:80px}
-.dbar-val{font-size:9.5px;font-weight:700;color:#434343}
-.dbar-pct{font-size:9px;color:#9A9A9A;font-weight:500}
-.lost-badge{font-size:7.5px;font-weight:800;padding:1px 5px;border-radius:3px;background:#434343;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
 
 /* ── Responsive ── */
 @media(max-width:1200px){
@@ -394,16 +384,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div style="position:relative;height:195px"><canvas id="tlc"></canvas></div>
     </div>
   </div>
-  <div class="chart-row-3">
+  <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Top Clients by Revenue</div>
       <div class="card-sub" id="cl-sub">Click any client to drill down</div>
       <div id="cl-bars"></div>
-    </div>
-    <div class="card">
-      <div class="card-ttl">Declining Clients</div>
-      <div class="card-sub" id="dc-sub">Revenue drop vs previous period · Click to drill</div>
-      <div id="dc-bars"></div>
     </div>
     <div class="card">
       <div class="card-ttl">Invoice Type Breakdown</div>
@@ -446,7 +431,7 @@ const MFULL=["january","february","march","april","may","june","july","august","
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // ════ STATE ════
-let deals=[],prevDeals=[],sk="amount",sd="desc",pg=1;
+let deals=[],sk="amount",sd="desc",pg=1;
 const PER=10;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 const drill={};
@@ -537,18 +522,6 @@ function updateChips(){
   chips.classList.add("show");
 }
 
-// ════ PREVIOUS PERIOD ════
-function getPrevMonths(currMonths){
-  if(!currMonths||!currMonths.length)return[];
-  const len=currMonths.length;
-  const[fm,fy]=currMonths[0].split("-");
-  const firstDate=new Date(+fy,MFULL.indexOf(fm),1);
-  const prevStart=new Date(firstDate.getFullYear(),firstDate.getMonth()-len,1);
-  const ms=[];
-  for(let i=0;i<len;i++){const d=new Date(prevStart.getFullYear(),prevStart.getMonth()+i,1);ms.push(monthVal(d));}
-  return ms;
-}
-
 // ════ SYNC ════
 async function doSync(force=false){
   if(isSyncing&&!force)return;
@@ -586,26 +559,6 @@ async function doSync(force=false){
 
     deals=allDeals;
 
-    // ── Fetch previous equivalent period ──
-    const prevMs=getPrevMonths(months);
-    const prevFilters=[
-      {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
-      {propertyName:"dealstage",operator:"EQ",value:STAGE},
-      prevMs.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:prevMs[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:prevMs},
-      {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
-    ];
-    if(geo)prevFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
-    if(geoHead)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-    if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
-    const prevAll=[];let pafter=null;
-    do{
-      const pb={filterGroups:[{filters:prevFilters}],properties:["contact_name__invoice_app_","amount_in_home_currency"],limit:200};
-      if(pafter)pb.after=pafter;
-      const pr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pb)});
-      if(pr.ok){const pd=await pr.json();(pd.results||[]).forEach(r=>{prevAll.push({client:r.properties?.contact_name__invoice_app_||"—",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0});});pafter=pd.paging?.next?.after||null;}else{pafter=null;}
-    }while(pafter);
-    prevDeals=prevAll;
-
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
     const lbl=getPeriodLabel(),sub=`${lbl}${geo?" · "+geo:""}`;
@@ -613,7 +566,6 @@ async function doSync(force=false){
     $("geo-sub").textContent=`By region · ${sub}`;
     $("tl-sub").textContent=`By close date · ${sub}`;
     $("cl-sub").textContent=`Top 10 · ${sub}`;
-    if($("dc-sub"))$("dc-sub").textContent=`Revenue drop vs previous period · ${sub}`;
     $("it-sub").textContent=`By pattern · ${sub}`;
     renderAll();
     $("sdot").style.background="#FFDA30";
@@ -636,13 +588,7 @@ function mets(){
   const cmap={};pos.filter(d=>d.client&&d.client!=="—").forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
   const top3=Object.values(cmap).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
   const conc=gross>0?Math.round(top3/gross*100):0;
-  // New clients = appeared in current period but NOT in previous equivalent period
-  const prevClientSet=new Set(prevDeals.filter(d=>d.amount>0&&d.client&&d.client!=="—").map(d=>d.client));
-  const newClientDeals=pos.filter(d=>d.client&&d.client!=="—"&&!prevClientSet.has(d.client));
-  const newClients=new Set(newClientDeals.map(d=>d.client));
-  const newRev=newClientDeals.reduce((s,d)=>s+d.amount,0);
-  const newPct=gross>0?Math.round(newRev/gross*100):0;
-  return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?gross/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—",newClients:newClients.size,newRev,newPct};
+  return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?gross/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—"};
 }
 function ostats(){
   const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
@@ -662,19 +608,6 @@ function topClients(){
   const v=view(),map={};v.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
   return Object.entries(map).map(([name,rev])=>({name,rev})).sort((a,b)=>b.rev-a.rev).slice(0,10);
 }
-function trendingDown(){
-  const prevMap={};
-  prevDeals.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{prevMap[d.client]=(prevMap[d.client]||0)+d.amount;});
-  const currMap={};
-  view().filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{currMap[d.client]=(currMap[d.client]||0)+d.amount;});
-  return Object.entries(prevMap).map(([name,prevRev])=>({
-    name,prevRev,currRev:currMap[name]||0,
-    decline:prevRev-(currMap[name]||0),
-    lost:!(currMap[name]),
-    pct:Math.round((prevRev-(currMap[name]||0))/prevRev*100)
-  })).filter(c=>c.decline>0).sort((a,b)=>b.decline-a.decline).slice(0,10);
-}
-
 function tline(){
   const v=view(),m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
@@ -703,9 +636,7 @@ function renderKPIs(){
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",ico:"",tip:"Average deal size"},
     {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",ico:"",tip:"Jump to clients chart",action:"scrollToClients()"},
-    {lbl:"New Clients",val:String(m.newClients),sub:m.newRev?fmtShort(m.newRev)+" revenue":"this period",ico:"",tip:"First-time clients this period",action:"scrollToClients()"},
-    {lbl:"New vs Repeat",val:m.newPct?m.newPct+"%":"—",sub:"revenue from new clients",ico:"",tip:"Share of revenue from new clients"},
-    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",ico:"",tip:"Revenue concentration"}
+{lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",ico:"",tip:"Revenue concentration"}
   ];
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
@@ -807,22 +738,7 @@ function renderTable(){
   $("pgs").innerHTML=prev+btns+next;
 }
 
-function renderDecliningClients(){
-  const dc=trendingDown(),el=document.getElementById("dc-bars");
-  if(!el)return;
-  if(!prevDeals.length){el.innerHTML=`<div class="empty-state"><div class="es-icon">📊</div><div class="es-title">Comparison loading</div><div class="es-sub">Previous period data will appear after first sync.</div></div>`;return;}
-  if(!dc.length){el.innerHTML=`<div class="empty-state"><div class="es-icon">📈</div><div class="es-title">No declining clients</div><div class="es-sub">All clients maintained or grew revenue vs previous period.</div></div>`;return;}
-  const mx=Math.max(...dc.map(c=>c.decline),1);
-  el.innerHTML=dc.map(c=>`
-    <div class="dbar-row${drill.client===c.name?" drill-active":""}" onclick="setDrill('client','${c.name.replace(/'/g,"\'")}')" title="${c.name}">
-      <div class="dbar-name" title="${c.name}">${c.name}</div>
-      ${c.lost?'<span class="lost-badge">Lost</span>':''}
-      <div class="dbar-track"><div class="dbar-fill" style="width:${(c.decline/mx*100).toFixed(1)}%"></div></div>
-      <div class="dbar-info"><div class="dbar-val">-${fmtShort(c.decline)}</div><div class="dbar-pct">${c.pct}% ↓</div></div>
-    </div>`).join("");
-}
-
-function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderDecliningClients();renderTimeline();renderInvChart();renderTable();}
+function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
 
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
@@ -848,8 +764,6 @@ function resetAll(){
 }
 
 // ════ LOGIN ════
-(function(){if(sessionStorage.getItem("nexus_auth")==="1"){const lo=document.getElementById("login-overlay");if(lo)lo.style.display="none";}})();
-
 async function doLogin(){
   const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
   if(!pw){err.textContent="Please enter the access password.";return;}
@@ -858,7 +772,6 @@ async function doLogin(){
     const res=await fetch("/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
     const data=await res.json();
     if(data.success){
-      sessionStorage.setItem("nexus_auth","1");
       document.getElementById("login-overlay").style.display="none";
     } else if(res.status===500||data.error){
       err.textContent="Server config error. Contact Mayur.";
