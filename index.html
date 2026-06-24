@@ -411,8 +411,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div id="dc-bars"></div>
     </div>
     <div class="card">
-      <div class="card-ttl">Invoice Type Breakdown</div>
-      <div class="card-sub" id="it-sub">Click any segment to drill down</div>
+      <div class="card-ttl">Engagement Model</div>
+      <div class="card-sub" id="it-sub">FTE · PTE · Recurring · P2P · click to drill</div>
       <div style="position:relative;height:210px"><canvas id="itc"></canvas></div>
     </div>
   </div>
@@ -526,6 +526,7 @@ function view(){
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
     if(drill.amount_sign==="negative"&&d.amount>=0)return false;
     if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
+    if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return false;}
     return true;
   });
 }
@@ -535,7 +536,7 @@ function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateC
 function updateChips(){
   const chips=$("drill-chips"),entries=Object.entries(drill);
   if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
-  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Geo Head"};
+  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Geo Head",eng_model:"Engagement"};
   const dv=(k,v)=>k==="owner"?ownerName(v):k==="amount_sign"?v==="negative"?"Credits Only":"Positive Only":v;
   chips.innerHTML=entries.map(([k,v])=>`<div class="dchip"><span class="dchip-lbl">${labels[k]||k}:</span><span>${dv(k,v)}</span><span class="dchip-x" onclick="clearDrill('${k}')">✕</span></div>`).join("")+
     `<button class="drill-clear" onclick="clearAllDrills()">Clear All</button>`;
@@ -589,18 +590,44 @@ async function doSync(force=false){
 
     const allDeals=[];let after=null;
     do{
-      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
+      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],client:r.properties?.contact_name__invoice_app_||"—",inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—"});
+        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],client:r.properties?.contact_name__invoice_app_||"—",inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—"});
       });
       after=data.paging?.next?.after||null;
     }while(after);
 
     deals=allDeals;
+
+    // ── Previous period comparison fetch ──
+    const prevMs=getPrevMonths(months);
+    const prevAll=[];
+    if(prevMs.length){
+      const prevFilters=[
+        {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
+        {propertyName:"dealstage",operator:"EQ",value:STAGE},
+        prevMs.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:prevMs[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:prevMs},
+        {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
+      ];
+      if(geo)prevFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
+      if(geoHead)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
+      if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+      let pa=null;
+      do{
+        const pb={filterGroups:[{filters:prevFilters}],properties:["contact_name__invoice_app_","amount_in_home_currency"],limit:200};
+        if(pa)pb.after=pa;
+        try{
+          const pr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pb)});
+          if(pr.ok){const pd=await pr.json();(pd.results||[]).forEach(r=>{prevAll.push({client:r.properties?.contact_name__invoice_app_||"—",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0});});pa=pd.paging?.next?.after||null;}else{console.warn("Prev period API returned",pr.status);pa=null;}
+        }catch(e){console.error("Prev period fetch error:",e);pa=null;}
+      }while(pa);
+    }
+    prevDeals=prevAll;
+    prevDeals._label=prevPeriodLabel(months);
 
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
@@ -609,7 +636,7 @@ async function doSync(force=false){
     $("geo-sub").textContent=`By region · ${sub}`;
     $("tl-sub").textContent=`By close date · ${sub}`;
     $("cl-sub").textContent=`Top 10 · ${sub}`;
-    $("it-sub").textContent=`By pattern · ${sub}`;
+    $("it-sub").textContent=`Engagement model · ${sub}`;
     renderAll();
     $("sdot").style.background="#FFDA30";
     $("stxt").textContent=`LIVE · ${deals.length} DEALS · ${lbl.toUpperCase()}`;
@@ -678,6 +705,27 @@ function tline(){
   const v=view(),m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
 }
+function engGroup(val){
+  if(!val||val==="—")return null;
+  if(val==="Dedicated FTE")return"Dedicated FTE";
+  if(val==="Dedicated PTE")return"Dedicated PTE";
+  if(val==="Recurring")return"Recurring";
+  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Multiple")return"P2P";
+  return null; // exclude Credit Note Deduct and unknown
+}
+
+function engTypes(){
+  const v=view(),m={};
+  v.filter(d=>d.amount>0&&d.eng_model&&d.eng_model!=="—").forEach(d=>{
+    const g=engGroup(d.eng_model);
+    if(g)m[g]=(m[g]||0)+d.amount;
+  });
+  // Ensure all 4 categories appear in order
+  const ordered={};
+  ["Dedicated FTE","Dedicated PTE","Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
+  return ordered;
+}
+
 function invTypes(){
   const v=view(),m={};v.filter(d=>d.amount>0).forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
 }
@@ -762,6 +810,12 @@ function renderTimeline(){
 function renderInvChart(){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
+  const types=engTypes(),labels=Object.keys(types),vals=Object.values(types);
+  if(!labels.length)return;
+  const palette={"Dedicated FTE":"#FFDA30","Dedicated PTE":"#DDB800","Recurring":"#434343","P2P":"#9A9A9A"};
+  const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
+  itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,el)=>{if(el.length)setDrill("eng_model",itcChart.data.labels[el[0].index]);},plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
+}
   const types=invTypes(),labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length)return;
   const colors=["#FFDA30","#DDB800","#A88C00","#434343","#696969","#9A9A9A"];
@@ -811,7 +865,11 @@ function renderDecliningClients(){
   const pLabel=prevDeals._label||"Previous Period";
   const cLabel=getPeriodLabel();
   if(!prevDeals.length){
-    el.innerHTML=`<div class="empty-state"><div class="es-icon">⏳</div><div class="es-title">Loading comparison</div><div class="es-sub">Previous period data loads with first sync.</div></div>`;
+    el.innerHTML=`<div class="empty-state">
+      <div class="es-title" style="font-size:11px;margin-bottom:6px">No Comparison Data</div>
+      <div class="es-sub">Previous period returned no results.</div>
+      <button onclick="doSync(true)" style="margin-top:10px;padding:5px 14px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer">⟳ Retry Sync</button>
+    </div>`;
     return;
   }
   if(!dc.length){
