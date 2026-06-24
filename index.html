@@ -199,13 +199,28 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
 /* Footer */
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
-.footer span{color:#9A9A9A;font-weight:800}
 
 /* Spinner */
 .lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
 .lo.show{display:flex}
 .spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Declining clients ── */
+.dc-row{padding:6px 6px 8px;border-radius:6px;cursor:pointer;transition:background .15s;margin-bottom:10px;border:1px solid transparent}
+.dc-row:last-child{margin-bottom:0}
+.dc-row:hover{background:#FFF8F8}
+.dc-row.dc-active{background:#FFF8F8;border-color:#434343}
+.dc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.dc-name{font-size:10px;font-weight:700;color:#434343;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
+.dc-decline{font-size:10px;font-weight:800;color:#434343;white-space:nowrap;flex-shrink:0}
+.dc-pct{font-size:9px;font-weight:700;color:#696969;margin-left:3px}
+.dc-bars-wrap{height:6px;background:#F2F2F2;border-radius:3px;overflow:hidden;margin-bottom:4px;position:relative}
+.dc-bar-curr{height:6px;background:#FFDA30;border-radius:3px;transition:width .7s ease;position:absolute;left:0;top:0}
+.dc-labels{display:flex;justify-content:space-between}
+.dc-lbl{font-size:8.5px;font-weight:600;color:#9A9A9A}
+.dc-lbl.curr{color:#696969}
+.lost-badge{font-size:7px;font-weight:800;padding:1px 4px;border-radius:3px;background:#434343;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase;margin-left:4px;vertical-align:middle}
 
 /* ── Responsive ── */
 @media(max-width:1200px){
@@ -384,11 +399,16 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div style="position:relative;height:195px"><canvas id="tlc"></canvas></div>
     </div>
   </div>
-  <div class="chart-row">
+  <div class="chart-row-3">
     <div class="card">
       <div class="card-ttl">Top Clients by Revenue</div>
       <div class="card-sub" id="cl-sub">Click any client to drill down</div>
       <div id="cl-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Declining Clients</div>
+      <div class="card-sub" id="dc-sub">vs previous period · click to drill down</div>
+      <div id="dc-bars"></div>
     </div>
     <div class="card">
       <div class="card-ttl">Invoice Type Breakdown</div>
@@ -408,7 +428,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="pgs" id="pgs"></div>
   </div>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; <span>A JAM-STACK APPLICATION</span></div>
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -431,7 +451,7 @@ const MFULL=["january","february","march","april","may","june","july","august","
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // ════ STATE ════
-let deals=[],sk="amount",sd="desc",pg=1;
+let deals=[],prevDeals=[],sk="amount",sd="desc",pg=1;
 const PER=10;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 const drill={};
@@ -522,6 +542,29 @@ function updateChips(){
   chips.classList.add("show");
 }
 
+// ════ PREVIOUS PERIOD ════
+function getPrevMonths(currMonths){
+  if(!currMonths||!currMonths.length)return[];
+  const len=currMonths.length;
+  const[fm,fy]=currMonths[0].split("-");
+  const firstDate=new Date(+fy,MFULL.indexOf(fm),1);
+  const prevStart=new Date(firstDate.getFullYear(),firstDate.getMonth()-len,1);
+  const ms=[];
+  for(let i=0;i<len;i++){
+    const d=new Date(prevStart.getFullYear(),prevStart.getMonth()+i,1);
+    ms.push(monthVal(d));
+  }
+  return ms;
+}
+function prevPeriodLabel(currMonths){
+  const pm=getPrevMonths(currMonths);
+  if(!pm.length)return"Previous Period";
+  const[fm,fy]=pm[0].split("-"),f=`${MSHRT[MFULL.indexOf(fm)]} ${fy}`;
+  if(pm.length===1)return f;
+  const[tm,ty]=pm[pm.length-1].split("-"),t=`${MSHRT[MFULL.indexOf(tm)]} ${ty}`;
+  return`${f}–${t}`;
+}
+
 // ════ SYNC ════
 async function doSync(force=false){
   if(isSyncing&&!force)return;
@@ -608,6 +651,29 @@ function topClients(){
   const v=view(),map={};v.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
   return Object.entries(map).map(([name,rev])=>({name,rev})).sort((a,b)=>b.rev-a.rev).slice(0,10);
 }
+function trendingDown(){
+  // Build current and previous maps
+  const prevMap={};
+  prevDeals.filter(d=>d.amount>0&&d.client&&d.client!=="—")
+    .forEach(d=>{prevMap[d.client]=(prevMap[d.client]||0)+d.amount;});
+  const currMap={};
+  view().filter(d=>d.amount>0&&d.client&&d.client!=="—")
+    .forEach(d=>{currMap[d.client]=(currMap[d.client]||0)+d.amount;});
+  // All previous clients — check if declined or disappeared
+  return Object.entries(prevMap)
+    .map(([name,prevRev])=>({
+      name,
+      prevRev,
+      currRev:currMap[name]||0,
+      decline:prevRev-(currMap[name]||0),
+      lost:!(currMap[name]),
+      pct:Math.round((prevRev-(currMap[name]||0))/prevRev*100)
+    }))
+    .filter(c=>c.decline>0)
+    .sort((a,b)=>b.decline-a.decline)
+    .slice(0,10);
+}
+
 function tline(){
   const v=view(),m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
@@ -738,7 +804,43 @@ function renderTable(){
   $("pgs").innerHTML=prev+btns+next;
 }
 
-function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
+function renderDecliningClients(){
+  const el=document.getElementById("dc-bars");
+  if(!el)return;
+  const dc=trendingDown();
+  const pLabel=prevDeals._label||"Previous Period";
+  const cLabel=getPeriodLabel();
+  if(!prevDeals.length){
+    el.innerHTML=`<div class="empty-state"><div class="es-icon">⏳</div><div class="es-title">Loading comparison</div><div class="es-sub">Previous period data loads with first sync.</div></div>`;
+    return;
+  }
+  if(!dc.length){
+    el.innerHTML=`<div class="empty-state"><div class="es-icon">📈</div><div class="es-title">No declining clients</div><div class="es-sub">All clients maintained or grew revenue vs ${pLabel}.</div></div>`;
+    return;
+  }
+  const mx=Math.max(...dc.map(c=>c.prevRev),1);
+  el.innerHTML=dc.map(c=>{
+    const currPct=c.prevRev>0?(c.currRev/c.prevRev*100).toFixed(0):0;
+    const drillActive=drill.client===c.name?" dc-active":"";
+    return`<div class="dc-row${drillActive}" onclick="setDrill('client','${c.name.replace(/'/g,"\'")}')">
+      <div class="dc-head">
+        <div class="dc-name" title="${c.name}">${c.name}${c.lost?' <span class="lost-badge">LOST</span>':''}</div>
+        <div class="dc-decline">-${fmtShort(c.decline)} <span class="dc-pct">↓${c.pct}%</span></div>
+      </div>
+      <div class="dc-bars-wrap">
+        <div class="dc-bar-bg" style="width:100%">
+          <div class="dc-bar-curr" style="width:${Math.min(currPct,100)}%" title="Now: ${fmtUSD(c.currRev)}"></div>
+        </div>
+      </div>
+      <div class="dc-labels">
+        <span class="dc-lbl">${pLabel}: ${fmtShort(c.prevRev)}</span>
+        <span class="dc-lbl curr">${cLabel}: ${fmtShort(c.currRev)}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderDecliningClients();renderTimeline();renderInvChart();renderTable();}
 
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
