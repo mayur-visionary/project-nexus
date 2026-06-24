@@ -451,7 +451,7 @@ const MFULL=["january","february","march","april","may","june","july","august","
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // ════ STATE ════
-let deals=[],prevDeals=[],sk="amount",sd="desc",pg=1;
+let deals=[],prevDeals=[],netRevTotal=0,sk="amount",sd="desc",pg=1;
 const PER=10;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 const drill={};
@@ -629,6 +629,26 @@ async function doSync(force=false){
     prevDeals=prevAll;
     prevDeals._label=prevPeriodLabel(months);
 
+    // ── Net Revenue — unfiltered (all owners, company total) ──
+    const nrFilters=[
+      {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
+      {propertyName:"dealstage",operator:"EQ",value:STAGE},
+      months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
+    ];
+    if(geo)nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
+    if(geoHead)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
+    if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    let nrSum=0,nrA=null;
+    do{
+      const nb={filterGroups:[{filters:nrFilters}],properties:["amount_in_home_currency"],limit:200};
+      if(nrA)nb.after=nrA;
+      try{
+        const nr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(nb)});
+        if(nr.ok){const nd=await nr.json();(nd.results||[]).forEach(r=>{nrSum+=parseFloat(r.properties?.amount_in_home_currency||0)||0;});nrA=nd.paging?.next?.after||null;}else{console.warn("Net revenue fetch returned",nr.status);nrA=null;}
+      }catch(e){console.error("Net revenue fetch error:",e);nrA=null;}
+    }while(nrA);
+    netRevTotal=nrSum;
+
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
     const lbl=getPeriodLabel(),sub=`${lbl}${geo?" · "+geo:""}`;
@@ -741,16 +761,12 @@ function renderKPIs(){
   const v=view();
   if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1">${emptyHTML()}</div>`;return;}
   const m=mets(),os=ostats(),top=os.find(o=>o.posRev>0)||null;
-  const gss=geostats(),tr=gss.find(g=>g.posRev>0)||null;
-  const ghs=geoheadstats(),tgh=ghs.find(g=>g.rev>0)||null;
   const cards=[
-    {lbl:"Net Bookings",val:fmtUSD(m.net),sub:`${m.count} deal${m.count!==1?"s":""}`,ico:"",tip:"Total net bookings"},
-    {lbl:"Gross Revenue",val:fmtUSD(m.gross),sub:"before credits",ico:"",tip:"Sort table by amount",action:"sortTable()"},
-    {lbl:"Credit Notes",val:fmtUSD(Math.abs(m.credits)),sub:`${m.credCnt} adjustment${m.credCnt!==1?"s":""}`,ico:"",tip:"View credit notes only",action:"drillCredits()"},
-    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",ico:"",tip:"Average deal size"},
-    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",ico:"",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
-    {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",ico:"",tip:"Jump to clients chart",action:"scrollToClients()"},
-{lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",ico:"",tip:"Revenue concentration"}
+    {lbl:"Net Revenue",val:fmtUSD(netRevTotal||m.net),sub:`${m.count} deal${m.count!==1?"s":""} · all owners`,tip:"Company-wide net revenue for this period"},
+    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
+    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
+    {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
+    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
@@ -898,8 +914,6 @@ function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClient
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
 function scrollToClients(){document.getElementById("cl-bars")?.closest(".card")?.scrollIntoView({behavior:"smooth",block:"center"});}
-function drillCredits(){if(drill.amount_sign==="negative"){delete drill.amount_sign;}else{drill.amount_sign="negative";}updateChips();renderAll();}
-function drillTopRegion(){const gs=geostats();if(gs.length)setDrill("region",gs[0].geo);}
 
 function sortBy(k){if(sk===k)sd=sd==="asc"?"desc":"asc";else{sk=k;sd="desc";}pg=1;renderTable();}
 function goPg(p){pg=p;renderTable();}
