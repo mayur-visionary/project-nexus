@@ -600,22 +600,24 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
       {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
     ];
-    // Smart BU + Head interaction — both use geo_head__invoice_app_
-    if(bu&&BU_HEADS[bu]){
-      const bh=BU_HEADS[bu];
-      if(geoHead&&bh.includes(geoHead))filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-      else if(bh.length===1)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
-      else filters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
-    } else if(geoHead){
-      filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-    }
     if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
+    // Build filterGroups — use multiple EQ (OR) for geo_head since IN not supported on string props
+    let fGroups;
+    if(bu&&BU_HEADS[bu]){
+      const bh=BU_HEADS[bu];
+      const heads=(geoHead&&bh.includes(geoHead))?[geoHead]:bh;
+      fGroups=heads.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
+    } else if(geoHead){
+      fGroups=[{filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead}]}];
+    } else {
+      fGroups=[{filters}];
+    }
 
     const allDeals=[];let after=null;
     do{
-      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
@@ -635,20 +637,23 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
     ];
     if(geo){const _gv={"AU":"AU/NZ","UK":"UK","US":"US"}[geo]||geo;nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:_gv});}
-    if(bu&&BU_HEADS[bu]){
-      const bh=BU_HEADS[bu];
-      if(geoHead&&bh.includes(geoHead))nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-      else if(bh.length===1)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
-      else nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
-    } else if(geoHead){
-      nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-    }
     if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     nrFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
+    // Build filterGroups for NR — multiple EQ for geo_head OR
+    let nrGroups;
+    if(bu&&BU_HEADS[bu]){
+      const bh=BU_HEADS[bu];
+      const heads=(geoHead&&bh.includes(geoHead))?[geoHead]:bh;
+      nrGroups=heads.map(h=>({filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
+    } else if(geoHead){
+      nrGroups=[{filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead}]}];
+    } else {
+      nrGroups=[{filters:nrFilters}];
+    }
     let nrSum=0,nrA=null;
     do{
-      const nb={filterGroups:[{filters:nrFilters}],properties:["amount_in_home_currency"],limit:200};
+      const nb={filterGroups:nrGroups,properties:["amount_in_home_currency"],limit:200};
       if(nrA)nb.after=nrA;
       try{
         const nr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(nb)});
