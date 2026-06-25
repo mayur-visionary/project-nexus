@@ -587,6 +587,8 @@ async function doSync(force=false){
     if(geo)filters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
     if(geoHead)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+    filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
 
     const allDeals=[];let after=null;
     do{
@@ -616,6 +618,8 @@ async function doSync(force=false){
       if(geo)prevFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
       if(geoHead)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
       if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+      prevFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+      prevFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
       let pa=null;
       do{
         const pb={filterGroups:[{filters:prevFilters}],properties:["contact_name__invoice_app_","amount_in_home_currency"],limit:200};
@@ -638,6 +642,8 @@ async function doSync(force=false){
     if(geo)nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
     if(geoHead)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+    nrFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
     let nrSum=0,nrA=null;
     do{
       const nb={filterGroups:[{filters:nrFilters}],properties:["amount_in_home_currency"],limit:200};
