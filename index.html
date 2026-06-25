@@ -327,6 +327,13 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
       </div>
       <div class="vdiv"></div>
+      <span class="fl">Business Unit</span>
+      <select class="fsel sm" id="bu-sel" onchange="onFilterChange()">
+        <option value="">All BUs</option>
+        <option value="Digital">Digital</option>
+        <option value="MarTech">MarTech</option>
+      </select>
+      <div class="vdiv"></div>
       <span class="fl">Region</span>
       <select class="fsel sm" id="geo-sel" onchange="onGeoChange()">
         <option value="">All Regions</option>
@@ -462,6 +469,11 @@ const OWNER_GROUPS={
   "Reactivation":[
     {id:"41490632",name:"Mukund Basita"}
   ]
+};
+// BU geo-head mapping
+const BU_HEADS={
+  Digital:["Tanuj Gupta","Jiggyasa Agrawal","Nevilson Christan"],
+  MarTech:["Jaydeep Salla"]
 };
 // Team-structure geo mapping (primary)
 const OWNER_GEO={
@@ -615,7 +627,7 @@ async function doSync(force=false){
   if(isSyncing&&!force)return;
   isSyncing=true;
   const errBar=$("err-bar");
-  const owners=selOwners(),geo=$("geo-sel")?.value||"",geoHead=$("geohead-sel")?.value||"",itype=$("itype-sel")?.value||"";
+  const owners=selOwners(),geo=$("geo-sel")?.value||"",bu=$("bu-sel")?.value||"",geoHead=$("geohead-sel")?.value||"",itype=$("itype-sel")?.value||"";
   const months=getMonths();
   if(!owners.length){$("sdot").style.background="#9A9A9A";$("stxt").textContent="NO OWNERS SELECTED";isSyncing=false;return;}
   errBar.style.display="none";
@@ -630,6 +642,11 @@ async function doSync(force=false){
     ];
     if(geoHead)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    if(bu&&BU_HEADS[bu]){
+      const bh=BU_HEADS[bu];
+      if(bh.length===1)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
+      else filters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
+    }
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
 
@@ -660,6 +677,11 @@ async function doSync(force=false){
       ];
       if(geoHead)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
       if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+      if(bu&&BU_HEADS[bu]){
+        const bh=BU_HEADS[bu];
+        if(bh.length===1)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
+        else prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
+      }
       prevFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
       prevFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
       let pa=null;
@@ -684,6 +706,11 @@ async function doSync(force=false){
     if(geo){const _gv={"AU":"AU/NZ","UK":"UK","US":"US"}[geo]||geo;nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:_gv});}
     if(geoHead)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    if(bu&&BU_HEADS[bu]){
+      const bh=BU_HEADS[bu];
+      if(bh.length===1)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
+      else nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
+    }
     nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     nrFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
     let nrSum=0,nrA=null;
@@ -699,7 +726,7 @@ async function doSync(force=false){
 
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
-    const lbl=getPeriodLabel(),sub=`${lbl}${geo?" · "+geo:""}`;
+    const lbl=getPeriodLabel(),sub=`${lbl}${bu?" · "+bu:""}${geo?" · "+geo:""}`;
     $("ob-sub").textContent=`Gross bookings · ${sub}`;
     $("geo-sub").textContent=`By region · ${sub}`;
     $("tl-sub").textContent=`By close date · ${sub}`;
@@ -974,7 +1001,7 @@ function goPg(p){pg=p;renderTable();}
 function resetAll(){
   const ps=$("period-sel");if(ps)ps.value="last-month";
   const cr=$("custom-range");if(cr)cr.classList.remove("show");
-  const gs=$("geo-sel");if(gs)gs.value="";
+  const bs=$("bu-sel");if(bs)bs.value="";const gs=$("geo-sel");if(gs)gs.value="";
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
