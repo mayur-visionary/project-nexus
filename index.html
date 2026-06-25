@@ -251,7 +251,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow">Mavlers X Sales-Ops</div>
+    <div class="login-eyebrow">Mavlers · Internal</div>
     <div class="login-title">Project Nexus</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
@@ -312,7 +312,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
       <div class="vdiv"></div>
       <span class="fl">Business Unit</span>
-      <select class="fsel sm" id="bu-sel" onchange="onFilterChange()">
+      <select class="fsel sm" id="bu-sel" onchange="onBUChange()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
         <option value="MarTech">MarTech</option>
@@ -327,13 +327,22 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </select>
       <div class="vdiv"></div>
       <span class="fl">Head</span>
-      <select class="fsel" id="geohead-sel" onchange="onFilterChange()">
-        <option value="">All Heads</option>
-        <option value="Jiggyasa Agrawal">Jiggyasa Agrawal</option>
-        <option value="Jaydeep Salla">Jaydeep Salla</option>
-        <option value="Nevilson Christan">Nevilson Christan</option>
-        <option value="Tanuj Gupta">Tanuj Gupta</option>
-      </select>
+      <div class="ms-wrap" id="head-ms-wrap">
+        <div class="ms-btn" id="head-ms-btn" onclick="toggleHeadMS(event)">
+          <span id="head-ms-label">All Heads</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="head-ms-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Heads</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllHeads()">All</span>
+              <span class="ms-act" onclick="deselectAllHeads()">None</span>
+            </div>
+          </div>
+          <div id="head-ms-list"></div>
+        </div>
+      </div>
       <div class="vdiv"></div>
       <span class="fl">Owners</span>
       <div class="ms-wrap" id="ms-wrap">
@@ -455,6 +464,17 @@ const BU_HEADS={
   Digital:["Tanuj Gupta","Jiggyasa Agrawal","Nevilson Christan"],
   MarTech:["Jaydeep Salla"]
 };
+const ALL_HEADS=["Jiggyasa Agrawal","Jaydeep Salla","Nevilson Christan","Tanuj Gupta"];
+const HEAD_BU_MAP={
+  "Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech",
+  "Nevilson Christan":"Digital","Tanuj Gupta":"Digital"
+};
+const HEADS_CONFIG=[
+  {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
+  {id:"jaydeep",name:"Jaydeep Salla",bu:"MarTech"},
+  {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
+  {id:"tanuj",name:"Tanuj Gupta",bu:"Digital"}
+];
 // Team-structure geo mapping (primary)
 const OWNER_GEO={
   "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","37762663":"US",
@@ -530,6 +550,40 @@ function initMonthSelects(){
   });
 }
 
+// ════ HEAD MULTI-SELECT ════
+function initHeadFilter(){
+  $("head-ms-list").innerHTML=ALL_HEADS.map(h=>`
+    <div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h}</label></div>`).join("");
+}
+function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");}
+function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
+function updateHeadLabel(){
+  const sel=getSelectedHeads();
+  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:sel.length+" Heads";
+}
+function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();onFilterChange();}
+function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
+function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),400);}
+
+// ════ SMART FILTERS ════
+function updateSmartFilters(){
+  // Head → BU: narrow BU options based on selected heads
+  const sel=getSelectedHeads();
+  const buSel=$("bu-sel");
+  if(!buSel)return;
+  if(sel.length===0||sel.length===ALL_HEADS.length){
+    Array.from(buSel.options).forEach(o=>{o.style.display="";});
+    return;
+  }
+  const validBUs=new Set(sel.map(h=>HEAD_BU_MAP[h]).filter(Boolean));
+  Array.from(buSel.options).forEach(opt=>{
+    if(!opt.value){opt.style.display="";return;}
+    opt.style.display=validBUs.has(opt.value)?"":"none";
+  });
+  if(buSel.value&&!validBUs.has(buSel.value))buSel.value="";
+  if(validBUs.size===1&&!buSel.value)[...validBUs].forEach(v=>buSel.value=v);
+}
+
 // ════ OWNER MULTI-SELECT ════
 function initOwners(){
   $("ms-list").innerHTML=Object.entries(OWNER_GROUPS).map(([geo,owners])=>`
@@ -546,10 +600,24 @@ function selectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);i
 function deselectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();}
 function onOwnerChange(){updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),600);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
-document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");});
+document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");});
 
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
+function onBUChange(){
+  const bu=$("bu-sel")?.value||"";
+  if(bu){
+    // Narrow head options to those within this BU
+    const validH=BU_HEADS[bu]||[];
+    ALL_HEADS.forEach(h=>{
+      const e=$("head-"+h.replace(/\s/g,"_"));
+      if(e&&!validH.includes(h)){e.checked=false;}
+    });
+    updateHeadLabel();
+  }
+  updateSmartFilters();
+  clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);
+}
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
@@ -562,9 +630,11 @@ function view(){
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
     if(drill.amount_sign==="negative"&&d.amount>=0)return false;
     if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
-    // BU client-side filter (enforces BU even during drill-downs)
+    // BU + Head client-side filter
     const _bu=$("bu-sel")?.value||"";
     if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
+    const _vh=getSelectedHeads();
+    if(_vh.length>0&&_vh.length<ALL_HEADS.length&&!_vh.includes(d.geo_head||""))return false;
     // Revenue formula exclusions (client-side — keeps API under 6 filters/group)
     if(d.eng_model==="Wallet"||d.eng_model==="Special Engagement")return false;
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
@@ -593,7 +663,7 @@ async function doSync(force=false){
   if(isSyncing&&!force)return;
   isSyncing=true;
   const errBar=$("err-bar");
-  const owners=selOwners(),geo=$("geo-sel")?.value||"",bu=$("bu-sel")?.value||"",geoHead=$("geohead-sel")?.value||"",itype=$("itype-sel")?.value||"";
+  const owners=selOwners(),geo=$("geo-sel")?.value||"",bu=$("bu-sel")?.value||"",itype=$("itype-sel")?.value||"";const _selHeads=getSelectedHeads(),_allHeads=_selHeads.length===ALL_HEADS.length;
   const months=getMonths();
   if(!owners.length){$("sdot").style.background="#9A9A9A";$("stxt").textContent="NO OWNERS SELECTED";isSyncing=false;return;}
   errBar.style.display="none";
@@ -611,10 +681,11 @@ async function doSync(force=false){
     let fGroups;
     if(bu&&BU_HEADS[bu]){
       const bh=BU_HEADS[bu];
-      const heads=(geoHead&&bh.includes(geoHead))?[geoHead]:bh;
-      fGroups=heads.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
-    } else if(geoHead){
-      fGroups=[{filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead}]}];
+      const heads=(!_allHeads&&_selHeads.length>0)?bh.filter(h=>_selHeads.includes(h)):bh;
+      const finalH=heads.length>0?heads:bh;
+      fGroups=finalH.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
+    } else if(!_allHeads&&_selHeads.length>0){
+      fGroups=_selHeads.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
     } else {
       fGroups=[{filters}];
     }
@@ -648,10 +719,11 @@ async function doSync(force=false){
     let nrGroups;
     if(bu&&BU_HEADS[bu]){
       const bh=BU_HEADS[bu];
-      const heads=(geoHead&&bh.includes(geoHead))?[geoHead]:bh;
-      nrGroups=heads.map(h=>({filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
-    } else if(geoHead){
-      nrGroups=[{filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead}]}];
+      const heads=(!_allHeads&&_selHeads.length>0)?bh.filter(h=>_selHeads.includes(h)):bh;
+      const finalH=heads.length>0?heads:bh;
+      nrGroups=finalH.map(h=>({filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
+    } else if(!_allHeads&&_selHeads.length>0){
+      nrGroups=_selHeads.map(h=>({filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
     } else {
       nrGroups=[{filters:nrFilters}];
     }
@@ -760,7 +832,7 @@ function renderKPIs(){
   if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1">${emptyHTML()}</div>`;return;}
   const m=mets(),os=ostats(),top=os.find(o=>o.posRev>0)||null;
   const cards=[
-    {lbl:"Net Revenue",val:fmtUSD(Object.keys(drill).length>0?m.net:(netRevTotal||m.net)),sub:Object.keys(drill).length>0?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`,tip:"Company-wide net revenue — updates when chart elements are clicked"},
+    {lbl:"Net Revenue",val:(()=>{const _hasDrill=Object.keys(drill).length>0;const _hasClientFilter=($("geo-sel")?.value||"")||($("itype-sel")?.value||"");return fmtUSD(_hasDrill||_hasClientFilter?m.net:(netRevTotal||m.net));})(),sub:(()=>{const _hasDrill=Object.keys(drill).length>0;const _hasClientFilter=($("geo-sel")?.value||"")||($("itype-sel")?.value||"");return _hasDrill||_hasClientFilter?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;})(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
     {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
@@ -880,7 +952,7 @@ function goPg(p){pg=p;renderTable();}
 function resetAll(){
   const ps=$("period-sel");if(ps)ps.value="last-month";
   const cr=$("custom-range");if(cr)cr.classList.remove("show");
-  const bs=$("bu-sel");if(bs)bs.value="";const gs=$("geo-sel");if(gs)gs.value="";
+  const bs=$("bu-sel");if(bs)bs.value="";const gs=$("geo-sel");if(gs)gs.value="";ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
@@ -919,6 +991,7 @@ window.addEventListener("DOMContentLoaded",function(){
   try{
     initMonthSelects();
     initOwners();
+    initHeadFilter();
     const ps=$("period-sel");if(ps)ps.value="last-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     doSync(true);
