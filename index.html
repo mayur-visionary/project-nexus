@@ -185,7 +185,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .amt{text-align:right;font-weight:800;font-size:11px}
 .cred td{background:#FAFAFA!important}
 .geo-tag{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:3px;cursor:pointer}
-.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#DDB800;color:#111}.geo-AUNZ{background:#434343;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
+.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#DDB800;color:#111}.geo-AU{background:#434343;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
 .inv-tag{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;background:#F2F2F2;color:#696969;cursor:pointer}
 .hs-a{color:#DDB800;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
 .hs-a:hover{color:#FFDA30}
@@ -328,12 +328,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
       <div class="vdiv"></div>
       <span class="fl">Region</span>
-      <select class="fsel sm" id="geo-sel" onchange="onFilterChange()">
+      <select class="fsel sm" id="geo-sel" onchange="onGeoChange()">
         <option value="">All Regions</option>
         <option value="US">US</option>
         <option value="UK">UK</option>
-        <option value="AU/NZ">AU/NZ</option>
-        <option value="Other">Other</option>
+        <option value="AU">AU</option>
       </select>
       <div class="vdiv"></div>
       <span class="fl">Geo Head</span>
@@ -435,16 +434,60 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 <script>
 // ════ OWNER REGISTRY ════
 const OWNER_GROUPS={
-  "US":[{id:"38568120",name:"Baspin Thomas"},{id:"46153051",name:"Ayush Rathi"},{id:"42663191",name:"Dhaval Damania"},{id:"34558123",name:"Kaustubh Agrawal"},{id:"41490632",name:"Mukund Basita"},{id:"17738843",name:"Jaydeep Soni"},{id:"17739548",name:"Darshan Modi"},{id:"284770744",name:"Sourya Ghosh"},{id:"240935328",name:"Hammad Bhaldar"},{id:"86147905",name:"Preeti Thapliyal"},{id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"}],
-  "UK":[{id:"37344296",name:"Kalgi Shah"},{id:"46156316",name:"Flintoff Mehta"},{id:"31730801",name:"Vikram Sahi"},{id:"24817892",name:"Sheldon Fernandes"},{id:"82030736",name:"Sakshi Bissa"},{id:"82911376",name:"Divya S"}],
-  "AU/NZ":[{id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"},{id:"78831011",name:"Kunal Gohil"},{id:"467997340",name:"Karan Doshi"}]
+  "Digital — US":[
+    {id:"38568120",name:"Baspin Thomas"},{id:"34558123",name:"Kaustubh Agrawal"},
+    {id:"284770744",name:"Sourya Ghosh"},{id:"42663191",name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"},{id:"37762663",name:"Malav Modi"}
+  ],
+  "Digital — UK":[
+    {id:"37344296",name:"Kalgi Shah"},{id:"31730801",name:"Vikram Sahi"},
+    {id:"46156316",name:"Flintoff Mehta"},{id:"255830830",name:"Devanshu Kumar"}
+  ],
+  "Digital — AU":[
+    {id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"},
+    {id:"78831011",name:"Kunal Gohil"},{id:"86813698",name:"Aman Acharya"}
+  ],
+  "MarTech — US":[
+    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815",name:"Vinita Raidu"},{id:"46153051",name:"Ayush Rathi"},
+    {id:"93107638",name:"Ayush Dhupar"}
+  ],
+  "MarTech — UK":[
+    {id:"82030736",name:"Sakshi Bissa"},{id:"82911376",name:"Divya S"},
+    {id:"916030451",name:"Kamesh Biniwale"}
+  ],
+  "MarTech — AU":[
+    {id:"467997340",name:"Karan Doshi"}
+  ],
+  "Reactivation":[
+    {id:"41490632",name:"Mukund Basita"}
+  ]
 };
-const GEO_DOTS={US:"#FFDA30",UK:"#DDB800","AU/NZ":"#434343"};
-const GEO_COLORS={US:"#FFDA30",UK:"#DDB800","AU/NZ":"#434343",Other:"#9A9A9A"};
+// Team-structure geo mapping (primary)
+const OWNER_GEO={
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","37762663":"US",
+  "37344296":"UK","31730801":"UK","46156316":"UK","255830830":"UK",
+  "176516495":"AU","263464861":"AU","78831011":"AU","86813698":"AU",
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  "82030736":"UK","82911376":"UK","916030451":"UK",
+  "467997340":"AU"
+};
+const REACTIVATION_IDS=["41490632"];
+function geoFromDeal(d){
+  const id=String(d.owner_id||"");
+  if(OWNER_GEO[id])return OWNER_GEO[id];
+  // Fallback: use geo__invoice_app_ for Reactivation + unknown owners
+  const g=d.geo||"";
+  if(g==="AU/NZ")return"AU";
+  if(g==="UK"||g==="US")return g;
+  return null;
+}
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A"};
+const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
 const ALL_OWNERS=Object.values(OWNER_GROUPS).flat();
 const OWN=Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
 const ALL_IDS=ALL_OWNERS.map(o=>o.id);
-function getOwnerGeo(id){for(const[g,arr]of Object.entries(OWNER_GROUPS)){if(arr.find(o=>o.id===id))return g;}return null;}
+function getOwnerGeo(id){return OWNER_GEO[String(id)]||null;}
 
 const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
 const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
@@ -515,12 +558,13 @@ document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-
 
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
+function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ DRILL-DOWN ════
 function view(){
   return deals.filter(d=>{
-    if(drill.region&&d.geo!==drill.region)return false;
+    if(drill.region&&geoFromDeal(d)!==drill.region)return false;
     if(drill.owner&&d.owner_id!==drill.owner)return false;
     if(drill.client&&d.client!==drill.client)return false;
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
@@ -584,7 +628,6 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
       {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
     ];
-    if(geo)filters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
     if(geoHead)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
@@ -615,7 +658,6 @@ async function doSync(force=false){
         prevMs.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:prevMs[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:prevMs},
         {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
       ];
-      if(geo)prevFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
       if(geoHead)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
       if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
       prevFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
@@ -639,7 +681,7 @@ async function doSync(force=false){
       {propertyName:"dealstage",operator:"EQ",value:STAGE},
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
     ];
-    if(geo)nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:geo});
+    if(geo){const _gv={"AU":"AU/NZ","UK":"UK","US":"US"}[geo]||geo;nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:_gv});}
     if(geoHead)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
@@ -693,7 +735,11 @@ function ostats(){
 }
 function geostats(){
   const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
-  return["US","UK","AU/NZ","Other"].map(geo=>{const od=v.filter(d=>geo==="Other"?!["US","UK","AU/NZ"].includes(d.geo||""):d.geo===geo);const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};}).filter(g=>g.count>0).sort((a,b)=>b.posRev-a.posRev);
+  return["US","UK","AU"].map(geo=>{
+    const od=v.filter(d=>geoFromDeal(d)===geo);
+    const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
+    return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};
+  }).filter(g=>g.count>0).sort((a,b)=>b.posRev-a.posRev);
 }
 function geoheadstats(){
   const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
@@ -853,7 +899,7 @@ function renderTable(){
   $("dtb").innerHTML=paged.map((d,i)=>{
     const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
-    const geo=d.geo||"—",gc=geo==="AU/NZ"?"geo-AUNZ":"geo-"+geo.replace(/\//g,"");
+    const geo=geoFromDeal(d)||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
