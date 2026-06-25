@@ -251,7 +251,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow">Mavlers · Internal</div>
+    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
     <div class="login-title">Project Nexus</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
@@ -469,6 +469,18 @@ const HEAD_BU_MAP={
   "Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech",
   "Nevilson Christan":"Digital","Tanuj Gupta":"Digital"
 };
+const HEAD_REGIONS={
+  "Jiggyasa Agrawal":["AU"],
+  "Tanuj Gupta":["US","UK"],
+  "Nevilson Christan":["AU","UK","US"],
+  "Jaydeep Salla":["AU","UK","US"]
+};
+const HEAD_OWNER_GROUPS={
+  "Jiggyasa Agrawal":["Digital — AU"],
+  "Tanuj Gupta":["Digital — US","Digital — UK"],
+  "Nevilson Christan":["Digital — US","Digital — UK","Digital — AU"],
+  "Jaydeep Salla":["MarTech — US","MarTech — UK","MarTech — AU","Reactivation"]
+};
 const HEADS_CONFIG=[
   {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
   {id:"jaydeep",name:"Jaydeep Salla",bu:"MarTech"},
@@ -567,21 +579,53 @@ function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debT
 
 // ════ SMART FILTERS ════
 function updateSmartFilters(){
-  // Head → BU: narrow BU options based on selected heads
   const sel=getSelectedHeads();
-  const buSel=$("bu-sel");
-  if(!buSel)return;
-  if(sel.length===0||sel.length===ALL_HEADS.length){
-    Array.from(buSel.options).forEach(o=>{o.style.display="";});
-    return;
+  const buSel=$("bu-sel"),geoSel=$("geo-sel");
+  const allSelected=sel.length===0||sel.length===ALL_HEADS.length;
+
+  // ── BU cascade ──
+  if(buSel){
+    if(allSelected){
+      Array.from(buSel.options).forEach(o=>o.style.display="");
+    } else {
+      const validBUs=new Set(sel.map(h=>HEAD_BU_MAP[h]).filter(Boolean));
+      Array.from(buSel.options).forEach(opt=>{
+        if(!opt.value){opt.style.display="";return;}
+        opt.style.display=validBUs.has(opt.value)?"":"none";
+      });
+      if(buSel.value&&!validBUs.has(buSel.value))buSel.value="";
+      if(validBUs.size===1&&!buSel.value)[...validBUs].forEach(v=>buSel.value=v);
+    }
   }
-  const validBUs=new Set(sel.map(h=>HEAD_BU_MAP[h]).filter(Boolean));
-  Array.from(buSel.options).forEach(opt=>{
-    if(!opt.value){opt.style.display="";return;}
-    opt.style.display=validBUs.has(opt.value)?"":"none";
-  });
-  if(buSel.value&&!validBUs.has(buSel.value))buSel.value="";
-  if(validBUs.size===1&&!buSel.value)[...validBUs].forEach(v=>buSel.value=v);
+
+  // ── Region cascade ──
+  if(geoSel){
+    if(allSelected){
+      Array.from(geoSel.options).forEach(o=>o.style.display="");
+    } else {
+      const validRegions=new Set();
+      sel.forEach(h=>(HEAD_REGIONS[h]||[]).forEach(r=>validRegions.add(r)));
+      Array.from(geoSel.options).forEach(opt=>{
+        if(!opt.value){opt.style.display="";return;}
+        opt.style.display=validRegions.has(opt.value)?"":"none";
+      });
+      if(geoSel.value&&!validRegions.has(geoSel.value)){geoSel.value="";renderAll();}
+      if(validRegions.size===1&&!geoSel.value)[...validRegions].forEach(v=>geoSel.value=v);
+    }
+  }
+
+  // ── Owner cascade ──
+  if(allSelected){
+    ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
+  } else {
+    const validGroups=new Set();
+    sel.forEach(h=>(HEAD_OWNER_GROUPS[h]||[]).forEach(g=>validGroups.add(g)));
+    Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
+      const isValid=validGroups.has(grp);
+      owners.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=isValid;});
+    });
+  }
+  updateOwnerLabel();
 }
 
 // ════ OWNER MULTI-SELECT ════
@@ -765,22 +809,27 @@ function mets(){
   const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
   const geos=new Set(pos.filter(d=>d.geo&&d.geo!=="—"&&d.geo!=="—").map(d=>d.geo));
   const cmap={};pos.filter(d=>d.client&&d.client!=="—").forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
-  const top3=Object.values(cmap).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
-  const conc=gross>0?Math.round(top3/gross*100):0;
+  const top3=Object.values(cmap).filter(v=>v>0).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
+  const netTotal=v.reduce((s,d)=>s+d.amount,0);
+  const conc=netTotal>0?Math.round(top3/netTotal*100):0;
   return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?gross/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—"};
 }
 function ostats(){
-  const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
+  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
   const ids=[...new Set(v.map(d=>d.owner_id))];
-  return ids.map(id=>{const od=v.filter(d=>d.owner_id===id),p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);return{id,name:ownerName(id),posRev:p,count:od.length,share:g>0?p/g*100:0};}).sort((a,b)=>b.posRev-a.posRev);
+  return ids.map(id=>{
+    const od=v.filter(d=>d.owner_id===id);
+    const net=od.reduce((s,d)=>s+d.amount,0);
+    return{id,name:ownerName(id),posRev:net,count:od.length,share:g>0?net/g*100:0};
+  }).filter(o=>o.posRev>0).sort((a,b)=>b.posRev-a.posRev);
 }
 function geostats(){
-  const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
+  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
   return["AU","UK","US"].map(geo=>{
     const od=v.filter(d=>geoFromDeal(d)===geo);
-    const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
+    const p=od.reduce((s,d)=>s+d.amount,0);
     return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};
-  }).filter(g=>g.count>0).sort((a,b)=>b.posRev-a.posRev);
+  }).filter(g=>g.posRev>0).sort((a,b)=>b.posRev-a.posRev);
 }
 function geoheadstats(){
   const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
@@ -788,8 +837,10 @@ function geoheadstats(){
   return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
 }
 function topClients(){
-  const v=view(),map={};v.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
-  return Object.entries(map).map(([name,rev])=>({name,rev})).sort((a,b)=>b.rev-a.rev).slice(0,10);
+  const v=view(),map={};
+  v.filter(d=>d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
+  return Object.entries(map).map(([name,rev])=>({name,rev}))
+    .filter(c=>c.rev>0).sort((a,b)=>b.rev-a.rev).slice(0,10);
 }
 function tline(){
   const v=view(),m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
