@@ -354,7 +354,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
       <div class="vdiv"></div>
       <span class="fl">Invoice Type</span>
-      <select class="fsel sm" id="itype-sel" onchange="onFilterChange()">
+      <select class="fsel sm" id="itype-sel" onchange="onGeoChange()">
         <option value="">All Types</option>
         <option value="One Time">P2P</option>
         <option value="Recurring">Recurring</option>
@@ -565,6 +565,12 @@ function view(){
     // BU client-side filter (enforces BU even during drill-downs)
     const _bu=$("bu-sel")?.value||"";
     if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
+    // Revenue formula exclusions (client-side — keeps API under 6 filters/group)
+    if(d.eng_model==="Wallet"||d.eng_model==="Special Engagement")return false;
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
+    // Invoice type filter (client-side)
+    const _itype=$("itype-sel")?.value||"";
+    if(_itype&&d.inv_type!==_itype)return false;
     if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return false;}
     return true;
   });
@@ -600,10 +606,8 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
       {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
     ];
-    if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
-    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
-    filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
     // Build filterGroups — use multiple EQ (OR) for geo_head since IN not supported on string props
+    // itype + exclusions moved to client-side view() to stay under 6 filters/group limit
     let fGroups;
     if(bu&&BU_HEADS[bu]){
       const bh=BU_HEADS[bu];
@@ -617,13 +621,13 @@ async function doSync(force=false){
 
     const allDeals=[];let after=null;
     do{
-      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],client:r.properties?.contact_name__invoice_app_||"—",inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—"});
+        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],client:r.properties?.contact_name__invoice_app_||"—",inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—",company_name:r.properties?.company_name__invoice_app_||""});
       });
       after=data.paging?.next?.after||null;
     }while(after);
@@ -636,8 +640,8 @@ async function doSync(force=false){
       {propertyName:"dealstage",operator:"EQ",value:STAGE},
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
     ];
-    if(geo){const _gv={"AU":"AU/NZ","UK":"UK","US":"US"}[geo]||geo;nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:_gv});}
-    if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    // NR: keep exclusions in API (no geo/itype — NR is company-wide BU total)
+    // pipeline(1)+stage(2)+months(3)+engagement_excl(4)+company_excl(5)+geo_head(6) = exactly 6
     nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     nrFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
     // Build filterGroups for NR — multiple EQ for geo_head OR
