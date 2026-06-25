@@ -681,8 +681,8 @@ function view(){
     if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
     const _vh=getSelectedHeads();
     if(_vh.length>0&&_vh.length<ALL_HEADS.length&&!_vh.includes(d.geo_head||""))return false;
-    // Revenue formula exclusions (client-side — keeps API under 6 filters/group)
-    if(d.eng_model==="Wallet"||d.eng_model==="Special Engagement")return false;
+    // company_name exclusion (client-side — 3 specific internal companies)
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     // Invoice type filter (client-side)
     const _itype=$("itype-sel")?.value||"";
@@ -722,8 +722,10 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
       {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
     ];
+    // engagement_model exclusion back in API (5 base filters + geo_head = 6 exactly)
+    // company_name stays client-side, itype stays client-side
+    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     // Build filterGroups — use multiple EQ (OR) for geo_head since IN not supported on string props
-    // itype + exclusions moved to client-side view() to stay under 6 filters/group limit
     let fGroups;
     if(bu&&BU_HEADS[bu]){
       const bh=BU_HEADS[bu];
