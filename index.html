@@ -768,7 +768,7 @@ function renderKPIs(){
   if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1">${emptyHTML()}</div>`;return;}
   const m=mets(),os=ostats(),top=os.find(o=>o.posRev>0)||null;
   const cards=[
-    {lbl:"Net Revenue",val:fmtUSD(netRevTotal||m.net),sub:`${m.count} deal${m.count!==1?"s":""} · all owners`,tip:"Company-wide net revenue for this period"},
+    {lbl:"Net Revenue",val:fmtUSD(Object.keys(drill).length>0?m.net:(netRevTotal||m.net)),sub:Object.keys(drill).length>0?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`,tip:"Company-wide net revenue — updates when chart elements are clicked"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
     {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
