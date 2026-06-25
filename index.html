@@ -206,22 +206,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Declining clients ── */
-.dc-row{padding:6px 6px 8px;border-radius:6px;cursor:pointer;transition:background .15s;margin-bottom:10px;border:1px solid transparent}
-.dc-row:last-child{margin-bottom:0}
-.dc-row:hover{background:#FFF8F8}
-.dc-row.dc-active{background:#FFF8F8;border-color:#434343}
-.dc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
-.dc-name{font-size:10px;font-weight:700;color:#434343;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
-.dc-decline{font-size:10px;font-weight:800;color:#434343;white-space:nowrap;flex-shrink:0}
-.dc-pct{font-size:9px;font-weight:700;color:#696969;margin-left:3px}
-.dc-bars-wrap{height:6px;background:#F2F2F2;border-radius:3px;overflow:hidden;margin-bottom:4px;position:relative}
-.dc-bar-curr{height:6px;background:#FFDA30;border-radius:3px;transition:width .7s ease;position:absolute;left:0;top:0}
-.dc-labels{display:flex;justify-content:space-between}
-.dc-lbl{font-size:8.5px;font-weight:600;color:#9A9A9A}
-.dc-lbl.curr{color:#696969}
-.lost-badge{font-size:7px;font-weight:800;padding:1px 4px;border-radius:3px;background:#434343;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase;margin-left:4px;vertical-align:middle}
-
 /* ── Responsive ── */
 @media(max-width:1200px){
   .chart-row-3{grid-template-columns:1fr 1fr}
@@ -342,12 +326,13 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="AU">AU</option>
       </select>
       <div class="vdiv"></div>
-      <span class="fl">Geo Head</span>
+      <span class="fl">Head</span>
       <select class="fsel" id="geohead-sel" onchange="onFilterChange()">
         <option value="">All Heads</option>
-        <option value="Tanuj Gupta">Tanuj Gupta</option>
-        <option value="Jaydeep Salla">Jaydeep Salla</option>
         <option value="Jiggyasa Agrawal">Jiggyasa Agrawal</option>
+        <option value="Jaydeep Salla">Jaydeep Salla</option>
+        <option value="Nevilson Christan">Nevilson Christan</option>
+        <option value="Tanuj Gupta">Tanuj Gupta</option>
       </select>
       <div class="vdiv"></div>
       <span class="fl">Owners</span>
@@ -371,7 +356,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <span class="fl">Invoice Type</span>
       <select class="fsel sm" id="itype-sel" onchange="onFilterChange()">
         <option value="">All Types</option>
-        <option value="One Time">One Time</option>
+        <option value="One Time">P2P</option>
         <option value="Recurring">Recurring</option>
       </select>
     </div>
@@ -405,16 +390,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div style="position:relative;height:195px"><canvas id="tlc"></canvas></div>
     </div>
   </div>
-  <div class="chart-row-3">
+  <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Top Clients by Revenue</div>
       <div class="card-sub" id="cl-sub">Click any client to drill down</div>
       <div id="cl-bars"></div>
-    </div>
-    <div class="card">
-      <div class="card-ttl">Declining Clients</div>
-      <div class="card-sub" id="dc-sub">vs previous period · click to drill down</div>
-      <div id="dc-bars"></div>
     </div>
     <div class="card">
       <div class="card-ttl">Engagement Model</div>
@@ -506,7 +486,7 @@ const MFULL=["january","february","march","april","may","june","july","august","
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // ════ STATE ════
-let deals=[],prevDeals=[],netRevTotal=0,sk="amount",sd="desc",pg=1;
+let deals=[],netRevTotal=0,sk="amount",sd="desc",pg=1;
 const PER=10;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 const drill={};
@@ -582,6 +562,9 @@ function view(){
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
     if(drill.amount_sign==="negative"&&d.amount>=0)return false;
     if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
+    // BU client-side filter (enforces BU even during drill-downs)
+    const _bu=$("bu-sel")?.value||"";
+    if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
     if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return false;}
     return true;
   });
@@ -592,34 +575,11 @@ function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateC
 function updateChips(){
   const chips=$("drill-chips"),entries=Object.entries(drill);
   if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
-  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Geo Head",eng_model:"Engagement"};
+  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Head",eng_model:"Engagement"};
   const dv=(k,v)=>k==="owner"?ownerName(v):k==="amount_sign"?v==="negative"?"Credits Only":"Positive Only":v;
   chips.innerHTML=entries.map(([k,v])=>`<div class="dchip"><span class="dchip-lbl">${labels[k]||k}:</span><span>${dv(k,v)}</span><span class="dchip-x" onclick="clearDrill('${k}')">✕</span></div>`).join("")+
     `<button class="drill-clear" onclick="clearAllDrills()">Clear All</button>`;
   chips.classList.add("show");
-}
-
-// ════ PREVIOUS PERIOD ════
-function getPrevMonths(currMonths){
-  if(!currMonths||!currMonths.length)return[];
-  const len=currMonths.length;
-  const[fm,fy]=currMonths[0].split("-");
-  const firstDate=new Date(+fy,MFULL.indexOf(fm),1);
-  const prevStart=new Date(firstDate.getFullYear(),firstDate.getMonth()-len,1);
-  const ms=[];
-  for(let i=0;i<len;i++){
-    const d=new Date(prevStart.getFullYear(),prevStart.getMonth()+i,1);
-    ms.push(monthVal(d));
-  }
-  return ms;
-}
-function prevPeriodLabel(currMonths){
-  const pm=getPrevMonths(currMonths);
-  if(!pm.length)return"Previous Period";
-  const[fm,fy]=pm[0].split("-"),f=`${MSHRT[MFULL.indexOf(fm)]} ${fy}`;
-  if(pm.length===1)return f;
-  const[tm,ty]=pm[pm.length-1].split("-"),t=`${MSHRT[MFULL.indexOf(tm)]} ${ty}`;
-  return`${f}–${t}`;
 }
 
 // ════ SYNC ════
@@ -640,13 +600,16 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
       {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
     ];
-    if(geoHead)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-    if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
+    // Smart BU + Head interaction — both use geo_head__invoice_app_
     if(bu&&BU_HEADS[bu]){
       const bh=BU_HEADS[bu];
-      if(bh.length===1)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
+      if(geoHead&&bh.includes(geoHead))filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
+      else if(bh.length===1)filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
       else filters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
+    } else if(geoHead){
+      filters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     }
+    if(itype)filters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
 
@@ -665,38 +628,6 @@ async function doSync(force=false){
 
     deals=allDeals;
 
-    // ── Previous period comparison fetch ──
-    const prevMs=getPrevMonths(months);
-    const prevAll=[];
-    if(prevMs.length){
-      const prevFilters=[
-        {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
-        {propertyName:"dealstage",operator:"EQ",value:STAGE},
-        prevMs.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:prevMs[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:prevMs},
-        {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
-      ];
-      if(geoHead)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-      if(itype)prevFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
-      if(bu&&BU_HEADS[bu]){
-        const bh=BU_HEADS[bu];
-        if(bh.length===1)prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
-        else prevFilters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
-      }
-      prevFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
-      prevFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
-      let pa=null;
-      do{
-        const pb={filterGroups:[{filters:prevFilters}],properties:["contact_name__invoice_app_","amount_in_home_currency"],limit:200};
-        if(pa)pb.after=pa;
-        try{
-          const pr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(pb)});
-          if(pr.ok){const pd=await pr.json();(pd.results||[]).forEach(r=>{prevAll.push({client:r.properties?.contact_name__invoice_app_||"—",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0});});pa=pd.paging?.next?.after||null;}else{console.warn("Prev period API returned",pr.status);pa=null;}
-        }catch(e){console.error("Prev period fetch error:",e);pa=null;}
-      }while(pa);
-    }
-    prevDeals=prevAll;
-    prevDeals._label=prevPeriodLabel(months);
-
     // ── Net Revenue — unfiltered (all owners, company total) ──
     const nrFilters=[
       {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
@@ -704,13 +635,15 @@ async function doSync(force=false){
       months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
     ];
     if(geo){const _gv={"AU":"AU/NZ","UK":"UK","US":"US"}[geo]||geo;nrFilters.push({propertyName:"geo__invoice_app_",operator:"EQ",value:_gv});}
-    if(geoHead)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
-    if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     if(bu&&BU_HEADS[bu]){
       const bh=BU_HEADS[bu];
-      if(bh.length===1)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
+      if(geoHead&&bh.includes(geoHead))nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
+      else if(bh.length===1)nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:bh[0]});
       else nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"IN",values:bh});
+    } else if(geoHead){
+      nrFilters.push({propertyName:"geo_head__invoice_app_",operator:"EQ",value:geoHead});
     }
+    if(itype)nrFilters.push({propertyName:"invoice_type__invoice_app_",operator:"EQ",value:itype});
     nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     nrFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
     let nrSum=0,nrA=null;
@@ -762,7 +695,7 @@ function ostats(){
 }
 function geostats(){
   const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
-  return["US","UK","AU"].map(geo=>{
+  return["AU","UK","US"].map(geo=>{
     const od=v.filter(d=>geoFromDeal(d)===geo);
     const p=od.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
     return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};
@@ -777,29 +710,6 @@ function topClients(){
   const v=view(),map={};v.filter(d=>d.amount>0&&d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
   return Object.entries(map).map(([name,rev])=>({name,rev})).sort((a,b)=>b.rev-a.rev).slice(0,10);
 }
-function trendingDown(){
-  // Build current and previous maps
-  const prevMap={};
-  prevDeals.filter(d=>d.amount>0&&d.client&&d.client!=="—")
-    .forEach(d=>{prevMap[d.client]=(prevMap[d.client]||0)+d.amount;});
-  const currMap={};
-  view().filter(d=>d.amount>0&&d.client&&d.client!=="—")
-    .forEach(d=>{currMap[d.client]=(currMap[d.client]||0)+d.amount;});
-  // All previous clients — check if declined or disappeared
-  return Object.entries(prevMap)
-    .map(([name,prevRev])=>({
-      name,
-      prevRev,
-      currRev:currMap[name]||0,
-      decline:prevRev-(currMap[name]||0),
-      lost:!(currMap[name]),
-      pct:Math.round((prevRev-(currMap[name]||0))/prevRev*100)
-    }))
-    .filter(c=>c.decline>0)
-    .sort((a,b)=>b.decline-a.decline)
-    .slice(0,10);
-}
-
 function tline(){
   const v=view(),m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
@@ -948,47 +858,7 @@ function renderTable(){
   $("pgs").innerHTML=prev+btns+next;
 }
 
-function renderDecliningClients(){
-  const el=document.getElementById("dc-bars");
-  if(!el)return;
-  const dc=trendingDown();
-  const pLabel=prevDeals._label||"Previous Period";
-  const cLabel=getPeriodLabel();
-  if(!prevDeals.length){
-    el.innerHTML=`<div class="empty-state">
-      <div class="es-title" style="font-size:11px;margin-bottom:6px">No Comparison Data</div>
-      <div class="es-sub">Previous period returned no results.</div>
-      <button onclick="doSync(true)" style="margin-top:10px;padding:5px 14px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer">⟳ Retry Sync</button>
-    </div>`;
-    return;
-  }
-  if(!dc.length){
-    el.innerHTML=`<div class="empty-state"><div class="es-icon">📈</div><div class="es-title">No declining clients</div><div class="es-sub">All clients maintained or grew revenue vs ${pLabel}.</div></div>`;
-    return;
-  }
-  const mx=Math.max(...dc.map(c=>c.prevRev),1);
-  el.innerHTML=dc.map(c=>{
-    const currPct=c.prevRev>0?(c.currRev/c.prevRev*100).toFixed(0):0;
-    const drillActive=drill.client===c.name?" dc-active":"";
-    return`<div class="dc-row${drillActive}" onclick="setDrill('client','${c.name.replace(/'/g,"\'")}')">
-      <div class="dc-head">
-        <div class="dc-name" title="${c.name}">${c.name}${c.lost?' <span class="lost-badge">LOST</span>':''}</div>
-        <div class="dc-decline">-${fmtShort(c.decline)} <span class="dc-pct">↓${c.pct}%</span></div>
-      </div>
-      <div class="dc-bars-wrap">
-        <div class="dc-bar-bg" style="width:100%">
-          <div class="dc-bar-curr" style="width:${Math.min(currPct,100)}%" title="Now: ${fmtUSD(c.currRev)}"></div>
-        </div>
-      </div>
-      <div class="dc-labels">
-        <span class="dc-lbl">${pLabel}: ${fmtShort(c.prevRev)}</span>
-        <span class="dc-lbl curr">${cLabel}: ${fmtShort(c.currRev)}</span>
-      </div>
-    </div>`;
-  }).join("");
-}
-
-function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderDecliningClients();renderTimeline();renderInvChart();renderTable();}
+function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
 
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
