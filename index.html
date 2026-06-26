@@ -146,7 +146,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .gbar-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;padding:6px 8px;border-radius:6px;transition:background .15s}
 .gbar-row:hover{background:#FFFBEA}
 .gbar-row.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
-.gbar-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:5px;width:54px;text-align:center;flex-shrink:0;letter-spacing:.04em}
+.gbar-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:5px;min-width:54px;text-align:center;flex-shrink:0;letter-spacing:.04em;white-space:nowrap}
 .gbar-track{flex:1;height:8px;background:#EDEDED;border-radius:4px;overflow:hidden}
 .gbar-fill{height:8px;border-radius:4px;transition:width .7s ease}
 .gbar-info{text-align:right;flex-shrink:0;width:80px}
@@ -345,14 +345,22 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
       <div class="vdiv"></div>
       <span class="fl">Service</span>
-      <select class="fsel sm" id="service-sel" onchange="onGeoChange()">
-        <option value="">All Services</option>
-        <option value="Campaign">Campaign</option>
-        <option value="Email">Email</option>
-        <option value="Design">Design</option>
-        <option value="Search">Search</option>
-        <option value="Web">Web</option>
-      </select>
+      <div class="ms-wrap" id="svc-ms-wrap">
+        <div class="ms-btn" id="svc-ms-btn" onclick="toggleSvcMS(event)">
+          <span id="svc-ms-label">All Services</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="svc-ms-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Services</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllSvc()">All</span>
+              <span class="ms-act" onclick="deselectAllSvc()">None</span>
+            </div>
+          </div>
+          <div id="svc-ms-list"></div>
+        </div>
+      </div>
       <div class="vdiv"></div>
       <span class="fl">Owners</span>
       <div class="ms-wrap" id="ms-wrap">
@@ -392,6 +400,32 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="kpi-grid" id="kpi-grid"></div>
 
   <div class="sec">Performance Breakdown</div>
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-ttl">Revenue by Business Unit</div>
+      <div class="card-sub" id="bu-chart-sub">Digital · MarTech · click to drill</div>
+      <div id="bu-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Revenue by Region</div>
+      <div class="card-sub" id="geo-sub">Click any region to drill down</div>
+      <div id="geo-bars"></div>
+    </div>
+  </div>
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-ttl">Revenue by Head</div>
+      <div class="card-sub" id="head-chart-sub">Click any head to drill down</div>
+      <div id="head-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Revenue by Service</div>
+      <div class="card-sub" id="svc-chart-sub">Net revenue by service category</div>
+      <div id="svc-bars"></div>
+    </div>
+  </div>
+
+  <div class="sec">Detailed Analysis</div>
   <div class="chart-row-3">
     <div class="card">
       <div class="card-ttl">Revenue by Owner</div>
@@ -399,14 +433,14 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div id="ob-bars"></div>
     </div>
     <div class="card">
-      <div class="card-ttl">Revenue by Region</div>
-      <div class="card-sub" id="geo-sub">Click any region to drill down</div>
-      <div id="geo-bars"></div>
-    </div>
-    <div class="card">
       <div class="card-ttl">Daily Booking Activity</div>
       <div class="card-sub" id="tl-sub">Revenue by close date</div>
       <div style="position:relative;height:195px"><canvas id="tlc"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Engagement Model</div>
+      <div class="card-sub" id="it-sub">FTE · PTE · Recurring · P2P · click to drill</div>
+      <div style="position:relative;height:210px"><canvas id="itc"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
@@ -414,11 +448,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div class="card-ttl">Top Clients by Revenue</div>
       <div class="card-sub" id="cl-sub">Click any client to drill down</div>
       <div id="cl-bars"></div>
-    </div>
-    <div class="card">
-      <div class="card-ttl">Engagement Model</div>
-      <div class="card-sub" id="it-sub">FTE · PTE · Recurring · P2P · click to drill</div>
-      <div style="position:relative;height:210px"><canvas id="itc"></canvas></div>
     </div>
   </div>
 
@@ -589,6 +618,23 @@ function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/
 function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
 function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),400);}
 
+// ════ SERVICE MULTI-SELECT ════
+const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#434343","Search":"#9A9A9A","Web":"#696969"};
+function initServiceFilter(){
+  $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`
+    <div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="onSvcChange()"><label for="svc-${s}">${s}</label></div>`).join("");
+}
+function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");}
+function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s);return !e||e.checked;});}
+function updateSvcLabel(){
+  const sel=getSelectedServices();
+  $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Services";
+}
+function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
+function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
+function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+
 // ════ SMART FILTERS ════
 function updateSmartFilters(){
   const sel=getSelectedHeads();
@@ -656,7 +702,7 @@ function selectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);i
 function deselectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();}
 function onOwnerChange(){updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),600);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
-document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");});
+document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");});
 
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
@@ -686,13 +732,13 @@ function view(){
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
     if(drill.amount_sign==="negative"&&d.amount>=0)return false;
     if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
+    if(drill.bu){const dbu=HEAD_BU_MAP[d.geo_head||""]||"Other";if(dbu!==drill.bu)return false;}
     // BU + Head client-side filter
     const _bu=$("bu-sel")?.value||"";
     if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
     const _vh=getSelectedHeads();
     if(_vh.length>0&&_vh.length<ALL_HEADS.length&&!_vh.includes(d.geo_head||""))return false;
     // company_name exclusion (client-side — 3 specific internal companies)
-    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     // Invoice type filter (client-side)
     const _itype=$("itype-sel")?.value||"";
@@ -707,7 +753,7 @@ function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateC
 function updateChips(){
   const chips=$("drill-chips"),entries=Object.entries(drill);
   if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
-  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Head",eng_model:"Engagement"};
+  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Head",eng_model:"Engagement",bu:"Business Unit"};
   const dv=(k,v)=>k==="owner"?ownerName(v):k==="amount_sign"?v==="negative"?"Credits Only":"Positive Only":v;
   chips.innerHTML=entries.map(([k,v])=>`<div class="dchip"><span class="dchip-lbl">${labels[k]||k}:</span><span>${dv(k,v)}</span><span class="dchip-x" onclick="clearDrill('${k}')">✕</span></div>`).join("")+
     `<button class="drill-clear" onclick="clearAllDrills()">Clear All</button>`;
@@ -799,8 +845,11 @@ async function doSync(force=false){
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
     const lbl=getPeriodLabel(),sub=`${lbl}${bu?" · "+bu:""}${geo?" · "+geo:""}`;
+    $("bu-chart-sub").textContent=`Net revenue · ${sub}`;
+    $("geo-sub").textContent=`Net revenue · ${sub}`;
+    $("head-chart-sub").textContent=`Net revenue · ${sub}`;
+    $("svc-chart-sub").textContent=`Net revenue · ${sub}`;
     $("ob-sub").textContent=`Net revenue · ${sub}`;
-    $("geo-sub").textContent=`By region · ${sub}`;
     $("tl-sub").textContent=`By close date · ${sub}`;
     $("cl-sub").textContent=`Top 10 · ${sub}`;
     $("it-sub").textContent=`Engagement model · ${sub}`;
@@ -850,6 +899,30 @@ function geoheadstats(){
   const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;});
   return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
+}
+function bustats(){
+  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+  const bmap={};
+  v.forEach(d=>{
+    const bu=HEAD_BU_MAP[d.geo_head||""]||"Other";
+    if(!bmap[bu])bmap[bu]={rev:0,count:0};
+    bmap[bu].rev+=d.amount;bmap[bu].count++;
+  });
+  return["Digital","MarTech"].map(bu=>{
+    const s=bmap[bu]||{rev:0,count:0};
+    return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};
+  }).filter(b=>b.rev>0);
+}
+function headstats(){
+  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+  const hmap={};
+  v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{
+    if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};
+    hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;
+  });
+  return Object.entries(hmap).map(([head,s])=>({
+    head,firstName:head.split(" ")[0],rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0
+  })).filter(h=>h.rev>0).sort((a,b)=>b.rev-a.rev);
 }
 function topClients(){
   const v=view(),map={};
@@ -1020,7 +1093,42 @@ function renderTable(){
   $("pgs").innerHTML=prev+btns+next;
 }
 
-function renderAll(){renderKPIs();renderOwnerBars();renderGeoBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
+function renderBUBars(){
+  const bs=bustats(),v=view();
+  if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
+  if(!bs.length){$("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;return;}
+  const mx=Math.max(...bs.map(b=>b.rev),1);
+  const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
+  $("bu-bars").innerHTML=bs.map(b=>`
+    <div class="gbar-row${drill.bu===b.bu?" drill-active":""}" onclick="setDrill('bu','${b.bu}')" title="${b.bu}">
+      <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${buColors[b.bu]||"#9A9A9A"};width:${(b.rev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(b.rev)}</div><div class="gbar-cnt">${b.count} deals · ${b.share.toFixed(1)}%</div></div>
+    </div>`).join("");
+}
+
+function renderHeadBars(){
+  const hs=headstats(),v=view();
+  if(!v.length){$("head-bars").innerHTML=emptyHTML();return;}
+  if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
+  const mx=Math.max(...hs.map(h=>h.rev),1);
+  const headColors={"Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta":"#DDB800","Nevilson Christan":"#434343","Jaydeep Salla":"#9A9A9A"};
+  $("head-bars").innerHTML=hs.map(h=>`
+    <div class="gbar-row${drill.geo_head===h.head?" drill-active":""}" onclick="setDrill('geo_head','${h.head}')" title="${h.head}">
+      <div class="gbar-badge" style="background:${headColors[h.head]||"#9A9A9A"};color:${h.head==="Nevilson Christan"||h.head==="Jaydeep Salla"?"#FFDA30":"#111"};font-size:9px">${h.firstName}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${headColors[h.head]||"#9A9A9A"};width:${(h.rev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(h.rev)}</div><div class="gbar-cnt">${h.count} deals · ${h.share.toFixed(1)}%</div></div>
+    </div>`).join("");
+}
+
+function renderSvcBars(){
+  const v=view();
+  if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
+  // Service data not yet mapped to a HubSpot property — show placeholder
+  $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">🔧</div><div class="es-title">Awaiting data source</div><div class="es-sub">Service filter is ready — pending HubSpot property mapping.</div></div>`;
+}
+
+function renderAll(){renderKPIs();renderBUBars();renderGeoBars();renderHeadBars();renderSvcBars();renderOwnerBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
 
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
@@ -1082,6 +1190,7 @@ function resetAll(){
   const bs=$("bu-sel");if(bs)bs.value="";const gs=$("geo-sel");if(gs)gs.value="";ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
+  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   updateOwnerLabel();
   Object.keys(drill).forEach(k=>delete drill[k]);
@@ -1119,6 +1228,7 @@ window.addEventListener("DOMContentLoaded",function(){
     initMonthSelects();
     initOwners();
     initHeadFilter();
+    initServiceFilter();
     const ps=$("period-sel");if(ps)ps.value="last-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     doSync(true);
