@@ -1257,8 +1257,8 @@ function renderSvcBars(){
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.svc)return;
-      // If BU filter is active, only count line items from that BU
-      if(_bu&&li.bu&&li.bu!==_bu)return;
+      // If BU filter is active, only count line items explicitly tagged with that BU
+      if(_bu){if(li.bu!==_bu)return;}
       m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
