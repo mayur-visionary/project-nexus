@@ -794,11 +794,11 @@ function initOwners(){
     ${owners.map(o=>`<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`).join("")}`).join("");
 }
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
-function selectAll(){ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onFilterChange();}
+function selectAll(){ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
 function deselectAll(){ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
-function selectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();onFilterChange();}
+function selectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
 function deselectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();}
-function onOwnerChange(){updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),600);}
+function onOwnerChange(){updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
 document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");});
 
@@ -842,8 +842,13 @@ function view(){
     if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
     const _vh=getSelectedHeads();
     if(_vh.length>0&&_vh.length<ALL_HEADS.length&&!_vh.includes(d.geo_head||""))return false;
-    // company_name exclusion (client-side — 3 specific internal companies)
+    // company_name exclusion (client-side safety net — also in API)
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
+    // Owner filter (client-side — main fetch has no owner filter)
+    const _selOwners=selOwners();
+    if(_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
+      if(!_selOwners.includes(String(d.owner_id)))return false;
+    }
     // Invoice type filter (client-side)
     const _itype=$("itype-sel")?.value||"";
     if(_itype&&d.inv_type!==_itype)return false;
@@ -883,7 +888,6 @@ async function doSync(force=false){
   const errBar=$("err-bar");
   const owners=selOwners(),geoArr=getSelectedRegions(),bu=$("bu-sel")?.value||"",itype=$("itype-sel")?.value||"";const _selHeads=getSelectedHeads(),_allHeads=_selHeads.length===ALL_HEADS.length;
   const months=getMonths();
-  if(!owners.length){$("sdot").style.background="#9A9A9A";$("stxt").textContent="NO OWNERS SELECTED";isSyncing=false;return;}
   errBar.style.display="none";
   $("sdot").style.background="#DDB800";$("stxt").textContent="SYNCING...";
   $("lo").classList.add("show");$("rfbtn").disabled=true;$("resetbtn").disabled=true;
@@ -891,12 +895,11 @@ async function doSync(force=false){
     const filters=[
       {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
       {propertyName:"dealstage",operator:"EQ",value:STAGE},
-      months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months},
-      {propertyName:"hubspot_owner_id",operator:"IN",values:owners}
+      months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
     ];
-    // engagement_model exclusion back in API (5 base filters + geo_head = 6 exactly)
-    // company_name stays client-side, itype stays client-side
+    // Exclusions at API level — no owner filter (all owners fetched, owner filter is client-side)
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+    filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
     // Build filterGroups — use multiple EQ (OR) for geo_head since IN not supported on string props
     let fGroups;
     if(bu&&BU_HEADS[bu]){
@@ -952,38 +955,8 @@ async function doSync(force=false){
       }catch(e){console.error("Line items fetch error:",e);}
     })();
 
-    // ── Net Revenue — unfiltered (all owners, company total) ──
-    const nrFilters=[
-      {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
-      {propertyName:"dealstage",operator:"EQ",value:STAGE},
-      months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
-    ];
-    // NR: keep exclusions in API (no geo/itype — NR is company-wide BU total)
-    // pipeline(1)+stage(2)+months(3)+engagement_excl(4)+company_excl(5)+geo_head(6) = exactly 6
-    nrFilters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
-    nrFilters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
-    // Build filterGroups for NR — multiple EQ for geo_head OR
-    let nrGroups;
-    if(bu&&BU_HEADS[bu]){
-      const bh=BU_HEADS[bu];
-      const heads=(!_allHeads&&_selHeads.length>0)?bh.filter(h=>_selHeads.includes(h)):bh;
-      const finalH=heads.length>0?heads:bh;
-      nrGroups=finalH.map(h=>({filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
-    } else if(!_allHeads&&_selHeads.length>0){
-      nrGroups=_selHeads.map(h=>({filters:[...nrFilters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
-    } else {
-      nrGroups=[{filters:nrFilters}];
-    }
-    let nrSum=0,nrA=null;
-    do{
-      const nb={filterGroups:nrGroups,properties:["amount_in_home_currency"],limit:200};
-      if(nrA)nb.after=nrA;
-      try{
-        const nr=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(nb)});
-        if(nr.ok){const nd=await nr.json();(nd.results||[]).forEach(r=>{nrSum+=parseFloat(r.properties?.amount_in_home_currency||0)||0;});nrA=nd.paging?.next?.after||null;}else{console.warn("Net revenue fetch returned",nr.status);nrA=null;}
-      }catch(e){console.error("Net revenue fetch error:",e);nrA=null;}
-    }while(nrA);
-    netRevTotal=nrSum;
+    // ── Net Revenue — computed from all fetched deals (no owner filter) ──
+    netRevTotal=allDeals.reduce((s,d)=>s+d.amount,0);
 
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
@@ -1115,7 +1088,7 @@ function renderKPIs(){
   const _hasDrill=Object.keys(drill).length>0;
   const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
   const _hasItype=$("itype-sel")?.value||"";
-  const _notAllOwners=selOwners().length<getExpectedOwnerCount();
+  const _notAllOwners=selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners||_hasSvc;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
@@ -1123,7 +1096,7 @@ function renderKPIs(){
   const _hasDrill=Object.keys(drill).length>0;
   const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
   const _hasItype=$("itype-sel")?.value||"";
-  const _notAllOwners=selOwners().length<getExpectedOwnerCount();
+  const _notAllOwners=selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners||_hasSvc;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
