@@ -319,12 +319,22 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </select>
       <div class="vdiv"></div>
       <span class="fl">Region</span>
-      <select class="fsel sm" id="geo-sel" onchange="onGeoChange()">
-        <option value="">All Regions</option>
-        <option value="US">US</option>
-        <option value="UK">UK</option>
-        <option value="AU">AU</option>
-      </select>
+      <div class="ms-wrap" id="geo-ms-wrap">
+        <div class="ms-btn" id="geo-ms-btn" onclick="toggleGeoMS(event)">
+          <span id="geo-ms-label">All Regions</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="geo-ms-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Regions</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllGeo()">All</span>
+              <span class="ms-act" onclick="deselectAllGeo()">None</span>
+            </div>
+          </div>
+          <div id="geo-ms-list"></div>
+        </div>
+      </div>
       <div class="vdiv"></div>
       <span class="fl">Head</span>
       <div class="ms-wrap" id="head-ms-wrap">
@@ -441,7 +451,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Engagement Model</div>
-      <div class="card-sub" id="it-sub">FTE · PTE · Recurring · P2P · click to drill</div>
+      <div class="card-sub" id="it-sub">Recurring · P2P · click to drill</div>
       <div style="position:relative;height:210px"><canvas id="itc"></canvas></div>
     </div>
     <div class="card">
@@ -618,6 +628,22 @@ function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/
 function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
 function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),400);}
 
+// ════ REGION MULTI-SELECT ════
+const ALL_REGIONS=["US","UK","AU"];
+function initRegionFilter(){
+  $("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>`
+    <div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="onGeoMSChange()"><label for="geo-${r}">${r}</label></div>`).join("");
+}
+function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");}
+function getSelectedRegions(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
+function updateGeoLabel(){
+  const sel=getSelectedRegions();
+  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
+}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onGeoChange();}
+function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
+function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
 const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#5C6BC0","Search":"#26A69A","Web":"#434343"};
@@ -686,7 +712,7 @@ function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeo
 // ════ SMART FILTERS ════
 function updateSmartFilters(){
   const sel=getSelectedHeads();
-  const buSel=$("bu-sel"),geoSel=$("geo-sel");
+  const buSel=$("bu-sel");
   const allSelected=sel.length===0||sel.length===ALL_HEADS.length;
 
   // ── BU cascade ──
@@ -704,21 +730,18 @@ function updateSmartFilters(){
     }
   }
 
-  // ── Region cascade ──
-  if(geoSel){
-    if(allSelected){
-      Array.from(geoSel.options).forEach(o=>o.style.display="");
-    } else {
-      const validRegions=new Set();
-      sel.forEach(h=>(HEAD_REGIONS[h]||[]).forEach(r=>validRegions.add(r)));
-      Array.from(geoSel.options).forEach(opt=>{
-        if(!opt.value){opt.style.display="";return;}
-        opt.style.display=validRegions.has(opt.value)?"":"none";
-      });
-      if(geoSel.value&&!validRegions.has(geoSel.value)){geoSel.value="";renderAll();}
-      // Do NOT auto-select region — user decides; cascade only restricts options
-    }
+  // ── Region cascade (multiselect) ──
+  if(!allSelected){
+    const validRegions=new Set();
+    sel.forEach(h=>(HEAD_REGIONS[h]||[]).forEach(r=>validRegions.add(r)));
+    // Uncheck regions not valid for selected heads, but do NOT auto-check valid ones
+    ALL_REGIONS.forEach(r=>{
+      const e=$("geo-"+r);
+      if(e&&!validRegions.has(r))e.checked=false;
+    });
+    updateGeoLabel();
   }
+  // Do NOT auto-select region — user decides; cascade only restricts options
 
   // ── Owner cascade ──
   if(allSelected){
@@ -750,7 +773,7 @@ function selectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);i
 function deselectGroup(geo){OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();}
 function onOwnerChange(){updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),600);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
-document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");});
+document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");});
 
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
@@ -775,6 +798,12 @@ function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(
 function view(){
   return deals.filter(d=>{
     if(drill.region&&geoFromDeal(d)!==drill.region)return false;
+    // Region multiselect filter (client-side)
+    const _selGeo=getSelectedRegions();
+    if(_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length){
+      const dGeo=geoFromDeal(d);
+      if(!dGeo||!_selGeo.includes(dGeo))return false;
+    }
     if(drill.owner&&d.owner_id!==drill.owner)return false;
     if(drill.client&&d.client!==drill.client)return false;
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
@@ -825,7 +854,7 @@ async function doSync(force=false){
   if(isSyncing&&!force)return;
   isSyncing=true;
   const errBar=$("err-bar");
-  const owners=selOwners(),geo=$("geo-sel")?.value||"",bu=$("bu-sel")?.value||"",itype=$("itype-sel")?.value||"";const _selHeads=getSelectedHeads(),_allHeads=_selHeads.length===ALL_HEADS.length;
+  const owners=selOwners(),geoArr=getSelectedRegions(),bu=$("bu-sel")?.value||"",itype=$("itype-sel")?.value||"";const _selHeads=getSelectedHeads(),_allHeads=_selHeads.length===ALL_HEADS.length;
   const months=getMonths();
   if(!owners.length){$("sdot").style.background="#9A9A9A";$("stxt").textContent="NO OWNERS SELECTED";isSyncing=false;return;}
   errBar.style.display="none";
@@ -927,7 +956,7 @@ async function doSync(force=false){
 
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
-    const lbl=getPeriodLabel(),sub=`${lbl}${bu?" · "+bu:""}${geo?" · "+geo:""}`;
+    const lbl=getPeriodLabel(),geoLbl=geoArr.length<ALL_REGIONS.length?geoArr.join("+"):"",sub=`${lbl}${bu?" · "+bu:""}${geoLbl?" · "+geoLbl:""}`;
     $("bu-chart-sub").textContent=`Net revenue · ${sub}`;
     $("geo-sub").textContent=`Net revenue · ${sub}`;
     $("head-chart-sub").textContent=`Net revenue · ${sub}`;
@@ -1017,10 +1046,10 @@ function tline(){
 }
 function engGroup(val){
   if(!val||val==="—")return null;
-  if(val==="Dedicated FTE")return"Dedicated FTE";
-  if(val==="Dedicated PTE")return"Dedicated PTE";
-  if(val==="Recurring")return"Recurring";
-  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Multiple")return"P2P";
+  // Recurring umbrella: Dedicated FTE, Dedicated PTE, Multiple, Recurring Services, Recurring
+  if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
+  // P2P umbrella: P2P, Time and Material, T&M, Time
+  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
   return null; // exclude Credit Note Deduct and unknown
 }
 
@@ -1030,9 +1059,8 @@ function engTypes(){
     const g=engGroup(d.eng_model);
     if(g)m[g]=(m[g]||0)+d.amount;
   });
-  // Ensure all 4 categories appear in order
   const ordered={};
-  ["Dedicated FTE","Dedicated PTE","Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
+  ["Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
   return ordered;
 }
 
@@ -1042,8 +1070,8 @@ function invTypes(){
 
 // ════ EMPTY STATE ════
 function emptyHTML(){
-  const geo=$("geo-sel")?.value||"",period=getPeriodLabel();
-  return`<div class="empty-state"><div class="es-icon">📭</div><div class="es-title">No bookings recorded</div><div class="es-sub">No activity found${geo?" for "+geo:""} in ${period}.</div><div class="es-hint">Try expanding the period, selecting a different region, or adjusting the owner selection.</div></div>`;
+  const geoArr=getSelectedRegions(),geoLbl=geoArr.length<ALL_REGIONS.length?geoArr.join(", "):"",period=getPeriodLabel();
+  return`<div class="empty-state"><div class="es-icon">📭</div><div class="es-title">No bookings recorded</div><div class="es-sub">No activity found${geoLbl?" for "+geoLbl:""} in ${period}.</div><div class="es-hint">Try expanding the period, selecting a different region, or adjusting the owner selection.</div></div>`;
 }
 
 // ════ RENDER KPIs ════
@@ -1054,18 +1082,19 @@ function renderKPIs(){
   const cards=[
     {lbl:"Net Revenue",val:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
-  const _hasGeo=$("geo-sel")?.value||"";
+  const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
   const _hasItype=$("itype-sel")?.value||"";
   const _notAllOwners=selOwners().length<getExpectedOwnerCount();
-  // BU + Head are in NR fetch — netRevTotal already reflects them, no need to switch to m.net
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners;
+  const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners||_hasSvc;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
 })(),sub:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
-  const _hasGeo=$("geo-sel")?.value||"";
+  const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
   const _hasItype=$("itype-sel")?.value||"";
   const _notAllOwners=selOwners().length<getExpectedOwnerCount();
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners;
+  const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners||_hasSvc;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
@@ -1133,7 +1162,7 @@ function renderInvChart(){
   if(itcChart){itcChart.destroy();itcChart=null;}
   const types=engTypes(),labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length)return;
-  const palette={"Dedicated FTE":"#FFDA30","Dedicated PTE":"#DDB800","Recurring":"#434343","P2P":"#9A9A9A"};
+  const palette={"Recurring":"#FFDA30","P2P":"#434343"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
   itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,el)=>{if(el.length)setDrill("eng_model",itcChart.data.labels[el[0].index]);},plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
 }
@@ -1266,24 +1295,23 @@ function updateDynamicOptions(){
     });
     if(iSel.value&&!invTypes.has(iSel.value)){iSel.value="";}
   }
-  // Region — only show geos present in current deals (unless head constrains it)
+  // Region — uncheck geos not present in current deals (unless head constrains it)
   const geos=new Set(deals.map(d=>geoFromDeal(d)).filter(Boolean));
-  const geoSel=$("geo-sel");
   const _headSel=getSelectedHeads();
   const _headConstrained=_headSel.length>0&&_headSel.length<ALL_HEADS.length;
-  if(geoSel&&!_headConstrained){
-    Array.from(geoSel.options).forEach(opt=>{
-      if(!opt.value){opt.style.display="";return;}
-      opt.style.display=geos.has(opt.value)?"":"none";
+  if(!_headConstrained){
+    ALL_REGIONS.forEach(r=>{
+      const e=$("geo-"+r);
+      if(e&&!geos.has(r))e.checked=false;
     });
-    if(geoSel.value&&!geos.has(geoSel.value)){geoSel.value="";}
+    updateGeoLabel();
   }
 }
 
 function resetAll(){
   const ps=$("period-sel");if(ps)ps.value="last-month";
   const cr=$("custom-range");if(cr)cr.classList.remove("show");
-  const bs=$("bu-sel");if(bs)bs.value="";const gs=$("geo-sel");if(gs)gs.value="";ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
+  const bs=$("bu-sel");if(bs)bs.value="";ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
   const ib=$("interbu-sel");if(ib)ib.value="";
@@ -1326,6 +1354,7 @@ window.addEventListener("DOMContentLoaded",function(){
     initMonthSelects();
     initOwners();
     initHeadFilter();
+    initRegionFilter();
     initServiceFilter();
     const ps=$("period-sel");if(ps)ps.value="last-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
