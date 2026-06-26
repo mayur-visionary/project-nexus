@@ -612,7 +612,7 @@ function updateSmartFilters(){
         opt.style.display=validRegions.has(opt.value)?"":"none";
       });
       if(geoSel.value&&!validRegions.has(geoSel.value)){geoSel.value="";renderAll();}
-      if(// Do NOT auto-select region — user decides; cascade only restricts options
+      // Do NOT auto-select region — user decides; cascade only restricts options
     }
   }
 
