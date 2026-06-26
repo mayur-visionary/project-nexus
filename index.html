@@ -1013,8 +1013,9 @@ async function doSync(force=false){
 }
 
 // ════ METRICS ════
-function mets(){
-  const v=view(),pos=v.filter(d=>d.amount>0),neg=v.filter(d=>d.amount<0);
+function mets(v){
+  if(!v)v=view();
+  const pos=v.filter(d=>d.amount>0),neg=v.filter(d=>d.amount<0);
   const gross=pos.reduce((s,d)=>s+d.amount,0);
   const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
   const geos=new Set(pos.filter(d=>d.geo&&d.geo!=="—"&&d.geo!=="—").map(d=>d.geo));
@@ -1024,8 +1025,9 @@ function mets(){
   const conc=netTotal>0?Math.round(top3/netTotal*100):0;
   return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:pos.length?gross/pos.length:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—"};
 }
-function ostats(){
-  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+function ostats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
   const ids=[...new Set(v.map(d=>d.owner_id))];
   return ids.map(id=>{
     const od=v.filter(d=>d.owner_id===id);
@@ -1033,21 +1035,24 @@ function ostats(){
     return{id,name:ownerName(id),posRev:net,count:od.length,share:g>0?net/g*100:0};
   }).filter(o=>o.posRev>0).sort((a,b)=>b.posRev-a.posRev);
 }
-function geostats(){
-  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+function geostats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
   return["AU","UK","US"].map(geo=>{
     const od=v.filter(d=>geoFromDeal(d)===geo);
     const p=od.reduce((s,d)=>s+d.amount,0);
     return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};
   }).filter(g=>g.posRev>0).sort((a,b)=>b.posRev-a.posRev);
 }
-function geoheadstats(){
-  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+function geoheadstats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;});
   return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
 }
-function bustats(){
-  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+function bustats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
   const bmap={};
   v.forEach(d=>{
     const bu=HEAD_BU_MAP[d.geo_head||""]||"Other";
@@ -1059,8 +1064,9 @@ function bustats(){
     return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};
   }).filter(b=>b.rev>0);
 }
-function headstats(){
-  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+function headstats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};
   v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{
     if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};
@@ -1070,14 +1076,16 @@ function headstats(){
     head,firstName:head.split(" ")[0],rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0
   })).filter(h=>h.rev>0).sort((a,b)=>b.rev-a.rev);
 }
-function topClients(){
-  const v=view(),map={};
+function topClients(v){
+  if(!v)v=view();
+  const map={};
   v.filter(d=>d.client&&d.client!=="—").forEach(d=>{map[d.client]=(map[d.client]||0)+d.amount;});
   return Object.entries(map).map(([name,rev])=>({name,rev}))
     .filter(c=>c.rev>0).sort((a,b)=>b.rev-a.rev).slice(0,10);
 }
-function tline(){
-  const v=view(),m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
+function tline(v){
+  if(!v)v=view();
+  const m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
 }
 function engGroup(val){
@@ -1089,8 +1097,9 @@ function engGroup(val){
   return null; // exclude Credit Note Deduct and unknown
 }
 
-function engTypes(){
-  const v=view(),m={};
+function engTypes(v){
+  if(!v)v=view();
+  const m={};
   v.filter(d=>d.eng_model&&d.eng_model!=="—").forEach(d=>{
     const g=engGroup(d.eng_model);
     if(g)m[g]=(m[g]||0)+d.amount;
@@ -1100,8 +1109,9 @@ function engTypes(){
   return ordered;
 }
 
-function invTypes(){
-  const v=view(),m={};v.forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
+function invTypes(v){
+  if(!v)v=view();
+  const m={};v.forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
 }
 
 // ════ EMPTY STATE ════
@@ -1111,10 +1121,10 @@ function emptyHTML(){
 }
 
 // ════ RENDER KPIs ════
-function renderKPIs(){
-  const v=view();
+function renderKPIs(_v){
+  const v=_v||view();
   if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1">${emptyHTML()}</div>`;return;}
-  const m=mets(),os=ostats(),top=os.find(o=>o.posRev>0)||null;
+  const m=mets(v),os=ostats(v),top=os.find(o=>o.posRev>0)||null;
   const cards=[
     {lbl:"Net Revenue",val:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
@@ -1147,8 +1157,9 @@ function renderKPIs(){
 }
 
 // ════ RENDER CHARTS ════
-function renderOwnerBars(){
-  const os=ostats(),v=view();
+function renderOwnerBars(_v){
+  const v=_v||view();
+  const os=ostats(v);
   if(!v.length){$("ob-bars").innerHTML=emptyHTML();return;}
   if(!os.length){$("ob-bars").innerHTML=`<div class="empty-state"><div class="es-icon">📊</div><div class="es-title">No owner data</div></div>`;return;}
   const mx=Math.max(...os.map(o=>o.posRev),1);
@@ -1162,8 +1173,9 @@ function renderOwnerBars(){
     </div>`).join("");
 }
 
-function renderGeoBars(){
-  const gs=geostats(),v=view();
+function renderGeoBars(_v){
+  const v=_v||view();
+  const gs=geostats(v);
   if(!v.length){$("geo-bars").innerHTML=emptyHTML();return;}
   if(!gs.length){$("geo-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🌍</div><div class="es-title">No region data</div></div>`;return;}
   const mx=Math.max(...gs.map(g=>g.posRev),1);
@@ -1175,8 +1187,9 @@ function renderGeoBars(){
     </div>`).join("");
 }
 
-function renderClientBars(){
-  const clients=topClients(),v=view();
+function renderClientBars(_v){
+  const v=_v||view();
+  const clients=topClients(v);
   if(!v.length){$("cl-bars").innerHTML=emptyHTML();return;}
   if(!clients.length){$("cl-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No client data</div></div>`;return;}
   const mx=Math.max(...clients.map(c=>c.rev),1);
@@ -1195,10 +1208,10 @@ function renderTimeline(){
   tlcChart=new Chart(ctx,{type:"line",data:{labels:data.map(d=>d.label),datasets:[{label:"Revenue",data:data.map(d=>d.value),borderColor:"#FFDA30",backgroundColor:"rgba(255,218,48,0.07)",borderWidth:2,pointRadius:2.5,pointBackgroundColor:"#FFDA30",fill:true,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.y)},bodyFont:{family:"Montserrat",size:11},titleFont:{family:"Montserrat",size:11}}},scales:{x:{ticks:{font:{family:"Montserrat",size:8},color:"#9A9A9A",maxRotation:45,autoSkip:true},grid:{color:"rgba(0,0,0,0.03)"}},y:{ticks:{font:{family:"Montserrat",size:8},color:"#9A9A9A",callback:v=>fmtShort(v)},grid:{color:"rgba(0,0,0,0.03)"}}}}});
 }
 
-function renderInvChart(){
+function renderInvChart(_v){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
-  const types=engTypes(),labels=Object.keys(types),vals=Object.values(types);
+  const types=engTypes(_v||view()),labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length)return;
   const palette={"Recurring":"#FFDA30","P2P":"#434343"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
@@ -1206,8 +1219,8 @@ function renderInvChart(){
 }
 
 // ════ RENDER TABLE ════
-function renderTable(){
-  const v=view();
+function renderTable(_v){
+  const v=_v||view();
   const srt=[...v].sort((a,b)=>{const m=sd==="asc"?1:-1;if(sk==="amount")return m*(a.amount-b.amount);if(sk==="closedate")return m*(a.closedate||"").localeCompare(b.closedate||"");if(sk==="client")return m*(a.client||"").localeCompare(b.client||"");if(sk==="geo")return m*(a.geo||"").localeCompare(b.geo||"");return m*(a.dealname||"").localeCompare(b.dealname||"");});
   const tot=Math.max(1,Math.ceil(srt.length/PER));
   if(pg>tot)pg=tot;
@@ -1224,7 +1237,7 @@ function renderTable(){
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
-      <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${d.geo}')">${geo}</span></td>
+      <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${geo}')">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
       <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('inv_type','${d.inv_type}')">${d.inv_type}</span></td>
       <td style="background:${bg}"><span class="inv-tag">${d.inv_pattern}</span></td>
@@ -1241,8 +1254,9 @@ function renderTable(){
   $("pgs").innerHTML=prev+btns+next;
 }
 
-function renderBUBars(){
-  const bs=bustats(),v=view();
+function renderBUBars(_v){
+  const v=_v||view();
+  const bs=bustats(v);
   if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
   if(!bs.length){$("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;return;}
   const mx=Math.max(...bs.map(b=>b.rev),1);
@@ -1255,8 +1269,9 @@ function renderBUBars(){
     </div>`).join("");
 }
 
-function renderHeadBars(){
-  const hs=headstats(),v=view();
+function renderHeadBars(_v){
+  const v=_v||view();
+  const hs=headstats(v);
   if(!v.length){$("head-bars").innerHTML=emptyHTML();return;}
   if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
   const mx=Math.max(...hs.map(h=>h.rev),1);
@@ -1269,8 +1284,8 @@ function renderHeadBars(){
     </div>`).join("");
 }
 
-function renderSvcBars(){
-  const v=view();
+function renderSvcBars(_v){
+  const v=_v||view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
   // Determine active BU context (from BU dropdown OR drill)
   const _bu=$("bu-sel")?.value||drill.bu||"";
@@ -1304,7 +1319,10 @@ function renderSvcBars(){
     </div>`).join("");
 }
 
-function renderAll(){renderKPIs();renderBUBars();renderGeoBars();renderHeadBars();renderSvcBars();renderClientBars();renderInvChart();renderTable();}
+function renderAll(){
+  const _v=view();
+  renderKPIs(_v);renderBUBars(_v);renderGeoBars(_v);renderHeadBars(_v);renderSvcBars(_v);renderClientBars(_v);renderInvChart(_v);renderTable(_v);
+}
 
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
