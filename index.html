@@ -1124,14 +1124,17 @@ function engGroupFromLi(d){
 function bustatsLi(v){
   if(!v)v=view();
   const _bu=$("bu-sel")?.value||drill.bu||"";
+  const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const bmap={Digital:{rev:0,deals:new Set()},MarTech:{rev:0,deals:new Set()}};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(li.bu&&bmap[li.bu]){
-        // If BU filter active, only count line items for that BU
-        if(_bu&&li.bu!==_bu)return;
-        bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);
-      }
+      if(!li.bu||!bmap[li.bu])return;
+      if(_bu&&li.bu!==_bu)return;
+      if(_svcDrill&&li.svc!==_svcDrill)return;
+      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
+      bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);
     });
   });
   const total=bmap.Digital.rev+bmap.MarTech.rev;
@@ -1144,10 +1147,15 @@ function bustatsLi(v){
 function engTypesLi(v){
   if(!v)v=view();
   const _bu=$("bu-sel")?.value||drill.bu||"";
+  const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(_bu&&li.bu!==_bu)return;
+      if(_svcDrill&&li.svc!==_svcDrill)return;
+      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
       const eg=engGroupFromLiName(li.name);
       if(eg)m[eg]=(m[eg]||0)+li.amount;
     });
@@ -1370,12 +1378,13 @@ function renderSvcBars(_v){
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
   // Aggregate line-item amounts by service from visible deals
   const _bu=$("bu-sel")?.value||drill.bu||"";
+  const _svcDrill=drill.service||null;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.svc)return;
-      // If BU filter active, only count line items belonging to that BU
       if(_bu&&li.bu!==_bu)return;
+      if(_svcDrill&&li.svc!==_svcDrill)return;
       m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
