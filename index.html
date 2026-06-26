@@ -872,13 +872,30 @@ function view(){
       if(!dSvc.some(li=>li.svc===drill.service))return null;
     }
 
-    // ── BU line-item amount adjustment ──
-    // When BU filter is active, replace deal amount with sum of line items for that BU's services
-    if(_bu){
+    // ── Line-item amount adjustment ──
+    // Determine effective BU context: dropdown OR drill
+    const effectiveBU=_bu||drill.bu||"";
+    // Determine if service-level filtering is active (drill or multiselect)
+    const effectiveSvc=drill.service||null;
+    const needsLiAdjust=effectiveBU||effectiveSvc||_svcFiltered;
+
+    if(needsLiAdjust){
       const lis=dealServiceMap[d.id]||[];
-      const buAmount=lis.filter(li=>li.bu===_bu).reduce((s,li)=>s+li.amount,0);
-      if(buAmount===0&&lis.length>0)return null; // deal has line items but none for this BU
-      if(lis.length>0)return Object.assign({},d,{amount:buAmount});
+      if(lis.length>0){
+        // Filter line items by BU and/or service
+        const filtered=lis.filter(li=>{
+          if(effectiveBU&&li.bu!==effectiveBU)return false;
+          if(effectiveSvc&&li.svc!==effectiveSvc)return false;
+          if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+          return true;
+        });
+        const adjAmount=filtered.reduce((s,li)=>s+li.amount,0);
+        if(adjAmount===0)return null;
+        return Object.assign({},d,{amount:adjAmount});
+      }
+      // Deal has no line items in dealServiceMap — keep deal-level amount if no BU filter
+      // but exclude if BU filter is active (can't verify BU without line items)
+      if(effectiveBU)return null;
     }
 
     return d;
@@ -1255,8 +1272,8 @@ function renderHeadBars(){
 function renderSvcBars(){
   const v=view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
-  // Determine active BU context (from BU filter or head selection)
-  const _bu=$("bu-sel")?.value||"";
+  // Determine active BU context (from BU dropdown OR drill)
+  const _bu=$("bu-sel")?.value||drill.bu||"";
   // Aggregate line-item amounts by service from visible deals, respecting BU
   const m={};
   v.forEach(d=>{
