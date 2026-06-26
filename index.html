@@ -873,12 +873,12 @@ async function doSync(force=false){
     dealServiceMap={};
     try{
       const dealIds=allDeals.map(d=>d.id);
-      // Batch in chunks of 500 deal IDs per request to keep payload manageable
       for(let i=0;i<dealIds.length;i+=500){
         const chunk=dealIds.slice(i,i+500);
         const liRes=await fetch("/api/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
         if(liRes.ok){
           const liData=await liRes.json();
+          if(liData._debug)console.log("Line items debug:",liData._debug);
           const items=liData.items||{};
           Object.entries(items).forEach(([did,lis])=>{
             dealServiceMap[did]=(lis||[]).map(li=>({
@@ -887,8 +887,9 @@ async function doSync(force=false){
               name:li.name||""
             })).filter(li=>li.svc);
           });
-        }else{console.warn("Line items fetch returned",liRes.status);}
+        }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
       }
+      console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
     }catch(e){console.error("Line items fetch error:",e);}
 
     // ── Net Revenue — unfiltered (all owners, company total) ──
