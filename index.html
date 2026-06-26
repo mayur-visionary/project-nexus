@@ -114,9 +114,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:default;overflow:hidden;min-width:0}
 .kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
 .kpi-ico{font-size:14px;margin-bottom:7px}
-.kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
+.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
 .kpi-val{font-size:clamp(11px,1.15vw,16px);font-weight:800;color:#434343;line-height:1.15;word-break:break-all;overflow-wrap:anywhere}
-.kpi-sub{font-size:10px;color:#9A9A9A;margin-top:4px;font-weight:500}
+.kpi-sub{font-size:10px;color:#696969;margin-top:4px;font-weight:600}
 
 /* ── Charts ── */
 .chart-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
@@ -125,7 +125,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .card-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
 .drill-notice{font-size:9px;font-weight:700;color:#434343;background:#FFDA30;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em;display:none;margin-bottom:10px}
 .drill-notice.show{display:block}
-.card-sub{font-size:10px;color:#9A9A9A;margin-bottom:12px;font-weight:500}
+.card-sub{font-size:10px;color:#696969;margin-bottom:12px;font-weight:600}
 
 /* Owner bars */
 .orow{margin-bottom:11px;cursor:pointer;border-radius:6px;padding:4px 6px;transition:all .15s;position:relative}
@@ -256,7 +256,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-footer">Where HubSpot data becomes decisions</div>
+    <div class="login-footer">The Live Pulse of our Revenue</div>
   </div>
 </div>
 
@@ -413,27 +413,27 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="sec">Key Metrics</div>
   <div class="kpi-grid" id="kpi-grid"></div>
 
-  <div class="sec">Performance Breakdown</div>
+  <div class="sec">Revenue Performance Breakdown</div>
   <div class="chart-row">
     <div class="card">
-      <div class="card-ttl">Revenue by Business Unit</div>
+      <div class="card-ttl">Business Unit</div>
       <div class="card-sub" id="bu-chart-sub">Digital · MarTech · click to drill</div>
       <div id="bu-bars"></div>
     </div>
     <div class="card">
-      <div class="card-ttl">Revenue by Region</div>
+      <div class="card-ttl">Region</div>
       <div class="card-sub" id="geo-sub">Click any region to drill down</div>
       <div id="geo-bars"></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card">
-      <div class="card-ttl">Revenue by Head</div>
+      <div class="card-ttl">Head</div>
       <div class="card-sub" id="head-chart-sub">Click any head to drill down</div>
       <div id="head-bars"></div>
     </div>
     <div class="card">
-      <div class="card-ttl">Revenue by Service</div>
+      <div class="card-ttl">Service</div>
       <div class="card-sub" id="svc-chart-sub">Net revenue by service category</div>
       <div id="svc-bars"></div>
     </div>
@@ -445,7 +445,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div style="position:relative;height:210px"><canvas id="itc"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-ttl">Top Clients by Revenue</div>
+      <div class="card-ttl">Top Clients</div>
       <div class="card-sub" id="cl-sub">Click any client to drill down</div>
       <div id="cl-bars"></div>
     </div>
@@ -620,7 +620,7 @@ function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debT
 
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
-const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#434343","Search":"#9A9A9A","Web":"#696969"};
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#5C6BC0","Search":"#26A69A","Web":"#434343"};
 
 // ════ SERVICE CLASSIFIER ════
 // Line item name keywords → service category (matched against line item name, case-insensitive)
@@ -1193,10 +1193,10 @@ function renderHeadBars(){
   if(!v.length){$("head-bars").innerHTML=emptyHTML();return;}
   if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
   const mx=Math.max(...hs.map(h=>h.rev),1);
-  const headColors={"Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta":"#DDB800","Nevilson Christan":"#434343","Jaydeep Salla":"#9A9A9A"};
+  const headColors={"Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta":"#DDB800","Nevilson Christan":"#434343","Jaydeep Salla":"#5C6BC0"};
   $("head-bars").innerHTML=hs.map(h=>`
     <div class="gbar-row${drill.geo_head===h.head?" drill-active":""}" onclick="setDrill('geo_head','${h.head}')" title="${h.head}">
-      <div class="gbar-badge" style="background:${headColors[h.head]||"#9A9A9A"};color:${h.head==="Nevilson Christan"||h.head==="Jaydeep Salla"?"#FFDA30":"#111"};font-size:9px">${h.firstName}</div>
+      <div class="gbar-badge" style="background:${headColors[h.head]||"#9A9A9A"};color:${h.head==="Jiggyasa Agrawal"||h.head==="Tanuj Gupta"?"#111":"#fff"};font-size:9px">${h.firstName}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${headColors[h.head]||"#9A9A9A"};width:${(h.rev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(h.rev)}</div><div class="gbar-cnt">${h.count} deals · ${h.share.toFixed(1)}%</div></div>
     </div>`).join("");
@@ -1218,7 +1218,7 @@ function renderSvcBars(){
   const mx=Math.max(...entries.map(e=>e.rev),1);
   $("svc-bars").innerHTML=entries.map(e=>`
     <div class="gbar-row${drill.service===e.svc?" drill-active":""}" onclick="setDrill('service','${e.svc}')" title="${e.svc}">
-      <div class="gbar-badge" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};color:${e.svc==="Design"||e.svc==="Search"||e.svc==="Web"?"#FFDA30":"#111"}">${e.svc}</div>
+      <div class="gbar-badge" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};color:${e.svc==="Campaign"?"#111":"#fff"}">${e.svc}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};width:${(e.rev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(e.rev)}</div><div class="gbar-cnt">${total>0?(e.rev/total*100).toFixed(1):0}%</div></div>
     </div>`).join("");
