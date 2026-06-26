@@ -612,7 +612,7 @@ function updateSmartFilters(){
         opt.style.display=validRegions.has(opt.value)?"":"none";
       });
       if(geoSel.value&&!validRegions.has(geoSel.value)){geoSel.value="";renderAll();}
-      if(validRegions.size===1&&!geoSel.value)[...validRegions].forEach(v=>geoSel.value=v);
+      if(// Do NOT auto-select region — user decides; cascade only restricts options
     }
   }
 
@@ -1021,13 +1021,19 @@ function goPg(p){pg=p;renderTable();}
 
 // ════ RESET ALL ════
 function getExpectedOwnerCount(){
-  // Returns how many owners are "expected" given current BU/Head cascade
-  // Used so auto-cascade doesn't falsely trigger m.net fallback
+  // Compare selected owners against cascade-expected count to detect manual filtering
   const bu=$("bu-sel")?.value||"";
   const selH=getSelectedHeads();
   const allHeadsSelected=selH.length===ALL_HEADS.length||selH.length===0;
   if(allHeadsSelected&&!bu)return ALL_IDS.length;
-  const effectiveHeads=(bu&&BU_HEADS[bu])?BU_HEADS[bu]:selH;
+  let effectiveHeads;
+  if(bu&&BU_HEADS[bu]){
+    // Intersect BU heads with selected heads for precision
+    const intersection=BU_HEADS[bu].filter(h=>selH.includes(h));
+    effectiveHeads=intersection.length>0?intersection:BU_HEADS[bu];
+  } else {
+    effectiveHeads=selH;
+  }
   const expectedGroups=new Set();
   effectiveHeads.forEach(h=>(HEAD_OWNER_GROUPS[h]||[]).forEach(g=>expectedGroups.add(g)));
   return Object.entries(OWNER_GROUPS)
