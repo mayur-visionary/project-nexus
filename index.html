@@ -417,15 +417,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section">
-      <div class="sb-lbl">Inter BU</div>
-      <select class="fsel sb-sel" id="interbu-sel" onchange="onGeoChange()">
-        <option value="">Select</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-      </select>
-    </div>
-    <div class="sb-divider"></div>
-    <div class="sb-section">
       <div class="sb-lbl">NBD</div>
       <select class="fsel sb-sel" id="nbd-sel" onchange="onGeoChange()">
         <option value="">Select</option>
@@ -487,7 +478,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div>
   </div>
 
-  <div id="deal-records-section" style="display:none">
+  <div id="deal-records-section">
   <div class="sec">Deal Records</div>
   <div class="tcard">
     <div class="tcard-hdr">
@@ -845,61 +836,34 @@ function view(){
   const _ownerFiltered=ownerManuallyFiltered;
   const _selOwners=_ownerFiltered?selOwners():[];
 
-  return deals.map(d=>{
-    // ── Standard filters (return null to exclude) ──
-    if(drill.region&&geoFromDeal(d)!==drill.region)return null;
-    if(_geoFiltered){const dGeo=geoFromDeal(d);if(!dGeo||!_selGeo.includes(dGeo))return null;}
-    if(drill.owner&&d.owner_id!==drill.owner)return null;
-    if(drill.client&&d.client!==drill.client)return null;
-    if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
-    if(drill.amount_sign==="negative"&&d.amount>=0)return null;
-    if(drill.geo_head&&d.geo_head!==drill.geo_head)return null;
-    if(drill.bu){const dbu=HEAD_BU_MAP[d.geo_head||""]||"Other";if(dbu!==drill.bu)return null;}
-    if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return null;
-    if(_headFiltered&&!_vh.includes(d.geo_head||""))return null;
-    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
+  return deals.filter(d=>{
+    if(drill.region&&geoFromDeal(d)!==drill.region)return false;
+    if(_geoFiltered){const dGeo=geoFromDeal(d);if(!dGeo||!_selGeo.includes(dGeo))return false;}
+    if(drill.owner&&d.owner_id!==drill.owner)return false;
+    if(drill.client&&d.client!==drill.client)return false;
+    if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
+    if(drill.amount_sign==="negative"&&d.amount>=0)return false;
+    if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
+    // BU filter: by geo_head for deal-level charts, but also keep deals for line-item charts
+    if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
+    if(drill.bu){const dbu=HEAD_BU_MAP[d.geo_head||""]||"Other";if(dbu!==drill.bu)return false;}
+    if(_headFiltered&&!_vh.includes(d.geo_head||""))return false;
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
-      if(!_selOwners.includes(String(d.owner_id)))return null;
+      if(!_selOwners.includes(String(d.owner_id)))return false;
     }
-    if(_itype&&d.inv_type!==_itype)return null;
-    if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return null;}
+    if(_itype&&d.inv_type!==_itype)return false;
+    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return false;}
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
-      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
+      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return false;
     }
     if(drill.service){
       const dSvc=dealServiceMap[d.id]||[];
-      if(!dSvc.some(li=>li.svc===drill.service))return null;
+      if(!dSvc.some(li=>li.svc===drill.service))return false;
     }
-
-    // ── Line-item amount adjustment ──
-    // Determine effective BU context: dropdown OR drill
-    const effectiveBU=_bu||drill.bu||"";
-    // Determine if service-level filtering is active (drill or multiselect)
-    const effectiveSvc=drill.service||null;
-    const needsLiAdjust=effectiveBU||effectiveSvc||_svcFiltered;
-
-    if(needsLiAdjust){
-      const lis=dealServiceMap[d.id]||[];
-      if(lis.length>0){
-        // Filter line items by BU and/or service
-        const filtered=lis.filter(li=>{
-          if(effectiveBU&&li.bu!==effectiveBU)return false;
-          if(effectiveSvc&&li.svc!==effectiveSvc)return false;
-          if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
-          return true;
-        });
-        const adjAmount=filtered.reduce((s,li)=>s+li.amount,0);
-        if(adjAmount===0)return null;
-        return Object.assign({},d,{amount:adjAmount});
-      }
-      // Deal has no line items in dealServiceMap — keep deal-level amount if no BU filter
-      // but exclude if BU filter is active (can't verify BU without line items)
-      if(effectiveBU)return null;
-    }
-
-    return d;
-  }).filter(Boolean);
+    return true;
+  });
 }
 function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
 function clearDrill(key){delete drill[key];updateChips();renderAll();}
@@ -959,7 +923,15 @@ async function doSync(force=false){
       after=data.paging?.next?.after||null;
     }while(after);
 
-    deals=allDeals;
+    // ── Deduplicate: same dealname + same amount = duplicate, keep earliest ──
+    const seen={};const dupes=[];
+    allDeals.forEach(d=>{
+      const key=d.dealname+"|"+d.amount;
+      if(seen[key]){dupes.push(d.id);return;}
+      seen[key]=d.id;
+    });
+    if(dupes.length)console.log("Duplicates excluded:",dupes.length,dupes);
+    deals=dupes.length?allDeals.filter(d=>!dupes.includes(d.id)):allDeals;
 
     // ── Fetch line items for service classification (non-blocking) ──
     dealServiceMap={};
@@ -1090,11 +1062,61 @@ function tline(v){
 }
 function engGroup(val){
   if(!val||val==="—")return null;
-  // Recurring umbrella: Dedicated FTE, Dedicated PTE, Multiple, Recurring Services, Recurring
   if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
-  // P2P umbrella: P2P, Time and Material, T&M, Time
   if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
-  return null; // exclude Credit Note Deduct and unknown
+  return null;
+}
+// Classify engagement from line item name prefix
+function engGroupFromLiName(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+  if(n.startsWith("dedicated fte"))return"Recurring";
+  if(n.startsWith("dedicated pte"))return"Recurring";
+  if(n.startsWith("recurring"))return"Recurring";
+  if(n.startsWith("multiple"))return"Recurring";
+  if(n.startsWith("p2p"))return"P2P";
+  if(n.startsWith("time and material")||n.startsWith("t&m"))return"P2P";
+  return null;
+}
+// Get engagement group for a deal from its line items (majority wins)
+function engGroupFromLi(d){
+  const lis=dealServiceMap[d.id]||[];
+  if(!lis.length)return engGroup(d.eng_model); // fallback to deal property
+  const m={};lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg)m[eg]=(m[eg]||0)+li.amount;});
+  const entries=Object.entries(m);
+  if(!entries.length)return engGroup(d.eng_model);
+  return entries.sort((a,b)=>b[1]-a[1])[0][0]; // largest amount wins
+}
+
+// ═══ LINE-ITEM BASED STATS ═══
+// BU stats from line items — each line item has li.bu
+function bustatsLi(v){
+  if(!v)v=view();
+  const bmap={Digital:{rev:0,deals:new Set()},MarTech:{rev:0,deals:new Set()}};
+  v.forEach(d=>{
+    (dealServiceMap[d.id]||[]).forEach(li=>{
+      if(li.bu&&bmap[li.bu]){bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);}
+    });
+  });
+  const total=bmap.Digital.rev+bmap.MarTech.rev;
+  return["Digital","MarTech"].map(bu=>({
+    bu,rev:bmap[bu].rev,count:bmap[bu].deals.size,share:total>0?bmap[bu].rev/total*100:0
+  })).filter(b=>b.rev>0);
+}
+
+// Engagement stats from line items
+function engTypesLi(v){
+  if(!v)v=view();
+  const m={};
+  v.forEach(d=>{
+    (dealServiceMap[d.id]||[]).forEach(li=>{
+      const eg=engGroupFromLiName(li.name);
+      if(eg)m[eg]=(m[eg]||0)+li.amount;
+    });
+  });
+  const ordered={};
+  ["Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
+  return ordered;
 }
 
 function engTypes(v){
@@ -1133,7 +1155,8 @@ function renderKPIs(_v){
   const _hasBU=$("bu-sel")?.value||"";
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc;
+  const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
 })(),sub:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
@@ -1142,7 +1165,8 @@ function renderKPIs(_v){
   const _hasBU=$("bu-sel")?.value||"";
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc;
+  const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
@@ -1211,7 +1235,7 @@ function renderTimeline(){
 function renderInvChart(_v){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
-  const types=engTypes(_v||view()),labels=Object.keys(types),vals=Object.values(types);
+  const types=engTypesLi(_v||view()),labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length)return;
   const palette={"Recurring":"#FFDA30","P2P":"#434343"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
@@ -1256,7 +1280,7 @@ function renderTable(_v){
 
 function renderBUBars(_v){
   const v=_v||view();
-  const bs=bustats(v);
+  const bs=bustatsLi(v);
   if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
   if(!bs.length){$("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;return;}
   const mx=Math.max(...bs.map(b=>b.rev),1);
@@ -1287,16 +1311,11 @@ function renderHeadBars(_v){
 function renderSvcBars(_v){
   const v=_v||view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
-  // Determine active BU context (from BU dropdown OR drill)
-  const _bu=$("bu-sel")?.value||drill.bu||"";
-  // Aggregate line-item amounts by service from visible deals, respecting BU
+  // Aggregate line-item amounts by service from visible deals
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(!li.svc)return;
-      // If BU filter is active, only count line items explicitly tagged with that BU
-      if(_bu){if(li.bu!==_bu)return;}
-      m[li.svc]=(m[li.svc]||0)+li.amount;
+      if(li.svc)m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
   const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
@@ -1383,7 +1402,6 @@ function resetAll(){
   const bs=$("bu-sel");if(bs)bs.value="";ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
-  const ib=$("interbu-sel");if(ib)ib.value="";
   const nb=$("nbd-sel");if(nb)nb.value="";
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
