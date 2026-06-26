@@ -822,7 +822,7 @@ function onBUChange(){
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ NBD TOGGLE ════
-const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
+const NBD_OWNERS=["37762663","255830830","86813698","467997340","916030451"]; // Malav, Devanshu, Aman, Karan, Kamesh
 let nbdActive=false;
 function toggleNBD(){
   nbdActive=!nbdActive;
@@ -947,7 +947,7 @@ async function doSync(force=false){
     dealServiceMap={};
     const liPromise=(async()=>{
       try{
-        const dealIds=allDeals.map(d=>d.id);
+        const dealIds=deals.map(d=>d.id);
         for(let i=0;i<dealIds.length;i+=500){
           const chunk=dealIds.slice(i,i+500);
           const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
@@ -971,7 +971,7 @@ async function doSync(force=false){
     })();
 
     // ── Net Revenue — computed from all fetched deals (no owner filter) ──
-    netRevTotal=allDeals.reduce((s,d)=>s+d.amount,0);
+    netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
 
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
@@ -1169,7 +1169,7 @@ function renderKPIs(_v){
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
 })(),sub:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
@@ -1179,7 +1179,7 @@ function renderKPIs(_v){
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
