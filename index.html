@@ -116,6 +116,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
 .sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
 .sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
+.nbd-toggle{width:100%;padding:7px 10px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:10px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.1em;transition:all .2s}
+.nbd-toggle:hover{border-color:#DDB800;background:#FFFBEA;color:#434343}
+.nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
 .main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
 
@@ -417,12 +420,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section">
-      <div class="sb-lbl">NBD</div>
-      <select class="fsel sb-sel" id="nbd-sel" onchange="onGeoChange()">
-        <option value="">Select</option>
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-      </select>
+      <div class="sb-lbl">Quick Filter</div>
+      <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()">NBD</button>
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section">
@@ -821,6 +820,15 @@ function onBUChange(){
   clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);
 }
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+
+// ════ NBD TOGGLE ════
+const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
+let nbdActive=false;
+function toggleNBD(){
+  nbdActive=!nbdActive;
+  $("nbd-toggle").classList.toggle("active",nbdActive);
+  renderAll();
+}
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ DRILL-DOWN ════
@@ -853,6 +861,8 @@ function view(){
       if(!_selOwners.includes(String(d.owner_id)))return false;
     }
     if(_itype&&d.inv_type!==_itype)return false;
+    // NBD filter — only show deals from NBD owners when active
+    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return false;
     if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return false;}
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
@@ -954,8 +964,9 @@ async function doSync(force=false){
           }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
         }
         console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
-        // Re-render Service chart now that data is available
-        renderSvcBars();
+        // Re-render all line-item-dependent charts now that data is available
+        const _vLi=view();
+        renderBUBars(_vLi);renderSvcBars(_vLi);renderInvChart(_vLi);
       }catch(e){console.error("Line items fetch error:",e);}
     })();
 
@@ -1107,9 +1118,11 @@ function bustatsLi(v){
 // Engagement stats from line items
 function engTypesLi(v){
   if(!v)v=view();
+  const _bu=$("bu-sel")?.value||drill.bu||"";
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
+      if(_bu&&li.bu!==_bu)return;
       const eg=engGroupFromLiName(li.name);
       if(eg)m[eg]=(m[eg]||0)+li.amount;
     });
@@ -1236,7 +1249,16 @@ function renderInvChart(_v){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
   const types=engTypesLi(_v||view()),labels=Object.keys(types),vals=Object.values(types);
-  if(!labels.length)return;
+  if(!labels.length){
+    const hasLi=Object.keys(dealServiceMap).length>0;
+    if(!hasLi&&deals.length>0){
+      // Show loading in the canvas area
+      ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+      ctx.font="11px Montserrat";ctx.fillStyle="#9A9A9A";ctx.textAlign="center";
+      ctx.fillText("Loading engagement data...",ctx.canvas.width/2,ctx.canvas.height/2);
+    }
+    return;
+  }
   const palette={"Recurring":"#FFDA30","P2P":"#434343"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
   itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,el)=>{if(el.length)setDrill("eng_model",itcChart.data.labels[el[0].index]);},plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
@@ -1282,7 +1304,15 @@ function renderBUBars(_v){
   const v=_v||view();
   const bs=bustatsLi(v);
   if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
-  if(!bs.length){$("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;return;}
+  if(!bs.length){
+    const hasLi=Object.keys(dealServiceMap).length>0;
+    if(!hasLi&&deals.length>0){
+      $("bu-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto"></div></div><div class="es-sub" style="margin-top:8px">Loading BU data...</div></div>`;
+    }else{
+      $("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;
+    }
+    return;
+  }
   const mx=Math.max(...bs.map(b=>b.rev),1);
   const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
   $("bu-bars").innerHTML=bs.map(b=>`
@@ -1312,10 +1342,14 @@ function renderSvcBars(_v){
   const v=_v||view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
   // Aggregate line-item amounts by service from visible deals
+  const _bu=$("bu-sel")?.value||drill.bu||"";
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(li.svc)m[li.svc]=(m[li.svc]||0)+li.amount;
+      if(!li.svc)return;
+      // If BU filter active, only count line items belonging to that BU
+      if(_bu&&li.bu!==_bu)return;
+      m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
   const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
@@ -1402,7 +1436,7 @@ function resetAll(){
   const bs=$("bu-sel");if(bs)bs.value="";ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
-  const nb=$("nbd-sel");if(nb)nb.value="";
+  const nb=$("nbd-toggle");if(nb){nbdActive=false;nb.classList.remove("active");}
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   ownerManuallyFiltered=false;
