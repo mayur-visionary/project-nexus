@@ -575,13 +575,26 @@ const OWNER_GEO={
   "467997340":"AU"
 };
 const REACTIVATION_IDS=["41490632"];
+// Geo mapping: geo__invoice_app_ value → normalized region
+const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+// Extended OWNER_GEO for unregistered owners (fallback when geo property is empty/unknown)
+const OWNER_GEO_EXT=Object.assign({},OWNER_GEO,{
+  "131779647":"AU",  // Jiggyasa Agrawal
+  "17739173":"US",   // Tanuj Gupta
+  "107178262":"UK",  // Chintan Doshi
+  "86940863":"US",   // Nevilson Christan (NBD head)
+  "41490632":"US"    // Mukund Basita (Reactivation)
+});
 function geoFromDeal(d){
-  const id=String(d.owner_id||"");
-  if(OWNER_GEO[id])return OWNER_GEO[id];
-  // Fallback: use geo__invoice_app_ for Reactivation + unknown owners
+  // Primary: geo__invoice_app_ property with mapping
   const g=d.geo||"";
-  if(g==="AU/NZ")return"AU";
-  if(g==="UK"||g==="US")return g;
+  if(g&&GEO_MAP[g]!==undefined){
+    if(GEO_MAP[g])return GEO_MAP[g];
+    // "Other" → fallback to owner's team geo
+  }
+  // Fallback: owner's team geo (registered + extended)
+  const id=String(d.owner_id||"");
+  if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
 const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A"};
