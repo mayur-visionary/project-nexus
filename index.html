@@ -344,6 +344,16 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         </div>
       </div>
       <div class="vdiv"></div>
+      <span class="fl">Service</span>
+      <select class="fsel sm" id="service-sel" onchange="onGeoChange()">
+        <option value="">All Services</option>
+        <option value="Campaign">Campaign</option>
+        <option value="Email">Email</option>
+        <option value="Design">Design</option>
+        <option value="Search">Search</option>
+        <option value="Web">Web</option>
+      </select>
+      <div class="vdiv"></div>
       <span class="fl">Owners</span>
       <div class="ms-wrap" id="ms-wrap">
         <div class="ms-btn" id="ms-btn" onclick="toggleMS(event)">
@@ -367,16 +377,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="">All Types</option>
         <option value="One Time">P2P</option>
         <option value="Recurring">Recurring</option>
-      </select>
-      <div class="vdiv"></div>
-      <span class="fl">Service</span>
-      <select class="fsel sm" id="service-sel" onchange="onGeoChange()">
-        <option value="">All Services</option>
-        <option value="Campaign">Campaign</option>
-        <option value="Email">Email</option>
-        <option value="Design">Design</option>
-        <option value="Search">Search</option>
-        <option value="Web">Web</option>
       </select>
     </div>
   </div>
@@ -577,7 +577,7 @@ function initMonthSelects(){
 // ════ HEAD MULTI-SELECT ════
 function initHeadFilter(){
   $("head-ms-list").innerHTML=ALL_HEADS.map(h=>`
-    <div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h}</label></div>`).join("");
+    <div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h.split(" ")[0]}</label></div>`).join("");
 }
 function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");}
 function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
@@ -799,7 +799,7 @@ async function doSync(force=false){
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
     const lbl=getPeriodLabel(),sub=`${lbl}${bu?" · "+bu:""}${geo?" · "+geo:""}`;
-    $("ob-sub").textContent=`Gross bookings · ${sub}`;
+    $("ob-sub").textContent=`Net revenue · ${sub}`;
     $("geo-sub").textContent=`By region · ${sub}`;
     $("tl-sub").textContent=`By close date · ${sub}`;
     $("cl-sub").textContent=`Top 10 · ${sub}`;
@@ -847,8 +847,8 @@ function geostats(){
   }).filter(g=>g.posRev>0).sort((a,b)=>b.posRev-a.posRev);
 }
 function geoheadstats(){
-  const v=view(),g=v.filter(d=>d.amount>0).reduce((s,d)=>s+d.amount,0);
-  const hmap={};v.filter(d=>d.amount>0&&d.geo_head&&d.geo_head!=="—").forEach(d=>{if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;});
+  const v=view(),g=v.reduce((s,d)=>s+d.amount,0);
+  const hmap={};v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;});
   return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
 }
 function topClients(){
@@ -872,7 +872,7 @@ function engGroup(val){
 
 function engTypes(){
   const v=view(),m={};
-  v.filter(d=>d.amount>0&&d.eng_model&&d.eng_model!=="—").forEach(d=>{
+  v.filter(d=>d.eng_model&&d.eng_model!=="—").forEach(d=>{
     const g=engGroup(d.eng_model);
     if(g)m[g]=(m[g]||0)+d.amount;
   });
@@ -883,7 +883,7 @@ function engTypes(){
 }
 
 function invTypes(){
-  const v=view(),m={};v.filter(d=>d.amount>0).forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
+  const v=view(),m={};v.forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
 }
 
 // ════ EMPTY STATE ════
