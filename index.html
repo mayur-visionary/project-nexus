@@ -386,6 +386,20 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="One Time">P2P</option>
         <option value="Recurring">Recurring</option>
       </select>
+      <div class="vdiv"></div>
+      <span class="fl">Inter BU</span>
+      <select class="fsel sm" id="interbu-sel" onchange="onGeoChange()">
+        <option value="">All</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <div class="vdiv"></div>
+      <span class="fl">NBD</span>
+      <select class="fsel sm" id="nbd-sel" onchange="onGeoChange()">
+        <option value="">All</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
     </div>
   </div>
   <div class="yellow-rule"></div>
@@ -424,26 +438,12 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div id="svc-bars"></div>
     </div>
   </div>
-
-  <div class="sec">Detailed Analysis</div>
-  <div class="chart-row-3">
-    <div class="card">
-      <div class="card-ttl">Revenue by Owner</div>
-      <div class="card-sub" id="ob-sub">Click any bar to drill down</div>
-      <div id="ob-bars"></div>
-    </div>
-    <div class="card">
-      <div class="card-ttl">Daily Booking Activity</div>
-      <div class="card-sub" id="tl-sub">Revenue by close date</div>
-      <div style="position:relative;height:195px"><canvas id="tlc"></canvas></div>
-    </div>
+  <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Engagement Model</div>
       <div class="card-sub" id="it-sub">FTE · PTE · Recurring · P2P · click to drill</div>
       <div style="position:relative;height:210px"><canvas id="itc"></canvas></div>
     </div>
-  </div>
-  <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Top Clients by Revenue</div>
       <div class="card-sub" id="cl-sub">Click any client to drill down</div>
@@ -849,8 +849,6 @@ async function doSync(force=false){
     $("geo-sub").textContent=`Net revenue · ${sub}`;
     $("head-chart-sub").textContent=`Net revenue · ${sub}`;
     $("svc-chart-sub").textContent=`Net revenue · ${sub}`;
-    $("ob-sub").textContent=`Net revenue · ${sub}`;
-    $("tl-sub").textContent=`By close date · ${sub}`;
     $("cl-sub").textContent=`Top 10 · ${sub}`;
     $("it-sub").textContent=`Engagement model · ${sub}`;
     renderAll();
@@ -1128,7 +1126,7 @@ function renderSvcBars(){
   $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">🔧</div><div class="es-title">Awaiting data source</div><div class="es-sub">Service filter is ready — pending HubSpot property mapping.</div></div>`;
 }
 
-function renderAll(){renderKPIs();renderBUBars();renderGeoBars();renderHeadBars();renderSvcBars();renderOwnerBars();renderClientBars();renderTimeline();renderInvChart();renderTable();}
+function renderAll(){renderKPIs();renderBUBars();renderGeoBars();renderHeadBars();renderSvcBars();renderClientBars();renderInvChart();renderTable();}
 
 // ════ KPI ACTIONS ════
 function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
@@ -1190,6 +1188,8 @@ function resetAll(){
   const bs=$("bu-sel");if(bs)bs.value="";const gs=$("geo-sel");if(gs)gs.value="";ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
+  const ib=$("interbu-sel");if(ib)ib.value="";
+  const nb=$("nbd-sel");if(nb)nb.value="";
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   updateOwnerLabel();
