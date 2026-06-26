@@ -621,6 +621,54 @@ function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debT
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
 const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#434343","Search":"#9A9A9A","Web":"#696969"};
+
+// ════ SERVICE CLASSIFIER ════
+// Line item name keywords → service category (matched against line item name, case-insensitive)
+// Order matters — first match wins; more specific patterns come first
+const SVC_PATTERNS=[
+  // Campaign
+  {svc:"Campaign",kw:["campaign - retainer campaigns","campaign - automation","campaign - production",
+    "campaign - data migration","campaign - adhoc campaigns","campaign - data integration",
+    "campaign - audit","campaign manager","campaign operation specialist","sfmc","campaign"]},
+  // Email (Development - Email, EMail Coding)
+  {svc:"Email",kw:["development - email","email coding"]},
+  // Design (but NOT Design - Asset which is Web)
+  {svc:"Design",kw:["design - banner","design - copywriting","design - email","design - lp","design - web"]},
+  // Search
+  {svc:"Search",kw:["search - seo","search - sem","search - google analytics","search - outreach",
+    "search - social","search - production","search - programmatic advertising","search - dm",
+    "sem","social","search"]},
+  // Web (Design - Asset + Development - Web/LP/Hub/Mobile + Landing Page)
+  {svc:"Web",kw:["design - asset","development - web","development - lp/hub","development - mobile app",
+    "landing page coding and design","landing page coding","landing page only coding"]}
+];
+function classifyLineItem(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+  for(const p of SVC_PATTERNS){
+    for(const kw of p.kw){
+      if(n.includes(kw.toLowerCase()))return p.svc;
+    }
+  }
+  return null;
+}
+
+// Line-item service data: dealId → [{svc, amount}]
+let dealServiceMap={};
+// Service-level amounts for filtered view: computed from dealServiceMap + view() deals
+function svcAmounts(){
+  const v=view(),selSvc=getSelectedServices(),allSvc=selSvc.length===ALL_SERVICES.length;
+  const m={};
+  v.forEach(d=>{
+    const items=dealServiceMap[d.id]||[];
+    items.forEach(li=>{
+      if(li.svc&&(allSvc||selSvc.includes(li.svc))){
+        m[li.svc]=(m[li.svc]||0)+li.amount;
+      }
+    });
+  });
+  return m;
+}
 function initServiceFilter(){
   $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`
     <div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="onSvcChange()"><label for="svc-${s}">${s}</label></div>`).join("");
@@ -744,6 +792,18 @@ function view(){
     const _itype=$("itype-sel")?.value||"";
     if(_itype&&d.inv_type!==_itype)return false;
     if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return false;}
+    // Service filter (client-side, line-item based)
+    const _selSvc=getSelectedServices();
+    if(_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length){
+      const dSvc=dealServiceMap[d.id]||[];
+      const hasSvc=dSvc.some(li=>_selSvc.includes(li.svc));
+      if(!hasSvc)return false;
+    }
+    // Service drill
+    if(drill.service){
+      const dSvc=dealServiceMap[d.id]||[];
+      if(!dSvc.some(li=>li.svc===drill.service))return false;
+    }
     return true;
   });
 }
@@ -753,7 +813,7 @@ function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateC
 function updateChips(){
   const chips=$("drill-chips"),entries=Object.entries(drill);
   if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
-  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Head",eng_model:"Engagement",bu:"Business Unit"};
+  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Head",eng_model:"Engagement",bu:"Business Unit",service:"Service"};
   const dv=(k,v)=>k==="owner"?ownerName(v):k==="amount_sign"?v==="negative"?"Credits Only":"Positive Only":v;
   chips.innerHTML=entries.map(([k,v])=>`<div class="dchip"><span class="dchip-lbl">${labels[k]||k}:</span><span>${dv(k,v)}</span><span class="dchip-x" onclick="clearDrill('${k}')">✕</span></div>`).join("")+
     `<button class="drill-clear" onclick="clearAllDrills()">Clear All</button>`;
@@ -808,6 +868,28 @@ async function doSync(force=false){
     }while(after);
 
     deals=allDeals;
+
+    // ── Fetch line items for service classification ──
+    dealServiceMap={};
+    try{
+      const dealIds=allDeals.map(d=>d.id);
+      // Batch in chunks of 500 deal IDs per request to keep payload manageable
+      for(let i=0;i<dealIds.length;i+=500){
+        const chunk=dealIds.slice(i,i+500);
+        const liRes=await fetch("/api/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          const items=liData.items||{};
+          Object.entries(items).forEach(([did,lis])=>{
+            dealServiceMap[did]=(lis||[]).map(li=>({
+              svc:classifyLineItem(li.name),
+              amount:li.amount||0,
+              name:li.name||""
+            })).filter(li=>li.svc);
+          });
+        }else{console.warn("Line items fetch returned",liRes.status);}
+      }
+    }catch(e){console.error("Line items fetch error:",e);}
 
     // ── Net Revenue — unfiltered (all owners, company total) ──
     const nrFilters=[
@@ -1122,8 +1204,23 @@ function renderHeadBars(){
 function renderSvcBars(){
   const v=view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
-  // Service data not yet mapped to a HubSpot property — show placeholder
-  $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">🔧</div><div class="es-title">Awaiting data source</div><div class="es-sub">Service filter is ready — pending HubSpot property mapping.</div></div>`;
+  // Aggregate line-item amounts by service from visible deals
+  const m={};
+  v.forEach(d=>{
+    (dealServiceMap[d.id]||[]).forEach(li=>{
+      if(li.svc)m[li.svc]=(m[li.svc]||0)+li.amount;
+    });
+  });
+  const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
+  if(!entries.length){$("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">🔧</div><div class="es-title">No service data</div><div class="es-sub">No classified line items found for this period.</div></div>`;return;}
+  const total=entries.reduce((s,e)=>s+e.rev,0);
+  const mx=Math.max(...entries.map(e=>e.rev),1);
+  $("svc-bars").innerHTML=entries.map(e=>`
+    <div class="gbar-row${drill.service===e.svc?" drill-active":""}" onclick="setDrill('service','${e.svc}')" title="${e.svc}">
+      <div class="gbar-badge" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};color:${e.svc==="Design"||e.svc==="Search"||e.svc==="Web"?"#FFDA30":"#111"}">${e.svc}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};width:${(e.rev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(e.rev)}</div><div class="gbar-cnt">${total>0?(e.rev/total*100).toFixed(1):0}%</div></div>
+    </div>`).join("");
 }
 
 function renderAll(){renderKPIs();renderBUBars();renderGeoBars();renderHeadBars();renderSvcBars();renderClientBars();renderInvChart();renderTable();}
