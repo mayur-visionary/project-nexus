@@ -299,10 +299,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <span class="fl">Period</span>
       <select class="fsel" id="period-sel" onchange="onPeriodChange()">
         <option value="this-month">This Month</option>
-        <option value="last-month" selected>Last Month</option>
+        <option value="last-month">Last Month</option>
         <option value="this-quarter">This Quarter</option>
         <option value="last-quarter">Last Quarter</option>
-        <option value="this-fy">This FY</option>
+        <option value="this-fy" selected>This FY</option>
         <option value="custom">Custom ▾</option>
       </select>
       <div class="custom-range" id="custom-range">
@@ -390,25 +390,25 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         </div>
       </div>
       <div class="vdiv"></div>
-      <span class="fl">Invoice Type</span>
-      <select class="fsel sm" id="itype-sel" onchange="onGeoChange()">
-        <option value="">All Types</option>
-        <option value="One Time">P2P</option>
-        <option value="Recurring">Recurring</option>
-      </select>
-      <div class="vdiv"></div>
       <span class="fl">Inter BU</span>
       <select class="fsel sm" id="interbu-sel" onchange="onGeoChange()">
-        <option value="">All</option>
+        <option value="">Select</option>
         <option value="Yes">Yes</option>
         <option value="No">No</option>
       </select>
       <div class="vdiv"></div>
       <span class="fl">NBD</span>
       <select class="fsel sm" id="nbd-sel" onchange="onGeoChange()">
-        <option value="">All</option>
+        <option value="">Select</option>
         <option value="Yes">Yes</option>
         <option value="No">No</option>
+      </select>
+      <div class="vdiv"></div>
+      <span class="fl">Invoice Type</span>
+      <select class="fsel sm" id="itype-sel" onchange="onGeoChange()">
+        <option value="">All Types</option>
+        <option value="One Time">P2P</option>
+        <option value="Recurring">Recurring</option>
       </select>
     </div>
   </div>
@@ -1309,7 +1309,7 @@ function updateDynamicOptions(){
 }
 
 function resetAll(){
-  const ps=$("period-sel");if(ps)ps.value="last-month";
+  const ps=$("period-sel");if(ps)ps.value="this-fy";
   const cr=$("custom-range");if(cr)cr.classList.remove("show");
   const bs=$("bu-sel");if(bs)bs.value="";ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
@@ -1356,7 +1356,7 @@ window.addEventListener("DOMContentLoaded",function(){
     initHeadFilter();
     initRegionFilter();
     initServiceFilter();
-    const ps=$("period-sel");if(ps)ps.value="last-month";
+    const ps=$("period-sel");if(ps)ps.value="this-fy";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     doSync(true);
   }catch(e){
