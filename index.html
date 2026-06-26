@@ -421,7 +421,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="sb-divider"></div>
     <div class="sb-section">
       <div class="sb-lbl">Quick Filter</div>
-      <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()">NBD</button>
+      <div style="display:flex;gap:6px">
+        <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()" style="flex:1">NBD</button>
+        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1">Reactivation</button>
+      </div>
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section">
@@ -806,27 +809,26 @@ document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
 function onBUChange(){
-  const bu=$("bu-sel")?.value||"";
-  if(bu){
-    // Narrow head options to those within this BU
-    const validH=BU_HEADS[bu]||[];
-    ALL_HEADS.forEach(h=>{
-      const e=$("head-"+h.replace(/\s/g,"_"));
-      if(e&&!validH.includes(h)){e.checked=false;}
-    });
-    updateHeadLabel();
-  }
-  updateSmartFilters();
-  clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);
+  clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);
 }
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ NBD TOGGLE ════
-const NBD_OWNERS=["37762663","255830830","86813698","467997340","916030451"]; // Malav, Devanshu, Aman, Karan, Kamesh
-let nbdActive=false;
+const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
+const REACTIVATION_OWNERS=["41490632"]; // Mukund Basita
+let nbdActive=false,reactivationActive=false;
 function toggleNBD(){
   nbdActive=!nbdActive;
+  if(nbdActive)reactivationActive=false;
   $("nbd-toggle").classList.toggle("active",nbdActive);
+  $("react-toggle").classList.remove("active");
+  renderAll();
+}
+function toggleReactivation(){
+  reactivationActive=!reactivationActive;
+  if(reactivationActive)nbdActive=false;
+  $("react-toggle").classList.toggle("active",reactivationActive);
+  $("nbd-toggle").classList.remove("active");
   renderAll();
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
@@ -834,6 +836,8 @@ function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(
 // ════ DRILL-DOWN ════
 function view(){
   const _bu=$("bu-sel")?.value||"";
+  const _drillBU=drill.bu||"";
+  const _effectiveBU=_bu||_drillBU;
   const _selGeo=getSelectedRegions();
   const _geoFiltered=_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length;
   const _vh=getSelectedHeads();
@@ -843,37 +847,58 @@ function view(){
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const _ownerFiltered=ownerManuallyFiltered;
   const _selOwners=_ownerFiltered?selOwners():[];
+  const _effectiveSvc=drill.service||null;
 
-  return deals.filter(d=>{
-    if(drill.region&&geoFromDeal(d)!==drill.region)return false;
-    if(_geoFiltered){const dGeo=geoFromDeal(d);if(!dGeo||!_selGeo.includes(dGeo))return false;}
-    if(drill.owner&&d.owner_id!==drill.owner)return false;
-    if(drill.client&&d.client!==drill.client)return false;
-    if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
-    if(drill.amount_sign==="negative"&&d.amount>=0)return false;
-    if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
-    // BU filter: by geo_head for deal-level charts, but also keep deals for line-item charts
-    if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
-    if(drill.bu){const dbu=HEAD_BU_MAP[d.geo_head||""]||"Other";if(dbu!==drill.bu)return false;}
-    if(_headFiltered&&!_vh.includes(d.geo_head||""))return false;
-    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
+  return deals.map(d=>{
+    // ── Standard deal-level filters ──
+    if(drill.region&&geoFromDeal(d)!==drill.region)return null;
+    if(_geoFiltered){const dGeo=geoFromDeal(d);if(!dGeo||!_selGeo.includes(dGeo))return null;}
+    if(drill.owner&&d.owner_id!==drill.owner)return null;
+    if(drill.client&&d.client!==drill.client)return null;
+    if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
+    if(drill.amount_sign==="negative"&&d.amount>=0)return null;
+    if(drill.geo_head&&d.geo_head!==drill.geo_head)return null;
+    // Head dropdown filter (independent of BU — head narrows within whatever BU context)
+    if(_headFiltered&&!_vh.includes(d.geo_head||""))return null;
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
-      if(!_selOwners.includes(String(d.owner_id)))return false;
+      if(!_selOwners.includes(String(d.owner_id)))return null;
     }
-    if(_itype&&d.inv_type!==_itype)return false;
-    // NBD filter — only show deals from NBD owners when active
-    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return false;
-    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return false;}
+    if(_itype&&d.inv_type!==_itype)return null;
+    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
+    if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
+    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;}
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
-      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return false;
+      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
     }
     if(drill.service){
       const dSvc=dealServiceMap[d.id]||[];
-      if(!dSvc.some(li=>li.svc===drill.service))return false;
+      if(!dSvc.some(li=>li.svc===drill.service))return null;
     }
-    return true;
-  });
+
+    // ── Line-item amount adjustment ──
+    // When BU and/or Service filter is active, adjust deal amount to matching line items
+    const needsLiAdjust=_effectiveBU||_effectiveSvc||_svcFiltered;
+    if(needsLiAdjust){
+      const lis=dealServiceMap[d.id]||[];
+      if(lis.length>0){
+        const filtered=lis.filter(li=>{
+          if(_effectiveBU&&li.bu!==_effectiveBU)return false;
+          if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
+          if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+          return true;
+        });
+        const adjAmount=filtered.reduce((s,li)=>s+li.amount,0);
+        if(adjAmount===0)return null;
+        return Object.assign({},d,{amount:adjAmount});
+      }
+      // No line items loaded yet — if BU filter active, exclude (can't determine BU)
+      if(_effectiveBU)return null;
+    }
+
+    return d;
+  }).filter(Boolean);
 }
 function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
 function clearDrill(key){delete drill[key];updateChips();renderAll();}
@@ -907,14 +932,9 @@ async function doSync(force=false){
     // Exclusions at API level — no owner filter (all owners fetched, owner filter is client-side)
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
-    // Build filterGroups — use multiple EQ (OR) for geo_head since IN not supported on string props
+    // Build filterGroups — Head filter at API level only when heads manually selected
     let fGroups;
-    if(bu&&BU_HEADS[bu]){
-      const bh=BU_HEADS[bu];
-      const heads=(!_allHeads&&_selHeads.length>0)?bh.filter(h=>_selHeads.includes(h)):bh;
-      const finalH=heads.length>0?heads:bh;
-      fGroups=finalH.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
-    } else if(!_allHeads&&_selHeads.length>0){
+    if(!_allHeads&&_selHeads.length>0){
       fGroups=_selHeads.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
     } else {
       fGroups=[{filters}];
@@ -1103,10 +1123,15 @@ function engGroupFromLi(d){
 // BU stats from line items — each line item has li.bu
 function bustatsLi(v){
   if(!v)v=view();
+  const _bu=$("bu-sel")?.value||drill.bu||"";
   const bmap={Digital:{rev:0,deals:new Set()},MarTech:{rev:0,deals:new Set()}};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(li.bu&&bmap[li.bu]){bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);}
+      if(li.bu&&bmap[li.bu]){
+        // If BU filter active, only count line items for that BU
+        if(_bu&&li.bu!==_bu)return;
+        bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);
+      }
     });
   });
   const total=bmap.Digital.rev+bmap.MarTech.rev;
@@ -1169,7 +1194,7 @@ function renderKPIs(_v){
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
 })(),sub:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
@@ -1179,7 +1204,7 @@ function renderKPIs(_v){
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
@@ -1273,20 +1298,22 @@ function renderTable(_v){
   const paged=srt.slice((pg-1)*PER,pg*PER);
   $("tmeta").textContent=`${v.length} deal${v.length!==1?"s":""} · Page ${pg} of ${tot}`;
   const ar=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
-  $("dth").innerHTML=`<tr><th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th><th onclick="sortBy('client')">Client${ar("client")}</th><th>Owner</th><th onclick="sortBy('geo')">Region${ar("geo")}</th><th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th><th>Type</th><th>Pattern</th><th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th><th style="text-align:center">↗</th></tr>`;
+  $("dth").innerHTML=`<tr><th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th><th onclick="sortBy('client')">Client${ar("client")}</th><th>Owner</th><th>Head</th><th onclick="sortBy('geo')">Region${ar("geo")}</th><th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th><th>Engagement</th><th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th><th style="text-align:center">↗</th></tr>`;
   if(!paged.length){$("dtb").innerHTML=`<tr><td colspan="9">${emptyHTML()}</td></tr>`;$("pgs").innerHTML="";return;}
   $("dtb").innerHTML=paged.map((d,i)=>{
     const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
     const geo=geoFromDeal(d)||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
+    const headFirst=(d.geo_head||"—").split(" ")[0];
+    const eng=engGroup(d.eng_model)||"—";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${d.geo_head}')">${headFirst}</td>
       <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${geo}')">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
-      <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('inv_type','${d.inv_type}')">${d.inv_type}</span></td>
-      <td style="background:${bg}"><span class="inv-tag">${d.inv_pattern}</span></td>
+      <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('eng_model','${eng}')">${eng}</span></td>
       <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(d.closedate)}</td>
       <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" onclick="event.stopPropagation()">↗</a></td>
     </tr>`;
@@ -1437,6 +1464,7 @@ function resetAll(){
   const gh=$("geohead-sel");if(gh)gh.value="";
   const it=$("itype-sel");if(it)it.value="";
   const nb=$("nbd-toggle");if(nb){nbdActive=false;nb.classList.remove("active");}
+  const rt=$("react-toggle");if(rt){reactivationActive=false;rt.classList.remove("active");}
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   ownerManuallyFiltered=false;
