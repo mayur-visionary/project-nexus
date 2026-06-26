@@ -690,52 +690,47 @@ const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
 const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#5C6BC0","Search":"#26A69A","Web":"#434343"};
 
 // ════ SERVICE CLASSIFIER ════
-// Line item name keywords → service category (matched against line item name, case-insensitive)
-// Order matters — first match wins; more specific patterns come first
-const SVC_PATTERNS=[
-  // Campaign
-  {svc:"Campaign",kw:["campaign - retainer campaigns","campaign - automation","campaign - production",
-    "campaign - data migration","campaign - adhoc campaigns","campaign - data integration",
-    "campaign - audit","campaign manager","campaign operation specialist","sfmc","campaign"]},
-  // Email (Development - Email, EMail Coding)
-  {svc:"Email",kw:["development - email","email coding"]},
-  // Design (but NOT Design - Asset which is Web)
-  {svc:"Design",kw:["design - banner","design - copywriting","design - email","design - lp","design - web"]},
-  // Search
-  {svc:"Search",kw:["search - seo","search - sem","search - google analytics","search - outreach",
-    "search - social","search - production","search - programmatic advertising","search - dm",
-    "sem","social","search"]},
-  // Web (Design - Asset + Development - Web/LP/Hub/Mobile + Landing Page)
-  {svc:"Web",kw:["design - asset","development - web","development - lp/hub","development - mobile app",
-    "landing page coding and design","landing page coding","landing page only coding"]}
-];
+// BU-aware: classifyLineItem returns {svc, bu} based on line item name
+// MarTech services: Campaign, Design (only Design - Email), Email (Development - Email)
+// Digital services: Design (all Design - * except Design - Email), Search, Web
 function classifyLineItem(name){
   if(!name)return null;
   const n=name.toLowerCase();
-  for(const p of SVC_PATTERNS){
-    for(const kw of p.kw){
-      if(n.includes(kw.toLowerCase()))return p.svc;
-    }
-  }
+
+  // ── MarTech: Campaign (any Campaign - sub-service) ──
+  if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
+    return{svc:"Campaign",bu:"MarTech"};
+
+  // ── MarTech: Design (ONLY Design - Email) ──
+  if(n.includes("design - email"))
+    return{svc:"Design",bu:"MarTech"};
+
+  // ── MarTech: Email (Development - Email, EMail Coding) ──
+  if(n.includes("development - email")||n.includes("email coding"))
+    return{svc:"Email",bu:"MarTech"};
+
+  // ── Digital: Web (must check before Design to catch Design - Asset) ──
+  if(n.includes("design - asset")||n.includes("development - web")||n.includes("development - lp/hub")||
+     n.includes("development - mobile app")||n.includes("ai & automation - web")||
+     n.includes("dot-net development")||n.includes("operational service - data entry")||
+     n.includes("landing page coding and design")||n.includes("landing page coding")||
+     n.includes("landing page only coding"))
+    return{svc:"Web",bu:"Digital"};
+
+  // ── Digital: Design (all remaining Design - * patterns) ──
+  if(n.includes("design - banner")||n.includes("design - copywriting")||
+     n.includes("design - lp")||n.includes("design - web"))
+    return{svc:"Design",bu:"Digital"};
+
+  // ── Digital: Search (all Search - * + Consultancy Fees) ──
+  if(n.includes("search -")||n.includes("consultancy fees"))
+    return{svc:"Search",bu:"Digital"};
+
   return null;
 }
 
-// Line-item service data: dealId → [{svc, amount}]
+// Line-item service data: dealId → [{svc, bu, amount, name}]
 let dealServiceMap={};
-// Service-level amounts for filtered view: computed from dealServiceMap + view() deals
-function svcAmounts(){
-  const v=view(),selSvc=getSelectedServices(),allSvc=selSvc.length===ALL_SERVICES.length;
-  const m={};
-  v.forEach(d=>{
-    const items=dealServiceMap[d.id]||[];
-    items.forEach(li=>{
-      if(li.svc&&(allSvc||selSvc.includes(li.svc))){
-        m[li.svc]=(m[li.svc]||0)+li.amount;
-      }
-    });
-  });
-  return m;
-}
 function initServiceFilter(){
   $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`
     <div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="onSvcChange()"><label for="svc-${s}">${s}</label></div>`).join("");
@@ -959,11 +954,10 @@ async function doSync(force=false){
             if(liData._debug)console.log("Line items debug:",liData._debug);
             const items=liData.items||{};
             Object.entries(items).forEach(([did,lis])=>{
-              dealServiceMap[did]=(lis||[]).map(li=>({
-                svc:classifyLineItem(li.name),
-                amount:li.amount||0,
-                name:li.name||""
-              })).filter(li=>li.svc);
+              dealServiceMap[did]=(lis||[]).map(li=>{
+                const cls=classifyLineItem(li.name);
+                return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
+              }).filter(Boolean);
             });
           }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
         }
@@ -1256,16 +1250,20 @@ function renderHeadBars(){
 function renderSvcBars(){
   const v=view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
-  // Aggregate line-item amounts by service from visible deals
+  // Determine active BU context (from BU filter or head selection)
+  const _bu=$("bu-sel")?.value||"";
+  // Aggregate line-item amounts by service from visible deals, respecting BU
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(li.svc)m[li.svc]=(m[li.svc]||0)+li.amount;
+      if(!li.svc)return;
+      // If BU filter is active, only count line items from that BU
+      if(_bu&&li.bu&&li.bu!==_bu)return;
+      m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
   const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
   if(!entries.length){
-    // Check if line items are still loading
     const hasAnyServiceData=Object.keys(dealServiceMap).length>0;
     if(!hasAnyServiceData&&deals.length>0){
       $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto"></div></div><div class="es-sub" style="margin-top:8px">Loading service data...</div></div>`;
