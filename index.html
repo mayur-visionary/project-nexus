@@ -875,7 +875,7 @@ async function doSync(force=false){
       const dealIds=allDeals.map(d=>d.id);
       for(let i=0;i<dealIds.length;i+=500){
         const chunk=dealIds.slice(i,i+500);
-        const liRes=await fetch("/api/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
         if(liRes.ok){
           const liData=await liRes.json();
           if(liData._debug)console.log("Line items debug:",liData._debug);
