@@ -834,52 +834,55 @@ function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(
 
 // ════ DRILL-DOWN ════
 function view(){
-  return deals.filter(d=>{
-    if(drill.region&&geoFromDeal(d)!==drill.region)return false;
-    // Region multiselect filter (client-side)
-    const _selGeo=getSelectedRegions();
-    if(_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length){
-      const dGeo=geoFromDeal(d);
-      if(!dGeo||!_selGeo.includes(dGeo))return false;
+  const _bu=$("bu-sel")?.value||"";
+  const _selGeo=getSelectedRegions();
+  const _geoFiltered=_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length;
+  const _vh=getSelectedHeads();
+  const _headFiltered=_vh.length>0&&_vh.length<ALL_HEADS.length;
+  const _itype=$("itype-sel")?.value||"";
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
+  const _ownerFiltered=ownerManuallyFiltered;
+  const _selOwners=_ownerFiltered?selOwners():[];
+
+  return deals.map(d=>{
+    // ── Standard filters (return null to exclude) ──
+    if(drill.region&&geoFromDeal(d)!==drill.region)return null;
+    if(_geoFiltered){const dGeo=geoFromDeal(d);if(!dGeo||!_selGeo.includes(dGeo))return null;}
+    if(drill.owner&&d.owner_id!==drill.owner)return null;
+    if(drill.client&&d.client!==drill.client)return null;
+    if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
+    if(drill.amount_sign==="negative"&&d.amount>=0)return null;
+    if(drill.geo_head&&d.geo_head!==drill.geo_head)return null;
+    if(drill.bu){const dbu=HEAD_BU_MAP[d.geo_head||""]||"Other";if(dbu!==drill.bu)return null;}
+    if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return null;
+    if(_headFiltered&&!_vh.includes(d.geo_head||""))return null;
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
+    if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
+      if(!_selOwners.includes(String(d.owner_id)))return null;
     }
-    if(drill.owner&&d.owner_id!==drill.owner)return false;
-    if(drill.client&&d.client!==drill.client)return false;
-    if(drill.inv_type&&d.inv_type!==drill.inv_type)return false;
-    if(drill.amount_sign==="negative"&&d.amount>=0)return false;
-    if(drill.geo_head&&d.geo_head!==drill.geo_head)return false;
-    if(drill.bu){const dbu=HEAD_BU_MAP[d.geo_head||""]||"Other";if(dbu!==drill.bu)return false;}
-    // BU + Head client-side filter
-    const _bu=$("bu-sel")?.value||"";
-    if(_bu&&BU_HEADS[_bu]&&!BU_HEADS[_bu].includes(d.geo_head||""))return false;
-    const _vh=getSelectedHeads();
-    if(_vh.length>0&&_vh.length<ALL_HEADS.length&&!_vh.includes(d.geo_head||""))return false;
-    // company_name exclusion (client-side safety net — also in API)
-    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
-    // Owner filter (client-side — only when user manually changed owner selection)
-    if(ownerManuallyFiltered){
-      const _selOwners=selOwners();
-      if(_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
-        if(!_selOwners.includes(String(d.owner_id)))return false;
-      }
-    }
-    // Invoice type filter (client-side)
-    const _itype=$("itype-sel")?.value||"";
-    if(_itype&&d.inv_type!==_itype)return false;
-    if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return false;}
-    // Service filter (client-side, line-item based)
-    const _selSvc=getSelectedServices();
-    if(_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length){
+    if(_itype&&d.inv_type!==_itype)return null;
+    if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return null;}
+    if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
-      const hasSvc=dSvc.some(li=>_selSvc.includes(li.svc));
-      if(!hasSvc)return false;
+      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
     }
-    // Service drill
     if(drill.service){
       const dSvc=dealServiceMap[d.id]||[];
-      if(!dSvc.some(li=>li.svc===drill.service))return false;
+      if(!dSvc.some(li=>li.svc===drill.service))return null;
     }
-    return true;
-  });
+
+    // ── BU line-item amount adjustment ──
+    // When BU filter is active, replace deal amount with sum of line items for that BU's services
+    if(_bu){
+      const lis=dealServiceMap[d.id]||[];
+      const buAmount=lis.filter(li=>li.bu===_bu).reduce((s,li)=>s+li.amount,0);
+      if(buAmount===0&&lis.length>0)return null; // deal has line items but none for this BU
+      if(lis.length>0)return Object.assign({},d,{amount:buAmount});
+    }
+
+    return d;
+  }).filter(Boolean);
 }
 function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
 function clearDrill(key){delete drill[key];updateChips();renderAll();}
@@ -1100,17 +1103,19 @@ function renderKPIs(){
   const _hasDrill=Object.keys(drill).length>0;
   const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
   const _hasItype=$("itype-sel")?.value||"";
+  const _hasBU=$("bu-sel")?.value||"";
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners||_hasSvc;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
 })(),sub:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
   const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
   const _hasItype=$("itype-sel")?.value||"";
+  const _hasBU=$("bu-sel")?.value||"";
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_notAllOwners||_hasSvc;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
