@@ -90,7 +90,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
 /* ── Drill chips ── */
-.drill-bar{max-width:1440px;margin:0 auto;padding:0 28px}
+.drill-bar{max-width:1540px;margin:0 auto;padding:0 28px}
 .drill-chips{display:none;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 0}
 .drill-chips.show{display:flex}
 .dchip{display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;background:#FFDA30;color:#111;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
@@ -106,7 +106,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .err-bar strong{color:#FFDA30}
 
 /* ── Main ── */
-.main{max-width:1440px;margin:0 auto;padding:18px 28px 48px}
+.app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
+.sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
+.sb-section{margin-bottom:0}
+.sb-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:5px}
+.sb-sel{width:100%;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:none}
+.sb-sel:hover,.sb-sel:focus{border-color:#FFDA30;background:#FFFBEA}
+.sb-sel option{background:#fff;color:#434343}
+.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
+.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
+.main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
 
 /* ── KPI — all borders uniform yellow ── */
@@ -218,6 +228,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   .main{padding:16px 18px 40px}
   .drill-bar{padding:0 18px}
   .err-wrap{padding:8px 18px 0}
+  .app-layout{flex-direction:column}
+  .sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static;max-height:none;align-items:flex-end}
+  .sb-section{flex:1;min-width:120px}
+  .sb-divider{display:none}
 }
 @media(max-width:600px){
   .hdr-top{flex-direction:column}
@@ -371,10 +385,21 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <div id="svc-ms-list"></div>
         </div>
       </div>
-      <div class="vdiv"></div>
-      <span class="fl">Owners</span>
-      <div class="ms-wrap" id="ms-wrap">
-        <div class="ms-btn" id="ms-btn" onclick="toggleMS(event)">
+    </div>
+  </div>
+  <div class="yellow-rule"></div>
+</div>
+
+<div class="drill-bar"><div class="drill-chips" id="drill-chips"></div></div>
+<div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div></div>
+
+<!-- LAYOUT: Sidebar + Main -->
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <div class="ms-wrap" id="ms-wrap" style="width:100%">
+        <div class="ms-btn sb-ms-btn" id="ms-btn" onclick="toggleMS(event)">
           <span id="ms-label">All Owners</span>
           <span class="ms-arrow">▼</span>
         </div>
@@ -389,37 +414,38 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <div id="ms-list"></div>
         </div>
       </div>
-      <div class="vdiv"></div>
-      <span class="fl">Inter BU</span>
-      <select class="fsel sm" id="interbu-sel" onchange="onGeoChange()">
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Inter BU</div>
+      <select class="fsel sb-sel" id="interbu-sel" onchange="onGeoChange()">
         <option value="">Select</option>
         <option value="Yes">Yes</option>
         <option value="No">No</option>
       </select>
-      <div class="vdiv"></div>
-      <span class="fl">NBD</span>
-      <select class="fsel sm" id="nbd-sel" onchange="onGeoChange()">
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">NBD</div>
+      <select class="fsel sb-sel" id="nbd-sel" onchange="onGeoChange()">
         <option value="">Select</option>
         <option value="Yes">Yes</option>
         <option value="No">No</option>
       </select>
-      <div class="vdiv"></div>
-      <span class="fl">Invoice Type</span>
-      <select class="fsel sm" id="itype-sel" onchange="onGeoChange()">
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Invoice Type</div>
+      <select class="fsel sb-sel" id="itype-sel" onchange="onGeoChange()">
         <option value="">All Types</option>
         <option value="One Time">P2P</option>
         <option value="Recurring">Recurring</option>
       </select>
     </div>
-  </div>
-  <div class="yellow-rule"></div>
-</div>
+  </aside>
 
-<div class="drill-bar"><div class="drill-chips" id="drill-chips"></div></div>
-<div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div></div>
-
-<!-- MAIN -->
-<div class="main">
+  <!-- MAIN -->
+  <div class="main">
   <div class="sec">Key Metrics</div>
   <div class="kpi-grid" id="kpi-grid"></div>
 
@@ -476,6 +502,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div><!-- /deal-records-section -->
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
+</div><!-- /app-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
