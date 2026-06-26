@@ -312,11 +312,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="fbar-in">
       <span class="fl">Period</span>
       <select class="fsel" id="period-sel" onchange="onPeriodChange()">
-        <option value="this-month">This Month</option>
+        <option value="this-month" selected>This Month</option>
         <option value="last-month">Last Month</option>
         <option value="this-quarter">This Quarter</option>
         <option value="last-quarter">Last Quarter</option>
-        <option value="this-fy" selected>This FY</option>
+        <option value="this-fy">This FY</option>
         <option value="custom">Custom ▾</option>
       </select>
       <div class="custom-range" id="custom-range">
@@ -925,28 +925,32 @@ async function doSync(force=false){
 
     deals=allDeals;
 
-    // ── Fetch line items for service classification ──
+    // ── Fetch line items for service classification (non-blocking) ──
     dealServiceMap={};
-    try{
-      const dealIds=allDeals.map(d=>d.id);
-      for(let i=0;i<dealIds.length;i+=500){
-        const chunk=dealIds.slice(i,i+500);
-        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
-        if(liRes.ok){
-          const liData=await liRes.json();
-          if(liData._debug)console.log("Line items debug:",liData._debug);
-          const items=liData.items||{};
-          Object.entries(items).forEach(([did,lis])=>{
-            dealServiceMap[did]=(lis||[]).map(li=>({
-              svc:classifyLineItem(li.name),
-              amount:li.amount||0,
-              name:li.name||""
-            })).filter(li=>li.svc);
-          });
-        }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
-      }
-      console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
-    }catch(e){console.error("Line items fetch error:",e);}
+    const liPromise=(async()=>{
+      try{
+        const dealIds=allDeals.map(d=>d.id);
+        for(let i=0;i<dealIds.length;i+=500){
+          const chunk=dealIds.slice(i,i+500);
+          const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+          if(liRes.ok){
+            const liData=await liRes.json();
+            if(liData._debug)console.log("Line items debug:",liData._debug);
+            const items=liData.items||{};
+            Object.entries(items).forEach(([did,lis])=>{
+              dealServiceMap[did]=(lis||[]).map(li=>({
+                svc:classifyLineItem(li.name),
+                amount:li.amount||0,
+                name:li.name||""
+              })).filter(li=>li.svc);
+            });
+          }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
+        }
+        console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
+        // Re-render Service chart now that data is available
+        renderSvcBars();
+      }catch(e){console.error("Line items fetch error:",e);}
+    })();
 
     // ── Net Revenue — unfiltered (all owners, company total) ──
     const nrFilters=[
@@ -1269,7 +1273,16 @@ function renderSvcBars(){
     });
   });
   const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
-  if(!entries.length){$("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">🔧</div><div class="es-title">No service data</div><div class="es-sub">No classified line items found for this period.</div></div>`;return;}
+  if(!entries.length){
+    // Check if line items are still loading
+    const hasAnyServiceData=Object.keys(dealServiceMap).length>0;
+    if(!hasAnyServiceData&&deals.length>0){
+      $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto"></div></div><div class="es-sub" style="margin-top:8px">Loading service data...</div></div>`;
+    }else{
+      $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">📊</div><div class="es-title">No service data</div><div class="es-sub">No classified line items found for this period.</div></div>`;
+    }
+    return;
+  }
   const total=entries.reduce((s,e)=>s+e.rev,0);
   const mx=Math.max(...entries.map(e=>e.rev),1);
   $("svc-bars").innerHTML=entries.map(e=>`
@@ -1336,7 +1349,7 @@ function updateDynamicOptions(){
 }
 
 function resetAll(){
-  const ps=$("period-sel");if(ps)ps.value="this-fy";
+  const ps=$("period-sel");if(ps)ps.value="this-month";
   const cr=$("custom-range");if(cr)cr.classList.remove("show");
   const bs=$("bu-sel");if(bs)bs.value="";ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";
@@ -1383,7 +1396,7 @@ window.addEventListener("DOMContentLoaded",function(){
     initHeadFilter();
     initRegionFilter();
     initServiceFilter();
-    const ps=$("period-sel");if(ps)ps.value="this-fy";
+    const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     doSync(true);
   }catch(e){
