@@ -898,9 +898,10 @@ function view(){
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;}
+    // Service multiselect filter — always active when not all selected
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
-      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
+      if(dSvc.length>0&&!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
     }
     if(drill.service){
       const dSvc=dealServiceMap[d.id]||[];
@@ -908,7 +909,7 @@ function view(){
     }
 
     // ── Line-item amount adjustment ──
-    // Only when Service filter is active — BU filter is now head-based (deal-level amounts)
+    // When Service filter is active, adjust deal amount to matching line items only
     const needsLiAdjust=_effectiveSvc||_svcFiltered;
     if(needsLiAdjust){
       const lis=dealServiceMap[d.id]||[];
@@ -1174,12 +1175,11 @@ function engTypesLi(v){
   if(!v)v=view();
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
-  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(_svcDrill&&li.svc!==_svcDrill)return;
-      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
+      if(!_selSvc.includes(li.svc))return;
       const eg=engGroupFromLiName(li.name);
       if(eg)m[eg]=(m[eg]||0)+li.amount;
     });
@@ -1406,18 +1406,18 @@ function renderSvcBars(_v){
   // Aggregate line-item amounts by service from visible deals
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
-  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.svc)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
-      // Respect service multiselect in chart display
-      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
+      // Always filter by selected services
+      if(!_selSvc.includes(li.svc))return;
       m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
-  const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
+  // Only show services that are selected AND have revenue
+  const entries=_selSvc.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
   if(!entries.length){
     const hasAnyServiceData=Object.keys(dealServiceMap).length>0;
     if(!hasAnyServiceData&&deals.length>0){
