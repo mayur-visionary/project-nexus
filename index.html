@@ -664,7 +664,7 @@ const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).
 const fmtDate=d=>{if(!d)return"—";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}};
 const dealURL=id=>`https://app.hubspot.com/contacts/${PORTAL}/record/0-3/${id}`;
 const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
-const selOwners=()=>ALL_IDS.filter(id=>{const e=$("ow-"+id);return !e||e.checked;});
+const selOwners=()=>ALL_IDS.filter(id=>{const e=$("ow-"+id);return e?e.checked:true;});
 
 // ════ MONTH HELPERS ════
 function monthVal(d){return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;}
@@ -702,7 +702,7 @@ function initHeadFilter(){
     <div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h.split(" ")[0]}</label></div>`).join("");
 }
 function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");}
-function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
+function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return e?e.checked:true;});}
 function updateHeadLabel(){
   const sel=getSelectedHeads();
   $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:sel.length+" Heads";
@@ -718,7 +718,7 @@ function initRegionFilter(){
     <div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="onGeoMSChange()"><label for="geo-${r}">${r}</label></div>`).join("");
 }
 function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");}
-function getSelectedRegions(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
+function getSelectedRegions(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return e?e.checked:true;});}
 function updateGeoLabel(){
   const sel=getSelectedRegions();
   $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
@@ -790,7 +790,7 @@ function initServiceFilter(){
 function selectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
 function deselectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();}
 function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");}
-function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));return !e||e.checked;});}
+function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));return e&&e.checked;});}
 function updateSvcLabel(){
   const sel=getSelectedServices();
   $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Services";
