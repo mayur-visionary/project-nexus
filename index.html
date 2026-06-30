@@ -856,8 +856,7 @@ function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(
 // ════ DRILL-DOWN ════
 function view(){
   const _bu=$("bu-sel")?.value||"";
-  const _drillBU=drill.bu||"";
-  const _effectiveBU=_bu||_drillBU;
+  const _effectiveBU=_bu;
   const _selGeo=getSelectedRegions();
   const _geoFiltered=_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length;
   const _vh=getSelectedHeads();
@@ -1372,11 +1371,18 @@ function renderBUBars(_v){
   const mx=Math.max(...bs.map(b=>b.rev),1);
   const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
   $("bu-bars").innerHTML=bs.map(b=>`
-    <div class="gbar-row${drill.bu===b.bu?" drill-active":""}" onclick="setDrill('bu','${b.bu}')" title="${b.bu}">
+    <div class="gbar-row${($("bu-sel")?.value||"")=== b.bu?" drill-active":""}" onclick="toggleBUFilter('${b.bu}')" title="${b.bu}">
       <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${buColors[b.bu]||"#9A9A9A"};width:${(b.rev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(b.rev)}</div><div class="gbar-cnt">${b.count} deals · ${b.share.toFixed(1)}%</div></div>
     </div>`).join("");
+}
+function toggleBUFilter(bu){
+  const sel=$("bu-sel");
+  if(sel.value===bu){sel.value="";}else{sel.value=bu;}
+  // Clear any competing BU drill
+  delete drill.bu;updateChips();
+  renderAll();
 }
 
 function renderHeadBars(_v){
