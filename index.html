@@ -898,10 +898,12 @@ function view(){
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;}
-    // Service multiselect filter — always active when not all selected
+    // Service multiselect filter — when active, only deals with matching classified line items pass
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
-      if(dSvc.length>0&&!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
+      // No classified line items = exclude (can't attribute to any service)
+      if(!dSvc.length)return null;
+      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
     }
     if(drill.service){
       const dSvc=dealServiceMap[d.id]||[];
@@ -913,16 +915,16 @@ function view(){
     const needsLiAdjust=_effectiveSvc||_svcFiltered;
     if(needsLiAdjust){
       const lis=dealServiceMap[d.id]||[];
-      if(lis.length>0){
-        const filtered=lis.filter(li=>{
-          if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
-          if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
-          return true;
-        });
-        const adjAmount=filtered.reduce((s,li)=>s+li.amount,0);
-        if(adjAmount===0)return null;
-        return Object.assign({},d,{amount:adjAmount});
-      }
+      // No classified line items = exclude
+      if(!lis.length)return null;
+      const filtered=lis.filter(li=>{
+        if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
+        if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+        return true;
+      });
+      const adjAmount=filtered.reduce((s,li)=>s+li.amount,0);
+      if(adjAmount===0)return null;
+      return Object.assign({},d,{amount:adjAmount});
     }
 
     return d;
@@ -991,32 +993,27 @@ async function doSync(force=false){
     if(dupes.length)console.log("Duplicates excluded:",dupes.length,dupes);
     deals=dupes.length?allDeals.filter(d=>!dupes.includes(d.id)):allDeals;
 
-    // ── Fetch line items for service classification (non-blocking) ──
+    // ── Fetch line items for service classification (BLOCKING — wait for data before render) ──
     dealServiceMap={};
-    const liPromise=(async()=>{
-      try{
-        const dealIds=deals.map(d=>d.id);
-        for(let i=0;i<dealIds.length;i+=500){
-          const chunk=dealIds.slice(i,i+500);
-          const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
-          if(liRes.ok){
-            const liData=await liRes.json();
-            if(liData._debug)console.log("Line items debug:",liData._debug);
-            const items=liData.items||{};
-            Object.entries(items).forEach(([did,lis])=>{
-              dealServiceMap[did]=(lis||[]).map(li=>{
-                const cls=classifyLineItem(li.name);
-                return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
-              }).filter(Boolean);
-            });
-          }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
-        }
-        console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
-        // Re-render line-item-dependent charts now that data is available
-        const _vLi=view();
-        renderSvcBars(_vLi);renderInvChart(_vLi);
-      }catch(e){console.error("Line items fetch error:",e);}
-    })();
+    try{
+      const dealIds=deals.map(d=>d.id);
+      for(let i=0;i<dealIds.length;i+=500){
+        const chunk=dealIds.slice(i,i+500);
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          if(liData._debug)console.log("Line items debug:",liData._debug);
+          const items=liData.items||{};
+          Object.entries(items).forEach(([did,lis])=>{
+            dealServiceMap[did]=(lis||[]).map(li=>{
+              const cls=classifyLineItem(li.name);
+              return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
+            }).filter(Boolean);
+          });
+        }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
+      }
+      console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
+    }catch(e){console.error("Line items fetch error:",e);}
 
     // ── Net Revenue — computed from all fetched deals (no owner filter) ──
     netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
@@ -1244,6 +1241,21 @@ function renderKPIs(_v){
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
     {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
+  // ── Inter BU KPI — only when BU filter is active ──
+  const _activeBU=$("bu-sel")?.value||"";
+  if(_activeBU){
+    const oppBU=_activeBU==="Digital"?"MarTech":"Digital";
+    const _selSvc=getSelectedServices();
+    let interRev=0;
+    v.forEach(d=>{
+      (dealServiceMap[d.id]||[]).forEach(li=>{
+        if(li.bu===oppBU&&_selSvc.includes(li.svc)){
+          interRev+=li.amount;
+        }
+      });
+    });
+    cards.push({lbl:"Inter BU",val:interRev>0?fmtUSD(interRev):"—",sub:interRev>0?`${oppBU} services by ${_activeBU} team`:"no cross-sell in view",tip:`Revenue from ${oppBU} services sold by ${_activeBU} team`});
+  }
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
     return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
