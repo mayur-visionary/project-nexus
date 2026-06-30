@@ -707,9 +707,9 @@ function updateHeadLabel(){
   const sel=getSelectedHeads();
   $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:sel.length+" Heads";
 }
-function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();onFilterChange();}
-function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
-function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),400);}
+function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function onHeadChange(){updateHeadLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ REGION MULTI-SELECT ════
 const ALL_REGIONS=["US","UK","AU"];
@@ -723,9 +723,9 @@ function updateGeoLabel(){
   const sel=getSelectedRegions();
   $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
 }
-function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onGeoChange();}
-function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
-function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ SERVICE MULTI-SELECT ════
 // Services grouped by BU — Design appears in both with different scope
@@ -787,17 +787,17 @@ function initServiceFilter(){
     </div>
     ${svcs.map(s=>`<div class="ms-item"><input type="checkbox" id="svc-${s.replace(/[\s()]/g,'_')}" checked onchange="onSvcChange()"><label for="svc-${s.replace(/[\s()]/g,'_')}">${s}</label></div>`).join("")}`).join("");
 }
-function selectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
-function deselectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();}
+function selectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function deselectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");}
 function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));return e&&e.checked;});}
 function updateSvcLabel(){
   const sel=getSelectedServices();
   $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Services";
 }
-function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
-function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();}
-function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ SMART FILTERS ════
 // ════ SMART FILTERS — ALL MANUAL ════
@@ -818,20 +818,20 @@ function initOwners(){
     ${owners.map(o=>`<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`).join("")}`).join("");
 }
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
-function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
-function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
-function selectGroup(geo){ownerManuallyFiltered=true;OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
-function deselectGroup(geo){ownerManuallyFiltered=true;OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();}
-function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function selectGroup(geo){ownerManuallyFiltered=true;OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function deselectGroup(geo){ownerManuallyFiltered=true;OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
 document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");});
 
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
 function onBUChange(){
-  clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);
+  clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);
 }
-function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ NBD TOGGLE ════
 const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
@@ -842,14 +842,14 @@ function toggleNBD(){
   if(nbdActive)reactivationActive=false;
   $("nbd-toggle").classList.toggle("active",nbdActive);
   $("react-toggle").classList.remove("active");
-  renderAll();
+  doSync(false);
 }
 function toggleReactivation(){
   reactivationActive=!reactivationActive;
   if(reactivationActive)nbdActive=false;
   $("react-toggle").classList.toggle("active",reactivationActive);
   $("nbd-toggle").classList.remove("active");
-  renderAll();
+  doSync(false);
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
@@ -928,9 +928,9 @@ function view(){
     return d;
   }).filter(Boolean);
 }
-function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
-function clearDrill(key){delete drill[key];updateChips();renderAll();}
-function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateChips();renderAll();}
+function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();doSync(false);}
+function clearDrill(key){delete drill[key];updateChips();doSync(false);}
+function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateChips();doSync(false);}
 function updateChips(){
   const chips=$("drill-chips"),entries=Object.entries(drill);
   if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
@@ -1380,9 +1380,8 @@ function renderBUBars(_v){
 function toggleBUFilter(bu){
   const sel=$("bu-sel");
   if(sel.value===bu){sel.value="";}else{sel.value=bu;}
-  // Clear any competing BU drill
   delete drill.bu;updateChips();
-  renderAll();
+  doSync(false);
 }
 
 function renderHeadBars(_v){
