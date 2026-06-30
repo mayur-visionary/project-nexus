@@ -568,6 +568,55 @@ const OWNER_GEO={
   "467997340":"AU"
 };
 const REACTIVATION_IDS=["41490632"];
+// Unregistered directors → BU/Head attribution
+// MarTech directors: revenue under Jaydeep
+const MARTECH_DIRECTORS={"107178262":"Chintan Doshi","58637099786_owner":"Mrugesh Dabhi"};
+const MARTECH_DIRECTOR_IDS=["107178262"]; // Chintan Doshi — Mrugesh matched by geo_head value
+// Digital directors: revenue under geo-based Digital head (AU→Jiggyasa, UK/US→Tanuj)
+const DIGITAL_DIRECTOR_IDS=["17739548","24817892"]; // Darshan Modi, Krunal Bakraniya (Sheldon removed)
+// Resolve effective geo_head for a deal — handles -, blank, unregistered directors
+function headFromDeal(d){
+  const gh=d.geo_head||"";
+  // Known heads — return as-is
+  if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Nevilson Christan"||gh==="Jaydeep Salla")return gh;
+  // Mrugesh dabhi / mrugesh — MarTech director → Jaydeep
+  if(gh&&gh!=="—"&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
+  // Sheldon Fernandes — legacy, treat as Digital director
+  if(gh==="Sheldon Fernandes"){
+    const geo=geoFromDeal(d);
+    return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";
+  }
+  // Blank / dash / unknown → fallback by owner
+  const oid=String(d.owner_id||"");
+  // MarTech directors (Chintan)
+  if(MARTECH_DIRECTOR_IDS.includes(oid))return"Jaydeep Salla";
+  // Digital directors (Darshan, Krunal)
+  if(DIGITAL_DIRECTOR_IDS.includes(oid)){
+    const geo=geoFromDeal(d);
+    return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";
+  }
+  // Registered owners — derive head from owner group
+  for(const[grp,owners]of Object.entries(OWNER_GROUPS)){
+    if(owners.some(o=>o.id===oid)){
+      if(grp.startsWith("MarTech"))return"Jaydeep Salla";
+      if(grp==="Reactivation")return"Jaydeep Salla";
+      if(grp.includes("AU"))return"Jiggyasa Agrawal";
+      return"Tanuj Gupta";
+    }
+  }
+  // Geo heads who also own deals
+  if(oid==="131779647")return"Jiggyasa Agrawal";
+  if(oid==="17739173")return"Tanuj Gupta";
+  if(oid==="86940863")return"Nevilson Christan";
+  // Last resort — try deal geo
+  const geo=geoFromDeal(d);
+  if(geo==="AU")return"Jiggyasa Agrawal";
+  return"Tanuj Gupta";
+}
+function buFromDeal(d){
+  const h=headFromDeal(d);
+  return HEAD_BU_MAP[h]||"Digital";
+}
 // Geo mapping: geo__invoice_app_ value → normalized region
 const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
 // Extended OWNER_GEO for unregistered owners (fallback when geo property is empty/unknown)
@@ -679,8 +728,14 @@ function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.che
 function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ SERVICE MULTI-SELECT ════
-const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
-const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#5C6BC0","Search":"#26A69A","Web":"#434343"};
+// Services grouped by BU — Design appears in both with different scope
+const SVC_GROUPS={
+  "MarTech":["Campaign","Email","Design (Email)"],
+  "Digital":["Design (Web)","Search","Web"]
+};
+const ALL_SERVICES=["Campaign","Email","Design (Email)","Design (Web)","Search","Web"];
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design (Email)":"#5C6BC0","Design (Web)":"#5C6BC0","Search":"#26A69A","Web":"#434343"};
+const SVC_DOTS={"MarTech":"#434343","Digital":"#FFDA30"};
 
 // ════ SERVICE CLASSIFIER ════
 // BU-aware: classifyLineItem returns {svc, bu} based on line item name
@@ -696,7 +751,7 @@ function classifyLineItem(name){
 
   // ── MarTech: Design (ONLY Design - Email) ──
   if(n.includes("design - email"))
-    return{svc:"Design",bu:"MarTech"};
+    return{svc:"Design (Email)",bu:"MarTech"};
 
   // ── MarTech: Email (Development - Email, EMail Coding) ──
   if(n.includes("development - email")||n.includes("email coding"))
@@ -713,7 +768,7 @@ function classifyLineItem(name){
   // ── Digital: Design (all remaining Design - * patterns) ──
   if(n.includes("design - banner")||n.includes("design - copywriting")||
      n.includes("design - lp")||n.includes("design - web"))
-    return{svc:"Design",bu:"Digital"};
+    return{svc:"Design (Web)",bu:"Digital"};
 
   // ── Digital: Search (all Search - * + Consultancy Fees) ──
   if(n.includes("search -")||n.includes("consultancy fees"))
@@ -725,66 +780,31 @@ function classifyLineItem(name){
 // Line-item service data: dealId → [{svc, bu, amount, name}]
 let dealServiceMap={};
 function initServiceFilter(){
-  $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`
-    <div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="onSvcChange()"><label for="svc-${s}">${s}</label></div>`).join("");
+  $("svc-ms-list").innerHTML=Object.entries(SVC_GROUPS).map(([bu,svcs])=>`
+    <div class="ms-group-hdr">
+      <div class="ms-group-name"><span class="ms-group-dot" style="background:${SVC_DOTS[bu]||"#9A9A9A"}"></span>${bu}</div>
+      <div class="ms-group-acts"><span class="ms-group-act" onclick="selectSvcGroup('${bu}')">All</span><span class="ms-group-act" onclick="deselectSvcGroup('${bu}')">None</span></div>
+    </div>
+    ${svcs.map(s=>`<div class="ms-item"><input type="checkbox" id="svc-${s.replace(/[\s()]/g,'_')}" checked onchange="onSvcChange()"><label for="svc-${s.replace(/[\s()]/g,'_')}">${s}</label></div>`).join("")}`).join("");
 }
+function selectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
+function deselectSvcGroup(bu){SVC_GROUPS[bu]?.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();}
 function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");}
-function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s);return !e||e.checked;});}
+function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));return !e||e.checked;});}
 function updateSvcLabel(){
   const sel=getSelectedServices();
   $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Services";
 }
-function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
-function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
+function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
+function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=false;});updateSvcLabel();}
 function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ SMART FILTERS ════
+// ════ SMART FILTERS — ALL MANUAL ════
+// No auto-cascading — every filter is user-driven only
 function updateSmartFilters(){
-  const sel=getSelectedHeads();
-  const buSel=$("bu-sel");
-  const allSelected=sel.length===0||sel.length===ALL_HEADS.length;
-
-  // ── BU cascade ──
-  if(buSel){
-    if(allSelected){
-      Array.from(buSel.options).forEach(o=>o.style.display="");
-    } else {
-      const validBUs=new Set(sel.map(h=>HEAD_BU_MAP[h]).filter(Boolean));
-      Array.from(buSel.options).forEach(opt=>{
-        if(!opt.value){opt.style.display="";return;}
-        opt.style.display=validBUs.has(opt.value)?"":"none";
-      });
-      if(buSel.value&&!validBUs.has(buSel.value))buSel.value="";
-      if(validBUs.size===1&&!buSel.value)[...validBUs].forEach(v=>buSel.value=v);
-    }
-  }
-
-  // ── Region cascade (multiselect) ──
-  if(!allSelected){
-    const validRegions=new Set();
-    sel.forEach(h=>(HEAD_REGIONS[h]||[]).forEach(r=>validRegions.add(r)));
-    // Uncheck regions not valid for selected heads, but do NOT auto-check valid ones
-    ALL_REGIONS.forEach(r=>{
-      const e=$("geo-"+r);
-      if(e&&!validRegions.has(r))e.checked=false;
-    });
-    updateGeoLabel();
-  }
-  // Do NOT auto-select region — user decides; cascade only restricts options
-
-  // ── Owner cascade ──
-  // Cascade resets manual flag — deals are filtered by geo_head at API level, not by owner
-  ownerManuallyFiltered=false;
-  if(allSelected){
-    ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
-  } else {
-    const validGroups=new Set();
-    sel.forEach(h=>(HEAD_OWNER_GROUPS[h]||[]).forEach(g=>validGroups.add(g)));
-    Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
-      const isValid=validGroups.has(grp);
-      owners.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=isValid;});
-    });
-  }
+  // Intentionally empty — all filters are manual
+  // Head, BU, Region, Owner, Service selections stay as user set them
   updateOwnerLabel();
 }
 
@@ -857,9 +877,20 @@ function view(){
     if(drill.client&&d.client!==drill.client)return null;
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
     if(drill.amount_sign==="negative"&&d.amount>=0)return null;
-    if(drill.geo_head&&d.geo_head!==drill.geo_head)return null;
-    // Head dropdown filter (independent of BU — head narrows within whatever BU context)
-    if(_headFiltered&&!_vh.includes(d.geo_head||""))return null;
+    if(drill.geo_head){
+      const eh=headFromDeal(d);
+      if(eh!==drill.geo_head)return null;
+    }
+    // Head dropdown filter — uses resolved head
+    if(_headFiltered){
+      const eh=headFromDeal(d);
+      if(!_vh.includes(eh))return null;
+    }
+    // BU filter — head-based: Digital = Tanuj/Jiggyasa/Nevilson, MarTech = Jaydeep
+    if(_effectiveBU){
+      const dealBU=buFromDeal(d);
+      if(dealBU!==_effectiveBU)return null;
+    }
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
       if(!_selOwners.includes(String(d.owner_id)))return null;
@@ -878,13 +909,12 @@ function view(){
     }
 
     // ── Line-item amount adjustment ──
-    // When BU and/or Service filter is active, adjust deal amount to matching line items
-    const needsLiAdjust=_effectiveBU||_effectiveSvc||_svcFiltered;
+    // Only when Service filter is active — BU filter is now head-based (deal-level amounts)
+    const needsLiAdjust=_effectiveSvc||_svcFiltered;
     if(needsLiAdjust){
       const lis=dealServiceMap[d.id]||[];
       if(lis.length>0){
         const filtered=lis.filter(li=>{
-          if(_effectiveBU&&li.bu!==_effectiveBU)return false;
           if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
           if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
           return true;
@@ -893,8 +923,6 @@ function view(){
         if(adjAmount===0)return null;
         return Object.assign({},d,{amount:adjAmount});
       }
-      // No line items loaded yet — if BU filter active, exclude (can't determine BU)
-      if(_effectiveBU)return null;
     }
 
     return d;
@@ -984,9 +1012,9 @@ async function doSync(force=false){
           }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
         }
         console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
-        // Re-render all line-item-dependent charts now that data is available
+        // Re-render line-item-dependent charts now that data is available
         const _vLi=view();
-        renderBUBars(_vLi);renderSvcBars(_vLi);renderInvChart(_vLi);
+        renderSvcBars(_vLi);renderInvChart(_vLi);
       }catch(e){console.error("Line items fetch error:",e);}
     })();
 
@@ -1050,7 +1078,7 @@ function geostats(v){
 function geoheadstats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
-  const hmap={};v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;});
+  const hmap={};v.forEach(d=>{const h=headFromDeal(d);if(!hmap[h])hmap[h]={rev:0,count:0};hmap[h].rev+=d.amount;hmap[h].count++;});
   return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
 }
 function bustats(v){
@@ -1058,7 +1086,7 @@ function bustats(v){
   const g=v.reduce((s,d)=>s+d.amount,0);
   const bmap={};
   v.forEach(d=>{
-    const bu=HEAD_BU_MAP[d.geo_head||""]||"Other";
+    const bu=buFromDeal(d);
     if(!bmap[bu])bmap[bu]={rev:0,count:0};
     bmap[bu].rev+=d.amount;bmap[bu].count++;
   });
@@ -1071,9 +1099,10 @@ function headstats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};
-  v.filter(d=>d.geo_head&&d.geo_head!=="—").forEach(d=>{
-    if(!hmap[d.geo_head])hmap[d.geo_head]={rev:0,count:0};
-    hmap[d.geo_head].rev+=d.amount;hmap[d.geo_head].count++;
+  v.forEach(d=>{
+    const h=headFromDeal(d);
+    if(!hmap[h])hmap[h]={rev:0,count:0};
+    hmap[h].rev+=d.amount;hmap[h].count++;
   });
   return Object.entries(hmap).map(([head,s])=>({
     head,firstName:head.split(" ")[0],rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0
@@ -1120,10 +1149,9 @@ function engGroupFromLi(d){
 }
 
 // ═══ LINE-ITEM BASED STATS ═══
-// BU stats from line items — each line item has li.bu
+// BU stats from line items — service-level BU split (for analytical view)
 function bustatsLi(v){
   if(!v)v=view();
-  const _bu=$("bu-sel")?.value||drill.bu||"";
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
@@ -1131,7 +1159,6 @@ function bustatsLi(v){
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.bu||!bmap[li.bu])return;
-      if(_bu&&li.bu!==_bu)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
       if(_svcFiltered&&!_selSvc.includes(li.svc))return;
       bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);
@@ -1146,14 +1173,12 @@ function bustatsLi(v){
 // Engagement stats from line items
 function engTypesLi(v){
   if(!v)v=view();
-  const _bu=$("bu-sel")?.value||drill.bu||"";
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(_bu&&li.bu!==_bu)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
       if(_svcFiltered&&!_selSvc.includes(li.svc))return;
       const eg=engGroupFromLiName(li.name);
@@ -1312,13 +1337,14 @@ function renderTable(_v){
     const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
     const geo=geoFromDeal(d)||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
-    const headFirst=(d.geo_head||"—").split(" ")[0];
+    const headFirst=headFromDeal(d).split(" ")[0];
+    const resolvedHead=headFromDeal(d);
     const eng=engGroup(d.eng_model)||"—";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
-      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${d.geo_head}')">${headFirst}</td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${resolvedHead}')">${headFirst}</td>
       <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${geo}')">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
       <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('eng_model','${eng}')">${eng}</span></td>
@@ -1337,15 +1363,10 @@ function renderTable(_v){
 
 function renderBUBars(_v){
   const v=_v||view();
-  const bs=bustatsLi(v);
+  const bs=bustats(v);
   if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
   if(!bs.length){
-    const hasLi=Object.keys(dealServiceMap).length>0;
-    if(!hasLi&&deals.length>0){
-      $("bu-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto"></div></div><div class="es-sub" style="margin-top:8px">Loading BU data...</div></div>`;
-    }else{
-      $("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;
-    }
+    $("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;
     return;
   }
   const mx=Math.max(...bs.map(b=>b.rev),1);
@@ -1377,14 +1398,16 @@ function renderSvcBars(_v){
   const v=_v||view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
   // Aggregate line-item amounts by service from visible deals
-  const _bu=$("bu-sel")?.value||drill.bu||"";
   const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.svc)return;
-      if(_bu&&li.bu!==_bu)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
+      // Respect service multiselect in chart display
+      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
       m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
@@ -1443,27 +1466,7 @@ function getExpectedOwnerCount(){
 }
 
 function updateDynamicOptions(){
-  // Invoice Type — only show types present in current deals
-  const invTypes=new Set(deals.filter(d=>d.inv_type&&d.inv_type!=="—").map(d=>d.inv_type));
-  const iSel=$("itype-sel");
-  if(iSel){
-    Array.from(iSel.options).forEach(opt=>{
-      if(!opt.value){opt.style.display="";return;}
-      opt.style.display=invTypes.has(opt.value)?"":"none";
-    });
-    if(iSel.value&&!invTypes.has(iSel.value)){iSel.value="";}
-  }
-  // Region — uncheck geos not present in current deals (unless head constrains it)
-  const geos=new Set(deals.map(d=>geoFromDeal(d)).filter(Boolean));
-  const _headSel=getSelectedHeads();
-  const _headConstrained=_headSel.length>0&&_headSel.length<ALL_HEADS.length;
-  if(!_headConstrained){
-    ALL_REGIONS.forEach(r=>{
-      const e=$("geo-"+r);
-      if(e&&!geos.has(r))e.checked=false;
-    });
-    updateGeoLabel();
-  }
+  // No auto-cascading — all filters remain as user set them
 }
 
 function resetAll(){
@@ -1474,7 +1477,7 @@ function resetAll(){
   const it=$("itype-sel");if(it)it.value="";
   const nb=$("nbd-toggle");if(nb){nbdActive=false;nb.classList.remove("active");}
   const rt=$("react-toggle");if(rt){reactivationActive=false;rt.classList.remove("active");}
-  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
+  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s.replace(/[\s()]/g,"_"));if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   ownerManuallyFiltered=false;
   updateOwnerLabel();
