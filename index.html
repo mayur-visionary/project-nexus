@@ -1254,7 +1254,7 @@ function renderKPIs(_v){
         }
       });
     });
-    cards.push({lbl:"Inter BU",val:interRev>0?fmtUSD(interRev):"—",sub:interRev>0?`${oppBU} services by ${_activeBU} team`:"no cross-sell in view",tip:`Revenue from ${oppBU} services sold by ${_activeBU} team`});
+    cards.splice(1,0,{lbl:"Inter BU",val:interRev>0?fmtUSD(interRev):"—",sub:interRev>0?`${oppBU} services by ${_activeBU} team`:"no cross-sell in view",tip:`Revenue from ${oppBU} services sold by ${_activeBU} team`});
   }
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
