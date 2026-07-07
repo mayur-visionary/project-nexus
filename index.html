@@ -971,13 +971,8 @@ async function doSync(force=false){
     // Exclusions at API level — no owner filter (all owners fetched, owner filter is client-side)
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
-    // Build filterGroups — Head filter at API level only when heads manually selected
-    let fGroups;
-    if(!_allHeads&&_selHeads.length>0){
-      fGroups=_selHeads.map(h=>({filters:[...filters,{propertyName:"geo_head__invoice_app_",operator:"EQ",value:h}]}));
-    } else {
-      fGroups=[{filters}];
-    }
+    // All filtering (BU, Head, Owner) is client-side — fetch all matching deals
+    const fGroups=[{filters}];
 
     const allDeals=[];let after=null;
     do{
@@ -1002,32 +997,27 @@ async function doSync(force=false){
     if(dupes.length)console.log("Duplicates excluded:",dupes.length,dupes);
     deals=dupes.length?allDeals.filter(d=>!dupes.includes(d.id)):allDeals;
 
-    // ── Fetch line items for service classification (non-blocking) ──
+    // ── Fetch line items for service classification (BLOCKING — must complete before render) ──
     dealServiceMap={};
-    const liPromise=(async()=>{
-      try{
-        const dealIds=deals.map(d=>d.id);
-        for(let i=0;i<dealIds.length;i+=500){
-          const chunk=dealIds.slice(i,i+500);
-          const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
-          if(liRes.ok){
-            const liData=await liRes.json();
-            if(liData._debug)console.log("Line items debug:",liData._debug);
-            const items=liData.items||{};
-            Object.entries(items).forEach(([did,lis])=>{
-              dealServiceMap[did]=(lis||[]).map(li=>{
-                const cls=classifyLineItem(li.name);
-                return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
-              }).filter(Boolean);
-            });
-          }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
-        }
-        console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
-        // Re-render all line-item-dependent charts now that data is available
-        const _vLi=view();
-        renderBUBars(_vLi);renderSvcBars(_vLi);renderInvChart(_vLi);
-      }catch(e){console.error("Line items fetch error:",e);}
-    })();
+    try{
+      const dealIds=deals.map(d=>d.id);
+      for(let i=0;i<dealIds.length;i+=500){
+        const chunk=dealIds.slice(i,i+500);
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          if(liData._debug)console.log("Line items debug:",liData._debug);
+          const items=liData.items||{};
+          Object.entries(items).forEach(([did,lis])=>{
+            dealServiceMap[did]=(lis||[]).map(li=>{
+              const cls=classifyLineItem(li.name);
+              return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
+            }).filter(Boolean);
+          });
+        }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
+      }
+      console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
+    }catch(e){console.error("Line items fetch error:",e);}
 
     // ── Net Revenue — computed from all fetched deals (no owner filter) ──
     netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
@@ -1255,11 +1245,23 @@ function renderKPIs(_v){
   const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
-    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:"positive deals",tip:"Average deal size"},
+    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:`${m.clients} unique clients`,tip:"Net revenue ÷ unique clients"},
     {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
     {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
+  // ── Inter BU KPI — only when BU filter is active ──
+  const _activeBU=$("bu-sel")?.value||"";
+  if(_activeBU){
+    let interRev=0;
+    v.forEach(d=>{
+      const ownerBu=buFromDeal(d);
+      const headBu=HEAD_BU_MAP[headFromDeal(d)]||"";
+      if(ownerBu===_activeBU&&headBu&&headBu!==ownerBu)interRev+=d.amount;
+    });
+    const oppBU=_activeBU==="Digital"?"MarTech":"Digital";
+    cards.splice(1,0,{lbl:"Inter BU",val:interRev>0?fmtUSD(interRev):"—",sub:interRev>0?`under ${oppBU} heads`:"no cross-team in view",tip:`${_activeBU} team revenue under ${oppBU} geo heads`});
+  }
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
     return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
@@ -1353,12 +1355,13 @@ function renderTable(_v){
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
     const geo=geoFromDeal(d)||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
     const headFirst=(d.geo_head||"—").split(" ")[0];
+    const resolvedHead=headFromDeal(d);
     const eng=engGroup(d.eng_model)||"—";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
-      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${d.geo_head}')">${headFirst}</td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${resolvedHead}')">${resolvedHead.split(" ")[0]}</td>
       <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${geo}')">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
       <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('eng_model','${eng}')">${eng}</span></td>
