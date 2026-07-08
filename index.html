@@ -76,13 +76,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .ms-actions{display:flex;gap:8px}
 .ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
 .ms-act:hover{opacity:.7}
-.ms-group-hdr{padding:7px 12px 5px;font-size:8px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.15)}
-.ms-group-hdr:first-child{border-top:none}
-.ms-group-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;margin-right:5px;display:inline-block}
-.ms-group-name{display:flex;align-items:center}
-.ms-group-acts{display:flex;gap:6px}
-.ms-group-act{font-size:8px;font-weight:700;color:rgba(255,218,48,.6);cursor:pointer;letter-spacing:.04em;text-transform:uppercase}
-.ms-group-act:hover{color:#FFDA30}
+
 .ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
 .ms-item:hover{background:rgba(255,255,255,.07)}
 .ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
@@ -684,10 +678,65 @@ function geoFromDeal(d){
 }
 const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#5C6BC0"};
 const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
-// Deduplicate: Leaders group shares members with team groups — keep unique by id
-const ALL_OWNERS=(()=>{const seen=new Set();return Object.values(OWNER_GROUPS).flat().filter(o=>{if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
-const OWN=Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
-const ALL_IDS=ALL_OWNERS.map(o=>o.id);
+// ── Flat ordered owner list for UI display — exact sequence confirmed by management.
+// Attribution logic uses OWNER_GROUPS; this list is UI-only.
+const ORDERED_OWNERS=[
+  // MarTech Leaders
+  {id:"107178262",name:"Chintan Doshi"},
+  {id:"",         name:"Jaydeep Salla"},  // GeoHead — owner ID not yet confirmed in HubSpot
+  {id:"34140174", name:"Mrugesh Dabhi"},
+  // MarTech AU
+  {id:"467997340",name:"Karan Doshi"},
+  // MarTech UK
+  {id:"82911376", name:"Divya S"},
+  {id:"82030736", name:"Sakshi Bissa"},
+  // MarTech US
+  {id:"93107638", name:"Ayush Dhupar"},
+  {id:"46153051", name:"Ayush Rathi"},
+  {id:"86147905", name:"Preeti Thapliyal"},
+  {id:"85767516", name:"Rupali Sindhu"},
+  {id:"89530815", name:"Vinita Raidu"},
+  // MarTech NBD
+  {id:"916030451",name:"Kamesh Biniwale"},
+  // Reactivation
+  {id:"41490632", name:"Mukund Basita"},
+  // Digital Leaders
+  {id:"17739548", name:"Darshan Modi"},
+  {id:"79217713", name:"Krunal Bakraniya"},
+  {id:"17739173", name:"Tanuj Gupta"},
+  // Digital AU
+  {id:"131779647",name:"Jiggyasa Agrawal"},
+  {id:"78831011", name:"Kunal Gohil"},
+  {id:"94746500", name:"Manvi Choumal"},
+  {id:"176516495",name:"Prachi Porwal"},
+  {id:"263464861",name:"Saquib Khan"},
+  // Digital UK
+  {id:"46156316", name:"Flintoff Mehta"},
+  {id:"37344296", name:"Kalgi Shah"},
+  {id:"24817892", name:"Sheldon Fernandes"},
+  {id:"31730801", name:"Vikram Sahi"},
+  // Digital US
+  {id:"38568120", name:"Baspin Thomas"},
+  {id:"42663191", name:"Dhaval Damania"},
+  {id:"240935328",name:"Hammad Bhaldar"},
+  {id:"19799470", name:"Jebin Joy"},
+  {id:"34558123", name:"Kaustubh Agrawal"},
+  {id:"284770744",name:"Sourya Ghosh"},
+  {id:"557894666",name:"Sudarshan Damani"},
+  // Nevilson Team
+  {id:"86813698", name:"Aman Acharya"},
+  {id:"255830830",name:"Devanshu Kumar"},
+  {id:"37762663", name:"Malav Modi"},
+  // Unclassified
+  {id:"17738843", name:"Jaydeep Soni"},
+  {id:"82663745", name:"Prativa Dubey"}
+];
+// Deduplicate by id. Entries with blank id (e.g. Jaydeep Salla — owner ID pending)
+// are kept for display but excluded from ALL_IDS so they don't affect filter logic.
+const ALL_OWNERS=(()=>{const seen=new Set();return ORDERED_OWNERS.filter(o=>{if(!o.id)return true; // keep blank-id entries for display
+if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
+const OWN=Object.fromEntries(ALL_OWNERS.filter(o=>o.id).map(o=>[o.id,o.name]));
+const ALL_IDS=ALL_OWNERS.filter(o=>o.id).map(o=>o.id);
 function getOwnerGeo(id){return OWNER_GEO[String(id)]||null;}
 // BU from deal — OWNER-BASED: owner's team determines BU
 function buFromDeal(d){
@@ -899,36 +948,36 @@ function updateSmartFilters(){
   }
   // Do NOT auto-select region — user decides; cascade only restricts options
 
-  // ── Owner cascade ──
-  // Cascade resets manual flag — deals are filtered by geo_head at API level, not by owner
+  // ── Owner cascade — flat list, no groups ──
   ownerManuallyFiltered=false;
   if(allSelected){
     ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   } else {
+    // Build set of valid owner IDs from selected heads via group membership
     const validGroups=new Set();
     sel.forEach(h=>(HEAD_OWNER_GROUPS[h]||[]).forEach(g=>validGroups.add(g)));
+    const validOwnerIds=new Set();
     Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
-      const isValid=validGroups.has(grp);
-      owners.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=isValid;});
+      if(validGroups.has(grp))owners.forEach(o=>{if(o.id)validOwnerIds.add(o.id);});
     });
+    ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=validOwnerIds.has(id);});
   }
   updateOwnerLabel();
 }
 
 // ════ OWNER MULTI-SELECT ════
 function initOwners(){
-  $("ms-list").innerHTML=Object.entries(OWNER_GROUPS).map(([geo,owners])=>`
-    <div class="ms-group-hdr">
-      <div class="ms-group-name"><span class="ms-group-dot" style="background:${GEO_DOTS[geo]||"#9A9A9A"}"></span>${geo}</div>
-      <div class="ms-group-acts"><span class="ms-group-act" onclick="selectGroup('${geo}')">All</span><span class="ms-group-act" onclick="deselectGroup('${geo}')">None</span></div>
-    </div>
-    ${owners.map(o=>`<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`).join("")}`).join("");
+  $("ms-list").innerHTML=ALL_OWNERS.map(o=>{
+    if(!o.id){
+      // Blank-ID owner (Jaydeep Salla — pending) shown as disabled display item
+      return`<div class="ms-item" style="opacity:.45;cursor:default"><input type="checkbox" disabled><label style="cursor:default;font-style:italic">${o.name} (ID pending)</label></div>`;
+    }
+    return`<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`;
+  }).join("");
 }
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
 function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
 function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
-function selectGroup(geo){ownerManuallyFiltered=true;OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
-function deselectGroup(geo){ownerManuallyFiltered=true;OWNER_GROUPS[geo]?.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();}
 function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
 document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");});
