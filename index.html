@@ -1569,12 +1569,11 @@ function renderKPIs(_v){
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
     {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
-  // ── Inter BU KPI — constant card, always visible ──
+  // ── Inter BU KPI — filter-responsive ──
   // Formula: Digital BU Net Revenue − Search line items − Web line items
-  // (i.e. Campaign + Email + Design delivered under Digital heads = MarTech cross-sell)
-  const _allDeals=deals;
+  // Computed from the current filtered view (v) — responds to all active filters.
   let digitalNetRev=0,searchWebRev=0;
-  _allDeals.forEach(d=>{
+  v.forEach(d=>{
     if(d.bu==="Digital"){
       digitalNetRev+=d.amount;
       (dealServiceMap[d.id]||[]).forEach(li=>{
@@ -1583,7 +1582,7 @@ function renderKPIs(_v){
     }
   });
   const interBUConst=digitalNetRev-searchWebRev;
-  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"—",sub:"Digital excl. Search & Web",tip:"Digital BU Net Revenue − Search − Web line items"});
+  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"—",sub:"Digital excl. Search & Web",tip:"Digital Net Revenue − Search − Web · responds to all filters"});
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
     return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
