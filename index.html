@@ -483,32 +483,32 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   <div id="trends-section">
   <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
-    <span>Revenue Trends · FY 2026</span>
+    <span>Revenue Trends · FY 2026 (Apr–Jul)</span>
     <span id="trend-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase">Loading...</span>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Revenue &amp; Unique Clients</div>
-      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026</div>
+      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Business Unit Trend</div>
-      <div class="card-sub">Digital · MarTech bars · Inter BU line overlay · FY 2026</div>
+      <div class="card-sub">Digital · MarTech bars · Inter BU line overlay · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div>
     </div>
     <div class="card">
       <div class="card-ttl">Engagement Model Trend</div>
-      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026</div>
+      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Avg Revenue per Unique Client</div>
-      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026</div>
+      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div>
     </div>
   </div>
@@ -961,13 +961,17 @@ function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(
 function attributeDeals(arr){
   arr.forEach(d=>{
     const oid=String(d.owner_id||"");
-    // .bu — owner-based, same logic as buFromDeal()
     d.bu=OWNER_BU_MAP[oid]||(HEAD_BU_MAP[d.geo_head||""])||"Digital";
-    // .region — OWNER_GEO primary, GEO_MAP fallback for unregistered owners
     d.region=OWNER_GEO[oid]||(GEO_MAP[d.geo||""]||null);
-    // .head — OWNER_HEAD_MAP exclusively; null for unregistered owners
     d.head=OWNER_HEAD_MAP[oid]||null;
   });
+  // Debug: log Nevilson's deals so we can verify head stamp in console
+  const nevDeals=arr.filter(d=>String(d.owner_id)==="86940863");
+  if(nevDeals.length){
+    console.log(`[Nexus] Nevilson deals: ${nevDeals.length}, head stamp: "${nevDeals[0].head}", total: $${nevDeals.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
+  }else{
+    console.warn("[Nexus] Nevilson (86940863): 0 deals found in this period");
+  }
 }
 
 // ════ DRILL-DOWN ════
@@ -1582,14 +1586,14 @@ function renderSvcBars(_v){
 }
 
 // ════ TRENDS ENGINE ════
-// FY 2026 = Jan 2026 → current month. Fixed range, independent of main Period filter.
+// FY 2026 = Apr 2026 → current month. Fixed range, independent of main Period filter.
 // Fetches once at boot via doTrendsSync(). Re-renders on refresh only.
 
 function getFY2026Months(){
   const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
   const months=[];
-  // Jan 2026 → current month (cap at current so no future months appear)
-  for(let m=0;m<12;m++){
+  // FY 2026 = Apr 2026 → current month (BU structure formed Apr 1, 2026)
+  for(let m=3;m<12;m++){ // m=3 = April (0-indexed)
     if(cy>2026||(cy===2026&&m<=cm))months.push(`${MFULL[m]}-2026`);
   }
   return months;
@@ -1663,7 +1667,8 @@ async function doTrendsSync(){
     attributeDeals(trendDeals);
 
     renderTrends(fyMonths);
-    $("trend-status").textContent=`${trendDeals.length} deals · Jan–${MSHRT[new Date().getMonth()]} 2026`;
+    const endLbl=MSHRT[new Date().getMonth()];
+    $("trend-status").textContent=`${trendDeals.length} deals · Apr–${endLbl} 2026`;
   }catch(e){
     console.error("Trends sync error:",e);
     $("trend-status").textContent="Sync failed";
