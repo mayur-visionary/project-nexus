@@ -1053,8 +1053,8 @@ function mets(v){
   if(!v)v=view();
   const pos=v.filter(d=>d.amount>0),neg=v.filter(d=>d.amount<0);
   const gross=pos.reduce((s,d)=>s+d.amount,0);
-  // Unique clients from ALL deals (not just positive) — matches management methodology
-  const clients=new Set(v.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
+  // Unique clients from positive-amount deals only — matches management benchmark
+  const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
   const geos=new Set(v.filter(d=>{const g=geoFromDeal(d);return g;}).map(d=>geoFromDeal(d)));
   const cmap={};v.filter(d=>d.client&&d.client!=="—"&&d.amount>0).forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
   const top3=Object.values(cmap).filter(v=>v>0).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
@@ -1076,7 +1076,14 @@ function geostats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
   return["AU","UK","US"].map(geo=>{
-    const od=v.filter(d=>OWNER_GEO[String(d.owner_id)]===geo);
+    const od=v.filter(d=>{
+      const oid=String(d.owner_id||"");
+      // Primary: owner's registered geo
+      if(OWNER_GEO[oid])return OWNER_GEO[oid]===geo;
+      // Fallback: geo__invoice_app_ field mapping for unregistered owners
+      const mapped=GEO_MAP[d.geo||""];
+      return mapped===geo;
+    });
     const rev=od.reduce((s,d)=>s+d.amount,0);
     return{geo,posRev:rev,count:od.length,share:g>0?rev/g*100:0};
   }).filter(g=>g.posRev!==0).sort((a,b)=>b.posRev-a.posRev);
@@ -1101,28 +1108,47 @@ function bustats(v){
     return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};
   }).filter(b=>b.rev>0);
 }
-// Owner IDs for Tanuj's two regions — used to split head chart
-const TANUJ_UK_IDS=new Set(["37344296","31730801","46156316","255830830","24817892"]); // Digital — UK
-const TANUJ_US_IDS=new Set(["38568120","34558123","284770744","42663191","240935328","37762663","19799470","17739173","17739548"]); // Digital — US (excl. Nevilson)
+// Owner→Head map derived purely from owner registration — the single source of truth
+// MarTech (all teams + Reactivation) → Jaydeep Salla
+// Digital — AU → Jiggyasa Agrawal
+// Digital — UK → Tanuj Gupta (UK)
+// Digital — US (excl Nevilson 86940863) → Tanuj Gupta (US)
+// Nevilson (86940863) → Nevilson Christan
+const NEVILSON_ID="86940863";
+const OWNER_HEAD_MAP=(()=>{
+  const m={};
+  Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
+    owners.forEach(o=>{
+      if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
+      if(grp==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}
+      if(grp==="Digital — UK"){m[o.id]="Tanuj Gupta (UK)";return;}
+      if(grp==="Digital — US"){
+        if(o.id===NEVILSON_ID){m[o.id]="Nevilson Christan";return;}
+        m[o.id]="Tanuj Gupta (US)";
+      }
+    });
+  });
+  return m;
+})();
 function headstats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};
   v.forEach(d=>{
     const oid=String(d.owner_id||"");
-    const baseHead=headFromDeal(d);
-    // Split Tanuj into UK and US sub-heads
-    let h=baseHead;
-    if(baseHead==="Tanuj Gupta"){
-      if(TANUJ_UK_IDS.has(oid))h="Tanuj Gupta (UK)";
-      else h="Tanuj Gupta (US)"; // US owners + Tanuj himself + Darshan
-    }
-    if(!hmap[h])hmap[h]={rev:0,count:0,base:baseHead};
+    // Head derived ONLY from owner's registered team — no geo_head property
+    const h=OWNER_HEAD_MAP[oid]||"Unknown";
+    if(h==="Unknown")return; // unregistered owners excluded from head chart
+    if(!hmap[h])hmap[h]={rev:0,count:0};
     hmap[h].rev+=d.amount;hmap[h].count++;
   });
+  // Map display labels and base head for drill
+  const BASE_HEAD={"Tanuj Gupta (UK)":"Tanuj Gupta","Tanuj Gupta (US)":"Tanuj Gupta"};
+  const DISPLAY={"Tanuj Gupta (UK)":"Tanuj UK","Tanuj Gupta (US)":"Tanuj US","Jiggyasa Agrawal":"Jiggyasa","Jaydeep Salla":"Jaydeep","Nevilson Christan":"Nevilson"};
   return Object.entries(hmap).map(([head,s])=>({
-    head,firstName:head.replace("Tanuj Gupta (UK)","Tanuj UK").replace("Tanuj Gupta (US)","Tanuj US").split(" ")[0]+(head.includes("(")?" "+head.match(/\(.*\)/)[0]:""),
-    rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0,base:s.base
+    head,firstName:DISPLAY[head]||head.split(" ")[0],
+    rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0,
+    base:BASE_HEAD[head]||head
   })).filter(h=>h.rev!==0).sort((a,b)=>b.rev-a.rev);
 }
 function topClients(v){
