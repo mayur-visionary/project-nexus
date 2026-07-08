@@ -534,17 +534,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ════ OWNER REGISTRY ════
-// Leaders: Org leaders whose region is fully dynamic (geo__invoice_app_ per deal).
-// Real team groups: fixed region and head assignment via OWNER_HEAD_MAP.
-const LEADER_IDS=new Set([
-  "107178262", // Chintan Doshi     — MarTech Leader → Jaydeep
-  "34140174",  // Mrugesh Dabhi     — MarTech Leader → Jaydeep
-  "17738843",  // Jaydeep Soni      — MarTech Leader → Jaydeep
-  "17739173",  // Tanuj Gupta       — Digital Leader → dynamic geo
-  "86940863",  // Nevilson Christan — Digital Leader → dynamic geo
-  "17739548",  // Darshan Modi      — Digital Leader → dynamic geo
-  "79217713"   // Krunal Bakraniya  — Digital Leader → dynamic geo
-]);
+// Two-tier attribution: registry values primary, deal property fallback for any blank.
+// BU: always from registry (CSV always has BU).
+// Region: OWNER_GEO[oid] primary → GEO_MAP[d.geo] fallback.
+// Head: OWNER_HEAD_MAP[oid] primary → derived from resolved region fallback.
 const OWNER_GROUPS={
   "Leaders / Heads":[
     {id:"107178262",name:"Chintan Doshi"},
@@ -559,7 +552,8 @@ const OWNER_GROUPS={
   "Digital — US":[
     {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
     {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
-    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"}
+    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
   ],
   "Digital — UK":[
     {id:"46156316",name:"Flintoff Mehta"},
@@ -572,9 +566,9 @@ const OWNER_GROUPS={
     {id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"}
   ],
   "Nevilson — Team":[
-    {id:"86813698",name:"Aman Acharya"},   // was Digital-AU
-    {id:"255830830",name:"Devanshu Kumar"}, // was Digital-UK
-    {id:"37762663",name:"Malav Modi"}       // was Digital-US
+    {id:"86813698",name:"Aman Acharya"},
+    {id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663",name:"Malav Modi"}
   ],
   "MarTech — US":[
     {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
@@ -590,6 +584,9 @@ const OWNER_GROUPS={
   ],
   "Reactivation":[
     {id:"41490632",name:"Mukund Basita"}
+  ],
+  "Unclassified":[
+    {id:"82663745",name:"Prativa Dubey"} // BU/Head/Region from deal properties
   ]
 };
 // BU geo-head mapping
@@ -620,34 +617,35 @@ const HEADS_CONFIG=[
   {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
   {id:"tanuj",name:"Tanuj Gupta",bu:"Digital"}
 ];
-// Team-structure geo mapping (primary) — fixed team members only.
-// Leaders (LEADER_IDS) are excluded: their region is dynamic via GEO_MAP[d.geo] per deal.
+// Region registry — CSV-confirmed fixed geo per owner.
+// Owners NOT listed here get region from GEO_MAP[d.geo__invoice_app_] per deal.
+// This includes: all Leaders, Mukund Basita (Reactivation), Prativa Dubey (Unclassified).
 const OWNER_GEO={
   // Digital — US
   "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
-  "19799470":"US",
+  "19799470":"US","557894666":"US", // Sudarshan Damani
   // Digital — UK
   "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
   // Digital — AU
   "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
-  // Nevilson — Team (geo fixed by their own registered territory)
+  // Nevilson — Team
   "86813698":"AU",  // Aman Acharya
   "255830830":"UK", // Devanshu Kumar
   "37762663":"US",  // Malav Modi
   // MarTech — US
   "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
   // MarTech — UK
-  "82030736":"UK","82911376":"UK","916030451":"UK","107178262":"UK",
+  "82030736":"UK","82911376":"UK",
+  "916030451":"US", // Kamesh Biniwale — corrected UK→US per CSV
   // MarTech — AU
-  "467997340":"AU",
-  // Reactivation
-  "41490632":"US"
+  "467997340":"AU"
+  // Mukund Basita (41490632) — blank in CSV, falls through to GEO_MAP[d.geo]
 };
 const REACTIVATION_IDS=["41490632"];
-// Owner→BU map: Leaders default first, real team groups overwrite, explicit overrides last
+// Owner→BU map — CSV is always populated for BU, so this is fully static.
 const OWNER_BU_MAP=(()=>{
   const m={};
-  // Leaders default to Digital (overwritten below if in a real MarTech team)
+  // Leaders default to Digital first
   OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
   // Real team groups overwrite
   Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
@@ -655,15 +653,17 @@ const OWNER_BU_MAP=(()=>{
     const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
     owners.forEach(o=>{m[o.id]=bu;});
   });
-  // MarTech Leaders explicit (only in Leaders group, not in any MarTech team group)
+  // MarTech Leaders — only in Leaders group, explicit override needed
   m["107178262"]="MarTech"; // Chintan Doshi
   m["34140174"]="MarTech";  // Mrugesh Dabhi
-  m["17738843"]="MarTech";  // Jaydeep Soni
+  m["17738843"]="MarTech";  // Jaydeep Soni (separate person from Jaydeep Salla)
   // Digital Leaders explicit
   m["17739173"]="Digital";  // Tanuj Gupta
   m["86940863"]="Digital";  // Nevilson Christan
   m["17739548"]="Digital";  // Darshan Modi
   m["79217713"]="Digital";  // Krunal Bakraniya
+  // Unclassified — Prativa Dubey is Digital per active status
+  m["82663745"]="Digital";
   return m;
 })();
 // Geo mapping: geo__invoice_app_ value → normalized region
@@ -682,7 +682,7 @@ function geoFromDeal(d){
   if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Leaders / Heads":"#5C6BC0"};
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#5C6BC0"};
 const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
 // Deduplicate: Leaders group shares members with team groups — keep unique by id
 const ALL_OWNERS=(()=>{const seen=new Set();return Object.values(OWNER_GROUPS).flat().filter(o=>{if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
@@ -975,43 +975,36 @@ function toggleReactivation(){
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
 // ════ ATTRIBUTION PRE-PASS ════
-// Called once per sync after dedup + line-item fetch.
-// Stamps .bu, .region, .head on every deal — single source of truth.
-// Fixed team members: read from OWNER_BU_MAP / OWNER_GEO / OWNER_HEAD_MAP.
-// Org Leaders (LEADER_IDS): .bu from OWNER_BU_MAP, .region from GEO_MAP[d.geo],
-//   .head dynamic — MarTech Leaders → Jaydeep Salla;
-//                   Digital Leaders → geo-based (UK→Tanuj UK, US→Tanuj US, AU→Jiggyasa).
-const MARTECH_LEADER_IDS=new Set(["107178262","34140174","17738843"]); // Chintan, Mrugesh, Jaydeep Soni
-const DIGITAL_LEADER_IDS=new Set(["17739173","86940863","17739548","79217713"]); // Tanuj, Nevilson, Darshan, Krunal
-function leaderHeadFromGeo(geo){
-  if(geo==="UK")return"Tanuj Gupta (UK)";
-  if(geo==="AU")return"Jiggyasa Agrawal";
-  return"Tanuj Gupta (US)"; // US and any unexpected value
+// Two-tier model — registry primary, deal property fallback for any null:
+//   .bu     = OWNER_BU_MAP[oid]          (always populated — CSV always has BU)
+//   .region = OWNER_GEO[oid]             || GEO_MAP[d.geo]
+//   .head   = OWNER_HEAD_MAP[oid]        || headFromRegion(resolved region)
+// headFromRegion: UK→Tanuj UK, AU→Jiggyasa, US/other→Tanuj US (for Digital)
+//                 MarTech fallback always → Jaydeep Salla
+function headFromRegion(region,bu){
+  if(bu==="MarTech")return"Jaydeep Salla";
+  if(region==="UK")return"Tanuj Gupta (UK)";
+  if(region==="AU")return"Jiggyasa Agrawal";
+  return"Tanuj Gupta (US)";
 }
 function attributeDeals(arr){
   arr.forEach(d=>{
     const oid=String(d.owner_id||"");
-    // BU — always from OWNER_BU_MAP (covers both Leaders and team members)
-    d.bu=OWNER_BU_MAP[oid]||"Digital";
-    if(LEADER_IDS.has(oid)){
-      // Leaders: region and head are dynamic per deal via geo__invoice_app_
-      d.region=GEO_MAP[d.geo||""]||null;
-      if(MARTECH_LEADER_IDS.has(oid)){
-        d.head="Jaydeep Salla";
-      } else {
-        // Digital Leader — head follows geo
-        d.head=leaderHeadFromGeo(d.region);
-      }
-    } else {
-      // Fixed team members: region from OWNER_GEO, head from OWNER_HEAD_MAP
-      d.region=OWNER_GEO[oid]||(GEO_MAP[d.geo||""]||null);
-      d.head=OWNER_HEAD_MAP[oid]||null;
-    }
+    // Tier 1: registry
+    d.bu    =OWNER_BU_MAP[oid]||"Digital";
+    d.region=OWNER_GEO[oid]||null;
+    d.head  =OWNER_HEAD_MAP[oid]||null;
+    // Tier 2: deal property fallback for any null
+    if(!d.region)d.region=GEO_MAP[d.geo||""]||null;
+    if(!d.head)  d.head=headFromRegion(d.region,d.bu);
   });
-  // Attribution summary log
+  // Attribution summary — logged to console for verification
   const byHead={};
   arr.forEach(d=>{if(d.head)byHead[d.head]=(byHead[d.head]||0)+d.amount;});
-  console.log("[Nexus] Attribution summary:",Object.entries(byHead).map(([h,v])=>`${h}: $${Math.round(v).toLocaleString()}`).join(" | "));
+  console.log("[Nexus] Attribution:",Object.entries(byHead)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([h,v])=>`${h.replace(" Agrawal","").replace(" Salla","").replace(" Christan","").replace(" Gupta","")}:$${Math.round(v/1000)}k`)
+    .join(" | "));
 }
 
 // ════ DRILL-DOWN ════
@@ -1249,13 +1242,13 @@ function bustats(v){
     return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};
   }).filter(b=>b.rev>0);
 }
-// Owner→Head map — fixed team members only.
-// Leaders (LEADER_IDS) are NOT in this map — their head is derived dynamically
-// in attributeDeals() based on geo__invoice_app_ per deal.
+// Head registry — CSV-confirmed fixed head per owner.
+// Owners NOT listed here get head derived from resolved region (fallback path in attributeDeals).
+// This includes: all Leaders, Mukund Basita, Prativa Dubey.
 const OWNER_HEAD_MAP=(()=>{
   const m={};
   Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
-    if(grp==="Leaders / Heads")return; // Leaders handled dynamically in attributeDeals
+    if(grp==="Leaders / Heads"||grp==="Unclassified")return; // handled by fallback
     owners.forEach(o=>{
       if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
       if(grp==="Nevilson — Team"){m[o.id]="Nevilson Christan";return;}
