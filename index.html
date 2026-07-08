@@ -940,9 +940,15 @@ function view(){
     if(drill.client&&d.client!==drill.client)return null;
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
     if(drill.amount_sign==="negative"&&d.amount>=0)return null;
-    if(drill.geo_head){const eh=headFromDeal(d);if(eh!==drill.geo_head)return null;}
+    if(drill.geo_head){
+      const oid=String(d.owner_id||"");
+      const ownerHead=OWNER_HEAD_MAP[oid]||"";
+      // h.base strips UK/US suffix — 'Tanuj Gupta' matches both 'Tanuj Gupta (UK)' and 'Tanuj Gupta (US)'
+      const baseHead=ownerHead.replace(" (UK)","").replace(" (US)","");
+      if(baseHead!==drill.geo_head)return null;
+    }
     // Head dropdown filter — uses resolved head
-    if(_headFiltered){const eh=headFromDeal(d);if(!_vh.includes(eh))return null;}
+    if(_headFiltered){const oid=String(d.owner_id||"");const ownerHead=OWNER_HEAD_MAP[oid]||"";const baseHead=ownerHead.replace(" (UK)","").replace(" (US)","");if(!_vh.includes(baseHead))return null;}
     // BU filter — owner-based: deal-level filter
     if(_effectiveBU){if(buFromDeal(d)!==_effectiveBU)return null;}
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
@@ -953,7 +959,7 @@ function view(){
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
-    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;}
+    if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return null;}
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
       if(!dSvc.length)return null;
@@ -1431,7 +1437,7 @@ function renderTable(_v){
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
     const geo=geoFromDeal(d)||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
     const headFirst=(d.geo_head||"—").split(" ")[0];
-    const resolvedHead=headFromDeal(d);
+    const resolvedHead=(OWNER_HEAD_MAP[String(d.owner_id||"")]||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
     const eng=engGroup(d.eng_model)||"—";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
