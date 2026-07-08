@@ -1101,18 +1101,29 @@ function bustats(v){
     return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};
   }).filter(b=>b.rev>0);
 }
+// Owner IDs for Tanuj's two regions — used to split head chart
+const TANUJ_UK_IDS=new Set(["37344296","31730801","46156316","255830830","24817892"]); // Digital — UK
+const TANUJ_US_IDS=new Set(["38568120","34558123","284770744","42663191","240935328","37762663","19799470","17739173","17739548"]); // Digital — US (excl. Nevilson)
 function headstats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};
   v.forEach(d=>{
-    const h=headFromDeal(d);
-    if(!hmap[h])hmap[h]={rev:0,count:0};
+    const oid=String(d.owner_id||"");
+    const baseHead=headFromDeal(d);
+    // Split Tanuj into UK and US sub-heads
+    let h=baseHead;
+    if(baseHead==="Tanuj Gupta"){
+      if(TANUJ_UK_IDS.has(oid))h="Tanuj Gupta (UK)";
+      else h="Tanuj Gupta (US)"; // US owners + Tanuj himself + Darshan
+    }
+    if(!hmap[h])hmap[h]={rev:0,count:0,base:baseHead};
     hmap[h].rev+=d.amount;hmap[h].count++;
   });
   return Object.entries(hmap).map(([head,s])=>({
-    head,firstName:head.split(" ")[0],rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0
-  })).filter(h=>h.rev>0).sort((a,b)=>b.rev-a.rev);
+    head,firstName:head.replace("Tanuj Gupta (UK)","Tanuj UK").replace("Tanuj Gupta (US)","Tanuj US").split(" ")[0]+(head.includes("(")?" "+head.match(/\(.*\)/)[0]:""),
+    rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0,base:s.base
+  })).filter(h=>h.rev!==0).sort((a,b)=>b.rev-a.rev);
 }
 function topClients(v){
   if(!v)v=view();
@@ -1250,18 +1261,21 @@ function renderKPIs(_v){
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
     {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
-  // ── Inter BU KPI — only when BU filter is active ──
-  const _activeBU=$("bu-sel")?.value||"";
-  if(_activeBU){
-    let interRev=0;
-    v.forEach(d=>{
-      const ownerBu=buFromDeal(d);
-      const headBu=HEAD_BU_MAP[headFromDeal(d)]||"";
-      if(ownerBu===_activeBU&&headBu&&headBu!==ownerBu)interRev+=d.amount;
-    });
-    const oppBU=_activeBU==="Digital"?"MarTech":"Digital";
-    cards.splice(1,0,{lbl:"Inter BU",val:interRev>0?fmtUSD(interRev):"—",sub:interRev>0?`under ${oppBU} heads`:"no cross-team in view",tip:`${_activeBU} team revenue under ${oppBU} geo heads`});
-  }
+  // ── Inter BU KPI — constant card, always visible ──
+  // Formula: Digital BU Net Revenue − Search line items − Web line items
+  // (i.e. Campaign + Email + Design delivered under Digital heads = MarTech cross-sell)
+  const _allDeals=deals; // use full unfiltered deal set for Inter BU constant
+  let digitalNetRev=0,searchWebRev=0;
+  _allDeals.forEach(d=>{
+    if(buFromDeal(d)==="Digital"){
+      digitalNetRev+=d.amount;
+      (dealServiceMap[d.id]||[]).forEach(li=>{
+        if(li.svc==="Search"||li.svc==="Web")searchWebRev+=li.amount;
+      });
+    }
+  });
+  const interBUConst=digitalNetRev-searchWebRev;
+  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"—",sub:"Digital excl. Search & Web",tip:"Digital BU Net Revenue − Search − Web line items"});
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
     return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
@@ -1392,12 +1406,19 @@ function renderHeadBars(_v){
   const hs=headstats(v);
   if(!v.length){$("head-bars").innerHTML=emptyHTML();return;}
   if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
-  const mx=Math.max(...hs.map(h=>h.rev),1);
-  const headColors={"Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta":"#DDB800","Nevilson Christan":"#434343","Jaydeep Salla":"#5C6BC0"};
+  const mx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
+  const headColors={
+    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#DDB800","Tanuj Gupta (US)":"#F5C400",
+    "Nevilson Christan":"#434343","Jaydeep Salla":"#5C6BC0"
+  };
+  const headTextColors={
+    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#111","Tanuj Gupta (US)":"#111",
+    "Nevilson Christan":"#FFDA30","Jaydeep Salla":"#fff"
+  };
   $("head-bars").innerHTML=hs.map(h=>`
-    <div class="gbar-row${drill.geo_head===h.head?" drill-active":""}" onclick="setDrill('geo_head','${h.head}')" title="${h.head}">
-      <div class="gbar-badge" style="background:${headColors[h.head]||"#9A9A9A"};color:${h.head==="Jiggyasa Agrawal"||h.head==="Tanuj Gupta"?"#111":"#fff"};font-size:9px">${h.firstName}</div>
-      <div class="gbar-track"><div class="gbar-fill" style="background:${headColors[h.head]||"#9A9A9A"};width:${(h.rev/mx*100).toFixed(1)}%"></div></div>
+    <div class="gbar-row${drill.geo_head===h.base?" drill-active":""}" onclick="setDrill('geo_head','${h.base}')" title="${h.head}">
+      <div class="gbar-badge" style="background:${headColors[h.head]||"#9A9A9A"};color:${headTextColors[h.head]||"#fff"};font-size:9px">${h.firstName}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${headColors[h.head]||"#9A9A9A"};width:${(Math.abs(h.rev)/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(h.rev)}</div><div class="gbar-cnt">${h.count} deals · ${h.share.toFixed(1)}%</div></div>
     </div>`).join("");
 }
