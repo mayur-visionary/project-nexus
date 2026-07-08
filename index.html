@@ -849,7 +849,12 @@ document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
 function onBUChange(){
-  clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);
+  clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);
+}
+function toggleBUFilter(bu){
+  const sel=$("bu-sel");
+  if(sel.value===bu){sel.value="";}else{sel.value=bu;}
+  doSync(false);
 }
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
@@ -876,8 +881,7 @@ function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(
 // ════ DRILL-DOWN ════
 function view(){
   const _bu=$("bu-sel")?.value||"";
-  const _drillBU=drill.bu||"";
-  const _effectiveBU=_bu||_drillBU;
+  const _effectiveBU=_bu;
   const _selGeo=getSelectedRegions();
   const _geoFiltered=_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length;
   const _vh=getSelectedHeads();
@@ -1049,13 +1053,14 @@ function mets(v){
   if(!v)v=view();
   const pos=v.filter(d=>d.amount>0),neg=v.filter(d=>d.amount<0);
   const gross=pos.reduce((s,d)=>s+d.amount,0);
-  const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
-  const geos=new Set(pos.filter(d=>d.geo&&d.geo!=="—"&&d.geo!=="—").map(d=>d.geo));
-  const cmap={};pos.filter(d=>d.client&&d.client!=="—").forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
+  // Unique clients from ALL deals (not just positive) — matches management methodology
+  const clients=new Set(v.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
+  const geos=new Set(v.filter(d=>{const g=geoFromDeal(d);return g;}).map(d=>geoFromDeal(d)));
+  const cmap={};v.filter(d=>d.client&&d.client!=="—"&&d.amount>0).forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
   const top3=Object.values(cmap).filter(v=>v>0).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
   const netTotal=v.reduce((s,d)=>s+d.amount,0);
   const conc=netTotal>0?Math.round(top3/netTotal*100):0;
-  return{net:v.reduce((s,d)=>s+d.amount,0),gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:clients.size?netTotal/clients.size:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—"};
+  return{net:netTotal,gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:clients.size?netTotal/clients.size:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—"};
 }
 function ostats(v){
   if(!v)v=view();
@@ -1071,10 +1076,10 @@ function geostats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
   return["AU","UK","US"].map(geo=>{
-    const od=v.filter(d=>geoFromDeal(d)===geo);
-    const p=od.reduce((s,d)=>s+d.amount,0);
-    return{geo,posRev:p,count:od.length,share:g>0?p/g*100:0};
-  }).filter(g=>g.posRev>0).sort((a,b)=>b.posRev-a.posRev);
+    const od=v.filter(d=>OWNER_GEO[String(d.owner_id)]===geo);
+    const rev=od.reduce((s,d)=>s+d.amount,0);
+    return{geo,posRev:rev,count:od.length,share:g>0?rev/g*100:0};
+  }).filter(g=>g.posRev!==0).sort((a,b)=>b.posRev-a.posRev);
 }
 function geoheadstats(v){
   if(!v)v=view();
@@ -1153,7 +1158,6 @@ function engGroupFromLi(d){
 // BU stats from line items — each line item has li.bu
 function bustatsLi(v){
   if(!v)v=view();
-  const _bu=$("bu-sel")?.value||drill.bu||"";
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
@@ -1161,7 +1165,6 @@ function bustatsLi(v){
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.bu||!bmap[li.bu])return;
-      if(_bu&&li.bu!==_bu)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
       if(_svcFiltered&&!_selSvc.includes(li.svc))return;
       bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);
@@ -1173,17 +1176,14 @@ function bustatsLi(v){
   })).filter(b=>b.rev>0);
 }
 
-// Engagement stats from line items
 function engTypesLi(v){
   if(!v)v=view();
-  const _bu=$("bu-sel")?.value||drill.bu||"";
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(_bu&&li.bu!==_bu)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
       if(_svcFiltered&&!_selSvc.includes(li.svc))return;
       const eg=engGroupFromLiName(li.name);
@@ -1323,17 +1323,8 @@ function renderTimeline(){
 function renderInvChart(_v){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
-  const types=engTypesLi(_v||view()),labels=Object.keys(types),vals=Object.values(types);
-  if(!labels.length){
-    const hasLi=Object.keys(dealServiceMap).length>0;
-    if(!hasLi&&deals.length>0){
-      // Show loading in the canvas area
-      ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-      ctx.font="11px Montserrat";ctx.fillStyle="#9A9A9A";ctx.textAlign="center";
-      ctx.fillText("Loading engagement data...",ctx.canvas.width/2,ctx.canvas.height/2);
-    }
-    return;
-  }
+  const types=engTypes(_v||view()),labels=Object.keys(types),vals=Object.values(types);
+  if(!labels.length){return;}
   const palette={"Recurring":"#FFDA30","P2P":"#434343"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
   itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,el)=>{if(el.length)setDrill("eng_model",itcChart.data.labels[el[0].index]);},plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
@@ -1380,21 +1371,16 @@ function renderTable(_v){
 
 function renderBUBars(_v){
   const v=_v||view();
-  const bs=bustatsLi(v);
+  const bs=bustats(v);
   if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
   if(!bs.length){
-    const hasLi=Object.keys(dealServiceMap).length>0;
-    if(!hasLi&&deals.length>0){
-      $("bu-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto"></div></div><div class="es-sub" style="margin-top:8px">Loading BU data...</div></div>`;
-    }else{
-      $("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;
-    }
+    $("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;
     return;
   }
   const mx=Math.max(...bs.map(b=>b.rev),1);
   const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
   $("bu-bars").innerHTML=bs.map(b=>`
-    <div class="gbar-row${drill.bu===b.bu?" drill-active":""}" onclick="setDrill('bu','${b.bu}')" title="${b.bu}">
+    <div class="gbar-row${($("bu-sel")?.value||"")=== b.bu?" drill-active":""}" onclick="toggleBUFilter('${b.bu}')" title="${b.bu}">
       <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${buColors[b.bu]||"#9A9A9A"};width:${(b.rev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(b.rev)}</div><div class="gbar-cnt">${b.count} deals · ${b.share.toFixed(1)}%</div></div>
@@ -1419,19 +1405,18 @@ function renderHeadBars(_v){
 function renderSvcBars(_v){
   const v=_v||view();
   if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
-  // Aggregate line-item amounts by service from visible deals
-  const _bu=$("bu-sel")?.value||drill.bu||"";
   const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
     (dealServiceMap[d.id]||[]).forEach(li=>{
       if(!li.svc)return;
-      if(_bu&&li.bu!==_bu)return;
       if(_svcDrill&&li.svc!==_svcDrill)return;
       m[li.svc]=(m[li.svc]||0)+li.amount;
     });
   });
-  const entries=ALL_SERVICES.map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
+  const entries=(_svcFiltered?_selSvc:ALL_SERVICES).map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
   if(!entries.length){
     const hasAnyServiceData=Object.keys(dealServiceMap).length>0;
     if(!hasAnyServiceData&&deals.length>0){
