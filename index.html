@@ -917,6 +917,23 @@ function toggleReactivation(){
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
 
+// ════ ATTRIBUTION PRE-PASS ════
+// Called once per sync, after dedup + line-item fetch.
+// Stamps .bu, .region, .head on every deal — the single source of truth.
+// All stat functions (bustats, geostats, headstats, mets, view) read these
+// stamped fields and never call buFromDeal/geoFromDeal/OWNER_HEAD_MAP inline.
+function attributeDeals(arr){
+  arr.forEach(d=>{
+    const oid=String(d.owner_id||"");
+    // .bu — owner-based, same logic as buFromDeal()
+    d.bu=OWNER_BU_MAP[oid]||(HEAD_BU_MAP[d.geo_head||""])||"Digital";
+    // .region — OWNER_GEO primary, GEO_MAP fallback for unregistered owners
+    d.region=OWNER_GEO[oid]||(GEO_MAP[d.geo||""]||null);
+    // .head — OWNER_HEAD_MAP exclusively; null for unregistered owners
+    d.head=OWNER_HEAD_MAP[oid]||null;
+  });
+}
+
 // ════ DRILL-DOWN ════
 function view(){
   const _bu=$("bu-sel")?.value||"";
@@ -933,24 +950,25 @@ function view(){
   const _effectiveSvc=drill.service||null;
 
   return deals.map(d=>{
-    // ── Standard deal-level filters ──
-    if(drill.region&&geoFromDeal(d)!==drill.region)return null;
-    if(_geoFiltered){const dGeo=geoFromDeal(d);if(!dGeo||!_selGeo.includes(dGeo))return null;}
+    // ── Standard deal-level filters — read stamped attribution fields ──
+    if(drill.region&&d.region!==drill.region)return null;
+    if(_geoFiltered){if(!d.region||!_selGeo.includes(d.region))return null;}
     if(drill.owner&&d.owner_id!==drill.owner)return null;
     if(drill.client&&d.client!==drill.client)return null;
     if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
     if(drill.amount_sign==="negative"&&d.amount>=0)return null;
     if(drill.geo_head){
-      const oid=String(d.owner_id||"");
-      const ownerHead=OWNER_HEAD_MAP[oid]||"";
-      // h.base strips UK/US suffix — 'Tanuj Gupta' matches both 'Tanuj Gupta (UK)' and 'Tanuj Gupta (US)'
-      const baseHead=ownerHead.replace(" (UK)","").replace(" (US)","");
+      // d.head is the full key e.g. "Tanuj Gupta (UK)"; strip suffix for base match
+      const baseHead=(d.head||"").replace(" (UK)","").replace(" (US)","");
       if(baseHead!==drill.geo_head)return null;
     }
-    // Head dropdown filter — uses resolved head
-    if(_headFiltered){const oid=String(d.owner_id||"");const ownerHead=OWNER_HEAD_MAP[oid]||"";const baseHead=ownerHead.replace(" (UK)","").replace(" (US)","");if(!_vh.includes(baseHead))return null;}
-    // BU filter — owner-based: deal-level filter
-    if(_effectiveBU){if(buFromDeal(d)!==_effectiveBU)return null;}
+    // Head dropdown filter
+    if(_headFiltered){
+      const baseHead=(d.head||"").replace(" (UK)","").replace(" (US)","");
+      if(!_vh.includes(baseHead))return null;
+    }
+    // BU filter — reads stamped d.bu (owner-based)
+    if(_effectiveBU){if(d.bu!==_effectiveBU)return null;}
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
       if(!_selOwners.includes(String(d.owner_id)))return null;
@@ -1069,6 +1087,10 @@ async function doSync(force=false){
       console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
     }catch(e){console.error("Line items fetch error:",e);}
 
+    // ── Attribution pre-pass — stamps .bu, .region, .head onto every deal ONCE ──
+    // All stat functions read these stamped fields; no function re-derives attribution.
+    attributeDeals(deals);
+
     // ── Net Revenue — computed from all fetched deals (no owner filter) ──
     netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
 
@@ -1101,7 +1123,7 @@ function mets(v){
   const gross=pos.reduce((s,d)=>s+d.amount,0);
   // Unique clients from positive-amount deals only — matches management benchmark
   const clients=new Set(pos.filter(d=>d.client&&d.client!=="—").map(d=>d.client));
-  const geos=new Set(v.filter(d=>{const g=geoFromDeal(d);return g;}).map(d=>geoFromDeal(d)));
+  const geos=new Set(v.filter(d=>d.region).map(d=>d.region));
   const cmap={};v.filter(d=>d.client&&d.client!=="—"&&d.amount>0).forEach(d=>{cmap[d.client]=(cmap[d.client]||0)+d.amount;});
   const top3=Object.values(cmap).filter(v=>v>0).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
   const netTotal=v.reduce((s,d)=>s+d.amount,0);
@@ -1122,14 +1144,7 @@ function geostats(v){
   if(!v)v=view();
   const g=v.reduce((s,d)=>s+d.amount,0);
   return["AU","UK","US"].map(geo=>{
-    const od=v.filter(d=>{
-      const oid=String(d.owner_id||"");
-      // Primary: owner's registered geo
-      if(OWNER_GEO[oid])return OWNER_GEO[oid]===geo;
-      // Fallback: geo__invoice_app_ field mapping for unregistered owners
-      const mapped=GEO_MAP[d.geo||""];
-      return mapped===geo;
-    });
+    const od=v.filter(d=>d.region===geo);
     const rev=od.reduce((s,d)=>s+d.amount,0);
     return{geo,posRev:rev,count:od.length,share:g>0?rev/g*100:0};
   }).filter(g=>g.posRev!==0).sort((a,b)=>b.posRev-a.posRev);
@@ -1145,7 +1160,7 @@ function bustats(v){
   const g=v.reduce((s,d)=>s+d.amount,0);
   const bmap={};
   v.forEach(d=>{
-    const bu=buFromDeal(d);
+    const bu=d.bu||"Digital";
     if(!bmap[bu])bmap[bu]={rev:0,count:0};
     bmap[bu].rev+=d.amount;bmap[bu].count++;
   });
@@ -1186,14 +1201,11 @@ function headstats(v){
   const g=v.reduce((s,d)=>s+d.amount,0);
   const hmap={};
   v.forEach(d=>{
-    const oid=String(d.owner_id||"");
-    // Head derived ONLY from owner's registered team — no geo_head property
-    const h=OWNER_HEAD_MAP[oid]||"Unknown";
-    if(h==="Unknown")return; // unregistered owners excluded from head chart
+    const h=d.head||null;
+    if(!h)return; // unregistered owners have null .head — excluded from head chart
     if(!hmap[h])hmap[h]={rev:0,count:0};
     hmap[h].rev+=d.amount;hmap[h].count++;
   });
-  // Map display labels and base head for drill
   const BASE_HEAD={"Tanuj Gupta (UK)":"Tanuj Gupta","Tanuj Gupta (US)":"Tanuj Gupta"};
   const DISPLAY={"Tanuj Gupta (UK)":"Tanuj UK","Tanuj Gupta (US)":"Tanuj US","Jiggyasa Agrawal":"Jiggyasa","Jaydeep Salla":"Jaydeep","Nevilson Christan":"Nevilson"};
   return Object.entries(hmap).map(([head,s])=>({
@@ -1341,10 +1353,10 @@ function renderKPIs(_v){
   // ── Inter BU KPI — constant card, always visible ──
   // Formula: Digital BU Net Revenue − Search line items − Web line items
   // (i.e. Campaign + Email + Design delivered under Digital heads = MarTech cross-sell)
-  const _allDeals=deals; // use full unfiltered deal set for Inter BU constant
+  const _allDeals=deals;
   let digitalNetRev=0,searchWebRev=0;
   _allDeals.forEach(d=>{
-    if(buFromDeal(d)==="Digital"){
+    if(d.bu==="Digital"){
       digitalNetRev+=d.amount;
       (dealServiceMap[d.id]||[]).forEach(li=>{
         if(li.svc==="Search"||li.svc==="Web")searchWebRev+=li.amount;
@@ -1435,9 +1447,8 @@ function renderTable(_v){
   $("dtb").innerHTML=paged.map((d,i)=>{
     const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
-    const geo=geoFromDeal(d)||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
-    const headFirst=(d.geo_head||"—").split(" ")[0];
-    const resolvedHead=(OWNER_HEAD_MAP[String(d.owner_id||"")]||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
+    const geo=d.region||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
+    const resolvedHead=(d.head||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
     const eng=engGroup(d.eng_model)||"—";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
@@ -1580,7 +1591,7 @@ function updateDynamicOptions(){
     if(iSel.value&&!invTypes.has(iSel.value)){iSel.value="";}
   }
   // Region — uncheck geos not present in current deals (unless head constrains it)
-  const geos=new Set(deals.map(d=>geoFromDeal(d)).filter(Boolean));
+  const geos=new Set(deals.map(d=>d.region).filter(Boolean));
   const _headSel=getSelectedHeads();
   const _headConstrained=_headSel.length>0&&_headSel.length<ALL_HEADS.length;
   if(!_headConstrained){
