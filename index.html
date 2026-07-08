@@ -536,7 +536,7 @@ const OWNER_GROUPS={
   "Leaders / Heads":[
     {id:"107178262",name:"Chintan Doshi"},
     {id:"17739548",name:"Darshan Modi"},
-    {id:"17738843",name:"Jaydeep Soni"},
+    {id:"17738843",name:"Jaydeep Salla"},
     {id:"131779647",name:"Jiggyasa Agrawal"},
     {id:"79217713",name:"Krunal Bakraniya"},
     {id:"34140174",name:"Mrugesh Dabhi"},
@@ -650,7 +650,7 @@ const OWNER_BU_MAP=(()=>{
   // MarTech Leaders — only in Leaders group, explicit override needed
   m["107178262"]="MarTech"; // Chintan Doshi
   m["34140174"]="MarTech";  // Mrugesh Dabhi
-  m["17738843"]="MarTech";  // Jaydeep Soni (separate person from Jaydeep Salla)
+  m["17738843"]="MarTech";  // Jaydeep Salla (HubSpot name: Jaydeep Soni, jay@mavlers.com — confirmed same person)
   // Digital Leaders explicit
   m["17739173"]="Digital";  // Tanuj Gupta
   m["86940863"]="Digital";  // Nevilson Christan
@@ -683,7 +683,7 @@ const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
 const ORDERED_OWNERS=[
   // MarTech Leaders
   {id:"107178262",name:"Chintan Doshi"},
-  {id:"",         name:"Jaydeep Salla"},  // GeoHead — owner ID not yet confirmed in HubSpot
+  {id:"17738843", name:"Jaydeep Salla"},  // Confirmed: Jaydeep Soni in HubSpot = Jaydeep Salla (jay@mavlers.com)
   {id:"34140174", name:"Mrugesh Dabhi"},
   // MarTech AU
   {id:"467997340",name:"Karan Doshi"},
@@ -728,15 +728,12 @@ const ORDERED_OWNERS=[
   {id:"255830830",name:"Devanshu Kumar"},
   {id:"37762663", name:"Malav Modi"},
   // Unclassified
-  {id:"17738843", name:"Jaydeep Soni"},
   {id:"82663745", name:"Prativa Dubey"}
 ];
-// Deduplicate by id. Entries with blank id (e.g. Jaydeep Salla — owner ID pending)
-// are kept for display but excluded from ALL_IDS so they don't affect filter logic.
-const ALL_OWNERS=(()=>{const seen=new Set();return ORDERED_OWNERS.filter(o=>{if(!o.id)return true; // keep blank-id entries for display
-if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
-const OWN=Object.fromEntries(ALL_OWNERS.filter(o=>o.id).map(o=>[o.id,o.name]));
-const ALL_IDS=ALL_OWNERS.filter(o=>o.id).map(o=>o.id);
+// Deduplicate by id — all entries now have confirmed IDs.
+const ALL_OWNERS=(()=>{const seen=new Set();return ORDERED_OWNERS.filter(o=>{if(!o.id)return false;if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
+const OWN=Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
+const ALL_IDS=ALL_OWNERS.map(o=>o.id);
 function getOwnerGeo(id){return OWNER_GEO[String(id)]||null;}
 // BU from deal — OWNER-BASED: owner's team determines BU
 function buFromDeal(d){
@@ -967,13 +964,9 @@ function updateSmartFilters(){
 
 // ════ OWNER MULTI-SELECT ════
 function initOwners(){
-  $("ms-list").innerHTML=ALL_OWNERS.map(o=>{
-    if(!o.id){
-      // Blank-ID owner (Jaydeep Salla — pending) shown as disabled display item
-      return`<div class="ms-item" style="opacity:.45;cursor:default"><input type="checkbox" disabled><label style="cursor:default;font-style:italic">${o.name} (ID pending)</label></div>`;
-    }
-    return`<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`;
-  }).join("");
+  $("ms-list").innerHTML=ALL_OWNERS.map(o=>
+    `<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`
+  ).join("");
 }
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
 function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
