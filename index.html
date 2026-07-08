@@ -423,7 +423,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section">
-      <div class="sb-lbl">Invoice Type</div>
+      <div class="sb-lbl">Engagement Model</div>
       <select class="fsel sb-sel" id="itype-sel" onchange="onGeoChange()">
         <option value="">All Types</option>
         <option value="One Time">P2P</option>
@@ -676,7 +676,7 @@ function geoFromDeal(d){
   if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#5C6BC0"};
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
 const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
 // ── Flat ordered owner list for UI display — exact sequence confirmed by management.
 // Attribution logic uses OWNER_GROUPS; this list is UI-only.
@@ -856,7 +856,7 @@ function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTim
 
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
-const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#5C6BC0","Search":"#26A69A","Web":"#434343"};
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#3B3561","Search":"#0CCE6B","Web":"#434343"};
 
 // ════ SERVICE CLASSIFIER ════
 // BU-aware: classifyLineItem returns {svc, bu} based on line item name
@@ -1540,7 +1540,7 @@ function renderInvChart(_v){
   if(itcChart){itcChart.destroy();itcChart=null;}
   const types=engTypes(_v||view()),labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length){return;}
-  const palette={"Recurring":"#FFDA30","P2P":"#434343"};
+  const palette={"Recurring":"#FFDA30","P2P":"#EF2D56"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
   itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,el)=>{if(el.length)setDrill("eng_model",itcChart.data.labels[el[0].index]);},plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
 }
@@ -1609,7 +1609,7 @@ function renderHeadBars(_v){
   const mx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
   const headColors={
     "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#DDB800","Tanuj Gupta (US)":"#F5C400",
-    "Nevilson Christan":"#434343","Jaydeep Salla":"#5C6BC0"
+    "Nevilson Christan":"#434343","Jaydeep Salla":"#3B3561"
   };
   const headTextColors={
     "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#111","Tanuj Gupta (US)":"#111",
@@ -1854,7 +1854,7 @@ function renderTrends(months){
       datasets:[
         {type:"bar",label:"Digital",data:digital,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,order:3},
         {type:"bar",label:"MarTech",data:martech,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3,order:2},
-        {type:"line",label:"Inter BU",data:interBU,borderColor:"#5C6BC0",backgroundColor:"transparent",borderWidth:2,pointRadius:3,pointBackgroundColor:"#5C6BC0",tension:0.3,order:1,borderDash:[4,3]}
+        {type:"line",label:"Inter BU",data:interBU,borderColor:"#3B3561",backgroundColor:"transparent",borderWidth:2,pointRadius:3,pointBackgroundColor:"#3B3561",tension:0.3,order:1,borderDash:[4,3]}
       ]
     },
     options:{
@@ -1877,7 +1877,7 @@ function renderTrends(months){
       labels,
       datasets:[
         {type:"bar",label:"Recurring",data:recurring,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3},
-        {type:"bar",label:"P2P",data:p2p,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3}
+        {type:"bar",label:"P2P",data:p2p,backgroundColor:"rgba(239,45,86,0.80)",borderRadius:3}
       ]
     },
     options:{
@@ -1955,7 +1955,7 @@ function getExpectedOwnerCount(){
 }
 
 function updateDynamicOptions(){
-  // Invoice Type — only show types present in current deals
+  // Engagement Model — only show types present in current deals
   const invTypes=new Set(deals.filter(d=>d.inv_type&&d.inv_type!=="—").map(d=>d.inv_type));
   const iSel=$("itype-sel");
   if(iSel){
