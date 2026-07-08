@@ -481,6 +481,39 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div>
   </div>
 
+  <div id="trends-section">
+  <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
+    <span>Revenue Trends · FY 2026</span>
+    <span id="trend-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase">Loading...</span>
+  </div>
+  <div class="chart-row">
+    <div class="card" style="grid-column:1/-1">
+      <div class="card-ttl">Revenue &amp; Unique Clients</div>
+      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026</div>
+      <div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-ttl">Business Unit Trend</div>
+      <div class="card-sub">Digital · MarTech bars · Inter BU line overlay · FY 2026</div>
+      <div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">Engagement Model Trend</div>
+      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026</div>
+      <div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-row">
+    <div class="card" style="grid-column:1/-1">
+      <div class="card-ttl">Avg Revenue per Unique Client</div>
+      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026</div>
+      <div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div>
+    </div>
+  </div>
+  </div>
+
   <div id="deal-records-section">
   <div class="sec">Deal Records</div>
   <div class="tcard">
@@ -677,6 +710,9 @@ const PER=10;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 let ownerManuallyFiltered=false;
 const drill={};
+// ── Trends state — FY 2026, independent of main Period filter ──
+let trendDeals=[],trendDealServiceMap={};
+let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
 
 // ════ HELPERS ════
 const $=id=>document.getElementById(id);
@@ -1545,6 +1581,268 @@ function renderSvcBars(_v){
     </div>`).join("");
 }
 
+// ════ TRENDS ENGINE ════
+// FY 2026 = Jan 2026 → current month. Fixed range, independent of main Period filter.
+// Fetches once at boot via doTrendsSync(). Re-renders on refresh only.
+
+function getFY2026Months(){
+  const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
+  const months=[];
+  // Jan 2026 → current month (cap at current so no future months appear)
+  for(let m=0;m<12;m++){
+    if(cy>2026||(cy===2026&&m<=cm))months.push(`${MFULL[m]}-2026`);
+  }
+  return months;
+}
+
+async function doTrendsSync(){
+  const fyMonths=getFY2026Months();
+  $("trend-status").textContent="Syncing...";
+  try{
+    const filters=[
+      {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
+      {propertyName:"dealstage",operator:"EQ",value:STAGE},
+      {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyMonths}
+    ];
+    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+    filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
+
+    const allDeals=[];let after=null;
+    do{
+      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","hubspot_owner_id","contact_name__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      if(after)body.after=after;
+      const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok)throw new Error("Trends API "+res.status);
+      const data=await res.json();
+      (data.results||[]).forEach(r=>{
+        allDeals.push({
+          id:String(r.id),
+          dealname:r.properties?.dealname||"",
+          amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
+          owner_id:String(r.properties?.hubspot_owner_id||""),
+          client:r.properties?.contact_name__invoice_app_||"—",
+          month:r.properties?.invoice_booking_month__invoice_app_||"",
+          eng_model:r.properties?.engagement_model__invoice_app_||"—",
+          geo:r.properties?.geo__invoice_app_||"—",
+          geo_head:r.properties?.geo_head__invoice_app_||"—",
+          company_name:r.properties?.company_name__invoice_app_||""
+        });
+      });
+      after=data.paging?.next?.after||null;
+    }while(after);
+
+    // Deduplicate — same rule as main deals
+    const seen={};const dupes=[];
+    allDeals.forEach(d=>{
+      const key=d.dealname+"|"+d.amount;
+      if(seen[key]){dupes.push(d.id);return;}
+      seen[key]=d.id;
+    });
+    trendDeals=dupes.length?allDeals.filter(d=>!dupes.includes(d.id)):allDeals;
+
+    // Fetch line items for Inter BU computation
+    trendDealServiceMap={};
+    try{
+      const didChunk=trendDeals.map(d=>d.id);
+      for(let i=0;i<didChunk.length;i+=500){
+        const chunk=didChunk.slice(i,i+500);
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          Object.entries(liData.items||{}).forEach(([did,lis])=>{
+            trendDealServiceMap[did]=(lis||[]).map(li=>{
+              const cls=classifyLineItem(li.name);
+              return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
+            }).filter(Boolean);
+          });
+        }
+      }
+    }catch(e){console.error("Trends line items error:",e);}
+
+    // Attribution pre-pass on trend deals
+    attributeDeals(trendDeals);
+
+    renderTrends(fyMonths);
+    $("trend-status").textContent=`${trendDeals.length} deals · Jan–${MSHRT[new Date().getMonth()]} 2026`;
+  }catch(e){
+    console.error("Trends sync error:",e);
+    $("trend-status").textContent="Sync failed";
+  }
+}
+
+// Build month-keyed aggregates from trendDeals
+function buildTrendData(months){
+  // Initialise per-month buckets
+  const byMonth={};
+  months.forEach(m=>{
+    byMonth[m]={
+      net:0,clients:new Set(),
+      digital:0,martech:0,
+      digitalNetRev:0,searchWebRev:0, // for Inter BU
+      recurring:0,p2p:0
+    };
+  });
+
+  trendDeals.forEach(d=>{
+    const m=d.month;
+    if(!byMonth[m])return;
+    const bkt=byMonth[m];
+
+    bkt.net+=d.amount;
+    if(d.amount>0&&d.client&&d.client!=="—")bkt.clients.add(d.client);
+
+    // BU
+    if(d.bu==="Digital"){
+      bkt.digital+=d.amount;
+      bkt.digitalNetRev+=d.amount;
+      // Inter BU: Digital Net Rev minus Search & Web line items
+      (trendDealServiceMap[d.id]||[]).forEach(li=>{
+        if(li.svc==="Search"||li.svc==="Web")bkt.searchWebRev+=li.amount;
+      });
+    } else if(d.bu==="MarTech"){
+      bkt.martech+=d.amount;
+    }
+
+    // Engagement
+    const eg=engGroup(d.eng_model);
+    if(eg==="Recurring")bkt.recurring+=d.amount;
+    else if(eg==="P2P")bkt.p2p+=d.amount;
+  });
+
+  // Derive Inter BU and Avg per month
+  months.forEach(m=>{
+    const bkt=byMonth[m];
+    bkt.interBU=bkt.digitalNetRev-bkt.searchWebRev;
+    bkt.clientCount=bkt.clients.size;
+    bkt.avg=bkt.clientCount>0?bkt.net/bkt.clientCount:0;
+  });
+
+  return byMonth;
+}
+
+// Shared Chart.js defaults for Trends
+const TREND_FONT={family:"Montserrat",size:9};
+const TREND_TICK={font:TREND_FONT,color:"#9A9A9A"};
+const TREND_GRID={color:"rgba(0,0,0,0.04)"};
+function trendTooltip(extra={}){
+  return{callbacks:{label:c=>`${c.dataset.label}: ${fmtUSD(c.parsed.y)}`,...(extra.callbacks||{})},bodyFont:{family:"Montserrat",size:10},titleFont:{family:"Montserrat",size:10},...extra};
+}
+function destroyTrendCharts(){
+  [trcRevChart,trcBUChart,trcEngChart,trcAvgChart].forEach(c=>{if(c)c.destroy();});
+  trcRevChart=trcBUChart=trcEngChart=trcAvgChart=null;
+}
+
+function renderTrends(months){
+  destroyTrendCharts();
+  const byMonth=buildTrendData(months);
+  // Month display labels e.g. "Jan", "Feb"
+  const labels=months.map(m=>{const[mn,yr]=m.split("-");return MSHRT[MFULL.indexOf(mn)];});
+  const net    =months.map(m=>byMonth[m].net);
+  const clients=months.map(m=>byMonth[m].clientCount);
+  const digital=months.map(m=>byMonth[m].digital);
+  const martech=months.map(m=>byMonth[m].martech);
+  const interBU=months.map(m=>byMonth[m].interBU);
+  const recurring=months.map(m=>byMonth[m].recurring);
+  const p2p    =months.map(m=>byMonth[m].p2p);
+  const avg    =months.map(m=>byMonth[m].avg);
+
+  // ── Chart 1: Revenue & Unique Clients ──────────────────────────
+  trcRevChart=new Chart($("trc-rev").getContext("2d"),{
+    data:{
+      labels,
+      datasets:[
+        {type:"bar",label:"Net Revenue",data:net,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,yAxisID:"yRev",order:2},
+        {type:"line",label:"Unique Clients",data:clients,borderColor:"#E84040",backgroundColor:"transparent",borderWidth:2,pointRadius:3,pointBackgroundColor:"#E84040",yAxisID:"yClients",tension:0.3,order:1}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
+        tooltip:trendTooltip({callbacks:{label:c=>c.dataset.yAxisID==="yClients"?`${c.dataset.label}: ${c.parsed.y}`:`${c.dataset.label}: ${fmtUSD(c.parsed.y)}`}})
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        yRev:{position:"left",ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID,title:{display:true,text:"Net Revenue",font:TREND_FONT,color:"#9A9A9A"}},
+        yClients:{position:"right",ticks:TREND_TICK,grid:{display:false},title:{display:true,text:"Unique Clients",font:TREND_FONT,color:"#9A9A9A"}}
+      }
+    }
+  });
+
+  // ── Chart 2: BU Trend — Digital + MarTech bars, Inter BU line ──
+  trcBUChart=new Chart($("trc-bu").getContext("2d"),{
+    data:{
+      labels,
+      datasets:[
+        {type:"bar",label:"Digital",data:digital,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,order:3},
+        {type:"bar",label:"MarTech",data:martech,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3,order:2},
+        {type:"line",label:"Inter BU",data:interBU,borderColor:"#5C6BC0",backgroundColor:"transparent",borderWidth:2,pointRadius:3,pointBackgroundColor:"#5C6BC0",tension:0.3,order:1,borderDash:[4,3]}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
+        tooltip:trendTooltip()
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        y:{ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID}
+      }
+    }
+  });
+
+  // ── Chart 3: Engagement Model Trend ────────────────────────────
+  trcEngChart=new Chart($("trc-eng").getContext("2d"),{
+    data:{
+      labels,
+      datasets:[
+        {type:"bar",label:"Recurring",data:recurring,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3},
+        {type:"bar",label:"P2P",data:p2p,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
+        tooltip:trendTooltip()
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        y:{ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID}
+      }
+    }
+  });
+
+  // ── Chart 4: Avg Revenue per Unique Client ──────────────────────
+  trcAvgChart=new Chart($("trc-avg").getContext("2d"),{
+    type:"line",
+    data:{
+      labels,
+      datasets:[{
+        label:"Avg Rev / Client",data:avg,
+        borderColor:"#DDB800",backgroundColor:"rgba(221,184,0,0.07)",
+        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#DDB800",
+        fill:true,tension:0.35
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:trendTooltip()
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        y:{ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID}
+      }
+    }
+  });
+}
+
 function renderAll(){
   const _v=view();
   renderKPIs(_v);renderBUBars(_v);renderGeoBars(_v);renderHeadBars(_v);renderSvcBars(_v);renderClientBars(_v);renderInvChart(_v);renderTable(_v);
@@ -1619,6 +1917,7 @@ function resetAll(){
   Object.keys(drill).forEach(k=>delete drill[k]);
   updateChips();
   doSync(true);
+  doTrendsSync();
 }
 
 // ════ LOGIN ════
@@ -1655,7 +1954,9 @@ window.addEventListener("DOMContentLoaded",function(){
     initServiceFilter();
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
+    // Main dashboard sync + Trends sync run in parallel
     doSync(true);
+    doTrendsSync();
   }catch(e){
     console.error("Nexus boot error:",e);
     const st=$("stxt");if(st)st.textContent="BOOT ERROR — CHECK CONSOLE";
