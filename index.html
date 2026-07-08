@@ -1273,17 +1273,17 @@ async function doSync(force=false){
 
     const allDeals=[];let after=null;
     do{
-      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","zoho_display_name__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
         allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],
-          // Client identity — two-tier:
-          // billing_id: zoho_billing_id for deduplication (numeric ID for INV, email for ON)
+          // Client identity:
+          // billing_id: contact_name__invoice_app_ — confirmed dedup key (Sales Ops)
           // client: display name (zoho_display_name preferred, contact_name fallback)
-          billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
+          billing_id:r.properties?.contact_name__invoice_app_||"—",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
           inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—",company_name:r.properties?.company_name__invoice_app_||""});
       });
@@ -1356,7 +1356,7 @@ function mets(v){
   if(!v)v=view();
   const pos=v.filter(d=>d.amount>0),neg=v.filter(d=>d.amount<0);
   const gross=pos.reduce((s,d)=>s+d.amount,0);
-  // Unique clients — deduplicated by billing_id (zoho entity ID), positive deals only
+  // Unique clients — deduplicated by contact_name__invoice_app_ (confirmed by Sales Ops)
   const clients=new Set(pos.filter(d=>d.billing_id&&d.billing_id!=="—").map(d=>d.billing_id));
   const geos=new Set(v.filter(d=>d.region).map(d=>d.region));
   // Revenue concentration — aggregate by billing_id, display client name
@@ -1442,7 +1442,7 @@ function headstats(v){
 }
 function topClients(v){
   if(!v)v=view();
-  // Aggregate by billing_id (dedup key), carry display name from first seen deal
+  // Aggregate by contact_name (dedup key), carry display name from first seen deal
   const map={};const nameMap={};
   v.filter(d=>d.billing_id&&d.billing_id!=="—"&&d.amount>0).forEach(d=>{
     map[d.billing_id]=(map[d.billing_id]||0)+d.amount;
@@ -1802,7 +1802,7 @@ async function doTrendsSync(){
 
     const allDeals=[];let after=null;
     do{
-      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","hubspot_owner_id","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","hubspot_owner_id","contact_name__invoice_app_","zoho_display_name__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("Trends API "+res.status);
@@ -1813,7 +1813,7 @@ async function doTrendsSync(){
           dealname:r.properties?.dealname||"",
           amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
           owner_id:String(r.properties?.hubspot_owner_id||""),
-          billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
+          billing_id:r.properties?.contact_name__invoice_app_||"—",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
           month:r.properties?.invoice_booking_month__invoice_app_||"",
           eng_model:r.properties?.engagement_model__invoice_app_||"—",
