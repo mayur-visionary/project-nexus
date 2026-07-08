@@ -421,9 +421,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="sb-divider"></div>
     <div class="sb-section">
       <div class="sb-lbl">Quick Filter</div>
-      <div style="display:flex;gap:5px">
-        <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()" style="flex:1">NBD</button>
-        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1">React.</button>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="nbd-toggle" id="existing-toggle" onclick="toggleExisting()" style="flex:1;min-width:60px">Existing</button>
+        <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()" style="flex:1;min-width:45px">NBD</button>
+        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1;min-width:50px">React.</button>
       </div>
     </div>
     <div class="sb-divider"></div>
@@ -532,6 +533,15 @@ const OWNER_GROUPS={
   ],
   "Reactivation":[
     {id:"41490632",name:"Mukund Basita"}
+  ],
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},
+    {id:"17739548",name:"Darshan Modi"},
+    {id:"17738843",name:"Jaydeep Soni"},
+    {id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713",name:"Krunal Bakraniya"},
+    {id:"86940863",name:"Nevilson Christan"},
+    {id:"17739173",name:"Tanuj Gupta"}
   ]
 };
 // BU geo-head mapping
@@ -562,7 +572,7 @@ const HEADS_CONFIG=[
   {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
   {id:"tanuj",name:"Tanuj Gupta",bu:"Digital"}
 ];
-// Team-structure geo mapping (primary) — all 34 registered owners + Reactivation
+// Team-structure geo mapping (primary) — all registered owners + Reactivation + Leaders
 const OWNER_GEO={
   // Digital — US
   "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","37762663":"US",
@@ -578,11 +588,30 @@ const OWNER_GEO={
   // MarTech — AU
   "467997340":"AU",
   // Reactivation
-  "41490632":"US"
+  "41490632":"US",
+  // Leaders / Heads (geo by their primary territory)
+  "17738843":"UK",  // Jaydeep Soni
+  "79217713":"UK"   // Krunal Bakraniya
 };
 const REACTIVATION_IDS=["41490632"];
-// Owner→BU map: MarTech teams + Reactivation → MarTech; Digital teams → Digital
-const OWNER_BU_MAP=(()=>{const m={};Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";owners.forEach(o=>{m[o.id]=bu;});});return m;})();
+// Owner→BU map: process Leaders first, then real team groups overwrite — ensures correct BU
+const OWNER_BU_MAP=(()=>{
+  const m={};
+  // Process Leaders first (lowest priority — real team group will overwrite)
+  const leaders=OWNER_GROUPS["Leaders / Heads"]||[];
+  leaders.forEach(o=>{m[o.id]="Digital";}); // default; overwritten below if in real team
+  // Real team groups (higher priority)
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    if(g==="Leaders / Heads")return;
+    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  // Jaydeep Soni (17738843) — only in Leaders, geo_head=Jaydeep Salla → MarTech
+  m["17738843"]="MarTech";
+  // Krunal Bakraniya (79217713) — only in Leaders, Digital-UK background
+  m["79217713"]="Digital";
+  return m;
+})();
 // Geo mapping: geo__invoice_app_ value → normalized region
 const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
 // Extended OWNER_GEO (all registered owners already included, just alias for compatibility)
@@ -599,9 +628,10 @@ function geoFromDeal(d){
   if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A"};
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Leaders / Heads":"#5C6BC0"};
 const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
-const ALL_OWNERS=Object.values(OWNER_GROUPS).flat();
+// Deduplicate: Leaders group shares members with team groups — keep unique by id
+const ALL_OWNERS=(()=>{const seen=new Set();return Object.values(OWNER_GROUPS).flat().filter(o=>{if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
 const OWN=Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
 const ALL_IDS=ALL_OWNERS.map(o=>o.id);
 function getOwnerGeo(id){return OWNER_GEO[String(id)]||null;}
@@ -858,22 +888,31 @@ function toggleBUFilter(bu){
 }
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
-// ════ NBD TOGGLE ════
+// ════ QUICK FILTERS ════
 const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
 const REACTIVATION_OWNERS=["41490632"]; // Mukund Basita
-let nbdActive=false,reactivationActive=false;
-function toggleNBD(){
-  nbdActive=!nbdActive;
-  if(nbdActive)reactivationActive=false;
-  $("nbd-toggle").classList.toggle("active",nbdActive);
+// Existing = everyone except NBD and Reactivation owners (Net - NBD)
+const EXISTING_EXCLUDE=[...NBD_OWNERS,...REACTIVATION_OWNERS];
+let nbdActive=false,reactivationActive=false,existingActive=false;
+function _clearQuickFilters(){
+  nbdActive=false;reactivationActive=false;existingActive=false;
+  $("nbd-toggle").classList.remove("active");
   $("react-toggle").classList.remove("active");
+  $("existing-toggle").classList.remove("active");
+}
+function toggleExisting(){
+  const wasActive=existingActive;_clearQuickFilters();
+  if(!wasActive){existingActive=true;$("existing-toggle").classList.add("active");}
+  renderAll();
+}
+function toggleNBD(){
+  const wasActive=nbdActive;_clearQuickFilters();
+  if(!wasActive){nbdActive=true;$("nbd-toggle").classList.add("active");}
   renderAll();
 }
 function toggleReactivation(){
-  reactivationActive=!reactivationActive;
-  if(reactivationActive)nbdActive=false;
-  $("react-toggle").classList.toggle("active",reactivationActive);
-  $("nbd-toggle").classList.remove("active");
+  const wasActive=reactivationActive;_clearQuickFilters();
+  if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}
   renderAll();
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
@@ -913,6 +952,7 @@ function view(){
     if(_itype&&d.inv_type!==_itype)return null;
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
+    if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
     if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;}
     if(_svcFiltered){
       const dSvc=dealServiceMap[d.id]||[];
@@ -1114,10 +1154,12 @@ function bustats(v){
 // Digital — UK → Tanuj Gupta (UK)
 // Digital — US (excl Nevilson 86940863) → Tanuj Gupta (US)
 // Nevilson (86940863) → Nevilson Christan
+// Leaders-only: Jaydeep Soni → Jaydeep Salla (MarTech); Krunal → Tanuj Gupta (UK)
 const NEVILSON_ID="86940863";
 const OWNER_HEAD_MAP=(()=>{
   const m={};
   Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
+    if(grp==="Leaders / Heads")return; // handled below via real team groups
     owners.forEach(o=>{
       if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
       if(grp==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}
@@ -1128,6 +1170,9 @@ const OWNER_HEAD_MAP=(()=>{
       }
     });
   });
+  // Leaders-only members not in any real team group
+  m["17738843"]="Jaydeep Salla"; // Jaydeep Soni → MarTech head
+  m["79217713"]="Tanuj Gupta (UK)"; // Krunal Bakraniya → Digital-UK
   return m;
 })();
 function headstats(v){
@@ -1269,7 +1314,7 @@ function renderKPIs(_v){
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive||existingActive;
   return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
 })(),sub:(()=>{
   const _hasDrill=Object.keys(drill).length>0;
@@ -1279,7 +1324,7 @@ function renderKPIs(_v){
   const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
   const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
   const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
-  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive||existingActive;
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:`${m.clients} unique clients`,tip:"Net revenue ÷ unique clients"},
@@ -1549,6 +1594,7 @@ function resetAll(){
   const it=$("itype-sel");if(it)it.value="";
   const nb=$("nbd-toggle");if(nb){nbdActive=false;nb.classList.remove("active");}
   const rt=$("react-toggle");if(rt){reactivationActive=false;rt.classList.remove("active");}
+  const ex=$("existing-toggle");if(ex){existingActive=false;ex.classList.remove("active");}
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
   ownerManuallyFiltered=false;
