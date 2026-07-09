@@ -242,6 +242,55 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 @media(max-width:400px){
   .kpi-grid{grid-template-columns:1fr}
 }
+
+/* ── Nav Tabs ── */
+.nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;gap:0}
+.nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
+
+/* ── Clubs Filter Bar ── */
+.clubs-fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+
+/* ── Clubs Main Layout ── */
+.clubs-layout{max-width:1540px;margin:0 auto;padding:18px 28px 48px}
+
+/* ── Tier Cards ── */
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.tier-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid #E2E2E2;position:relative;overflow:hidden;transition:box-shadow .2s}
+.tier-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
+.tier-card.gold{border-top:3px solid #FFDA30}
+.tier-card.silver{border-top:3px solid #9A9A9A}
+.tier-card.bronze{border-top:3px solid #CD7F32}
+.t-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;white-space:nowrap}
+.t-badge.gold{background:#FFDA30;color:#111}
+.t-badge.silver{background:#9A9A9A;color:#fff}
+.t-badge.bronze{background:#CD7F32;color:#fff}
+.t-count{font-size:34px;font-weight:800;color:#434343;line-height:1;margin-bottom:2px}
+.t-sublbl{font-size:8.5px;color:#9A9A9A;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.t-rev{font-size:13px;font-weight:800;color:#434343;margin-bottom:3px}
+.t-avg{font-size:10px;font-weight:600;color:#9A9A9A}
+.t-spark{position:absolute;bottom:14px;right:16px;opacity:.55;pointer-events:none}
+
+/* ── Movement Flags ── */
+.mvt{font-size:8px;font-weight:800;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.mvt-new{background:#0CCE6B;color:#fff}
+.mvt-retained{background:#EDEDED;color:#696969}
+.mvt-upgraded{background:#FFDA30;color:#111}
+.mvt-atrisk{background:#EF2D56;color:#fff}
+
+/* ── Tier group header rows in roster table ── */
+.tier-group-hdr td{background:#F7F7F7!important;padding:7px 12px!important;font-size:9px!important;font-weight:800!important;text-transform:uppercase!important;letter-spacing:.1em!important;color:#434343!important;border-top:2px solid #E2E2E2!important;border-bottom:1px solid #E8E8E8!important;cursor:default!important}
+.tier-group-hdr:hover td{background:#F7F7F7!important}
+
+/* ── Clubs empty state ── */
+.clubs-empty{text-align:center;padding:48px 20px;color:#9A9A9A}
+.clubs-empty .es-icon{font-size:32px;margin-bottom:12px}
+.clubs-empty p{font-size:11px;font-weight:600}
+
+@media(max-width:900px){.tier-grid{grid-template-columns:repeat(2,1fr)}.clubs-layout{padding:14px 18px 36px}}
+@media(max-width:600px){.tier-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -305,7 +354,14 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
     </div>
   </div>
-  <div class="fbar">
+  <!-- ── SCREEN NAVIGATION ── -->
+  <div class="nav-tabs-bar">
+    <div class="nav-in">
+      <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">📊 Revenue</button>
+      <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">🏆 Client Clubs</button>
+    </div>
+  </div>
+  <div class="fbar" id="fbar">
     <div class="fbar-in">
       <span class="fl">Period</span>
       <select class="fsel" id="period-sel" onchange="onPeriodChange()">
@@ -384,14 +440,39 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
     </div>
   </div>
+  <!-- ── CLUBS FILTER BAR (hidden by default) ── -->
+  <div class="clubs-fbar" id="clubs-fbar" style="display:none">
+    <div class="fbar-in">
+      <span class="fl">Month</span>
+      <select class="fsel" id="clubs-month-sel" onchange="renderClubs()"></select>
+      <div class="vdiv"></div>
+      <span class="fl">Region</span>
+      <div class="ms-wrap" id="clubs-geo-wrap">
+        <div class="ms-btn" id="clubs-geo-btn" onclick="toggleClubsGeoMS(event)">
+          <span id="clubs-geo-label">All Regions</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="clubs-geo-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Regions</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllClubsGeo()">All</span>
+              <span class="ms-act" onclick="deselectAllClubsGeo()">None</span>
+            </div>
+          </div>
+          <div id="clubs-geo-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="yellow-rule"></div>
 </div>
 
-<div class="drill-bar"><div class="drill-chips" id="drill-chips"></div></div>
+<div class="drill-bar" id="drill-bar"><div class="drill-chips" id="drill-chips"></div></div>
 <div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div></div>
 
 <!-- LAYOUT: Sidebar + Main -->
-<div class="app-layout">
+<div class="app-layout" id="app-layout">
   <aside class="sidebar">
     <div class="sb-section">
       <div class="sb-lbl">Owners</div>
@@ -524,6 +605,66 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 </div><!-- /app-layout -->
+
+<!-- ════ CLIENT CLUBS LAYOUT (hidden by default) ════ -->
+<div class="clubs-layout" id="clubs-layout" style="display:none">
+
+  <!-- Section header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A">
+      Tier Overview &nbsp;·&nbsp; <span id="clubs-month-display">—</span>
+    </div>
+    <div id="clubs-sync-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
+  </div>
+
+  <!-- Tier KPI Cards -->
+  <div class="tier-grid" id="tier-grid"></div>
+
+  <!-- Tier Membership Trend Chart -->
+  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
+    Tier Membership Trend · FY 2026 (Apr–present)
+  </div>
+  <div class="chart-row" style="margin-bottom:20px">
+    <div class="card" style="grid-column:1/-1">
+      <div class="card-ttl">Client Count by Tier</div>
+      <div class="card-sub">Monthly Gold · Silver · Bronze membership · stacked · all filters applied</div>
+      <div style="position:relative;height:220px"><canvas id="clubs-trend-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Client Roster -->
+  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
+    Club Members &nbsp;·&nbsp; <span id="clubs-roster-period">—</span>
+  </div>
+  <div class="tcard">
+    <div class="tcard-hdr">
+      <div class="tcard-ttl">
+        <h3>Client Roster</h3>
+        <p id="clubs-roster-meta">—</p>
+      </div>
+    </div>
+    <div class="twrap">
+      <table style="min-width:680px">
+        <thead>
+          <tr>
+            <th style="width:38px;text-align:center">#</th>
+            <th>Client</th>
+            <th>Tier</th>
+            <th style="text-align:right">Revenue</th>
+            <th>BU</th>
+            <th>Region</th>
+            <th>Movement</th>
+          </tr>
+        </thead>
+        <tbody id="clubs-roster-tbody">
+          <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading Club data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer" style="margin-top:24px">PROJECT NEXUS 2.0 &nbsp;•&nbsp; CLIENT CLUBS &nbsp;•&nbsp; BY MAYUR DADLANI</div>
+</div><!-- /clubs-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -781,6 +922,10 @@ const drill={};
 // deals[] and netRevTotal are derived in renderAll() by filtering allDeals to the active period.
 let allDeals=[];
 let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
+// ── Client Clubs state ──
+let currentScreen='revenue';   // 'revenue' | 'clubs'
+let clubDataCache={};           // keyed by 'month|regions' — cleared on every sync
+let clubsTrendChart=null;
 
 // ════ HELPERS ════
 const $=id=>document.getElementById(id);
@@ -1088,7 +1233,7 @@ function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$(
 function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
 function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
-document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");});
+document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");if(!$("clubs-geo-wrap")?.contains(e.target))$("clubs-geo-dropdown")?.classList.remove("open");});
 
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
@@ -1313,6 +1458,7 @@ async function doFYSync(force=false){
     });
     if(dupes.length)console.log("Duplicates excluded:",dupes.length,dupes);
     allDeals=dupes.length?fetched.filter(d=>!dupes.includes(d.id)):fetched;
+    clubDataCache={}; // invalidate clubs cache — source data refreshed
 
     // ── Single line-item fetch covering all FY deals ──
     dealServiceMap={};
@@ -1344,6 +1490,7 @@ async function doFYSync(force=false){
 
     renderAll();        // derives deals + netRevTotal from allDeals for current period
     updateDynamicOptions();
+    if(currentScreen==='clubs'){clubDataCache={};renderClubs();} // re-render clubs if active
 
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
@@ -2105,6 +2252,8 @@ window.addEventListener("DOMContentLoaded",function(){
     initHeadFilter();
     initRegionFilter();
     initServiceFilter();
+    initClubsMonthSel();      // Client Clubs month selector
+    initClubsRegionFilter();  // Client Clubs region filter
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     // Single unified sync — fetches all FY months, one source of truth for everything
@@ -2115,6 +2264,315 @@ window.addEventListener("DOMContentLoaded",function(){
     const sd=$("sdot");if(sd)sd.style.background="#696969";
   }
 });
+// ════════════════════════════════════════════════
+// ════ CLIENT CLUBS — NEXUS 2.0 ════
+// ════════════════════════════════════════════════
+
+// ── Screen Management ──
+function setScreen(name){
+  currentScreen=name;
+  const isRevenue=name==='revenue';
+  document.querySelectorAll('.nav-tab').forEach(tab=>{
+    tab.classList.toggle('active',tab.dataset.screen===name);
+  });
+  const fb=$('fbar');if(fb)fb.style.display=isRevenue?'':'none';
+  const cfb=$('clubs-fbar');if(cfb)cfb.style.display=isRevenue?'none':'';
+  const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
+  const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
+  const cl=$('clubs-layout');if(cl)cl.style.display=isRevenue?'none':'';
+  if(!isRevenue&&allDeals.length){clubDataCache={};renderClubs();}
+}
+
+// ── Clubs Month Selector ──
+function initClubsMonthSel(){
+  const sel=$('clubs-month-sel');
+  if(!sel)return;
+  const fyMonths=getFY2026Months();
+  [...fyMonths].reverse().forEach(m=>{
+    const[mn,yr]=m.split('-');
+    const opt=document.createElement('option');
+    opt.value=m;
+    opt.textContent=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
+    sel.appendChild(opt);
+  });
+  // Default: last complete month (one before current)
+  const now=new Date();
+  const prevDate=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const prevMV=monthVal(prevDate);
+  const hasOption=Array.from(sel.options).some(o=>o.value===prevMV);
+  sel.value=hasOption?prevMV:(fyMonths[fyMonths.length-1]||'');
+}
+
+// ── Clubs Region Filter ──
+function initClubsRegionFilter(){
+  const list=$('clubs-geo-list');
+  if(!list)return;
+  list.innerHTML=ALL_REGIONS.map(r=>`
+    <div class="ms-item"><input type="checkbox" id="clubs-geo-${r}" checked onchange="onClubsGeoChange()"><label for="clubs-geo-${r}">${r}</label></div>`).join('');
+}
+function toggleClubsGeoMS(e){e.stopPropagation();$('clubs-geo-dropdown').classList.toggle('open');}
+function getClubsSelectedRegions(){
+  return ALL_REGIONS.filter(r=>{const e=$('clubs-geo-'+r);return !e||e.checked;});
+}
+function updateClubsGeoLabel(){
+  const sel=getClubsSelectedRegions();
+  $('clubs-geo-label').textContent=
+    sel.length===ALL_REGIONS.length?'All Regions':
+    sel.length===0?'None':sel.length===1?sel[0]:sel.length+' Regions';
+}
+function selectAllClubsGeo(){
+  ALL_REGIONS.forEach(r=>{const e=$('clubs-geo-'+r);if(e)e.checked=true;});
+  updateClubsGeoLabel();clubDataCache={};renderClubs();
+}
+function deselectAllClubsGeo(){
+  ALL_REGIONS.forEach(r=>{const e=$('clubs-geo-'+r);if(e)e.checked=false;});
+  updateClubsGeoLabel();
+}
+function onClubsGeoChange(){
+  updateClubsGeoLabel();clubDataCache={};
+  clearTimeout(debTimer);debTimer=setTimeout(()=>renderClubs(),100);
+}
+
+// ── Clubs Data Engine ──
+// Tier thresholds applied to NET spend (positive + credits/negatives summed).
+// $25k+ = Gold | $15k-$25k = Silver | $5k-$15k = Bronze | <$5k = excluded.
+// Dedup key: d.billing_id (contact_name_invoice_app_ || zoho_billing_id).
+// Display name: d.client (zoho_display_name || contact_name).
+function buildClubData(month,regions){
+  regions=regions||ALL_REGIONS;
+  const allReg=regions.length===ALL_REGIONS.length;
+  const cmap={};
+  allDeals.forEach(d=>{
+    if(d.month!==month)return;
+    if(!d.billing_id||d.billing_id==='—')return;
+    if(!allReg&&(!d.region||!regions.includes(d.region)))return;
+    if(!cmap[d.billing_id]){
+      cmap[d.billing_id]={billing_id:d.billing_id,name:d.client||d.billing_id,total:0,regions:new Set(),bus:new Set()};
+    }
+    cmap[d.billing_id].total+=d.amount;
+    if(d.region)cmap[d.billing_id].regions.add(d.region);
+    if(d.bu)cmap[d.billing_id].bus.add(d.bu);
+  });
+  return Object.values(cmap).map(c=>{
+    const tier=c.total>=25000?'Gold':c.total>=15000?'Silver':c.total>=5000?'Bronze':null;
+    return{billing_id:c.billing_id,name:c.name,total:c.total,regions:[...c.regions],bus:[...c.bus],tier};
+  }).filter(c=>c.tier!==null).sort((a,b)=>b.total-a.total);
+}
+
+function getCachedClubData(month,regions){
+  regions=regions||ALL_REGIONS;
+  const key=month+'|'+[...regions].sort().join(',');
+  if(!clubDataCache[key])clubDataCache[key]=buildClubData(month,regions);
+  return clubDataCache[key];
+}
+
+// getPrevFYMonth: 'june-2026' → 'may-2026' | 'april-2026' → null (FY floor)
+function getPrevFYMonth(month){
+  const[mn,yr]=month.split('-');
+  const idx=MFULL.indexOf(mn);
+  if(idx<0)return null;
+  let pIdx=idx-1,pYr=parseInt(yr);
+  if(pIdx<0){pIdx=11;pYr--;}
+  const pDate=new Date(pYr,pIdx,1);
+  if(pDate<FY_FLOOR)return null;
+  return`${MFULL[pIdx]}-${pYr}`;
+}
+
+// Movement vs previous month: 'New' | 'Retained' | 'Upgraded' | 'At-risk'
+function getMovementFlag(billingId,currentTier,month,regions){
+  const prevMonth=getPrevFYMonth(month);
+  if(!prevMonth)return'New'; // April = first FY month, all new
+  const prevData=getCachedClubData(prevMonth,regions);
+  const prev=prevData.find(c=>c.billing_id===billingId);
+  if(!prev)return'New';
+  if(prev.tier===currentTier)return'Retained';
+  const rank={Bronze:1,Silver:2,Gold:3};
+  return rank[currentTier]>rank[prev.tier]?'Upgraded':'At-risk';
+}
+
+// buildTierTrendData: client counts & revenues per tier per FY month — warms cache.
+function buildTierTrendData(regions){
+  const fyMonths=getFY2026Months();
+  const counts={Gold:[],Silver:[],Bronze:[]};
+  const revs={Gold:[],Silver:[],Bronze:[]};
+  fyMonths.forEach(m=>{
+    const data=getCachedClubData(m,regions);
+    ['Gold','Silver','Bronze'].forEach(tier=>{
+      const tc=data.filter(c=>c.tier===tier);
+      counts[tier].push(tc.length);
+      revs[tier].push(tc.reduce((s,c)=>s+c.total,0));
+    });
+  });
+  return{months:fyMonths,counts,revs};
+}
+
+// ── SVG Sparkline ──
+function renderSparkline(values,color,w,h){
+  w=w||92;h=h||34;
+  if(!values||!values.length)return'';
+  const pad=3;
+  const max=Math.max(...values,1);
+  const min=0;
+  const rng=max-min||1;
+  if(values.length===1){
+    return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><circle cx="${w/2}" cy="${h/2}" r="3" fill="${color}"/></svg>`;
+  }
+  const pts=values.map((v,i)=>{
+    const x=pad+(i/(values.length-1))*(w-2*pad);
+    const y=(h-pad)-((v-min)/rng)*(h-2*pad);
+    return`${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const last=pts[pts.length-1].split(',');
+  return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="2.5" fill="${color}"/>
+  </svg>`;
+}
+
+// ── Render: Tier KPI Cards ──
+function renderTierCards(data,trend,fyMonths){
+  const TIERS=[
+    {key:'Gold',icon:'🥇',range:'$25k+',color:'#FFDA30'},
+    {key:'Silver',icon:'🥈',range:'$15k–$25k',color:'#9A9A9A'},
+    {key:'Bronze',icon:'🥉',range:'$5k–$15k',color:'#CD7F32'}
+  ];
+  $('tier-grid').innerHTML=TIERS.map(t=>{
+    const clients=data.filter(c=>c.tier===t.key);
+    const count=clients.length;
+    const revenue=clients.reduce((s,c)=>s+c.total,0);
+    const avg=count>0?revenue/count:0;
+    const spark=renderSparkline(trend.counts[t.key]||[],t.color);
+    return`<div class="tier-card ${t.key.toLowerCase()}">
+      <span class="t-badge ${t.key.toLowerCase()}">${t.icon} ${t.key}</span>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="t-count">${count}</div>
+          <div class="t-sublbl">${t.range} · clients</div>
+          <div class="t-rev">${fmtUSD(revenue)}</div>
+          <div class="t-avg">avg ${fmtUSD(avg)} / client</div>
+        </div>
+        <div class="t-spark">${spark}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Render: Clubs Trend Chart ──
+function renderClubsTrendChart(fyMonths,trend){
+  if(clubsTrendChart){clubsTrendChart.destroy();clubsTrendChart=null;}
+  const ctx=$('clubs-trend-chart')?.getContext('2d');
+  if(!ctx)return;
+  const labels=fyMonths.map(m=>{const[mn]=m.split('-');return MSHRT[MFULL.indexOf(mn)];});
+  clubsTrendChart=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'Gold',data:trend.counts.Gold,backgroundColor:'rgba(255,218,48,0.85)',borderRadius:3,stack:'s'},
+      {label:'Silver',data:trend.counts.Silver,backgroundColor:'rgba(154,154,154,0.80)',borderRadius:3,stack:'s'},
+      {label:'Bronze',data:trend.counts.Bronze,backgroundColor:'rgba(205,127,50,0.75)',borderRadius:3,stack:'s'}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:'#434343',boxWidth:10,padding:10}},
+        tooltip:{bodyFont:{family:'Montserrat',size:10},titleFont:{family:'Montserrat',size:10},
+          callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y} client${c.parsed.y!==1?'s':''}`}}
+      },
+      scales:{
+        x:{stacked:true,ticks:TREND_TICK,grid:TREND_GRID},
+        y:{stacked:true,ticks:{...TREND_TICK,stepSize:1},grid:TREND_GRID,
+          title:{display:true,text:'Clients',font:TREND_FONT,color:'#9A9A9A'}}
+      }
+    }
+  });
+}
+
+// ── Render: Client Roster Table ──
+// Sorted by tier desc (Gold → Silver → Bronze), revenue desc within each tier.
+// Movement flags compare to previous FY month — April 2026 all = 'New'.
+function renderClubsRoster(data,month,regions){
+  const TIER_ORDER=['Gold','Silver','Bronze'];
+  const MVT_CLASS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
+  let html='';
+  let grank=0;
+
+  TIER_ORDER.forEach(tier=>{
+    const tc=data.filter(c=>c.tier===tier).sort((a,b)=>b.total-a.total);
+    if(!tc.length)return;
+    const icon={Gold:'🥇',Silver:'🥈',Bronze:'🥉'}[tier];
+    html+=`<tr class="tier-group-hdr"><td colspan="7">${icon} ${tier.toUpperCase()} — ${tc.length} client${tc.length!==1?'s':''}</td></tr>`;
+    tc.forEach((c,idx)=>{
+      grank++;
+      const mvt=getMovementFlag(c.billing_id,c.tier,month,regions);
+      const geo=c.regions.join(' · ')||'—';
+      const bu=[...new Set(c.bus)].join('+')||'—';
+      const bg=grank%2===0?'#FAFAFA':'#fff';
+      html+=`<tr>
+        <td style="background:${bg};color:#9A9A9A;font-size:10px;font-weight:700;text-align:center">${idx+1}</td>
+        <td style="background:${bg};font-weight:700;font-size:11px;color:#434343;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}">${c.name}</td>
+        <td style="background:${bg}"><span class="t-badge ${tier.toLowerCase()}" style="margin-bottom:0;font-size:8px">${tier}</span></td>
+        <td class="amt" style="background:${bg}">${fmtUSD(c.total)}</td>
+        <td style="background:${bg};font-size:10px;font-weight:600;color:#696969">${bu}</td>
+        <td style="background:${bg};font-size:10px;font-weight:600;color:#696969">${geo}</td>
+        <td style="background:${bg}"><span class="mvt ${MVT_CLASS[mvt]||'mvt-retained'}">${mvt}</span></td>
+      </tr>`;
+    });
+  });
+
+  if(!html){
+    html=`<tr><td colspan="7" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:500">
+      No clients reached any tier this period.<br><span style="font-size:9px">Try selecting a different month or adjust the region filter.</span>
+    </td></tr>`;
+  }
+
+  $('clubs-roster-tbody').innerHTML=html;
+  const total=data.length;
+  const[mn,yr]=month.split('-');
+  const lbl=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
+  if($('clubs-roster-meta'))$('clubs-roster-meta').textContent=`${total} client${total!==1?'s':''} across all tiers · ${lbl}`;
+  if($('clubs-roster-period'))$('clubs-roster-period').textContent=lbl;
+  if($('clubs-month-display'))$('clubs-month-display').textContent=lbl;
+}
+
+// ── Main Clubs Render ──
+function renderClubs(){
+  const month=$('clubs-month-sel')?.value||'';
+  if(!month){
+    if($('clubs-roster-tbody'))$('clubs-roster-tbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:36px;color:#9A9A9A">Select a month above.</td></tr>`;
+    return;
+  }
+  if(!allDeals.length){
+    if($('clubs-roster-tbody'))$('clubs-roster-tbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:36px;color:#9A9A9A">Waiting for data sync...</td></tr>`;
+    return;
+  }
+  const regions=getClubsSelectedRegions();
+  const data=getCachedClubData(month,regions);
+  const fyMonths=getFY2026Months();
+  const trend=buildTierTrendData(regions); // warms cache for all FY months
+
+  renderTierCards(data,trend,fyMonths);
+  renderClubsTrendChart(fyMonths,trend);
+  renderClubsRoster(data,month,regions);
+
+  if($('clubs-sync-status'))$('clubs-sync-status').textContent=`${allDeals.length} deals loaded · ${fyMonths.length} FY months`;
+
+  // ── Jun-26 validation console log ──
+  // Compare against management-confirmed benchmarks stored in project memory.
+  const[mn]=month.split('-');
+  if(mn==='june'){
+    const gold=data.filter(c=>c.tier==='Gold');
+    const silver=data.filter(c=>c.tier==='Silver');
+    const bronze=data.filter(c=>c.tier==='Bronze');
+    console.groupCollapsed('[Nexus Clubs] Jun-26 Validation');
+    console.log(`Gold: ${gold.length} clients (expected 7) | $${Math.round(gold.reduce((s,c)=>s+c.total,0)).toLocaleString()} (expected ~$217,799)`);
+    console.log(`Silver: ${silver.length} clients (expected 9) | $${Math.round(silver.reduce((s,c)=>s+c.total,0)).toLocaleString()} (expected ~$171,901)`);
+    console.log(`Bronze: ${bronze.length} clients (live data)`);
+    console.log('Gold roster:',gold.map(c=>`${c.name} $${Math.round(c.total).toLocaleString()}`));
+    console.log('Silver roster:',silver.map(c=>`${c.name} $${Math.round(c.total).toLocaleString()}`));
+    console.groupEnd();
+  }
+}
+// ════ END CLIENT CLUBS ════
 </script>
 </body>
 </html>
