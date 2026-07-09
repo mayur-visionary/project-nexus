@@ -316,7 +316,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-footer">The Live Pulse of Mavlers </div>
+    <div class="login-footer">The Live Pulse of Mavlers Revenue</div>
   </div>
 </div>
 
@@ -341,7 +341,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
           <div class="hdr-title">Project Nexus</div>
-          <div class="hdr-sub">The Live Pulse of Mavlers </div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
       </a>
       <div class="hdr-right">
@@ -363,21 +363,23 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div>
   <div class="fbar" id="fbar">
     <div class="fbar-in">
-      <span class="fl">Period</span>
-      <select class="fsel" id="period-sel" onchange="onPeriodChange()">
-        <option value="this-month" selected>This Month</option>
-        <option value="last-month" id="opt-last-month">Last Month</option>
-        <option value="this-quarter">This Quarter (FY)</option>
-        <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
-        <option value="this-fy">This FY (Apr 2026)</option>
-        <option value="custom">Custom ▾</option>
-      </select>
-      <div class="custom-range" id="custom-range">
-        <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
-        <span class="range-sep">→</span>
-        <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
+      <div id="rev-period-wrap" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="fl">Period</span>
+        <select class="fsel" id="period-sel" onchange="onPeriodChange()">
+          <option value="this-month" selected>This Month</option>
+          <option value="last-month" id="opt-last-month">Last Month</option>
+          <option value="this-quarter">This Quarter (FY)</option>
+          <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
+          <option value="this-fy">This FY (Apr 2026)</option>
+          <option value="custom">Custom ▾</option>
+        </select>
+        <div class="custom-range" id="custom-range">
+          <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
+          <span class="range-sep">→</span>
+          <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
+        </div>
+        <div class="vdiv"></div>
       </div>
-      <div class="vdiv"></div>
       <span class="fl">Business Unit</span>
       <select class="fsel sm" id="bu-sel" onchange="onBUChange()">
         <option value="">All BUs</option>
@@ -443,25 +445,19 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <!-- ── CLUBS FILTER BAR (hidden by default) ── -->
   <div class="clubs-fbar" id="clubs-fbar" style="display:none">
     <div class="fbar-in">
-      <span class="fl">Month</span>
-      <select class="fsel" id="clubs-month-sel" onchange="renderClubs()"></select>
-      <div class="vdiv"></div>
-      <span class="fl">Region</span>
-      <div class="ms-wrap" id="clubs-geo-wrap">
-        <div class="ms-btn" id="clubs-geo-btn" onclick="toggleClubsGeoMS(event)">
-          <span id="clubs-geo-label">All Regions</span>
-          <span class="ms-arrow">▼</span>
-        </div>
-        <div class="ms-dropdown" id="clubs-geo-dropdown">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Regions</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllClubsGeo()">All</span>
-              <span class="ms-act" onclick="deselectAllClubsGeo()">None</span>
-            </div>
-          </div>
-          <div id="clubs-geo-list"></div>
-        </div>
+      <span class="fl">Period</span>
+      <select class="fsel" id="clubs-period-sel" onchange="onClubsPeriodChange()">
+        <option value="this-month">This Month</option>
+        <option value="last-month" id="clubs-opt-last-month" selected>Last Month</option>
+        <option value="this-quarter">This Quarter (FY)</option>
+        <option value="last-quarter" id="clubs-opt-last-quarter">Last Quarter (FY)</option>
+        <option value="this-fy">This FY (Apr 2026)</option>
+        <option value="custom">Custom ▾</option>
+      </select>
+      <div class="custom-range" id="clubs-custom-range">
+        <select class="fsel sm" id="clubs-from-sel" onchange="onClubsPeriodChange()"></select>
+        <span class="range-sep">→</span>
+        <select class="fsel sm" id="clubs-to-sel" onchange="onClubsPeriodChange()"></select>
       </div>
     </div>
   </div>
@@ -644,26 +640,27 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
     </div>
     <div class="twrap">
-      <table style="min-width:680px">
+      <table style="min-width:760px">
         <thead>
           <tr>
             <th style="width:38px;text-align:center">#</th>
             <th>Client</th>
             <th>Tier</th>
             <th style="text-align:right">Revenue</th>
+            <th style="text-align:right;color:#9A9A9A">Prev Rev</th>
             <th>BU</th>
             <th>Region</th>
             <th>Movement</th>
           </tr>
         </thead>
         <tbody id="clubs-roster-tbody">
-          <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading Club data...</td></tr>
+          <tr><td colspan="8" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading Club data...</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <div class="footer" style="margin-top:24px">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div><!-- /clubs-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -1093,7 +1090,7 @@ function updateHeadLabel(){
 }
 function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();onFilterChange();}
 function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
-function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 
 // ════ REGION MULTI-SELECT ════
 const ALL_REGIONS=["US","UK","AU"];
@@ -1109,7 +1106,7 @@ function updateGeoLabel(){
 }
 function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onGeoChange();}
 function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
-function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
@@ -1169,7 +1166,7 @@ function updateSvcLabel(){
 }
 function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
 function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
-function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 
 // ════ SMART FILTERS ════
 function updateSmartFilters(){
@@ -1238,7 +1235,7 @@ document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
 function onBUChange(){
-  clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);
+  clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);
 }
 function toggleBUFilter(bu){
   const sel=$("bu-sel");
@@ -2252,8 +2249,8 @@ window.addEventListener("DOMContentLoaded",function(){
     initHeadFilter();
     initRegionFilter();
     initServiceFilter();
-    initClubsMonthSel();      // Client Clubs month selector
-    initClubsRegionFilter();  // Client Clubs region filter
+    initClubsPeriodSel();     // Client Clubs period selector
+    initClubsPeriodOptions(); // Hide unavailable clubs period options
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     // Single unified sync — fetches all FY months, one source of truth for everything
@@ -2275,7 +2272,9 @@ function setScreen(name){
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  const fb=$('fbar');if(fb)fb.style.display=isRevenue?'':'none';
+  // Revenue fbar always visible (BU, Region, Head, Service apply to both screens)
+  // Only the Period wrap hides on Clubs (clubs has its own period)
+  const rp=$('rev-period-wrap');if(rp)rp.style.display=isRevenue?'':'none';
   const cfb=$('clubs-fbar');if(cfb)cfb.style.display=isRevenue?'none':'';
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
   const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
@@ -2283,69 +2282,116 @@ function setScreen(name){
   if(!isRevenue&&allDeals.length){clubDataCache={};renderClubs();}
 }
 
-// ── Clubs Month Selector ──
-function initClubsMonthSel(){
-  const sel=$('clubs-month-sel');
-  if(!sel)return;
-  const fyMonths=getFY2026Months();
-  [...fyMonths].reverse().forEach(m=>{
-    const[mn,yr]=m.split('-');
-    const opt=document.createElement('option');
-    opt.value=m;
-    opt.textContent=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
-    sel.appendChild(opt);
-  });
-  // Default: last complete month (one before current)
+// ── Clubs Period Selector ──
+function initClubsPeriodSel(){
+  // Default to last-month for clubs (last complete month is most relevant for tier review)
+  const sel=$('clubs-period-sel');
+  if(sel)sel.value='last-month';
+  // Populate clubs custom range selects (same logic as Revenue custom range)
   const now=new Date();
-  const prevDate=new Date(now.getFullYear(),now.getMonth()-1,1);
-  const prevMV=monthVal(prevDate);
-  const hasOption=Array.from(sel.options).some(o=>o.value===prevMV);
-  sel.value=hasOption?prevMV:(fyMonths[fyMonths.length-1]||'');
+  [$('clubs-from-sel'),$('clubs-to-sel')].forEach((s,idx)=>{
+    if(!s)return;
+    const months=[];const c=new Date(FY_FLOOR);
+    while(c<=now){months.push(new Date(c));c.setMonth(c.getMonth()+1);}
+    months.reverse().forEach(d=>{
+      const opt=document.createElement('option');
+      opt.value=monthVal(d);opt.textContent=monthLbl(d);
+      s.appendChild(opt);
+    });
+    if(idx===0&&s.options.length>1)s.options[1].selected=true;
+    if(idx===1&&s.options.length>0)s.options[0].selected=true;
+  });
 }
 
-// ── Clubs Region Filter ──
-function initClubsRegionFilter(){
-  const list=$('clubs-geo-list');
-  if(!list)return;
-  list.innerHTML=ALL_REGIONS.map(r=>`
-    <div class="ms-item"><input type="checkbox" id="clubs-geo-${r}" checked onchange="onClubsGeoChange()"><label for="clubs-geo-${r}">${r}</label></div>`).join('');
+function initClubsPeriodOptions(){
+  const now=new Date(),cm=now.getMonth(),cy=now.getFullYear();
+  const lm=new Date(cy,cm-1,1);
+  const lmOpt=$('clubs-opt-last-month');
+  if(lmOpt)lmOpt.style.display=lm<FY_FLOOR?'none':'';
+  const qs=fyQtrStart(cm);
+  let pqs,pqy;
+  if(qs===3){pqs=0;pqy=cy;}
+  else if(qs===6){pqs=3;pqy=cy;}
+  else if(qs===9){pqs=6;pqy=cy;}
+  else{pqs=9;pqy=cy-1;}
+  const lqEnd=new Date(pqy,pqs+2,1);
+  const lqOpt=$('clubs-opt-last-quarter');
+  if(lqOpt)lqOpt.style.display=lqEnd<FY_FLOOR?'none':'';
 }
-function toggleClubsGeoMS(e){e.stopPropagation();$('clubs-geo-dropdown').classList.toggle('open');}
-function getClubsSelectedRegions(){
-  return ALL_REGIONS.filter(r=>{const e=$('clubs-geo-'+r);return !e||e.checked;});
-}
-function updateClubsGeoLabel(){
-  const sel=getClubsSelectedRegions();
-  $('clubs-geo-label').textContent=
-    sel.length===ALL_REGIONS.length?'All Regions':
-    sel.length===0?'None':sel.length===1?sel[0]:sel.length+' Regions';
-}
-function selectAllClubsGeo(){
-  ALL_REGIONS.forEach(r=>{const e=$('clubs-geo-'+r);if(e)e.checked=true;});
-  updateClubsGeoLabel();clubDataCache={};renderClubs();
-}
-function deselectAllClubsGeo(){
-  ALL_REGIONS.forEach(r=>{const e=$('clubs-geo-'+r);if(e)e.checked=false;});
-  updateClubsGeoLabel();
-}
-function onClubsGeoChange(){
-  updateClubsGeoLabel();clubDataCache={};
+
+function onClubsPeriodChange(){
+  $('clubs-custom-range').classList.toggle('show',$('clubs-period-sel').value==='custom');
+  clubDataCache={};
   clearTimeout(debTimer);debTimer=setTimeout(()=>renderClubs(),100);
 }
 
+// getClubsMonths: same logic as getMonths() but reads clubs-period-sel / clubs-from-sel / clubs-to-sel
+function getClubsMonths(){
+  const p=$('clubs-period-sel').value,now=new Date(),cm=now.getMonth(),cy=now.getFullYear();
+  switch(p){
+    case'this-month':return clampedMonths([monthVal(now)]);
+    case'last-month':{const lm=new Date(cy,cm-1,1);return clampedMonths([monthVal(lm)]);}
+    case'this-quarter':{const qs=fyQtrStart(cm);return clampedMonths([0,1,2].map(i=>monthVal(new Date(cy,qs+i,1))));}
+    case'last-quarter':{
+      const qs=fyQtrStart(cm);
+      let pqs,pqy;
+      if(qs===3){pqs=0;pqy=cy;}else if(qs===6){pqs=3;pqy=cy;}
+      else if(qs===9){pqs=6;pqy=cy;}else{pqs=9;pqy=cy-1;}
+      return clampedMonths([0,1,2].map(i=>monthVal(new Date(pqy,pqs+i,1))));
+    }
+    case'this-fy':{
+      const fyYear=cm>=FY_START_MONTH?cy:cy-1;
+      const ms=[];
+      for(let m=FY_START_MONTH;m<FY_START_MONTH+12;m++){
+        const d=new Date(fyYear,m,1);if(d>now)break;ms.push(monthVal(d));
+      }
+      return clampedMonths(ms);
+    }
+    case'custom':{
+      const fv=$('clubs-from-sel').value,tv=$('clubs-to-sel').value;
+      if(!fv||!tv)return clampedMonths([monthVal(new Date(cy,cm-1,1))]);
+      const[fm,fy]=fv.split('-'),[tm,ty]=tv.split('-');
+      const from=clampToFloor(new Date(+fy,MFULL.indexOf(fm),1));
+      const to=new Date(+ty,MFULL.indexOf(tm),1);
+      const ms=[];const c=new Date(from);
+      while(c<=to&&ms.length<24){ms.push(monthVal(c));c.setMonth(c.getMonth()+1);}
+      return ms;
+    }
+    default:return clampedMonths([monthVal(new Date(cy,cm-1,1))]);
+  }
+}
+
+// getPrevPeriodMonths: given months[], return same-length array immediately before.
+// Returns null if any part of prev period is before FY_FLOOR.
+function getPrevPeriodMonths(months){
+  if(!months||!months.length)return null;
+  const count=months.length;
+  const[mn,yr]=months[0].split('-');
+  let mIdx=MFULL.indexOf(mn),mYr=parseInt(yr);
+  const prevMonths=[];
+  for(let i=count;i>=1;i--){
+    let idx=mIdx-i,year=mYr;
+    while(idx<0){idx+=12;year--;}
+    const d=new Date(year,idx,1);
+    if(d<FY_FLOOR)return null;
+    prevMonths.push(`${MFULL[idx]}-${year}`);
+  }
+  return prevMonths;
+}
+
+function getClubsPeriodLabel(months){
+  if(!months||!months.length)return'—';
+  const fmt=m=>{const[mn,yr]=m.split('-');return`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;};
+  return months.length===1?fmt(months[0]):`${fmt(months[0])}–${fmt(months[months.length-1])}`;
+}
+
 // ── Clubs Data Engine ──
-// Tier thresholds applied to NET spend (positive + credits/negatives summed).
-// $25k+ = Gold | $15k-$25k = Silver | $5k-$15k = Bronze | <$5k = excluded.
-// Dedup key: d.billing_id (contact_name_invoice_app_ || zoho_billing_id).
-// Display name: d.client (zoho_display_name || contact_name).
-function buildClubData(month,regions){
-  regions=regions||ALL_REGIONS;
-  const allReg=regions.length===ALL_REGIONS.length;
+// buildClubData: takes pre-filtered deals (period + attribution already applied).
+// Aggregates by billing_id, assigns tier from net spend.
+function buildClubData(filteredDeals){
   const cmap={};
-  allDeals.forEach(d=>{
-    if(d.month!==month)return;
+  filteredDeals.forEach(d=>{
     if(!d.billing_id||d.billing_id==='—')return;
-    if(!allReg&&(!d.region||!regions.includes(d.region)))return;
     if(!cmap[d.billing_id]){
       cmap[d.billing_id]={billing_id:d.billing_id,name:d.client||d.billing_id,total:0,regions:new Set(),bus:new Set()};
     }
@@ -2359,30 +2405,19 @@ function buildClubData(month,regions){
   }).filter(c=>c.tier!==null).sort((a,b)=>b.total-a.total);
 }
 
-function getCachedClubData(month,regions){
-  regions=regions||ALL_REGIONS;
-  const key=month+'|'+[...regions].sort().join(',');
-  if(!clubDataCache[key])clubDataCache[key]=buildClubData(month,regions);
-  return clubDataCache[key];
+// getCachedClubData: cache key = monthKey string. Cache reset at start of each renderClubs().
+function getCachedClubData(monthKey,filteredDeals){
+  if(!clubDataCache[monthKey])clubDataCache[monthKey]=buildClubData(filteredDeals);
+  return clubDataCache[monthKey];
 }
 
-// getPrevFYMonth: 'june-2026' → 'may-2026' | 'april-2026' → null (FY floor)
-function getPrevFYMonth(month){
-  const[mn,yr]=month.split('-');
-  const idx=MFULL.indexOf(mn);
-  if(idx<0)return null;
-  let pIdx=idx-1,pYr=parseInt(yr);
-  if(pIdx<0){pIdx=11;pYr--;}
-  const pDate=new Date(pYr,pIdx,1);
-  if(pDate<FY_FLOOR)return null;
-  return`${MFULL[pIdx]}-${pYr}`;
-}
-
-// Movement vs previous month: 'New' | 'Retained' | 'Upgraded' | 'At-risk'
-function getMovementFlag(billingId,currentTier,month,regions){
-  const prevMonth=getPrevFYMonth(month);
-  if(!prevMonth)return'New'; // April = first FY month, all new
-  const prevData=getCachedClubData(prevMonth,regions);
+// getMovementFlag: compare billingId against previous period.
+// prevMonths=null → 'New'. Not found in prev → 'New'. Tier up → 'Upgraded'. Tier down → 'At-risk'.
+function getMovementFlag(billingId,currentTier,prevMonths,allFiltered){
+  if(!prevMonths)return'New';
+  const prevKey='prev|'+prevMonths.join(',');
+  const prevDeals=allFiltered.filter(d=>prevMonths.includes(d.month));
+  const prevData=getCachedClubData(prevKey,prevDeals);
   const prev=prevData.find(c=>c.billing_id===billingId);
   if(!prev)return'New';
   if(prev.tier===currentTier)return'Retained';
@@ -2390,13 +2425,15 @@ function getMovementFlag(billingId,currentTier,month,regions){
   return rank[currentTier]>rank[prev.tier]?'Upgraded':'At-risk';
 }
 
-// buildTierTrendData: client counts & revenues per tier per FY month — warms cache.
-function buildTierTrendData(regions){
+// buildTierTrendData: iterate all FY months, bucket from attribution-filtered allDeals.
+// allFiltered = trendView() — BU/Region/Head/Service applied, all FY months included.
+function buildTierTrendData(allFiltered){
   const fyMonths=getFY2026Months();
   const counts={Gold:[],Silver:[],Bronze:[]};
   const revs={Gold:[],Silver:[],Bronze:[]};
   fyMonths.forEach(m=>{
-    const data=getCachedClubData(m,regions);
+    const monthDeals=allFiltered.filter(d=>d.month===m);
+    const data=getCachedClubData(m,monthDeals);
     ['Gold','Silver','Bronze'].forEach(tier=>{
       const tc=data.filter(c=>c.tier===tier);
       counts[tier].push(tc.length);
@@ -2412,14 +2449,13 @@ function renderSparkline(values,color,w,h){
   if(!values||!values.length)return'';
   const pad=3;
   const max=Math.max(...values,1);
-  const min=0;
-  const rng=max-min||1;
+  const rng=max||1;
   if(values.length===1){
     return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><circle cx="${w/2}" cy="${h/2}" r="3" fill="${color}"/></svg>`;
   }
   const pts=values.map((v,i)=>{
     const x=pad+(i/(values.length-1))*(w-2*pad);
-    const y=(h-pad)-((v-min)/rng)*(h-2*pad);
+    const y=(h-pad)-(v/rng)*(h-2*pad);
     return`${x.toFixed(1)},${y.toFixed(1)}`;
   });
   const last=pts[pts.length-1].split(',');
@@ -2488,22 +2524,28 @@ function renderClubsTrendChart(fyMonths,trend){
 }
 
 // ── Render: Client Roster Table ──
-// Sorted by tier desc (Gold → Silver → Bronze), revenue desc within each tier.
-// Movement flags compare to previous FY month — April 2026 all = 'New'.
-function renderClubsRoster(data,month,regions){
+// 8 columns: # | Client | Tier | Revenue | Prev Rev | BU | Region | Movement
+// Movement compares vs previous period (same duration, shifted back one period).
+function renderClubsRoster(data,months,prevMonths,allFiltered){
   const TIER_ORDER=['Gold','Silver','Bronze'];
   const MVT_CLASS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
-  let html='';
-  let grank=0;
+  const prevLbl=prevMonths?getClubsPeriodLabel(prevMonths):'—';
+  // Pre-compute prev period data once (cached)
+  const prevKey=prevMonths?'prev|'+prevMonths.join(','):null;
+  const prevDeals=prevMonths?allFiltered.filter(d=>prevMonths.includes(d.month)):[];
+  const prevData=prevKey?getCachedClubData(prevKey,prevDeals):[];
+  let html='';let grank=0;
 
   TIER_ORDER.forEach(tier=>{
     const tc=data.filter(c=>c.tier===tier).sort((a,b)=>b.total-a.total);
     if(!tc.length)return;
     const icon={Gold:'🥇',Silver:'🥈',Bronze:'🥉'}[tier];
-    html+=`<tr class="tier-group-hdr"><td colspan="7">${icon} ${tier.toUpperCase()} — ${tc.length} client${tc.length!==1?'s':''}</td></tr>`;
+    html+=`<tr class="tier-group-hdr"><td colspan="8">${icon} ${tier.toUpperCase()} — ${tc.length} client${tc.length!==1?'s':''}</td></tr>`;
     tc.forEach((c,idx)=>{
       grank++;
-      const mvt=getMovementFlag(c.billing_id,c.tier,month,regions);
+      const mvt=getMovementFlag(c.billing_id,c.tier,prevMonths,allFiltered);
+      const prevC=prevData.find(p=>p.billing_id===c.billing_id);
+      const prevRevStr=prevC?fmtShort(prevC.total):'—';
       const geo=c.regions.join(' · ')||'—';
       const bu=[...new Set(c.bus)].join('+')||'—';
       const bg=grank%2===0?'#FAFAFA':'#fff';
@@ -2512,6 +2554,7 @@ function renderClubsRoster(data,month,regions){
         <td style="background:${bg};font-weight:700;font-size:11px;color:#434343;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}">${c.name}</td>
         <td style="background:${bg}"><span class="t-badge ${tier.toLowerCase()}" style="margin-bottom:0;font-size:8px">${tier}</span></td>
         <td class="amt" style="background:${bg}">${fmtUSD(c.total)}</td>
+        <td style="background:${bg};text-align:right;font-size:10px;font-weight:600;color:#9A9A9A" title="Prev: ${prevLbl}">${prevRevStr}</td>
         <td style="background:${bg};font-size:10px;font-weight:600;color:#696969">${bu}</td>
         <td style="background:${bg};font-size:10px;font-weight:600;color:#696969">${geo}</td>
         <td style="background:${bg}"><span class="mvt ${MVT_CLASS[mvt]||'mvt-retained'}">${mvt}</span></td>
@@ -2520,46 +2563,48 @@ function renderClubsRoster(data,month,regions){
   });
 
   if(!html){
-    html=`<tr><td colspan="7" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:500">
-      No clients reached any tier this period.<br><span style="font-size:9px">Try selecting a different month or adjust the region filter.</span>
+    html=`<tr><td colspan="8" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:500">
+      No clients reached any tier this period.<br><span style="font-size:9px">Try a different period or adjust the filters.</span>
     </td></tr>`;
   }
 
   $('clubs-roster-tbody').innerHTML=html;
   const total=data.length;
-  const[mn,yr]=month.split('-');
-  const lbl=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
-  if($('clubs-roster-meta'))$('clubs-roster-meta').textContent=`${total} client${total!==1?'s':''} across all tiers · ${lbl}`;
-  if($('clubs-roster-period'))$('clubs-roster-period').textContent=lbl;
-  if($('clubs-month-display'))$('clubs-month-display').textContent=lbl;
+  const periodLbl=getClubsPeriodLabel(months);
+  if($('clubs-roster-meta'))$('clubs-roster-meta').textContent=`${total} client${total!==1?'s':''} across all tiers · ${periodLbl}${prevMonths?' · vs '+prevLbl:''}`;
+  if($('clubs-roster-period'))$('clubs-roster-period').textContent=periodLbl;
+  if($('clubs-month-display'))$('clubs-month-display').textContent=periodLbl;
 }
 
 // ── Main Clubs Render ──
+// Single source of truth: allDeals filtered via trendView() for BU/Region/Head/Service attribution,
+// then sliced by clubs period months for KPI/roster.
+// Trend chart uses all FY months from trendView() unsliced.
 function renderClubs(){
-  const month=$('clubs-month-sel')?.value||'';
-  if(!month){
-    if($('clubs-roster-tbody'))$('clubs-roster-tbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:36px;color:#9A9A9A">Select a month above.</td></tr>`;
-    return;
-  }
   if(!allDeals.length){
-    if($('clubs-roster-tbody'))$('clubs-roster-tbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:36px;color:#9A9A9A">Waiting for data sync...</td></tr>`;
+    if($('clubs-roster-tbody'))$('clubs-roster-tbody').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:36px;color:#9A9A9A">Waiting for data sync...</td></tr>`;
     return;
   }
-  const regions=getClubsSelectedRegions();
-  const data=getCachedClubData(month,regions);
+  clubDataCache={}; // Fresh cache — filter composition may have changed
+  const clubsMonths=getClubsMonths();
+  const prevMonths=getPrevPeriodMonths(clubsMonths);
+  // trendView() = all FY deals with BU/Region/Head/Service attribution filters applied
+  const allFiltered=trendView();
+  // Period slice for KPI cards and roster
+  const filteredDeals=allFiltered.filter(d=>clubsMonths.includes(d.month));
+  const data=getCachedClubData(clubsMonths.join(','),filteredDeals);
   const fyMonths=getFY2026Months();
-  const trend=buildTierTrendData(regions); // warms cache for all FY months
+  const trend=buildTierTrendData(allFiltered); // warms cache for all FY months
 
   renderTierCards(data,trend,fyMonths);
   renderClubsTrendChart(fyMonths,trend);
-  renderClubsRoster(data,month,regions);
+  renderClubsRoster(data,clubsMonths,prevMonths,allFiltered);
 
-  if($('clubs-sync-status'))$('clubs-sync-status').textContent=`${allDeals.length} deals loaded · ${fyMonths.length} FY months`;
+  const periodLbl=getClubsPeriodLabel(clubsMonths);
+  if($('clubs-sync-status'))$('clubs-sync-status').textContent=`${filteredDeals.length} deals · ${periodLbl}`;
 
-  // ── Jun-26 validation console log ──
-  // Compare against management-confirmed benchmarks stored in project memory.
-  const[mn]=month.split('-');
-  if(mn==='june'){
+  // ── Jun-26 single-month validation ──
+  if(clubsMonths.length===1&&clubsMonths[0]==='june-2026'){
     const gold=data.filter(c=>c.tier==='Gold');
     const silver=data.filter(c=>c.tier==='Silver');
     const bronze=data.filter(c=>c.tier==='Bronze');
