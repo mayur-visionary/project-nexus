@@ -1164,7 +1164,8 @@ function attributeDeals(arr){
 }
 
 // ════ DRILL-DOWN ════
-function view(){
+function view(src,liMap){
+  src=src||deals;liMap=liMap||dealServiceMap;
   const _bu=$("bu-sel")?.value||"";
   const _effectiveBU=_bu;
   const _selGeo=getSelectedRegions();
@@ -1178,7 +1179,7 @@ function view(){
   const _selOwners=_ownerFiltered?selOwners():[];
   const _effectiveSvc=drill.service||null;
 
-  return deals.map(d=>{
+  return src.map(d=>{
     // ── Standard deal-level filters — read stamped attribution fields ──
     if(drill.region&&d.region!==drill.region)return null;
     if(_geoFiltered){if(!d.region||!_selGeo.includes(d.region))return null;}
@@ -1208,12 +1209,12 @@ function view(){
     if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
     if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return null;}
     if(_svcFiltered){
-      const dSvc=dealServiceMap[d.id]||[];
+      const dSvc=liMap[d.id]||[];
       if(!dSvc.length)return null;
       if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
     }
     if(drill.service){
-      const dSvc=dealServiceMap[d.id]||[];
+      const dSvc=liMap[d.id]||[];
       if(!dSvc.some(li=>li.svc===drill.service))return null;
     }
 
@@ -1221,7 +1222,7 @@ function view(){
     // When Service filter is active, adjust deal amount to matching line items only
     const needsLiAdjust=_effectiveSvc||_svcFiltered;
     if(needsLiAdjust){
-      const lis=dealServiceMap[d.id]||[];
+      const lis=liMap[d.id]||[];
       if(!lis.length)return null;
       const filtered=lis.filter(li=>{
         if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
@@ -1236,6 +1237,9 @@ function view(){
     return d;
   }).filter(Boolean);
 }
+// ── trendView: applies all dashboard filters to trendDeals for filter-responsive Trends ──
+// Period filter intentionally excluded — Trends always shows full FY sweep regardless.
+function trendView(){return view(trendDeals,trendDealServiceMap);}
 function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
 function clearDrill(key){delete drill[key];updateChips();renderAll();}
 function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateChips();renderAll();}
@@ -1285,15 +1289,17 @@ async function doSync(force=false){
           // for deals where contact_name is null — client: display name (zoho_display_name preferred)
           billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"—",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
+          month:r.properties?.invoice_booking_month__invoice_app_||"",
           inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—",company_name:r.properties?.company_name__invoice_app_||""});
       });
       after=data.paging?.next?.after||null;
     }while(after);
 
-    // ── Deduplicate: same dealname + same amount = duplicate, keep earliest ──
+    // ── Deduplicate: same dealname + same amount + same month = duplicate, keep earliest ──
+    // Month is included so recurring clients (same name/amount across months) are NOT deduped.
     const seen={};const dupes=[];
     allDeals.forEach(d=>{
-      const key=d.dealname+"|"+d.amount;
+      const key=d.dealname+"|"+d.amount+"|"+(d.month||"");
       if(seen[key]){dupes.push(d.id);return;}
       seen[key]=d.id;
     });
@@ -1826,10 +1832,10 @@ async function doTrendsSync(){
       after=data.paging?.next?.after||null;
     }while(after);
 
-    // Deduplicate — same rule as main deals
+    // Deduplicate — dealname + amount + month: prevents cross-month dedup of recurring deals
     const seen={};const dupes=[];
     allDeals.forEach(d=>{
-      const key=d.dealname+"|"+d.amount;
+      const key=d.dealname+"|"+d.amount+"|"+d.month;
       if(seen[key]){dupes.push(d.id);return;}
       seen[key]=d.id;
     });
@@ -1857,7 +1863,7 @@ async function doTrendsSync(){
     // Attribution pre-pass on trend deals
     attributeDeals(trendDeals);
 
-    renderTrends(fyMonths);
+    renderTrends(fyMonths,trendView());
     const endLbl=MSHRT[new Date().getMonth()];
     $("trend-status").textContent=`${trendDeals.length} deals · Apr–${endLbl} 2026`;
   }catch(e){
@@ -1867,7 +1873,8 @@ async function doTrendsSync(){
 }
 
 // Build month-keyed aggregates from trendDeals
-function buildTrendData(months){
+function buildTrendData(months,src){
+  src=src||trendDeals;
   // Initialise per-month buckets
   const byMonth={};
   months.forEach(m=>{
@@ -1879,7 +1886,7 @@ function buildTrendData(months){
     };
   });
 
-  trendDeals.forEach(d=>{
+  src.forEach(d=>{
     const m=d.month;
     if(!byMonth[m])return;
     const bkt=byMonth[m];
@@ -1928,9 +1935,9 @@ function destroyTrendCharts(){
   trcRevChart=trcBUChart=trcEngChart=trcAvgChart=null;
 }
 
-function renderTrends(months){
+function renderTrends(months,src){
   destroyTrendCharts();
-  const byMonth=buildTrendData(months);
+  const byMonth=buildTrendData(months,src);
   // Month display labels e.g. "Jan", "Feb"
   const labels=months.map(m=>{const[mn,yr]=m.split("-");return MSHRT[MFULL.indexOf(mn)];});
   const net    =months.map(m=>byMonth[m].net);
@@ -2042,6 +2049,7 @@ function renderTrends(months){
 function renderAll(){
   const _v=view();
   renderKPIs(_v);renderBUBars(_v);renderGeoBars(_v);renderHeadBars(_v);renderSvcBars(_v);renderClientBars(_v);renderInvChart(_v);renderTable(_v);
+  if(trendDeals.length)renderTrends(getFY2026Months(),trendView());
 }
 
 // ════ KPI ACTIONS ════
