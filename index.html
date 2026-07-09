@@ -252,9 +252,13 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
 /* ── Clubs Filter Bar ── */
 .clubs-fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+/* ── Clubs layout — mirrors Revenue app-layout ── */
+.clubs-app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
+.clubs-sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
+.clubs-main{flex:1;min-width:0;padding:18px 28px 48px}
 
 /* ── Clubs Main Layout ── */
-.clubs-layout{max-width:1540px;margin:0 auto;padding:18px 28px 48px}
+.clubs-layout{display:none}
 
 /* ── Tier Cards ── */
 .tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
@@ -289,7 +293,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .clubs-empty .es-icon{font-size:32px;margin-bottom:12px}
 .clubs-empty p{font-size:11px;font-weight:600}
 
-@media(max-width:900px){.tier-grid{grid-template-columns:repeat(2,1fr)}.clubs-layout{padding:14px 18px 36px}}
+@media(max-width:900px){.tier-grid{grid-template-columns:repeat(2,1fr)}.clubs-app-layout{flex-direction:column}.clubs-sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static}.clubs-main{padding:14px 18px 36px}}
 @media(max-width:600px){.tier-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -603,64 +607,103 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 </div><!-- /app-layout -->
 
 <!-- ════ CLIENT CLUBS LAYOUT (hidden by default) ════ -->
-<div class="clubs-layout" id="clubs-layout" style="display:none">
+<div class="clubs-layout" id="clubs-layout">
 
-  <!-- Section header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A">
-      Tier Overview &nbsp;·&nbsp; <span id="clubs-month-display"></span>
-    </div>
-    <div id="clubs-sync-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
-  </div>
+  <div class="clubs-app-layout">
 
-  <!-- Tier KPI Cards -->
-  <div class="tier-grid" id="tier-grid"></div>
+    <!-- CLUBS SIDEBAR -->
+    <aside class="clubs-sidebar">
 
-  <!-- Tier Membership Trend Chart -->
-  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
-    Tier Membership Trend · FY 2026 (Apr–present)
-  </div>
-  <div class="chart-row" style="margin-bottom:20px">
-    <div class="card" style="grid-column:1/-1">
-      <div class="card-ttl">Client Count by Tier</div>
-      <div class="card-sub">Monthly Gold · Silver · Bronze membership · stacked · all filters applied</div>
-      <div style="position:relative;height:220px"><canvas id="clubs-trend-chart"></canvas></div>
-    </div>
-  </div>
-
-  <!-- Client Roster -->
-  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
-    Club Members &nbsp;·&nbsp; <span id="clubs-roster-period"></span>
-  </div>
-  <div class="tcard">
-    <div class="tcard-hdr">
-      <div class="tcard-ttl">
-        <h3>Client Roster</h3>
-        <p id="clubs-roster-meta"></p>
+      <div class="sb-section">
+        <div class="sb-lbl">Tier</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <button class="nbd-toggle active" id="ct-all" onclick="setClubsTier('')" style="text-align:left">All Tiers</button>
+          <button class="nbd-toggle" id="ct-gold" onclick="setClubsTier('Gold')" style="text-align:left">Gold &nbsp;$25k+</button>
+          <button class="nbd-toggle" id="ct-silver" onclick="setClubsTier('Silver')" style="text-align:left">Silver &nbsp;$15k+</button>
+          <button class="nbd-toggle" id="ct-bronze" onclick="setClubsTier('Bronze')" style="text-align:left">Bronze &nbsp;$5k+</button>
+        </div>
       </div>
-    </div>
-    <div class="twrap">
-      <table style="min-width:760px">
-        <thead>
-          <tr>
-            <th style="width:38px;text-align:center">#</th>
-            <th>Client</th>
-            <th>Tier</th>
-            <th style="text-align:right">Revenue</th>
-            <th style="text-align:right;color:#9A9A9A">Prev Rev</th>
-            <th>BU</th>
-            <th>Region</th>
-            <th>Movement</th>
-          </tr>
-        </thead>
-        <tbody id="clubs-roster-tbody">
-          <tr><td colspan="8" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading Club data...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+      <div class="sb-divider"></div>
+
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Movement</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
+          </span>
+        </div>
+        <div class="ms-item"><input type="checkbox" id="mvt-new" checked onchange="toggleClubsMovement('New')"><label for="mvt-new">New</label></div>
+        <div class="ms-item"><input type="checkbox" id="mvt-retained" checked onchange="toggleClubsMovement('Retained')"><label for="mvt-retained">Retained</label></div>
+        <div class="ms-item"><input type="checkbox" id="mvt-upgraded" checked onchange="toggleClubsMovement('Upgraded')"><label for="mvt-upgraded">Upgraded</label></div>
+        <div class="ms-item"><input type="checkbox" id="mvt-atrisk" checked onchange="toggleClubsMovement('At-risk')"><label for="mvt-atrisk">At-risk</label></div>
+      </div>
+
+    </aside>
+
+    <!-- CLUBS MAIN -->
+    <div class="clubs-main">
+
+      <!-- Section header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A">
+          Tier Overview &nbsp;·&nbsp; <span id="clubs-month-display"></span>
+        </div>
+        <div id="clubs-sync-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
+      </div>
+
+      <!-- Tier KPI Cards -->
+      <div class="tier-grid" id="tier-grid"></div>
+
+      <!-- Tier Membership Trend Chart -->
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
+        Tier Membership Trend · FY 2026 (Apr–present)
+      </div>
+      <div class="chart-row" style="margin-bottom:20px">
+        <div class="card" style="grid-column:1/-1">
+          <div class="card-ttl">Client Count by Tier</div>
+          <div class="card-sub">Monthly Gold · Silver · Bronze membership · stacked · all filters applied</div>
+          <div style="position:relative;height:220px"><canvas id="clubs-trend-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Client Roster -->
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
+        Club Members &nbsp;·&nbsp; <span id="clubs-roster-period"></span>
+      </div>
+      <div class="tcard">
+        <div class="tcard-hdr">
+          <div class="tcard-ttl">
+            <h3>Client Roster</h3>
+            <p id="clubs-roster-meta"></p>
+          </div>
+        </div>
+        <div class="twrap">
+          <table style="min-width:760px">
+            <thead>
+              <tr>
+                <th style="width:38px;text-align:center">#</th>
+                <th>Client</th>
+                <th>Tier</th>
+                <th style="text-align:right">Revenue</th>
+                <th style="text-align:right;color:#9A9A9A">Prev Rev</th>
+                <th>BU</th>
+                <th>Region</th>
+                <th>Movement</th>
+              </tr>
+            </thead>
+            <tbody id="clubs-roster-tbody">
+              <tr><td colspan="8" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading Club data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+
+    </div><!-- /clubs-main -->
+  </div><!-- /clubs-app-layout -->
 </div><!-- /clubs-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -923,6 +966,9 @@ let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
 let currentScreen='revenue';   // 'revenue' | 'clubs'
 let clubDataCache={};           // keyed by 'month|regions' — cleared on every sync
 let clubsTrendChart=null;
+let clubsTierFilter='';                                    // '' | 'Gold' | 'Silver' | 'Bronze'
+let clubsMovementFilter=['New','Retained','Upgraded','At-risk']; // all on by default
+let _lastClubsArgs=null;                                   // {data,clubsMonths,prevMonths,allFiltered}
 
 // ════ HELPERS ════
 const $=id=>document.getElementById(id);
@@ -2282,7 +2328,7 @@ function setScreen(name){
   else{$('custom-range')?.classList.remove('show');if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');}
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
   const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
-  const cl=$('clubs-layout');if(cl)cl.style.display=isRevenue?'none':'';
+  const cl=$('clubs-layout');if(cl)cl.style.display=isRevenue?'none':'block';
   if(!isRevenue&&allDeals.length){clubDataCache={};renderClubs();}
 }
 
@@ -2529,7 +2575,8 @@ function renderClubsTrendChart(fyMonths,trend){
 
 // ── Render: Client Roster Table ──
 // 8 columns: # | Client | Tier | Revenue | Prev Rev | BU | Region | Movement
-// Movement compares vs previous period (same duration, shifted back one period).
+// Sidebar filters: clubsTierFilter (scopes tier groups) + clubsMovementFilter (scopes rows).
+// KPI cards and trend chart are never touched here — roster-only scope.
 function renderClubsRoster(data,months,prevMonths,allFiltered){
   const TIER_ORDER=['Gold','Silver','Bronze'];
   const MVT_CLASS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
@@ -2538,14 +2585,26 @@ function renderClubsRoster(data,months,prevMonths,allFiltered){
   const prevKey=prevMonths?'prev|'+prevMonths.join(','):null;
   const prevDeals=prevMonths?allFiltered.filter(d=>prevMonths.includes(d.month)):[];
   const prevData=prevKey?getCachedClubData(prevKey,prevDeals):[];
-  let html='';let grank=0;
+  let html='';let grank=0;let visibleTotal=0;
 
   TIER_ORDER.forEach(tier=>{
+    // Tier sidebar filter — skip tiers not matching
+    if(clubsTierFilter&&clubsTierFilter!==tier)return;
     const tc=data.filter(c=>c.tier===tier).sort((a,b)=>b.total-a.total);
     if(!tc.length)return;
     const icon={Gold:'🥇',Silver:'🥈',Bronze:'🥉'}[tier];
-    html+=`<tr class="tier-group-hdr"><td colspan="8">${icon} ${tier.toUpperCase()} · ${tc.length} client${tc.length!==1?'s':''}</td></tr>`;
-    tc.forEach((c,idx)=>{
+    // Apply movement filter — determine which clients are visible
+    const allMvtSelected=clubsMovementFilter.length===4;
+    const visibleClients=tc.filter(c=>{
+      if(allMvtSelected)return true;
+      if(!clubsMovementFilter.length)return false;
+      const mvt=getMovementFlag(c.billing_id,c.tier,prevMonths,allFiltered);
+      return clubsMovementFilter.includes(mvt);
+    });
+    if(!visibleClients.length)return; // skip group if all clients filtered out
+    visibleTotal+=visibleClients.length;
+    html+=`<tr class="tier-group-hdr"><td colspan="8">${icon} ${tier.toUpperCase()} · ${visibleClients.length} client${visibleClients.length!==1?'s':''}</td></tr>`;
+    visibleClients.forEach((c,idx)=>{
       grank++;
       const mvt=getMovementFlag(c.billing_id,c.tier,prevMonths,allFiltered);
       const prevC=prevData.find(p=>p.billing_id===c.billing_id);
@@ -2567,15 +2626,19 @@ function renderClubsRoster(data,months,prevMonths,allFiltered){
   });
 
   if(!html){
+    const reason=!data.length?'No clients reached any tier this period.':
+      clubsTierFilter?`No ${clubsTierFilter} clients match the current movement filter.`:
+      'No clients match the current movement filter.';
     html=`<tr><td colspan="8" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:500">
-      No clients reached any tier this period.<br><span style="font-size:9px">Try a different period or adjust the filters.</span>
+      ${reason}<br><span style="font-size:9px">Try adjusting the Tier or Movement filters in the sidebar.</span>
     </td></tr>`;
   }
 
   $('clubs-roster-tbody').innerHTML=html;
   const total=data.length;
   const periodLbl=getClubsPeriodLabel(months);
-  if($('clubs-roster-meta'))$('clubs-roster-meta').textContent=`${total} client${total!==1?'s':''} across all tiers · ${periodLbl}${prevMonths?' · vs '+prevLbl:''}`;
+  const filterNote=clubsTierFilter||clubsMovementFilter.length<4?` · filtered`:'';
+  if($('clubs-roster-meta'))$('clubs-roster-meta').textContent=`${visibleTotal} of ${total} client${total!==1?'s':''} shown · ${periodLbl}${prevMonths?' · vs '+prevLbl:''}${filterNote}`;
   if($('clubs-roster-period'))$('clubs-roster-period').textContent=periodLbl;
   if($('clubs-month-display'))$('clubs-month-display').textContent=periodLbl;
 }
@@ -2600,9 +2663,13 @@ function renderClubs(){
   const fyMonths=getFY2026Months();
   const trend=buildTierTrendData(allFiltered); // warms cache for all FY months
 
+  // Cache args so sidebar filters can re-render roster without recomputing
+  _lastClubsArgs={data,clubsMonths,prevMonths,allFiltered};
+
   renderTierCards(data,trend,fyMonths);
   renderClubsTrendChart(fyMonths,trend);
   renderClubsRoster(data,clubsMonths,prevMonths,allFiltered);
+  updateClubsTierUI();
 
   const periodLbl=getClubsPeriodLabel(clubsMonths);
   if($('clubs-sync-status'))$('clubs-sync-status').textContent=`${filteredDeals.length} deals · ${periodLbl}`;
@@ -2621,6 +2688,45 @@ function renderClubs(){
     console.groupEnd();
   }
 }
+
+// ── Clubs Sidebar: Tier Filter ──
+function setClubsTier(tier){
+  clubsTierFilter=tier;
+  updateClubsTierUI();
+  renderClubsRosterOnly();
+}
+function updateClubsTierUI(){
+  const ids={'':"ct-all",Gold:"ct-gold",Silver:"ct-silver",Bronze:"ct-bronze"};
+  Object.entries(ids).forEach(([t,id])=>{
+    const btn=$(id);if(btn)btn.classList.toggle('active',clubsTierFilter===t);
+  });
+}
+
+// ── Clubs Sidebar: Movement Filter ──
+const MVT_IDS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
+function toggleClubsMovement(mvt){
+  const idx=clubsMovementFilter.indexOf(mvt);
+  if(idx>=0)clubsMovementFilter.splice(idx,1);else clubsMovementFilter.push(mvt);
+  renderClubsRosterOnly();
+}
+function selectAllMovements(){
+  clubsMovementFilter=['New','Retained','Upgraded','At-risk'];
+  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=true;});
+  renderClubsRosterOnly();
+}
+function deselectAllMovements(){
+  clubsMovementFilter=[];
+  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=false;});
+  renderClubsRosterOnly();
+}
+
+// ── Roster-only re-render (no KPI/chart recompute) ──
+function renderClubsRosterOnly(){
+  if(!_lastClubsArgs)return;
+  const{data,clubsMonths,prevMonths,allFiltered}=_lastClubsArgs;
+  renderClubsRoster(data,clubsMonths,prevMonths,allFiltered);
+}
+
 // ════ END CLIENT CLUBS ════
 </script>
 </body>
