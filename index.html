@@ -365,18 +365,37 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="fbar-in">
       <div id="rev-period-wrap" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
         <span class="fl">Period</span>
-        <select class="fsel" id="period-sel" onchange="onPeriodChange()">
-          <option value="this-month" selected>This Month</option>
-          <option value="last-month" id="opt-last-month">Last Month</option>
-          <option value="this-quarter">This Quarter (FY)</option>
-          <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
-          <option value="this-fy">This FY (Apr 2026)</option>
-          <option value="custom">Custom ▾</option>
-        </select>
-        <div class="custom-range" id="custom-range">
-          <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
-          <span class="range-sep">→</span>
-          <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
+        <!-- Revenue period (visible on Revenue screen) -->
+        <div id="rev-period-inner" style="display:flex;align-items:center;gap:8px">
+          <select class="fsel" id="period-sel" onchange="onPeriodChange()">
+            <option value="this-month" selected>This Month</option>
+            <option value="last-month" id="opt-last-month">Last Month</option>
+            <option value="this-quarter">This Quarter (FY)</option>
+            <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
+            <option value="this-fy">This FY (Apr 2026)</option>
+            <option value="custom">Custom ▾</option>
+          </select>
+          <div class="custom-range" id="custom-range">
+            <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
+            <span class="range-sep">→</span>
+            <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
+          </div>
+        </div>
+        <!-- Clubs period (visible on Client Clubs screen) -->
+        <div id="clubs-period-inner" style="display:none;align-items:center;gap:8px">
+          <select class="fsel" id="clubs-period-sel" onchange="onClubsPeriodChange()">
+            <option value="this-month">This Month</option>
+            <option value="last-month" id="clubs-opt-last-month" selected>Last Month</option>
+            <option value="this-quarter">This Quarter (FY)</option>
+            <option value="last-quarter" id="clubs-opt-last-quarter">Last Quarter (FY)</option>
+            <option value="this-fy">This FY (Apr 2026)</option>
+            <option value="custom">Custom ▾</option>
+          </select>
+          <div class="custom-range" id="clubs-custom-range">
+            <select class="fsel sm" id="clubs-from-sel" onchange="onClubsPeriodChange()"></select>
+            <span class="range-sep">→</span>
+            <select class="fsel sm" id="clubs-to-sel" onchange="onClubsPeriodChange()"></select>
+          </div>
         </div>
         <div class="vdiv"></div>
       </div>
@@ -439,25 +458,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           </div>
           <div id="svc-ms-list"></div>
         </div>
-      </div>
-    </div>
-  </div>
-  <!-- ── CLUBS FILTER BAR (hidden by default) ── -->
-  <div class="clubs-fbar" id="clubs-fbar" style="display:none">
-    <div class="fbar-in">
-      <span class="fl">Period</span>
-      <select class="fsel" id="clubs-period-sel" onchange="onClubsPeriodChange()">
-        <option value="this-month">This Month</option>
-        <option value="last-month" id="clubs-opt-last-month" selected>Last Month</option>
-        <option value="this-quarter">This Quarter (FY)</option>
-        <option value="last-quarter" id="clubs-opt-last-quarter">Last Quarter (FY)</option>
-        <option value="this-fy">This FY (Apr 2026)</option>
-        <option value="custom">Custom ▾</option>
-      </select>
-      <div class="custom-range" id="clubs-custom-range">
-        <select class="fsel sm" id="clubs-from-sel" onchange="onClubsPeriodChange()"></select>
-        <span class="range-sep">→</span>
-        <select class="fsel sm" id="clubs-to-sel" onchange="onClubsPeriodChange()"></select>
       </div>
     </div>
   </div>
@@ -2272,10 +2272,14 @@ function setScreen(name){
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Revenue fbar always visible (BU, Region, Head, Service apply to both screens)
-  // Only the Period wrap hides on Clubs (clubs has its own period)
-  const rp=$('rev-period-wrap');if(rp)rp.style.display=isRevenue?'':'none';
-  const cfb=$('clubs-fbar');if(cfb)cfb.style.display=isRevenue?'none':'';
+  // Swap Period inner within the shared fbar — one line on both screens
+  const rpi=$('rev-period-inner');
+  const cpi=$('clubs-period-inner');
+  if(rpi)rpi.style.display=isRevenue?'flex':'none';
+  if(cpi)cpi.style.display=isRevenue?'none':'flex';
+  // Clear the inactive screen's custom range
+  if(isRevenue)$('clubs-custom-range')?.classList.remove('show');
+  else{$('custom-range')?.classList.remove('show');if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');}
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
   const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isRevenue?'none':'';
