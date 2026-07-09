@@ -1288,7 +1288,9 @@ async function doFYSync(force=false){
           billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"—",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
           month:(()=>{
-            const bm=r.properties?.invoice_booking_month__invoice_app_||"";
+            // Normalise to lowercase — HubSpot API filter is case-insensitive but our JS includes() is not.
+            // Some deals have "June-2026" (capital) which fails "june-2026" period matching.
+            const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
             if(bm)return bm;
             // Fallback: derive month from closedate when booking month is null in HubSpot API response
             // HubSpot matched this deal to a FY month via the filter — closedate confirms which one
