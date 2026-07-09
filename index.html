@@ -301,7 +301,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <div class="last-sync" id="last-sync"></div>
         </div>
         <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
-        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
+        <button class="refresh-btn" id="rfbtn" onclick="doFYSync(true)">⟳ Refresh</button>
       </div>
     </div>
   </div>
@@ -777,8 +777,9 @@ const PER=10;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 let ownerManuallyFiltered=false;
 const drill={};
-// ── Trends state — FY 2026, independent of main Period filter ──
-let trendDeals=[],trendDealServiceMap={};
+// ── Single source of truth: all FY deals. Replaces separate deals[] + trendDeals[]. ──
+// deals[] and netRevTotal are derived in renderAll() by filtering allDeals to the active period.
+let allDeals=[];
 let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
 
 // ════ HELPERS ════
@@ -947,7 +948,7 @@ function updateHeadLabel(){
 }
 function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();onFilterChange();}
 function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
-function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),400);}
+function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ REGION MULTI-SELECT ════
 const ALL_REGIONS=["US","UK","AU"];
@@ -1092,12 +1093,12 @@ document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-
 function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
 // Region no longer auto-selects owners — fully independent
 function onBUChange(){
-  clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);
+  clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);
 }
 function toggleBUFilter(bu){
   const sel=$("bu-sel");
   if(sel.value===bu){sel.value="";}else{sel.value=bu;}
-  doSync(false);
+  renderAll();
 }
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
@@ -1128,7 +1129,7 @@ function toggleReactivation(){
   if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}
   renderAll();
 }
-function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>doSync(false),300);}
+function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ ATTRIBUTION PRE-PASS ════
 // Two-tier model — registry primary, deal property fallback for any null:
@@ -1237,9 +1238,9 @@ function view(src,liMap){
     return d;
   }).filter(Boolean);
 }
-// ── trendView: applies all dashboard filters to trendDeals for filter-responsive Trends ──
+// ── trendView: applies all dashboard filters to allDeals for filter-responsive Trends ──
 // Period filter intentionally excluded — Trends always shows full FY sweep regardless.
-function trendView(){return view(trendDeals,trendDealServiceMap);}
+function trendView(){return view(allDeals,dealServiceMap);}
 function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
 function clearDrill(key){delete drill[key];updateChips();renderAll();}
 function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateChips();renderAll();}
@@ -1253,40 +1254,37 @@ function updateChips(){
   chips.classList.add("show");
 }
 
-// ════ SYNC ════
-async function doSync(force=false){
+// ════ UNIFIED SYNC ════
+// Single source of truth — always fetches all FY months in one pass.
+// Main dashboard and Trends both read from allDeals[]; no separate Trends fetch.
+// Period filter, BU, Head and all other filter changes are client-side only — zero API calls.
+async function doFYSync(force=false){
   if(isSyncing&&!force)return;
   isSyncing=true;
   const errBar=$("err-bar");
-  const owners=selOwners(),geoArr=getSelectedRegions(),bu=$("bu-sel")?.value||"",itype=$("itype-sel")?.value||"";const _selHeads=getSelectedHeads(),_allHeads=_selHeads.length===ALL_HEADS.length;
-  const months=getMonths();
   errBar.style.display="none";
-  $("sdot").style.background="#DDB800";$("stxt").textContent="SYNCING...";
+  $("sdot").style.background="#DDB800";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
   $("lo").classList.add("show");$("rfbtn").disabled=true;$("resetbtn").disabled=true;
   try{
+    const fyMonths=getFY2026Months();
     const filters=[
       {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
       {propertyName:"dealstage",operator:"EQ",value:STAGE},
-      months.length===1?{propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:months[0]}:{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:months}
+      {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyMonths}
     ];
-    // Exclusions at API level — no owner filter (all owners fetched, owner filter is client-side)
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
-    // All filtering (BU, Head, Owner) is client-side — fetch all matching deals
     const fGroups=[{filters}];
 
-    const allDeals=[];let after=null;
+    const fetched=[];let after=null;
     do{
-      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"amount_in_home_currency",direction:"DESCENDING"}]};
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        allDeals.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],
-          // Client identity:
-          // billing_id: contact_name primary (Sales Ops confirmed), zoho_billing_id fallback
-          // for deals where contact_name is null — client: display name (zoho_display_name preferred)
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],
           billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"—",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
           month:r.properties?.invoice_booking_month__invoice_app_||"",
@@ -1295,23 +1293,21 @@ async function doSync(force=false){
       after=data.paging?.next?.after||null;
     }while(after);
 
-    // ── Deduplicate: same dealname + same amount + same month = duplicate, keep earliest ──
-    // Month is included so recurring clients (same name/amount across months) are NOT deduped.
+    // ── Single dedup pass across all FY deals ──
     const seen={};const dupes=[];
-    allDeals.forEach(d=>{
+    fetched.forEach(d=>{
       const key=d.dealname+"|"+d.amount+"|"+(d.month||"");
       if(seen[key]){dupes.push(d.id);return;}
       seen[key]=d.id;
     });
     if(dupes.length)console.log("Duplicates excluded:",dupes.length,dupes);
-    deals=dupes.length?allDeals.filter(d=>!dupes.includes(d.id)):allDeals;
+    allDeals=dupes.length?fetched.filter(d=>!dupes.includes(d.id)):fetched;
 
-    // ── Fetch line items for service classification (BLOCKING — must complete before render) ──
+    // ── Single line-item fetch covering all FY deals ──
     dealServiceMap={};
     try{
-      const dealIds=deals.map(d=>d.id);
-      for(let i=0;i<dealIds.length;i+=500){
-        const chunk=dealIds.slice(i,i+500);
+      for(let i=0;i<allDeals.length;i+=500){
+        const chunk=allDeals.slice(i,i+500).map(d=>d.id);
         const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
         if(liRes.ok){
           const liData=await liRes.json();
@@ -1328,27 +1324,20 @@ async function doSync(force=false){
       console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
     }catch(e){console.error("Line items fetch error:",e);}
 
-    // ── Attribution pre-pass — stamps .bu, .region, .head onto every deal ONCE ──
-    // All stat functions read these stamped fields; no function re-derives attribution.
-    attributeDeals(deals);
+    // ── Single attribution pass across all FY deals ──
+    attributeDeals(allDeals);
 
-    // ── Net Revenue — computed from all fetched deals (no owner filter) ──
-    netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
-
+    // ── Reset UI state ──
     sk="amount";sd="desc";pg=1;
     Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
-    const lbl=getPeriodLabel(),geoLbl=geoArr.length<ALL_REGIONS.length?geoArr.join("+"):"",sub=`${lbl}${bu?" · "+bu:""}${geoLbl?" · "+geoLbl:""}`;
-    $("bu-chart-sub").textContent=`Net revenue · ${sub}`;
-    $("geo-sub").textContent=`Net revenue · ${sub}`;
-    $("head-chart-sub").textContent=`Net revenue · ${sub}`;
-    $("svc-chart-sub").textContent=`Net revenue · ${sub}`;
-    $("cl-sub").textContent=`Top 10 · ${sub}`;
-    $("it-sub").textContent=`Engagement model · ${sub}`;
-    renderAll();
+
+    renderAll();        // derives deals + netRevTotal from allDeals for current period
     updateDynamicOptions();
+
     $("sdot").style.background="#FFDA30";
-    $("stxt").textContent=`LIVE · ${deals.length} DEALS · ${lbl.toUpperCase()}`;
     $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
+    const endLbl=MSHRT[new Date().getMonth()];
+    $("trend-status").textContent=`${allDeals.length} deals · Apr–${endLbl} 2026`;
   }catch(e){
     console.error(e);$("err-msg").textContent=e.message;errBar.style.display="block";
     $("sdot").style.background="#696969";$("stxt").textContent="SYNC FAILED";
@@ -1782,8 +1771,8 @@ function renderSvcBars(_v){
 }
 
 // ════ TRENDS ENGINE ════
-// FY 2026 = Apr 2026 → current month. Fixed range, independent of main Period filter.
-// Fetches once at boot via doTrendsSync(). Re-renders on refresh only.
+// FY 2026 = Apr 2026 → current month. Filter-responsive via trendView().
+// Data sourced from allDeals[] — same unified dataset as main dashboard.
 
 function getFY2026Months(){
   const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
@@ -1795,86 +1784,9 @@ function getFY2026Months(){
   return months;
 }
 
-async function doTrendsSync(){
-  const fyMonths=getFY2026Months();
-  $("trend-status").textContent="Syncing...";
-  try{
-    const filters=[
-      {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
-      {propertyName:"dealstage",operator:"EQ",value:STAGE},
-      {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyMonths}
-    ];
-    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
-    filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
-
-    const allDeals=[];let after=null;
-    do{
-      const body={filterGroups:[{filters}],properties:["dealname","amount_in_home_currency","hubspot_owner_id","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
-      if(after)body.after=after;
-      const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-      if(!res.ok)throw new Error("Trends API "+res.status);
-      const data=await res.json();
-      (data.results||[]).forEach(r=>{
-        allDeals.push({
-          id:String(r.id),
-          dealname:r.properties?.dealname||"",
-          amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
-          owner_id:String(r.properties?.hubspot_owner_id||""),
-          billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"—",
-          client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
-          month:r.properties?.invoice_booking_month__invoice_app_||"",
-          eng_model:r.properties?.engagement_model__invoice_app_||"—",
-          geo:r.properties?.geo__invoice_app_||"—",
-          geo_head:r.properties?.geo_head__invoice_app_||"—",
-          company_name:r.properties?.company_name__invoice_app_||""
-        });
-      });
-      after=data.paging?.next?.after||null;
-    }while(after);
-
-    // Deduplicate — dealname + amount + month: prevents cross-month dedup of recurring deals
-    const seen={};const dupes=[];
-    allDeals.forEach(d=>{
-      const key=d.dealname+"|"+d.amount+"|"+d.month;
-      if(seen[key]){dupes.push(d.id);return;}
-      seen[key]=d.id;
-    });
-    trendDeals=dupes.length?allDeals.filter(d=>!dupes.includes(d.id)):allDeals;
-
-    // Fetch line items for Inter BU computation
-    trendDealServiceMap={};
-    try{
-      const didChunk=trendDeals.map(d=>d.id);
-      for(let i=0;i<didChunk.length;i+=500){
-        const chunk=didChunk.slice(i,i+500);
-        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
-        if(liRes.ok){
-          const liData=await liRes.json();
-          Object.entries(liData.items||{}).forEach(([did,lis])=>{
-            trendDealServiceMap[did]=(lis||[]).map(li=>{
-              const cls=classifyLineItem(li.name);
-              return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
-            }).filter(Boolean);
-          });
-        }
-      }
-    }catch(e){console.error("Trends line items error:",e);}
-
-    // Attribution pre-pass on trend deals
-    attributeDeals(trendDeals);
-
-    renderTrends(fyMonths,trendView());
-    const endLbl=MSHRT[new Date().getMonth()];
-    $("trend-status").textContent=`${trendDeals.length} deals · Apr–${endLbl} 2026`;
-  }catch(e){
-    console.error("Trends sync error:",e);
-    $("trend-status").textContent="Sync failed";
-  }
-}
-
-// Build month-keyed aggregates from trendDeals
+// Build month-keyed aggregates from the filtered FY dataset
 function buildTrendData(months,src){
-  src=src||trendDeals;
+  src=src||allDeals;
   // Initialise per-month buckets
   const byMonth={};
   months.forEach(m=>{
@@ -1899,7 +1811,7 @@ function buildTrendData(months,src){
       bkt.digital+=d.amount;
       bkt.digitalNetRev+=d.amount;
       // Inter BU: Digital Net Rev minus Search & Web line items
-      (trendDealServiceMap[d.id]||[]).forEach(li=>{
+      (dealServiceMap[d.id]||[]).forEach(li=>{
         if(li.svc==="Search"||li.svc==="Web")bkt.searchWebRev+=li.amount;
       });
     } else if(d.bu==="MarTech"){
@@ -2047,9 +1959,28 @@ function renderTrends(months,src){
 }
 
 function renderAll(){
+  // ── Single source of truth: derive current period deals from unified FY dataset ──
+  // Every view — KPIs, charts, Trends — reads from allDeals[]. Period is a client-side filter.
+  const periodMonths=getMonths();
+  deals=allDeals.filter(d=>periodMonths.includes(d.month));
+  netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
+  // Chart subtitles reflect active period + filter state
+  const lbl=getPeriodLabel();
+  const bu=$("bu-sel")?.value||"";
+  const geoArr=getSelectedRegions();
+  const geoLbl=geoArr.length<ALL_REGIONS.length?geoArr.join("+"):"";
+  const sub=`${lbl}${bu?" · "+bu:""}${geoLbl?" · "+geoLbl:""}`;
+  $("bu-chart-sub").textContent=`Net revenue · ${sub}`;
+  $("geo-sub").textContent=`Net revenue · ${sub}`;
+  $("head-chart-sub").textContent=`Net revenue · ${sub}`;
+  $("svc-chart-sub").textContent=`Net revenue · ${sub}`;
+  $("cl-sub").textContent=`Top 10 · ${sub}`;
+  $("it-sub").textContent=`Engagement model · ${sub}`;
+  if($("sdot").style.background!=="rgb(105, 105, 105)")
+    $("stxt").textContent=`LIVE · ${deals.length} DEALS · ${lbl.toUpperCase()}`;
   const _v=view();
   renderKPIs(_v);renderBUBars(_v);renderGeoBars(_v);renderHeadBars(_v);renderSvcBars(_v);renderClientBars(_v);renderInvChart(_v);renderTable(_v);
-  if(trendDeals.length)renderTrends(getFY2026Months(),trendView());
+  if(allDeals.length)renderTrends(getFY2026Months(),trendView());
 }
 
 // ════ KPI ACTIONS ════
@@ -2120,8 +2051,7 @@ function resetAll(){
   updateOwnerLabel();
   Object.keys(drill).forEach(k=>delete drill[k]);
   updateChips();
-  doSync(true);
-  doTrendsSync();
+  doFYSync(true);
 }
 
 // ════ LOGIN ════
@@ -2159,9 +2089,8 @@ window.addEventListener("DOMContentLoaded",function(){
     initServiceFilter();
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
-    // Main dashboard sync + Trends sync run in parallel
-    doSync(true);
-    doTrendsSync();
+    // Single unified sync — fetches all FY months, one source of truth for everything
+    doFYSync(true);
   }catch(e){
     console.error("Nexus boot error:",e);
     const st=$("stxt");if(st)st.textContent="BOOT ERROR — CHECK CONSOLE";
