@@ -490,7 +490,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Business Unit Trend</div>
-      <div class="card-sub">Digital · MarTech bars · Inter BU line overlay · FY 2026 Apr–Jul</div>
+      <div class="card-sub">Digital (Pure) · Inter BU · MarTech bars · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div>
     </div>
     <div class="card">
@@ -1299,7 +1299,7 @@ async function doFYSync(force=false){
             try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
             catch(e){return"";}
           })(),
-          inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—",company_name:r.properties?.company_name__invoice_app_||""});
+          inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:(r.properties?.geo__invoice_app_||"—").trim(),geo_head:(r.properties?.geo_head__invoice_app_||"—").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"—").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
       });
       after=data.paging?.next?.after||null;
     }while(after);
@@ -1835,10 +1835,13 @@ function buildTrendData(months,src){
     else if(eg==="P2P")bkt.p2p+=d.amount;
   });
 
-  // Derive Inter BU and Avg per month
+  // Derive Inter BU, Digital Pure, and Avg per month
   months.forEach(m=>{
     const bkt=byMonth[m];
     bkt.interBU=bkt.digitalNetRev-bkt.searchWebRev;
+    // Digital Pure = Digital Net Rev minus Inter BU (Search + Web only)
+    // All three bars are now additive: MarTech + Inter BU + Digital Pure = Total Revenue
+    bkt.digitalPure=Math.max(0,bkt.digital-bkt.interBU);
     bkt.clientCount=bkt.clients.size;
     bkt.avg=bkt.clientCount>0?bkt.net/bkt.clientCount:0;
   });
@@ -1863,11 +1866,12 @@ function renderTrends(months,src){
   const byMonth=buildTrendData(months,src);
   // Month display labels e.g. "Jan", "Feb"
   const labels=months.map(m=>{const[mn,yr]=m.split("-");return MSHRT[MFULL.indexOf(mn)];});
-  const net    =months.map(m=>byMonth[m].net);
-  const clients=months.map(m=>byMonth[m].clientCount);
-  const digital=months.map(m=>byMonth[m].digital);
-  const martech=months.map(m=>byMonth[m].martech);
-  const interBU=months.map(m=>byMonth[m].interBU);
+  const net       =months.map(m=>byMonth[m].net);
+  const clients   =months.map(m=>byMonth[m].clientCount);
+  const digital   =months.map(m=>byMonth[m].digital);
+  const digitalPure=months.map(m=>byMonth[m].digitalPure);
+  const martech   =months.map(m=>byMonth[m].martech);
+  const interBU   =months.map(m=>byMonth[m].interBU);
   const recurring=months.map(m=>byMonth[m].recurring);
   const p2p    =months.map(m=>byMonth[m].p2p);
   const avg    =months.map(m=>byMonth[m].avg);
@@ -1896,14 +1900,17 @@ function renderTrends(months,src){
     }
   });
 
-  // ── Chart 2: BU Trend — Digital + MarTech bars, Inter BU line ──
+  // ── Chart 2: BU Trend — Digital Pure + Inter BU + MarTech bars ──
+  // Three bars are fully additive: Digital Pure + Inter BU + MarTech = Total Revenue.
+  // Digital Pure = Digital Net Rev − Inter BU (Search + Web only, no cross-BU services).
+  // Inter BU = Digital Net Rev − Search − Web (MarTech-type work by Digital owners).
   trcBUChart=new Chart($("trc-bu").getContext("2d"),{
     data:{
       labels,
       datasets:[
-        {type:"bar",label:"Digital",data:digital,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,order:3},
-        {type:"bar",label:"MarTech",data:martech,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3,order:2},
-        {type:"line",label:"Inter BU",data:interBU,borderColor:"#3B3561",backgroundColor:"transparent",borderWidth:2,pointRadius:3,pointBackgroundColor:"#3B3561",tension:0.3,order:1,borderDash:[4,3]}
+        {type:"bar",label:"Digital (Pure)",data:digitalPure,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,order:3},
+        {type:"bar",label:"Inter BU",data:interBU,backgroundColor:"rgba(59,53,97,0.85)",borderRadius:3,order:2},
+        {type:"bar",label:"MarTech",data:martech,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3,order:1}
       ]
     },
     options:{
