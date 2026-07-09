@@ -589,7 +589,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="sec">Deal Records</div>
   <div class="tcard">
     <div class="tcard-hdr">
-      <div class="tcard-ttl"><h3>All Deals</h3><p id="tmeta">—</p></div>
+      <div class="tcard-ttl"><h3>All Deals</h3><p id="tmeta"></p></div>
     </div>
     <div class="twrap">
       <table><thead id="dth"></thead><tbody id="dtb"><tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading live data from HubSpot...</td></tr></tbody></table>
@@ -608,7 +608,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <!-- Section header -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
     <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A">
-      Tier Overview &nbsp;·&nbsp; <span id="clubs-month-display">—</span>
+      Tier Overview &nbsp;·&nbsp; <span id="clubs-month-display"></span>
     </div>
     <div id="clubs-sync-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
   </div>
@@ -630,13 +630,13 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   <!-- Client Roster -->
   <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">
-    Club Members &nbsp;·&nbsp; <span id="clubs-roster-period">—</span>
+    Club Members &nbsp;·&nbsp; <span id="clubs-roster-period"></span>
   </div>
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl">
         <h3>Client Roster</h3>
-        <p id="clubs-roster-meta">—</p>
+        <p id="clubs-roster-meta"></p>
       </div>
     </div>
     <div class="twrap">
@@ -887,7 +887,7 @@ function headFromDeal(d){
   const gh=d.geo_head||"";
   if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Nevilson Christan"||gh==="Jaydeep Salla")return gh;
   // Mrugesh → MarTech director → Jaydeep
-  if(gh&&gh!=="—"&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
+  if(gh&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
   // Sheldon Fernandes → legacy → Digital
   if(gh==="Sheldon Fernandes"){const geo=geoFromDeal(d);return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";}
   // Blank/dash/unknown → fallback by owner's team
@@ -928,7 +928,7 @@ let clubsTrendChart=null;
 const $=id=>document.getElementById(id);
 const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2}).format(n);
 const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).toFixed(1)+"M":a>=1000?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
-const fmtDate=d=>{if(!d)return"—";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}};
+const fmtDate=d=>{if(!d)return"";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}};
 const dealURL=id=>`https://app.hubspot.com/contacts/${PORTAL}/record/0-3/${id}`;
 const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
 const selOwners=()=>ALL_IDS.filter(id=>{const e=$("ow-"+id);return !e||e.checked;});
@@ -1427,8 +1427,8 @@ async function doFYSync(force=false){
       const data=await res.json();
       (data.results||[]).forEach(r=>{
         fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],
-          billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"—",
-          client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
+          billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"",
+          client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           month:(()=>{
             // Normalise to lowercase — HubSpot API filter is case-insensitive but our JS includes() is not.
             // Some deals have "June-2026" (capital) which fails "june-2026" period matching.
@@ -1441,7 +1441,7 @@ async function doFYSync(force=false){
             try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
             catch(e){return"";}
           })(),
-          inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:(r.properties?.geo__invoice_app_||"—").trim(),geo_head:(r.properties?.geo_head__invoice_app_||"—").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"—").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
+          inv_type:r.properties?.invoice_type__invoice_app_||"",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"",order_type:r.properties?.order_type||"",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:(r.properties?.geo__invoice_app_||"").trim(),geo_head:(r.properties?.geo_head__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
       });
       after=data.paging?.next?.after||null;
     }while(after);
@@ -1508,14 +1508,14 @@ function mets(v){
   const gross=pos.reduce((s,d)=>s+d.amount,0);
   // Unique clients — distinct contact_name across ALL deals (matches HubSpot distinct count logic)
   // HubSpot counts all deal records regardless of amount sign — no pos-only restriction
-  const clients=new Set(v.filter(d=>d.billing_id&&d.billing_id!=="—").map(d=>d.billing_id));
+  const clients=new Set(v.filter(d=>d.billing_id).map(d=>d.billing_id));
   const geos=new Set(v.filter(d=>d.region).map(d=>d.region));
   // Revenue concentration — aggregate by billing_id, display client name
-  const cmap={};v.filter(d=>d.billing_id&&d.billing_id!=="—"&&d.amount>0).forEach(d=>{cmap[d.billing_id]=(cmap[d.billing_id]||0)+d.amount;});
+  const cmap={};v.filter(d=>d.billing_id&&d.amount>0).forEach(d=>{cmap[d.billing_id]=(cmap[d.billing_id]||0)+d.amount;});
   const top3=Object.values(cmap).filter(v=>v>0).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
   const netTotal=v.reduce((s,d)=>s+d.amount,0);
   const conc=netTotal>0?Math.round(top3/netTotal*100):0;
-  return{net:netTotal,gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:clients.size?netTotal/clients.size:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||"—"};
+  return{net:netTotal,gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:clients.size?netTotal/clients.size:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||""};
 }
 function ostats(v){
   if(!v)v=view();
@@ -1595,7 +1595,7 @@ function topClients(v){
   if(!v)v=view();
   // Aggregate by contact_name (dedup key), carry display name from first seen deal
   const map={};const nameMap={};
-  v.filter(d=>d.billing_id&&d.billing_id!=="—"&&d.amount>0).forEach(d=>{
+  v.filter(d=>d.billing_id&&d.amount>0).forEach(d=>{
     map[d.billing_id]=(map[d.billing_id]||0)+d.amount;
     if(!nameMap[d.billing_id])nameMap[d.billing_id]=d.client||d.billing_id;
   });
@@ -1608,7 +1608,7 @@ function tline(v){
   return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
 }
 function engGroup(val){
-  if(!val||val==="—")return null;
+  if(!val)return null;
   if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
   if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
   return null;
@@ -1679,7 +1679,7 @@ function engTypesLi(v){
 function engTypes(v){
   if(!v)v=view();
   const m={};
-  v.filter(d=>d.eng_model&&d.eng_model!=="—").forEach(d=>{
+  v.filter(d=>d.eng_model).forEach(d=>{
     const g=engGroup(d.eng_model);
     if(g)m[g]=(m[g]||0)+d.amount;
   });
@@ -1727,9 +1727,9 @@ function renderKPIs(_v){
   return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
 })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:`${m.clients} unique clients`,tip:"Net revenue ÷ unique clients"},
-    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"—",sub:top?fmtUSD(top.posRev):"—",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
+    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"n/a",sub:top?fmtUSD(top.posRev):"",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
-    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"—",sub:"top 3 clients' share",tip:"Revenue concentration"}
+    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"n/a",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
   // ── Inter BU KPI — filter-responsive ──
   // Formula: Digital BU Net Revenue − Search line items − Web line items
@@ -1744,7 +1744,7 @@ function renderKPIs(_v){
     }
   });
   const interBUConst=digitalNetRev-searchWebRev;
-  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"—",sub:"Digital excl. Search & Web",tip:"Digital Net Revenue − Search − Web · responds to all filters"});
+  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"n/a",sub:"Digital excl. Search & Web",tip:"Digital Net Revenue − Search − Web · responds to all filters"});
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
     return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
@@ -1827,9 +1827,9 @@ function renderTable(_v){
   $("dtb").innerHTML=paged.map((d,i)=>{
     const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
-    const geo=d.region||"—",gc=geo==="AU"?"geo-AU":"geo-"+geo;
+    const geo=d.region||"",gc=geo==="AU"?"geo-AU":"geo-"+geo;
     const resolvedHead=(d.head||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
-    const eng=engGroup(d.eng_model)||"—";
+    const eng=engGroup(d.eng_model)||"";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
@@ -1959,7 +1959,7 @@ function buildTrendData(months,src){
     const bkt=byMonth[m];
 
     bkt.net+=d.amount;
-    if(d.billing_id&&d.billing_id!=="—")bkt.clients.add(d.billing_id);
+    if(d.billing_id)bkt.clients.add(d.billing_id);
 
     // BU
     if(d.bu==="Digital"){
@@ -2176,7 +2176,7 @@ function getExpectedOwnerCount(){
 
 function updateDynamicOptions(){
   // Engagement Model — only show types present in current deals
-  const invTypes=new Set(deals.filter(d=>d.inv_type&&d.inv_type!=="—").map(d=>d.inv_type));
+  const invTypes=new Set(deals.filter(d=>d.inv_type).map(d=>d.inv_type));
   const iSel=$("itype-sel");
   if(iSel){
     Array.from(iSel.options).forEach(opt=>{
@@ -2234,7 +2234,7 @@ async function doLogin(){
       $("pw-input").value="";$("pw-input").focus();
     }
   }catch(e){
-    err.textContent="Connection error — check your network.";
+    err.textContent="Connection error. Check your network.";
     console.error(e);
   }
   finally{btn.disabled=false;btn.textContent="Access Dashboard";}
@@ -2257,7 +2257,7 @@ window.addEventListener("DOMContentLoaded",function(){
     doFYSync(true);
   }catch(e){
     console.error("Nexus boot error:",e);
-    const st=$("stxt");if(st)st.textContent="BOOT ERROR — CHECK CONSOLE";
+    const st=$("stxt");if(st)st.textContent="BOOT ERROR · CHECK CONSOLE";
     const sd=$("sdot");if(sd)sd.style.background="#696969";
   }
 });
@@ -2384,7 +2384,7 @@ function getPrevPeriodMonths(months){
 }
 
 function getClubsPeriodLabel(months){
-  if(!months||!months.length)return'—';
+  if(!months||!months.length)return'';
   const fmt=m=>{const[mn,yr]=m.split('-');return`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;};
   return months.length===1?fmt(months[0]):`${fmt(months[0])}–${fmt(months[months.length-1])}`;
 }
@@ -2395,7 +2395,7 @@ function getClubsPeriodLabel(months){
 function buildClubData(filteredDeals){
   const cmap={};
   filteredDeals.forEach(d=>{
-    if(!d.billing_id||d.billing_id==='—')return;
+    if(!d.billing_id||!d.billing_id)return;
     if(!cmap[d.billing_id]){
       cmap[d.billing_id]={billing_id:d.billing_id,name:d.client||d.billing_id,total:0,regions:new Set(),bus:new Set()};
     }
@@ -2533,7 +2533,7 @@ function renderClubsTrendChart(fyMonths,trend){
 function renderClubsRoster(data,months,prevMonths,allFiltered){
   const TIER_ORDER=['Gold','Silver','Bronze'];
   const MVT_CLASS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
-  const prevLbl=prevMonths?getClubsPeriodLabel(prevMonths):'—';
+  const prevLbl=prevMonths?getClubsPeriodLabel(prevMonths):'';
   // Pre-compute prev period data once (cached)
   const prevKey=prevMonths?'prev|'+prevMonths.join(','):null;
   const prevDeals=prevMonths?allFiltered.filter(d=>prevMonths.includes(d.month)):[];
@@ -2544,14 +2544,14 @@ function renderClubsRoster(data,months,prevMonths,allFiltered){
     const tc=data.filter(c=>c.tier===tier).sort((a,b)=>b.total-a.total);
     if(!tc.length)return;
     const icon={Gold:'🥇',Silver:'🥈',Bronze:'🥉'}[tier];
-    html+=`<tr class="tier-group-hdr"><td colspan="8">${icon} ${tier.toUpperCase()} — ${tc.length} client${tc.length!==1?'s':''}</td></tr>`;
+    html+=`<tr class="tier-group-hdr"><td colspan="8">${icon} ${tier.toUpperCase()} · ${tc.length} client${tc.length!==1?'s':''}</td></tr>`;
     tc.forEach((c,idx)=>{
       grank++;
       const mvt=getMovementFlag(c.billing_id,c.tier,prevMonths,allFiltered);
       const prevC=prevData.find(p=>p.billing_id===c.billing_id);
-      const prevRevStr=prevC?fmtShort(prevC.total):'—';
-      const geo=c.regions.join(' · ')||'—';
-      const bu=[...new Set(c.bus)].join('+')||'—';
+      const prevRevStr=prevC?fmtShort(prevC.total):'';
+      const geo=c.regions.join(' · ')||'';
+      const bu=[...new Set(c.bus)].join('+')||'';
       const bg=grank%2===0?'#FAFAFA':'#fff';
       html+=`<tr>
         <td style="background:${bg};color:#9A9A9A;font-size:10px;font-weight:700;text-align:center">${idx+1}</td>
