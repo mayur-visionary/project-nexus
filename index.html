@@ -1287,7 +1287,16 @@ async function doFYSync(force=false){
         fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],
           billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"—",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"—",
-          month:r.properties?.invoice_booking_month__invoice_app_||"",
+          month:(()=>{
+            const bm=r.properties?.invoice_booking_month__invoice_app_||"";
+            if(bm)return bm;
+            // Fallback: derive month from closedate when booking month is null in HubSpot API response
+            // HubSpot matched this deal to a FY month via the filter — closedate confirms which one
+            const cd=(r.properties?.closedate||"").split("T")[0];
+            if(!cd)return"";
+            try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
+            catch(e){return"";}
+          })(),
           inv_type:r.properties?.invoice_type__invoice_app_||"—",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"—",order_type:r.properties?.order_type||"—",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:r.properties?.geo__invoice_app_||"—",geo_head:r.properties?.geo_head__invoice_app_||"—",eng_model:r.properties?.engagement_model__invoice_app_||"—",company_name:r.properties?.company_name__invoice_app_||""});
       });
       after=data.paging?.next?.after||null;
