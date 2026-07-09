@@ -82,6 +82,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
 .ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
 .clubs-sidebar .ms-item label{color:#434343}
+.clubs-sidebar .ms-item{padding:4px 0}
+.clubs-sidebar .ms-item:hover{background:#FFFBEA;border-radius:4px}
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
 /* ── Drill chips ── */
@@ -617,11 +619,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
       <div class="sb-section">
         <div class="sb-lbl">Tier</div>
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <button class="nbd-toggle active" id="ct-all" onclick="setClubsTier('')" style="text-align:left">All Tiers</button>
-          <button class="nbd-toggle" id="ct-gold" onclick="setClubsTier('Gold')" style="text-align:left">Gold &nbsp;$25k+</button>
-          <button class="nbd-toggle" id="ct-silver" onclick="setClubsTier('Silver')" style="text-align:left">Silver &nbsp;$15k+</button>
-          <button class="nbd-toggle" id="ct-bronze" onclick="setClubsTier('Bronze')" style="text-align:left">Bronze &nbsp;$5k+</button>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="nbd-toggle active" id="ct-all" onclick="setClubsTier('')" style="flex:1;min-width:55px">All</button>
+          <button class="nbd-toggle" id="ct-gold" onclick="setClubsTier('Gold')" style="flex:1;min-width:55px">Gold</button>
+          <button class="nbd-toggle" id="ct-silver" onclick="setClubsTier('Silver')" style="flex:1;min-width:55px">Silver</button>
+          <button class="nbd-toggle" id="ct-bronze" onclick="setClubsTier('Bronze')" style="flex:1;min-width:55px">Bronze</button>
         </div>
       </div>
 
@@ -2529,7 +2531,7 @@ function renderTierCards(data,trend,fyMonths){
     const revenue=clients.reduce((s,c)=>s+c.total,0);
     const avg=count>0?revenue/count:0;
     const spark=renderSparkline(trend.counts[t.key]||[],t.color);
-    return`<div class="tier-card ${t.key.toLowerCase()}">
+    return`<div class="tier-card ${t.key.toLowerCase()}" data-tier="${t.key}" style="transition:opacity .25s">
       <span class="t-badge ${t.key.toLowerCase()}">${t.icon} ${t.key}</span>
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
@@ -2671,6 +2673,8 @@ function renderClubs(){
   renderClubsTrendChart(fyMonths,trend);
   renderClubsRoster(data,clubsMonths,prevMonths,allFiltered);
   updateClubsTierUI();
+  updateTierCardsHighlight();
+  updateTrendChartForTier();
 
   const periodLbl=getClubsPeriodLabel(clubsMonths);
   if($('clubs-sync-status'))$('clubs-sync-status').textContent=`${filteredDeals.length} deals · ${periodLbl}`;
@@ -2694,6 +2698,8 @@ function renderClubs(){
 function setClubsTier(tier){
   clubsTierFilter=tier;
   updateClubsTierUI();
+  updateTierCardsHighlight();
+  updateTrendChartForTier();
   renderClubsRosterOnly();
 }
 function updateClubsTierUI(){
@@ -2701,6 +2707,20 @@ function updateClubsTierUI(){
   Object.entries(ids).forEach(([t,id])=>{
     const btn=$(id);if(btn)btn.classList.toggle('active',clubsTierFilter===t);
   });
+}
+// Dim non-selected tier cards; full opacity when All selected
+function updateTierCardsHighlight(){
+  document.querySelectorAll('#tier-grid .tier-card').forEach(card=>{
+    card.style.opacity=(!clubsTierFilter||card.dataset.tier===clubsTierFilter)?'1':'0.3';
+  });
+}
+// Toggle trend chart dataset visibility by tier
+function updateTrendChartForTier(){
+  if(!clubsTrendChart)return;
+  clubsTrendChart.data.datasets.forEach(ds=>{
+    ds.hidden=clubsTierFilter!==''&&ds.label!==clubsTierFilter;
+  });
+  clubsTrendChart.update('none'); // 'none' = no animation, instant
 }
 
 // ── Clubs Sidebar: Movement Filter ──
