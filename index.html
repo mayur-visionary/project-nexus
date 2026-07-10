@@ -195,7 +195,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .amt{text-align:right;font-weight:800;font-size:11px}
 .cred td{background:#FAFAFA!important}
 .geo-tag{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:3px;cursor:pointer}
-.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#ffffff}.geo-AU{background:#473400;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
+.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#fff}.geo-AU{background:#473400;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
 .inv-tag{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;background:#F2F2F2;color:#696969;cursor:pointer}
 .hs-a{color:#006E5E;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
 .hs-a:hover{color:#FFDA30}
@@ -261,7 +261,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .clubs-main{flex:1;min-width:0;padding:18px 28px 48px}
 
 /* ── Clubs Main Layout ── */
-.clubs-layout{display:none}
+.clubs-layout{display:none;flex:1;min-width:0}
 
 /* ── Tier Cards ── */
 .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
@@ -286,12 +286,20 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .t-avg{font-size:10px;font-weight:600;color:#9A9A9A}
 .t-spark{position:absolute;bottom:14px;right:16px;opacity:.55;pointer-events:none}
 
-/* ── Movement Flags ── */
+/* ── Movement Flags (roster badges) ── */
 .mvt{font-size:8px;font-weight:800;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.mvt-new{background:#0CCE6B;color:#fff}
-.mvt-retained{background:#EDEDED;color:#696969}
+.mvt-new{background:#0CCE6B;color:#111}
+.mvt-retained{background:#006E5E;color:#fff}
 .mvt-upgraded{background:#FFDA30;color:#111}
 .mvt-atrisk{background:#EF2D56;color:#fff}
+/* ── Movement Sidebar Buttons (mirrors Tier style, semantic colours) ── */
+.mvt-btn{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
+.mvt-btn:hover{opacity:.65;transform:scale(1.02)}
+.mvt-btn.active{opacity:1}
+.mb-new{background:#0CCE6B;color:#111}
+.mb-retained{background:#006E5E;color:#fff}
+.mb-upgraded{background:#FFDA30;color:#111}
+.mb-atrisk{background:#EF2D56;color:#fff}
 
 /* ── Tier group header rows in roster table ── */
 .tier-group-hdr td{background:#F7F7F7!important;padding:7px 12px!important;font-size:9px!important;font-weight:800!important;text-transform:uppercase!important;letter-spacing:.1em!important;color:#434343!important;border-top:2px solid #E2E2E2!important;border-bottom:1px solid #E8E8E8!important;cursor:default!important}
@@ -695,9 +703,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div>
 </div><!-- /weekly-layout -->
 
-</div><!-- /app-layout -->
-
-<!-- ════ CLIENT CLUBS LAYOUT (hidden by default) ════ -->
+<!-- ════ CLIENT CLUB — inside app-layout, shares the sidebar ════ -->
 <div class="clubs-layout" id="clubs-layout">
 
   <div class="clubs-app-layout">
@@ -731,10 +737,12 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
             <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
           </span>
         </div>
-        <div class="ms-item"><input type="checkbox" id="mvt-new" checked onchange="toggleClubsMovement('New')"><label for="mvt-new">New</label></div>
-        <div class="ms-item"><input type="checkbox" id="mvt-retained" checked onchange="toggleClubsMovement('Retained')"><label for="mvt-retained">Retained</label></div>
-        <div class="ms-item"><input type="checkbox" id="mvt-upgraded" checked onchange="toggleClubsMovement('Upgraded')"><label for="mvt-upgraded">Upgraded</label></div>
-        <div class="ms-item"><input type="checkbox" id="mvt-atrisk" checked onchange="toggleClubsMovement('At-risk')"><label for="mvt-atrisk">At-risk</label></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="mvt-btn mb-new active"      id="mb-new"      onclick="toggleClubsMovement('New')">New</button>
+          <button class="mvt-btn mb-retained active" id="mb-retained" onclick="toggleClubsMovement('Retained')">Retained</button>
+          <button class="mvt-btn mb-upgraded active" id="mb-upgraded" onclick="toggleClubsMovement('Upgraded')">Upgraded</button>
+          <button class="mvt-btn mb-atrisk active"   id="mb-atrisk"   onclick="toggleClubsMovement('At-risk')">At-risk</button>
+        </div>
       </div>
 
     </aside>
@@ -802,6 +810,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div><!-- /clubs-main -->
   </div><!-- /clubs-app-layout -->
 </div><!-- /clubs-layout -->
+
+</div><!-- /app-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -1919,7 +1929,7 @@ function renderGeoBars(_v){
   const mx=Math.max(...gs.map(g=>g.posRev),1);
   $("geo-bars").innerHTML=gs.map(g=>`
     <div class="gbar-row${drill.region===g.geo?" drill-active":""}" onclick="setDrill('region','${g.geo}')" title="${g.geo}">
-      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#fff"}">${g.geo}</div>
+      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#111"}">${g.geo}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${GEO_COLORS[g.geo]};width:${(g.posRev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(g.posRev)}</div><div class="gbar-cnt">${g.count} deals · ${g.share.toFixed(1)}%</div></div>
     </div>`).join("");
@@ -2449,12 +2459,11 @@ function setScreen(name){
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
-  // app-layout: visible on Revenue AND Weekly (sidebar is shared between both)
-  // Toggle rev-main vs weekly-layout within the shared app-layout flex container
-  const al=$('app-layout');if(al)al.style.display=(isRevenue||isWeekly)?'flex':'none';
+  // app-layout: always visible — sidebar is shared across all three tabs
+  // Each tab shows exactly one content div; the other two are hidden.
+  const al=$('app-layout');if(al)al.style.display='flex';
   const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
-  // Clubs layout — separate, own sidebar
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
@@ -2867,20 +2876,24 @@ function updateTrendChartForTier(){
 }
 
 // ── Clubs Sidebar: Movement Filter ──
-const MVT_IDS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
+// ── Movement button ID map ──
+const MVT_BTN_IDS={New:'mb-new',Retained:'mb-retained',Upgraded:'mb-upgraded','At-risk':'mb-atrisk'};
+
 function toggleClubsMovement(mvt){
   const idx=clubsMovementFilter.indexOf(mvt);
   if(idx>=0)clubsMovementFilter.splice(idx,1);else clubsMovementFilter.push(mvt);
+  const btn=$(MVT_BTN_IDS[mvt]);
+  if(btn)btn.classList.toggle('active',clubsMovementFilter.includes(mvt));
   renderClubsRosterOnly();
 }
 function selectAllMovements(){
   clubsMovementFilter=['New','Retained','Upgraded','At-risk'];
-  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=true;});
+  Object.values(MVT_BTN_IDS).forEach(id=>{$(id)?.classList.add('active');});
   renderClubsRosterOnly();
 }
 function deselectAllMovements(){
   clubsMovementFilter=[];
-  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=false;});
+  Object.values(MVT_BTN_IDS).forEach(id=>{$(id)?.classList.remove('active');});
   renderClubsRosterOnly();
 }
 
