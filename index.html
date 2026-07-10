@@ -267,13 +267,19 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .tier-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid #E2E2E2;position:relative;overflow:hidden;transition:box-shadow .2s}
 .tier-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
-.tier-card.gold{border-top:3px solid #FFDA30}
-.tier-card.silver{border-top:3px solid #9A9A9A}
-.tier-card.bronze{border-top:3px solid #CD7F32}
+.tier-card.premier{border-top:3px solid #3B3561}
+.tier-card.select{border-top:3px solid #FFDA30}
+.tier-card.core{border-top:3px solid #9A9A9A}
+.tier-card.base{border-top:3px solid #E2E2E2}
+
+
 .t-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;white-space:nowrap}
-.t-badge.gold{background:#FFDA30;color:#111}
-.t-badge.silver{background:#9A9A9A;color:#fff}
-.t-badge.bronze{background:#CD7F32;color:#fff}
+.t-badge.premier{background:#3B3561;color:#FFDA30}
+.t-badge.select{background:#FFDA30;color:#111}
+.t-badge.core{background:#9A9A9A;color:#fff}
+.t-badge.base{background:#F2F2F2;color:#696969}
+
+
 .t-count{font-size:34px;font-weight:800;color:#434343;line-height:1;margin-bottom:2px}
 .t-sublbl{font-size:8.5px;color:#9A9A9A;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .t-rev{font-size:13px;font-weight:800;color:#434343;margin-bottom:3px}
@@ -618,12 +624,18 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <aside class="clubs-sidebar">
 
       <div class="sb-section">
-        <div class="sb-lbl">Tier</div>
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Tier</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
+          </span>
+        </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="nbd-toggle active" id="ct-all" onclick="setClubsTier('')" style="flex:1;min-width:55px">All</button>
-          <button class="nbd-toggle" id="ct-gold" onclick="setClubsTier('Gold')" style="flex:1;min-width:55px">Gold</button>
-          <button class="nbd-toggle" id="ct-silver" onclick="setClubsTier('Silver')" style="flex:1;min-width:55px">Silver</button>
-          <button class="nbd-toggle" id="ct-bronze" onclick="setClubsTier('Bronze')" style="flex:1;min-width:55px">Bronze</button>
+          <button class="nbd-toggle active" id="ct-premier" onclick="toggleClubsTier('Premier')" style="flex:1;min-width:60px">Premier</button>
+          <button class="nbd-toggle active" id="ct-select" onclick="toggleClubsTier('Select')" style="flex:1;min-width:60px">Select</button>
+          <button class="nbd-toggle active" id="ct-core" onclick="toggleClubsTier('Core')" style="flex:1;min-width:60px">Core</button>
+          <button class="nbd-toggle active" id="ct-base" onclick="toggleClubsTier('Base')" style="flex:1;min-width:60px">Base</button>
         </div>
       </div>
 
@@ -969,7 +981,7 @@ let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
 let currentScreen='revenue';   // 'revenue' | 'clubs'
 let clubDataCache={};           // keyed by 'month|regions' — cleared on every sync
 let clubsTrendChart=null;
-let clubsTierFilter='';                                    // '' | 'Gold' | 'Silver' | 'Bronze'
+let clubsTierFilter=['Premier','Select','Core','Base']; // all selected by default (multi-select)
 let clubsMovementFilter=['New','Retained','Upgraded','At-risk']; // all on by default
 let _lastClubsArgs=null;                                   // {data,clubsMonths,prevMonths,allFiltered}
 
@@ -2111,7 +2123,15 @@ function renderTrends(months,src){
       interaction:{mode:"index",intersect:false},
       plugins:{
         legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
-        tooltip:trendTooltip()
+        tooltip:{
+          bodyFont:{family:"Montserrat",size:10},titleFont:{family:"Montserrat",size:10},
+          callbacks:{label:c=>{
+            const total=c.chart.data.datasets.reduce((s,ds)=>
+              s+(!ds.hidden&&typeof ds.data[c.dataIndex]==='number'?ds.data[c.dataIndex]:0),0);
+            const pct=total>0?Math.round(c.parsed.y/total*100):0;
+            return`${c.dataset.label}: ${fmtShort(c.parsed.y)} (${pct}%)`;
+          }}
+        }
       },
       scales:{
         x:{ticks:TREND_TICK,grid:TREND_GRID},
@@ -2134,7 +2154,15 @@ function renderTrends(months,src){
       interaction:{mode:"index",intersect:false},
       plugins:{
         legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
-        tooltip:trendTooltip()
+        tooltip:{
+          bodyFont:{family:"Montserrat",size:10},titleFont:{family:"Montserrat",size:10},
+          callbacks:{label:c=>{
+            const total=c.chart.data.datasets.reduce((s,ds)=>
+              s+(!ds.hidden&&typeof ds.data[c.dataIndex]==='number'?ds.data[c.dataIndex]:0),0);
+            const pct=total>0?Math.round(c.parsed.y/total*100):0;
+            return`${c.dataset.label}: ${fmtShort(c.parsed.y)} (${pct}%)`;
+          }}
+        }
       },
       scales:{
         x:{ticks:TREND_TICK,grid:TREND_GRID},
@@ -2453,7 +2481,7 @@ function buildClubData(filteredDeals){
     if(d.bu)cmap[d.billing_id].bus.add(d.bu);
   });
   return Object.values(cmap).map(c=>{
-    const tier=c.total>=25000?'Gold':c.total>=15000?'Silver':c.total>=5000?'Bronze':null;
+    const tier=c.total>20000?'Premier':c.total>10000?'Select':c.total>5000?'Core':c.total>0?'Base':null;
     return{billing_id:c.billing_id,name:c.name,total:c.total,regions:[...c.regions],bus:[...c.bus],tier};
   }).filter(c=>c.tier!==null).sort((a,b)=>b.total-a.total);
 }
@@ -2482,12 +2510,12 @@ function getMovementFlag(billingId,currentTier,prevMonths,allFiltered){
 // allFiltered = trendView() — BU/Region/Head/Service applied, all FY months included.
 function buildTierTrendData(allFiltered){
   const fyMonths=getFY2026Months();
-  const counts={Gold:[],Silver:[],Bronze:[]};
-  const revs={Gold:[],Silver:[],Bronze:[]};
+  const counts={Premier:[],Select:[],Core:[],Base:[]};
+  const revs={Premier:[],Select:[],Core:[],Base:[]};
   fyMonths.forEach(m=>{
     const monthDeals=allFiltered.filter(d=>d.month===m);
     const data=getCachedClubData(m,monthDeals);
-    ['Gold','Silver','Bronze'].forEach(tier=>{
+    ['Premier','Select','Core','Base'].forEach(tier=>{
       const tc=data.filter(c=>c.tier===tier);
       counts[tier].push(tc.length);
       revs[tier].push(tc.reduce((s,c)=>s+c.total,0));
@@ -2521,9 +2549,10 @@ function renderSparkline(values,color,w,h){
 // ── Render: Tier KPI Cards ──
 function renderTierCards(data,trend,fyMonths){
   const TIERS=[
-    {key:'Gold',icon:'🥇',range:'$25k+',color:'#FFDA30'},
-    {key:'Silver',icon:'🥈',range:'$15k–$25k',color:'#9A9A9A'},
-    {key:'Bronze',icon:'🥉',range:'$5k–$15k',color:'#CD7F32'}
+    {key:'Premier',range:'>$20k',color:'#3B3561'},
+    {key:'Select', range:'$10k–$20k',color:'#FFDA30'},
+    {key:'Core',   range:'$5k–$10k', color:'#9A9A9A'},
+    {key:'Base',   range:'$0–$5k',   color:'#E2E2E2'}
   ];
   $('tier-grid').innerHTML=TIERS.map(t=>{
     const clients=data.filter(c=>c.tier===t.key);
@@ -2532,7 +2561,7 @@ function renderTierCards(data,trend,fyMonths){
     const avg=count>0?revenue/count:0;
     const spark=renderSparkline(trend.counts[t.key]||[],t.color);
     return`<div class="tier-card ${t.key.toLowerCase()}" data-tier="${t.key}" style="transition:opacity .25s">
-      <span class="t-badge ${t.key.toLowerCase()}">${t.icon} ${t.key}</span>
+      <span class="t-badge ${t.key.toLowerCase()}">${t.key}</span>
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <div class="t-count">${count}</div>
@@ -2555,9 +2584,10 @@ function renderClubsTrendChart(fyMonths,trend){
   clubsTrendChart=new Chart(ctx,{
     type:'bar',
     data:{labels,datasets:[
-      {label:'Gold',data:trend.counts.Gold,backgroundColor:'rgba(255,218,48,0.85)',borderRadius:3,stack:'s'},
-      {label:'Silver',data:trend.counts.Silver,backgroundColor:'rgba(154,154,154,0.80)',borderRadius:3,stack:'s'},
-      {label:'Bronze',data:trend.counts.Bronze,backgroundColor:'rgba(205,127,50,0.75)',borderRadius:3,stack:'s'}
+      {label:'Premier',data:trend.counts.Premier,backgroundColor:'rgba(59,53,97,0.85)',borderRadius:3,stack:'s'},
+      {label:'Select', data:trend.counts.Select, backgroundColor:'rgba(255,218,48,0.85)',borderRadius:3,stack:'s'},
+      {label:'Core',   data:trend.counts.Core,   backgroundColor:'rgba(154,154,154,0.80)',borderRadius:3,stack:'s'},
+      {label:'Base',   data:trend.counts.Base,   backgroundColor:'rgba(220,220,220,0.75)',borderRadius:3,stack:'s'}
     ]},
     options:{
       responsive:true,maintainAspectRatio:false,
@@ -2581,7 +2611,7 @@ function renderClubsTrendChart(fyMonths,trend){
 // Sidebar filters: clubsTierFilter (scopes tier groups) + clubsMovementFilter (scopes rows).
 // KPI cards and trend chart are never touched here — roster-only scope.
 function renderClubsRoster(data,months,prevMonths,allFiltered){
-  const TIER_ORDER=['Gold','Silver','Bronze'];
+  const TIER_ORDER=['Premier','Select','Core','Base'];
   const MVT_CLASS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
   const prevLbl=prevMonths?getClubsPeriodLabel(prevMonths):'';
   // Pre-compute prev period data once (cached)
@@ -2591,8 +2621,8 @@ function renderClubsRoster(data,months,prevMonths,allFiltered){
   let html='';let grank=0;let visibleTotal=0;
 
   TIER_ORDER.forEach(tier=>{
-    // Tier sidebar filter — skip tiers not matching
-    if(clubsTierFilter&&clubsTierFilter!==tier)return;
+    // Tier sidebar filter — skip tiers not in selection
+    if(!clubsTierFilter.includes(tier))return;
     const tc=data.filter(c=>c.tier===tier).sort((a,b)=>b.total-a.total);
     if(!tc.length)return;
     const icon={Gold:'🥇',Silver:'🥈',Bronze:'🥉'}[tier];
@@ -2681,46 +2711,61 @@ function renderClubs(){
 
   // ── Jun-26 single-month validation ──
   if(clubsMonths.length===1&&clubsMonths[0]==='june-2026'){
-    const gold=data.filter(c=>c.tier==='Gold');
-    const silver=data.filter(c=>c.tier==='Silver');
-    const bronze=data.filter(c=>c.tier==='Bronze');
-    console.groupCollapsed('[Nexus Clubs] Jun-26 Validation');
-    console.log(`Gold: ${gold.length} clients (expected 7) | $${Math.round(gold.reduce((s,c)=>s+c.total,0)).toLocaleString()} (expected ~$217,799)`);
-    console.log(`Silver: ${silver.length} clients (expected 9) | $${Math.round(silver.reduce((s,c)=>s+c.total,0)).toLocaleString()} (expected ~$171,901)`);
-    console.log(`Bronze: ${bronze.length} clients (live data)`);
-    console.log('Gold roster:',gold.map(c=>`${c.name} $${Math.round(c.total).toLocaleString()}`));
-    console.log('Silver roster:',silver.map(c=>`${c.name} $${Math.round(c.total).toLocaleString()}`));
+    const premier=data.filter(c=>c.tier==='Premier');
+    const select=data.filter(c=>c.tier==='Select');
+    const core=data.filter(c=>c.tier==='Core');
+    const base=data.filter(c=>c.tier==='Base');
+    console.groupCollapsed('[Nexus Clubs] Jun-26 Snapshot (new thresholds)');
+    console.log(`Premier (>$20k): ${premier.length} clients | $${Math.round(premier.reduce((s,c)=>s+c.total,0)).toLocaleString()}`);
+    console.log(`Select ($10k-$20k): ${select.length} clients | $${Math.round(select.reduce((s,c)=>s+c.total,0)).toLocaleString()}`);
+    console.log(`Core ($5k-$10k): ${core.length} clients | $${Math.round(core.reduce((s,c)=>s+c.total,0)).toLocaleString()}`);
+    console.log(`Base ($0-$5k): ${base.length} clients | $${Math.round(base.reduce((s,c)=>s+c.total,0)).toLocaleString()}`);
+    console.log('Premier roster:',premier.map(c=>`${c.name} $${Math.round(c.total).toLocaleString()}`));
+    console.log('Select roster:',select.map(c=>`${c.name} $${Math.round(c.total).toLocaleString()}`));
     console.groupEnd();
   }
 }
 
-// ── Clubs Sidebar: Tier Filter ──
-function setClubsTier(tier){
-  clubsTierFilter=tier;
+// ── Clubs Sidebar: Tier Filter (multi-select) ──
+const ALL_TIER_KEYS=['Premier','Select','Core','Base'];
+function toggleClubsTier(tier){
+  const idx=clubsTierFilter.indexOf(tier);
+  if(idx>=0)clubsTierFilter.splice(idx,1);
+  else clubsTierFilter.push(tier);
   updateClubsTierUI();
   updateTierCardsHighlight();
   updateTrendChartForTier();
   renderClubsRosterOnly();
 }
+function selectAllTiers(){
+  clubsTierFilter=[...ALL_TIER_KEYS];
+  updateClubsTierUI();updateTierCardsHighlight();updateTrendChartForTier();renderClubsRosterOnly();
+}
+function deselectAllTiers(){
+  clubsTierFilter=[];
+  updateClubsTierUI();updateTierCardsHighlight();updateTrendChartForTier();renderClubsRosterOnly();
+}
 function updateClubsTierUI(){
-  const ids={'':"ct-all",Gold:"ct-gold",Silver:"ct-silver",Bronze:"ct-bronze"};
-  Object.entries(ids).forEach(([t,id])=>{
-    const btn=$(id);if(btn)btn.classList.toggle('active',clubsTierFilter===t);
+  ALL_TIER_KEYS.forEach(t=>{
+    const btn=$('ct-'+t.toLowerCase());
+    if(btn)btn.classList.toggle('active',clubsTierFilter.includes(t));
   });
 }
-// Dim non-selected tier cards; full opacity when All selected
+// Dim non-selected tier cards; full opacity when all selected
 function updateTierCardsHighlight(){
+  const allSelected=clubsTierFilter.length===ALL_TIER_KEYS.length;
   document.querySelectorAll('#tier-grid .tier-card').forEach(card=>{
-    card.style.opacity=(!clubsTierFilter||card.dataset.tier===clubsTierFilter)?'1':'0.3';
+    card.style.opacity=(allSelected||clubsTierFilter.includes(card.dataset.tier))?'1':'0.3';
   });
 }
-// Toggle trend chart dataset visibility by tier
+// Toggle trend chart dataset visibility by tier selection
 function updateTrendChartForTier(){
   if(!clubsTrendChart)return;
+  const allSelected=clubsTierFilter.length===ALL_TIER_KEYS.length;
   clubsTrendChart.data.datasets.forEach(ds=>{
-    ds.hidden=clubsTierFilter!==''&&ds.label!==clubsTierFilter;
+    ds.hidden=!allSelected&&!clubsTierFilter.includes(ds.label);
   });
-  clubsTrendChart.update('none'); // 'none' = no animation, instant
+  clubsTrendChart.update('none');
 }
 
 // ── Clubs Sidebar: Movement Filter ──
