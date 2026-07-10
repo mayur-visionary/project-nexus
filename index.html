@@ -566,6 +566,41 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="Recurring">Recurring</option>
       </select>
     </div>
+    <!-- ── Client Club filters — shown only on Client Club tab ── -->
+    <div id="sidebar-clubs-section" style="display:none">
+      <div class="sb-divider"></div>
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Tier</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="tb tb-premier active" id="ct-premier" onclick="toggleClubsTier('Premier')">Premier</button>
+          <button class="tb tb-select active"  id="ct-select"  onclick="toggleClubsTier('Select')">Select</button>
+          <button class="tb tb-core active"    id="ct-core"    onclick="toggleClubsTier('Core')">Core</button>
+          <button class="tb tb-base active"    id="ct-base"    onclick="toggleClubsTier('Base')">Base</button>
+        </div>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Movement</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="mvt-btn mb-new active"      id="mb-new"      onclick="toggleClubsMovement('New')">New</button>
+          <button class="mvt-btn mb-retained active" id="mb-retained" onclick="toggleClubsMovement('Retained')">Retained</button>
+          <button class="mvt-btn mb-upgraded active" id="mb-upgraded" onclick="toggleClubsMovement('Upgraded')">Upgraded</button>
+          <button class="mvt-btn mb-atrisk active"   id="mb-atrisk"   onclick="toggleClubsMovement('At-risk')">At-risk</button>
+        </div>
+      </div>
+    </div>
   </aside>
 
   <!-- MAIN -->
@@ -717,50 +752,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
 <!-- ════ CLIENT CLUB — inside app-layout, shares the sidebar ════ -->
 <div class="clubs-layout" id="clubs-layout">
-
-  <div class="clubs-app-layout">
-
-    <!-- CLUBS SIDEBAR -->
-    <aside class="clubs-sidebar">
-
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Tier</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="tb tb-premier active" id="ct-premier" onclick="toggleClubsTier('Premier')">Premier</button>
-          <button class="tb tb-select active"  id="ct-select"  onclick="toggleClubsTier('Select')">Select</button>
-          <button class="tb tb-core active"    id="ct-core"    onclick="toggleClubsTier('Core')">Core</button>
-          <button class="tb tb-base active"    id="ct-base"    onclick="toggleClubsTier('Base')">Base</button>
-        </div>
-      </div>
-
-      <div class="sb-divider"></div>
-
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Movement</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="mvt-btn mb-new active"      id="mb-new"      onclick="toggleClubsMovement('New')">New</button>
-          <button class="mvt-btn mb-retained active" id="mb-retained" onclick="toggleClubsMovement('Retained')">Retained</button>
-          <button class="mvt-btn mb-upgraded active" id="mb-upgraded" onclick="toggleClubsMovement('Upgraded')">Upgraded</button>
-          <button class="mvt-btn mb-atrisk active"   id="mb-atrisk"   onclick="toggleClubsMovement('At-risk')">At-risk</button>
-        </div>
-      </div>
-
-    </aside>
-
-    <!-- CLUBS MAIN -->
-    <div class="clubs-main">
+  <div class="clubs-main">
 
       <!-- Section header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -819,8 +811,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
       <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 
-    </div><!-- /clubs-main -->
-  </div><!-- /clubs-app-layout -->
+  </div><!-- /clubs-main -->
 </div><!-- /clubs-layout -->
 
 </div><!-- /app-layout -->
@@ -1393,7 +1384,7 @@ function initOwners(){
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
 function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
 function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
-function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
 document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");if(!$("clubs-geo-wrap")?.contains(e.target))$("clubs-geo-dropdown")?.classList.remove("open");});
 
@@ -1407,7 +1398,7 @@ function toggleBUFilter(bu){
   if(sel.value===bu){sel.value="";}else{sel.value=bu;}
   renderAll();
 }
-function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 
 // ════ QUICK FILTERS ════
 const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
@@ -1424,17 +1415,17 @@ function _clearQuickFilters(){
 function toggleExisting(){
   const wasActive=existingActive;_clearQuickFilters();
   if(!wasActive){existingActive=true;$("existing-toggle").classList.add("active");}
-  renderAll();
+  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
 }
 function toggleNBD(){
   const wasActive=nbdActive;_clearQuickFilters();
   if(!wasActive){nbdActive=true;$("nbd-toggle").classList.add("active");}
-  renderAll();
+  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
 }
 function toggleReactivation(){
   const wasActive=reactivationActive;_clearQuickFilters();
   if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}
-  renderAll();
+  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
@@ -2477,6 +2468,8 @@ function setScreen(name){
   const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
+  // Tier + Movement sections in shared sidebar — visible on Client Club only
+  const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
