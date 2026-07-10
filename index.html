@@ -2425,7 +2425,7 @@ function setScreen(name){
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
   // Layout visibility — exactly one visible at a time
   const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
-  const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'':'none';
+  const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
@@ -2694,7 +2694,7 @@ function renderClubsRoster(data,months,prevMonths,allFiltered){
     if(!clubsTierFilter.includes(tier))return;
     const tc=data.filter(c=>c.tier===tier).sort((a,b)=>b.total-a.total);
     if(!tc.length)return;
-    const icon={Gold:'🥇',Silver:'🥈',Bronze:'🥉'}[tier];
+    const icon={Premier:'🏆',Select:'⭐',Core:'✦',Base:'○'}[tier]||'';
     // Apply movement filter — determine which clients are visible
     const allMvtSelected=clubsMovementFilter.length===4;
     const visibleClients=tc.filter(c=>{
