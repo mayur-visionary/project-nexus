@@ -263,6 +263,18 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 /* ── Clubs Main Layout ── */
 .clubs-layout{display:none;flex:1;min-width:0}
 
+/* ── Owner dropdown: constrain to sidebar width — prevents overflow into clubs-sidebar ── */
+.sidebar .ms-dropdown{min-width:100%}
+
+/* ── Tier Sidebar Buttons — colours match KPI badge exactly per tier ── */
+.tb{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
+.tb:hover{opacity:.65;transform:scale(1.02)}
+.tb.active{opacity:1}
+.tb-premier{background:#3B3561;color:#FFDA30}
+.tb-select{background:#FFDA30;color:#111}
+.tb-core{background:#5C5C5C;color:#fff}
+.tb-base{background:#9A9A9A;color:#fff}
+
 /* ── Tier Cards ── */
 .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .tier-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid #E2E2E2;position:relative;overflow:hidden;transition:box-shadow .2s}
@@ -720,10 +732,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           </span>
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="nbd-toggle active" id="ct-premier" onclick="toggleClubsTier('Premier')" style="flex:1;min-width:60px">Premier</button>
-          <button class="nbd-toggle active" id="ct-select" onclick="toggleClubsTier('Select')" style="flex:1;min-width:60px">Select</button>
-          <button class="nbd-toggle active" id="ct-core" onclick="toggleClubsTier('Core')" style="flex:1;min-width:60px">Core</button>
-          <button class="nbd-toggle active" id="ct-base" onclick="toggleClubsTier('Base')" style="flex:1;min-width:60px">Base</button>
+          <button class="tb tb-premier active" id="ct-premier" onclick="toggleClubsTier('Premier')">Premier</button>
+          <button class="tb tb-select active"  id="ct-select"  onclick="toggleClubsTier('Select')">Select</button>
+          <button class="tb tb-core active"    id="ct-core"    onclick="toggleClubsTier('Core')">Core</button>
+          <button class="tb tb-base active"    id="ct-base"    onclick="toggleClubsTier('Base')">Base</button>
         </div>
       </div>
 
