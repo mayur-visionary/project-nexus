@@ -264,20 +264,20 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .clubs-layout{display:none}
 
 /* ── Tier Cards ── */
-.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .tier-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid #E2E2E2;position:relative;overflow:hidden;transition:box-shadow .2s}
 .tier-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
 .tier-card.premier{border-top:3px solid #3B3561}
 .tier-card.select{border-top:3px solid #FFDA30}
-.tier-card.core{border-top:3px solid #9A9A9A}
-.tier-card.base{border-top:3px solid #E2E2E2}
+.tier-card.core{border-top:3px solid #5C5C5C}
+.tier-card.base{border-top:3px solid #9A9A9A;background:#F6F6F6}
 
 
 .t-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;white-space:nowrap}
 .t-badge.premier{background:#3B3561;color:#FFDA30}
 .t-badge.select{background:#FFDA30;color:#111}
-.t-badge.core{background:#9A9A9A;color:#fff}
-.t-badge.base{background:#F2F2F2;color:#696969}
+.t-badge.core{background:#5C5C5C;color:#fff}
+.t-badge.base{background:#9A9A9A;color:#fff}
 
 
 .t-count{font-size:34px;font-weight:800;color:#434343;line-height:1;margin-bottom:2px}
@@ -2551,8 +2551,8 @@ function renderTierCards(data,trend,fyMonths){
   const TIERS=[
     {key:'Premier',range:'>$20k',color:'#3B3561'},
     {key:'Select', range:'$10k–$20k',color:'#FFDA30'},
-    {key:'Core',   range:'$5k–$10k', color:'#9A9A9A'},
-    {key:'Base',   range:'$0–$5k',   color:'#E2E2E2'}
+    {key:'Core',   range:'$5k–$10k', color:'#5C5C5C'},
+    {key:'Base',   range:'$0–$5k',   color:'#9A9A9A'}
   ];
   $('tier-grid').innerHTML=TIERS.map(t=>{
     const clients=data.filter(c=>c.tier===t.key);
@@ -2586,8 +2586,8 @@ function renderClubsTrendChart(fyMonths,trend){
     data:{labels,datasets:[
       {label:'Premier',data:trend.counts.Premier,backgroundColor:'rgba(59,53,97,0.85)',borderRadius:3,stack:'s'},
       {label:'Select', data:trend.counts.Select, backgroundColor:'rgba(255,218,48,0.85)',borderRadius:3,stack:'s'},
-      {label:'Core',   data:trend.counts.Core,   backgroundColor:'rgba(154,154,154,0.80)',borderRadius:3,stack:'s'},
-      {label:'Base',   data:trend.counts.Base,   backgroundColor:'rgba(220,220,220,0.75)',borderRadius:3,stack:'s'}
+      {label:'Core',   data:trend.counts.Core,   backgroundColor:'rgba(92,92,92,0.80)',borderRadius:3,stack:'s'},
+      {label:'Base',   data:trend.counts.Base,   backgroundColor:'rgba(154,154,154,0.70)',borderRadius:3,stack:'s'}
     ]},
     options:{
       responsive:true,maintainAspectRatio:false,
