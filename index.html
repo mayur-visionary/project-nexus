@@ -1929,7 +1929,7 @@ function renderGeoBars(_v){
   const mx=Math.max(...gs.map(g=>g.posRev),1);
   $("geo-bars").innerHTML=gs.map(g=>`
     <div class="gbar-row${drill.region===g.geo?" drill-active":""}" onclick="setDrill('region','${g.geo}')" title="${g.geo}">
-      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#111"}">${g.geo}</div>
+      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#fff"}">${g.geo}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${GEO_COLORS[g.geo]};width:${(g.posRev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(g.posRev)}</div><div class="gbar-cnt">${g.count} deals · ${g.share.toFixed(1)}%</div></div>
     </div>`).join("");
