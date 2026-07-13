@@ -11,10 +11,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden}
-body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
 
 /* ── Login ── */
-.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-overlay{position:fixed;inset:0;background:#434343;z-index:9999;display:flex;align-items:center;justify-content:center}
 .login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
 .login-logo{margin-bottom:22px}
 .login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
@@ -29,7 +29,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
 
 /* ── Header ── */
-.hdr{background:#473400}
+.hdr{background:#434343}
 .hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
@@ -114,7 +114,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
 .sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
 .nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
-.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
+.nbd-toggle:hover{border-color:#DDB800;background:#FFFBEA;color:#434343}
 .nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
 .main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
@@ -195,9 +195,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .amt{text-align:right;font-weight:800;font-size:11px}
 .cred td{background:#FAFAFA!important}
 .geo-tag{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:3px;cursor:pointer}
-.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#fff}.geo-AU{background:#473400;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
+.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#DDB800;color:#111}.geo-AU{background:#434343;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
 .inv-tag{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;background:#F2F2F2;color:#696969;cursor:pointer}
-.hs-a{color:#006E5E;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
+.hs-a{color:#DDB800;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
 .hs-a:hover{color:#FFDA30}
 .pgs{padding:10px 16px;border-top:1px solid #F2F2F2;display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap}
 .pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
@@ -261,19 +261,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .clubs-main{flex:1;min-width:0;padding:18px 28px 48px}
 
 /* ── Clubs Main Layout ── */
-.clubs-layout{display:none;flex:1;min-width:0}
-
-/* ── Owner dropdown: constrain to sidebar width — prevents overflow into clubs-sidebar ── */
-.sidebar .ms-dropdown{min-width:100%}
-
-/* ── Tier Sidebar Buttons — colours match KPI badge exactly per tier ── */
-.tb{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
-.tb:hover{opacity:.65;transform:scale(1.02)}
-.tb.active{opacity:1}
-.tb-premier{background:#3B3561;color:#FFDA30}
-.tb-select{background:#FFDA30;color:#111}
-.tb-core{background:#5C5C5C;color:#fff}
-.tb-base{background:#9A9A9A;color:#fff}
+.clubs-layout{display:none}
 
 /* ── Tier Cards ── */
 .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
@@ -298,20 +286,12 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .t-avg{font-size:10px;font-weight:600;color:#9A9A9A}
 .t-spark{position:absolute;bottom:14px;right:16px;opacity:.55;pointer-events:none}
 
-/* ── Movement Flags (roster badges) ── */
+/* ── Movement Flags ── */
 .mvt{font-size:8px;font-weight:800;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.mvt-new{background:#0CCE6B;color:#111}
-.mvt-retained{background:#006E5E;color:#fff}
+.mvt-new{background:#0CCE6B;color:#fff}
+.mvt-retained{background:#EDEDED;color:#696969}
 .mvt-upgraded{background:#FFDA30;color:#111}
 .mvt-atrisk{background:#EF2D56;color:#fff}
-/* ── Movement Sidebar Buttons (mirrors Tier style, semantic colours) ── */
-.mvt-btn{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
-.mvt-btn:hover{opacity:.65;transform:scale(1.02)}
-.mvt-btn.active{opacity:1}
-.mb-new{background:#0CCE6B;color:#111}
-.mb-retained{background:#006E5E;color:#fff}
-.mb-upgraded{background:#FFDA30;color:#111}
-.mb-atrisk{background:#EF2D56;color:#fff}
 
 /* ── Tier group header rows in roster table ── */
 .tier-group-hdr td{background:#F7F7F7!important;padding:7px 12px!important;font-size:9px!important;font-weight:800!important;text-transform:uppercase!important;letter-spacing:.1em!important;color:#434343!important;border-top:2px solid #E2E2E2!important;border-bottom:1px solid #E8E8E8!important;cursor:default!important}
@@ -325,24 +305,37 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 @media(max-width:900px){.tier-grid{grid-template-columns:repeat(2,1fr)}.clubs-app-layout{flex-direction:column}.clubs-sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static}.clubs-main{padding:14px 18px 36px}}
 @media(max-width:600px){.tier-grid{grid-template-columns:1fr}}
 
-/* ── Weekly Sprint ── */
-.weekly-layout{display:none;flex:1;min-width:0}
-.weekly-main{max-width:1440px;padding:18px 28px 48px}
-/* Tiles */
-.wk-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.wk-tile{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #E2E2E2;padding:13px 15px 14px;cursor:pointer;transition:box-shadow .2s,transform .15s}
-.wk-tile:hover{box-shadow:0 4px 16px rgba(67,67,67,.12);transform:translateY(-1px)}
-.wk-tile.active{box-shadow:0 5px 20px rgba(67,67,67,.15)}
-.wkt-badge{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:4px;letter-spacing:.04em;margin-bottom:2px}
-.wkt-dates{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:10px}
-.wkt-rev{font-size:23px;font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
-.wkt-count{font-size:10px;font-weight:700;color:#696969}
-.wkt-pct{font-size:10px;font-weight:600;color:#9A9A9A}
-.wkt-empty{font-size:11px;font-weight:600;color:#C0C0C0;margin-top:4px}
-/* Active week deal table section label */
-.wk-tbl-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
-@media(max-width:900px){.wk-tiles{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.wk-tiles{grid-template-columns:1fr}}
+/* ── Weekly Numbers ── */
+.weekly-layout{display:none}
+.weekly-main{max-width:1540px;margin:0 auto;padding:18px 28px 48px}
+.week-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.week-panel{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;display:flex;flex-direction:column}
+.week-panel-hdr{padding:12px 14px 10px}
+.wk-badge{font-size:17px;font-weight:800;letter-spacing:.03em;line-height:1.2}
+.wk-dates{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.wk-body{flex:1}
+.wk-kpi{padding:12px 14px 0}
+.wk-kpi-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:2px}
+.wk-kpi-val{font-size:20px;font-weight:800;color:#434343;line-height:1.1;margin-bottom:8px}
+.wk-clients-row{display:flex;padding:0 14px 10px;gap:0}
+.wk-mini-kpi{flex:1}
+.wk-mini-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-bottom:1px}
+.wk-mini-val{font-size:15px;font-weight:800;color:#434343;line-height:1.2}
+.wk-top{display:flex;align-items:center;gap:6px;padding:5px 14px 7px;background:#FFFBEA;border-top:1px solid #F2F2F2;border-bottom:1px solid #F2F2F2}
+.wk-top-lbl{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A}
+.wk-top-name{font-size:11px;font-weight:800;color:#434343;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk-top-rev{font-size:10px;font-weight:700;color:#DDB800;white-space:nowrap}
+.wk-section-hdr{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;padding:7px 14px 3px;border-top:1px solid #F2F2F2}
+.wk-section{padding:0 14px 5px}
+.wk-bar-row{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.wk-bar-row:last-child{margin-bottom:0}
+.wk-bar-badge{font-size:7.5px;font-weight:800;padding:2px 5px;border-radius:3px;min-width:56px;text-align:center;flex-shrink:0;letter-spacing:.03em;white-space:nowrap}
+.wk-bar-track{flex:1;height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden}
+.wk-bar-fill{height:4px;border-radius:2px;transition:width .55s ease}
+.wk-bar-val{font-size:9px;font-weight:700;color:#434343;width:36px;text-align:right;flex-shrink:0;white-space:nowrap}
+.wk-no-data{font-size:9px;color:#C0C0C0;padding:2px 0}
+@media(max-width:1200px){.week-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.week-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -398,7 +391,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </a>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#DDB800"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
         <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
@@ -409,9 +402,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <!-- ── SCREEN NAVIGATION ── -->
   <div class="nav-tabs-bar">
     <div class="nav-in">
-      <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue Pulse</button>
-      <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
-      <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
+      <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue</button>
+      <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Numbers</button>
+      <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Clubs</button>
     </div>
   </div>
   <div class="fbar" id="fbar">
@@ -566,45 +559,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="Recurring">Recurring</option>
       </select>
     </div>
-    <!-- ── Client Club filters — shown only on Client Club tab ── -->
-    <div id="sidebar-clubs-section" style="display:none">
-      <div class="sb-divider"></div>
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Tier</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="tb tb-premier active" id="ct-premier" onclick="toggleClubsTier('Premier')">Premier</button>
-          <button class="tb tb-select active"  id="ct-select"  onclick="toggleClubsTier('Select')">Select</button>
-          <button class="tb tb-core active"    id="ct-core"    onclick="toggleClubsTier('Core')">Core</button>
-          <button class="tb tb-base active"    id="ct-base"    onclick="toggleClubsTier('Base')">Base</button>
-        </div>
-      </div>
-      <div class="sb-divider"></div>
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Movement</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="mvt-btn mb-new active"      id="mb-new"      onclick="toggleClubsMovement('New')">New</button>
-          <button class="mvt-btn mb-retained active" id="mb-retained" onclick="toggleClubsMovement('Retained')">Retained</button>
-          <button class="mvt-btn mb-upgraded active" id="mb-upgraded" onclick="toggleClubsMovement('Upgraded')">Upgraded</button>
-          <button class="mvt-btn mb-atrisk active"   id="mb-atrisk"   onclick="toggleClubsMovement('At-risk')">At-risk</button>
-        </div>
-      </div>
-    </div>
   </aside>
 
   <!-- MAIN -->
-  <div class="main" id="rev-main">
+  <div class="main">
   <div class="sec">Key Metrics</div>
   <div class="kpi-grid" id="kpi-grid"></div>
 
@@ -693,66 +651,70 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   </div><!-- /deal-records-section -->
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-</div><!-- /rev-main -->
+</div>
+</div><!-- /app-layout -->
 
-<!-- ════ WEEKLY SPRINT — inside app-layout, shares the sidebar ════ -->
+<!-- ════ WEEKLY NUMBERS LAYOUT (hidden by default) ════ -->
 <div class="weekly-layout" id="weekly-layout">
   <div class="weekly-main">
-
-    <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="sec" style="margin-bottom:0">Weekly Sprint &nbsp;·&nbsp; <span id="weekly-month-hdr" style="font-weight:600;color:#434343;text-transform:none;letter-spacing:0;font-size:11px"></span></div>
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;display:flex;align-items:center;gap:8px">
+        Weekly Numbers &nbsp;·&nbsp;
+        <span id="weekly-month-hdr" style="font-weight:800;font-size:11px;text-transform:none;letter-spacing:0;color:#434343"></span>
+      </div>
       <div id="weekly-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
     </div>
-
-    <!-- 4 Tiles -->
-    <div class="wk-tiles" id="wk-tiles">
-      <div style="grid-column:1/-1;text-align:center;padding:28px;color:#9A9A9A;font-weight:600">Loading sprint data...</div>
+    <div class="week-grid" id="weekly-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:48px;color:#9A9A9A;font-weight:600">Loading weekly data...</div>
     </div>
-
-    <!-- Row 1: BU by Week + Region by Week -->
-    <div class="chart-row">
-      <div class="card">
-        <div class="card-ttl">Business Unit by Week</div>
-        <div class="card-sub" id="wbu-sub">Digital (Pure) · Inter BU · MarTech — all 4 weeks</div>
-        <div style="position:relative;height:200px"><canvas id="wkBuChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-ttl">Region by Week</div>
-        <div class="card-sub" id="wgeo-sub">US · UK · AU — all 4 weeks</div>
-        <div style="position:relative;height:200px"><canvas id="wkRegChart"></canvas></div>
-      </div>
-    </div>
-
-    <!-- Row 2: Head by Week (full width — 5 series need space) -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-ttl">Head by Week</div>
-      <div class="card-sub" id="whead-sub">Net revenue per head · all 4 weeks compared</div>
-      <div style="position:relative;height:230px"><canvas id="wkHeadChart"></canvas></div>
-    </div>
-
-    <!-- Deal Records filtered to active week -->
-    <div class="wk-tbl-hdr">
-      <div class="sec" style="margin-bottom:0">Deal Records</div>
-      <span id="wk-active-lbl" style="font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em"></span>
-    </div>
-    <div class="tcard">
-      <div class="tcard-hdr"><div class="tcard-ttl"><h3>All Deals</h3><p id="wtmeta"></p></div></div>
-      <div class="twrap">
-        <table><thead id="wdth"></thead><tbody id="wdtb">
-          <tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Select a week tile above</td></tr>
-        </tbody></table>
-      </div>
-      <div class="pgs" id="wpgs"></div>
-    </div>
-
     <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
   </div>
 </div><!-- /weekly-layout -->
 
-<!-- ════ CLIENT CLUB — inside app-layout, shares the sidebar ════ -->
+<!-- ════ CLIENT CLUBS LAYOUT (hidden by default) ════ -->
 <div class="clubs-layout" id="clubs-layout">
-  <div class="clubs-main">
+
+  <div class="clubs-app-layout">
+
+    <!-- CLUBS SIDEBAR -->
+    <aside class="clubs-sidebar">
+
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Tier</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="nbd-toggle active" id="ct-premier" onclick="toggleClubsTier('Premier')" style="flex:1;min-width:60px">Premier</button>
+          <button class="nbd-toggle active" id="ct-select" onclick="toggleClubsTier('Select')" style="flex:1;min-width:60px">Select</button>
+          <button class="nbd-toggle active" id="ct-core" onclick="toggleClubsTier('Core')" style="flex:1;min-width:60px">Core</button>
+          <button class="nbd-toggle active" id="ct-base" onclick="toggleClubsTier('Base')" style="flex:1;min-width:60px">Base</button>
+        </div>
+      </div>
+
+      <div class="sb-divider"></div>
+
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Movement</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
+          </span>
+        </div>
+        <div class="ms-item"><input type="checkbox" id="mvt-new" checked onchange="toggleClubsMovement('New')"><label for="mvt-new">New</label></div>
+        <div class="ms-item"><input type="checkbox" id="mvt-retained" checked onchange="toggleClubsMovement('Retained')"><label for="mvt-retained">Retained</label></div>
+        <div class="ms-item"><input type="checkbox" id="mvt-upgraded" checked onchange="toggleClubsMovement('Upgraded')"><label for="mvt-upgraded">Upgraded</label></div>
+        <div class="ms-item"><input type="checkbox" id="mvt-atrisk" checked onchange="toggleClubsMovement('At-risk')"><label for="mvt-atrisk">At-risk</label></div>
+      </div>
+
+    </aside>
+
+    <!-- CLUBS MAIN -->
+    <div class="clubs-main">
 
       <!-- Section header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -811,10 +773,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
       <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 
-  </div><!-- /clubs-main -->
+    </div><!-- /clubs-main -->
+  </div><!-- /clubs-app-layout -->
 </div><!-- /clubs-layout -->
-
-</div><!-- /app-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -967,8 +928,8 @@ function geoFromDeal(d){
   if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#006E5E","Digital — AU":"#473400","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#006E5E","MarTech — AU":"#473400","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
-const GEO_COLORS={US:"#FFDA30",UK:"#006E5E",AU:"#473400"};
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
+const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
 // ── Flat ordered owner list for UI display — exact sequence confirmed by management.
 // Attribution logic uses OWNER_GROUPS; this list is UI-only.
 const ORDERED_OWNERS=[
@@ -1266,7 +1227,7 @@ function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTim
 
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
-const SVC_COLORS={"Campaign":"#FFDA30","Email":"#006E5E","Design":"#3B3561","Search":"#0CCE6B","Web":"#473400"};
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#3B3561","Search":"#0CCE6B","Web":"#434343"};
 
 // ════ SERVICE CLASSIFIER ════
 // BU-aware: classifyLineItem returns {svc, bu} based on line item name
@@ -1384,7 +1345,7 @@ function initOwners(){
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
 function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
 function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
-function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
+function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
 document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");if(!$("clubs-geo-wrap")?.contains(e.target))$("clubs-geo-dropdown")?.classList.remove("open");});
 
@@ -1398,7 +1359,7 @@ function toggleBUFilter(bu){
   if(sel.value===bu){sel.value="";}else{sel.value=bu;}
   renderAll();
 }
-function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
+function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
 // ════ QUICK FILTERS ════
 const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
@@ -1415,17 +1376,17 @@ function _clearQuickFilters(){
 function toggleExisting(){
   const wasActive=existingActive;_clearQuickFilters();
   if(!wasActive){existingActive=true;$("existing-toggle").classList.add("active");}
-  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
+  renderAll();
 }
 function toggleNBD(){
   const wasActive=nbdActive;_clearQuickFilters();
   if(!wasActive){nbdActive=true;$("nbd-toggle").classList.add("active");}
-  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
+  renderAll();
 }
 function toggleReactivation(){
   const wasActive=reactivationActive;_clearQuickFilters();
   if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}
-  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
+  renderAll();
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
@@ -1561,7 +1522,7 @@ async function doFYSync(force=false){
   isSyncing=true;
   const errBar=$("err-bar");
   errBar.style.display="none";
-  $("sdot").style.background="#006E5E";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
+  $("sdot").style.background="#DDB800";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
   $("lo").classList.add("show");$("rfbtn").disabled=true;$("resetbtn").disabled=true;
   try{
     const fyMonths=getFY2026Months();
@@ -1576,13 +1537,13 @@ async function doFYSync(force=false){
 
     const fetched=[];let after=null;
     do{
-      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],
           billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           month:(()=>{
@@ -2016,7 +1977,7 @@ function renderBUBars(_v){
     return;
   }
   const mx=Math.max(...bs.map(b=>b.rev),1);
-  const buColors={"Digital":"#FFDA30","MarTech":"#473400"};
+  const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
   $("bu-bars").innerHTML=bs.map(b=>`
     <div class="gbar-row${($("bu-sel")?.value||"")=== b.bu?" drill-active":""}" onclick="toggleBUFilter('${b.bu}')" title="${b.bu}">
       <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
@@ -2032,11 +1993,11 @@ function renderHeadBars(_v){
   if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
   const mx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
   const headColors={
-    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#006E5E","Tanuj Gupta (US)":"#FFDA30",
-    "Nevilson Christan":"#473400","Jaydeep Salla":"#3B3561"
+    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#DDB800","Tanuj Gupta (US)":"#F5C400",
+    "Nevilson Christan":"#434343","Jaydeep Salla":"#3B3561"
   };
   const headTextColors={
-    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#fff","Tanuj Gupta (US)":"#111",
+    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#111","Tanuj Gupta (US)":"#111",
     "Nevilson Christan":"#FFDA30","Jaydeep Salla":"#fff"
   };
   $("head-bars").innerHTML=hs.map(h=>`
@@ -2273,8 +2234,8 @@ function renderTrends(months,src){
       labels,
       datasets:[{
         label:"Avg Rev / Client",data:avg,
-        borderColor:"#006E5E",backgroundColor:"rgba(0,110,94,0.07)",
-        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#006E5E",
+        borderColor:"#DDB800",backgroundColor:"rgba(221,184,0,0.07)",
+        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#DDB800",
         fill:true,tension:0.35
       }]
     },
@@ -2449,27 +2410,23 @@ function setScreen(name){
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Swap Period inner — one per screen
+  // Swap Period inner — one per screen, all live inside #rev-period-wrap
   const rpi=$('rev-period-inner');
   const wpi=$('weekly-period-inner');
   const cpi=$('clubs-period-inner');
   if(rpi)rpi.style.display=isRevenue?'flex':'none';
   if(wpi)wpi.style.display=isWeekly?'flex':'none';
   if(cpi)cpi.style.display=isClubs?'flex':'none';
-  // Clear inactive custom ranges
+  // Clear custom ranges on inactive screens
   if(!isRevenue)$('custom-range')?.classList.remove('show');
   if(!isClubs){$('clubs-custom-range')?.classList.remove('show');}
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
-  // app-layout: always visible — sidebar is shared across all three tabs
-  // Each tab shows exactly one content div; the other two are hidden.
-  const al=$('app-layout');if(al)al.style.display='flex';
-  const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
+  // Layout visibility — exactly one visible at a time
+  const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
-  // Tier + Movement sections in shared sidebar — visible on Client Club only
-  const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
@@ -2881,24 +2838,20 @@ function updateTrendChartForTier(){
 }
 
 // ── Clubs Sidebar: Movement Filter ──
-// ── Movement button ID map ──
-const MVT_BTN_IDS={New:'mb-new',Retained:'mb-retained',Upgraded:'mb-upgraded','At-risk':'mb-atrisk'};
-
+const MVT_IDS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
 function toggleClubsMovement(mvt){
   const idx=clubsMovementFilter.indexOf(mvt);
   if(idx>=0)clubsMovementFilter.splice(idx,1);else clubsMovementFilter.push(mvt);
-  const btn=$(MVT_BTN_IDS[mvt]);
-  if(btn)btn.classList.toggle('active',clubsMovementFilter.includes(mvt));
   renderClubsRosterOnly();
 }
 function selectAllMovements(){
   clubsMovementFilter=['New','Retained','Upgraded','At-risk'];
-  Object.values(MVT_BTN_IDS).forEach(id=>{$(id)?.classList.add('active');});
+  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=true;});
   renderClubsRosterOnly();
 }
 function deselectAllMovements(){
   clubsMovementFilter=[];
-  Object.values(MVT_BTN_IDS).forEach(id=>{$(id)?.classList.remove('active');});
+  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=false;});
   renderClubsRosterOnly();
 }
 
@@ -2910,328 +2863,212 @@ function renderClubsRosterOnly(){
 }
 
 // ═══════════════════════════════════════════════════
-// ════ WEEKLY SPRINT — NEXUS 3.0 ════
+// ════ WEEKLY NUMBERS — NEXUS 3.0 ════
 // ═══════════════════════════════════════════════════
-// Layout: 4 tiles (month summary) + BU/Region charts + Head HTML bars +
-//   Service (stacked) / Engagement charts + Deal table for active week.
-// All shared top-bar filters apply via trendView(). Attribution stamps reused.
-// Effective date: d.closedate || d.createdate (Krishna-confirmed fallback).
-// All 4 weeks rendered simultaneously — comparison-native, no navigation needed.
+// Data source: d.closedate (ISO date already stored on every deal in doFYSync).
+// Week boundaries: W1=1–7, W2=8–14, W3=15–21, W4=22–end.
+// Attribution: reads .bu/.region/.head stamps — never re-derives.
+// Filters: shared BU/Region/Head/Service/Owner/Quick/Engagement from filter bar.
+// Base: trendView() (no period slice) → filter by closedate month + week bucket.
+// Deals with no closedate are EXCLUDED. Count logged to console.
+// Confirm with Krishna if booking-month fallback is needed for no-closedate deals.
 
-// ── Constants ──
-const WK_COLORS=['','#FFDA30','#006E5E','#3B3561','#473400'];
-const WK_TC    =['','#111','#fff','#fff','#FFDA30'];
-const WK_DATES =['','1–7','8–14','15–21','22–end'];
-
-// ── State ──
-let weeklyActiveWeek=1;
-let wkBuChart=null,wkRegChart=null,wkHeadChart=null; // 3 grouped bar charts
-let wsk='amount',wsd='desc',wpg=1;
-const WPER=10;
-
-// ── Effective date: closedate with createdate fallback (Krishna-confirmed) ──
-function effectiveDate(d){return d.closedate||d.createdate||'';}
-
-// ── Week classifier — uses effectiveDate ──
+// ── Week classifier ──
+// Returns 1–4 for a valid ISO date string; null if empty or parse error.
 function weekOfMonth(dateStr){
   if(!dateStr)return null;
-  try{const day=new Date(dateStr+'T00:00:00').getDate();
-    if(day<=7)return 1;if(day<=14)return 2;if(day<=21)return 3;return 4;
+  try{
+    const day=new Date(dateStr+'T00:00:00').getDate();
+    if(day<=7)return 1;
+    if(day<=14)return 2;
+    if(day<=21)return 3;
+    return 4;
   }catch(e){return null;}
 }
 
-// Returns "july-2026" from ISO date
+// Returns "july-2026" format from ISO date string (same format as d.month)
 function closeDateMonthVal(dateStr){
   if(!dateStr)return'';
   try{const dt=new Date(dateStr+'T00:00:00');return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
   catch(e){return'';}
 }
 
-// ── Period selector ──
+// ── Weekly period selector ──
 function getWeeklyMonth(){return $('weekly-period-sel')?.value||'';}
 
 function initWeeklyPeriodSel(){
-  const sel=$('weekly-period-sel');if(!sel)return;
-  const now=new Date();const months=[];const c=new Date(FY_FLOOR);
+  const sel=$('weekly-period-sel');
+  if(!sel)return;
+  const now=new Date();
+  const months=[];
+  const c=new Date(FY_FLOOR);
   while(c<=now){months.push(new Date(c));c.setMonth(c.getMonth()+1);}
   months.reverse().forEach(d=>{
     const opt=document.createElement('option');
-    opt.value=monthVal(d);opt.textContent=monthLbl(d);sel.appendChild(opt);
+    opt.value=monthVal(d);opt.textContent=monthLbl(d);
+    sel.appendChild(opt);
   });
-  if(sel.options.length>0)sel.options[0].selected=true;
+  if(sel.options.length>0)sel.options[0].selected=true; // default = current month
 }
 
-function onWeeklyPeriodChange(){wpg=1;if(currentScreen==='weekly')renderWeekly();}
-
-// ── Active week deals (for table-only re-renders) ──
-function _wkDeals(){
-  const sel=getWeeklyMonth();if(!sel)return[];
-  return trendView().filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel&&weekOfMonth(ed)===weeklyActiveWeek;});
+function onWeeklyPeriodChange(){
+  if(currentScreen==='weekly')renderWeekly();
 }
 
-// ── Week tile click — instant response: highlight charts in-place, update table ──
-function setActiveWeek(w){
-  weeklyActiveWeek=w;wpg=1;
-  // 1. Highlight active week column in all 3 charts (zero flash)
-  [wkBuChart,wkRegChart,wkHeadChart].forEach(c=>_applyWeekHighlight(c,w-1));
-  // 2. Recompute month deals for tiles
-  const sel=getWeeklyMonth();if(!sel)return;
-  const base=trendView();
-  const mDeals=base.filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel;});
-  const mTotal=mDeals.reduce((s,d)=>s+d.amount,0);
-  // 3. Re-render tiles (active state border)
-  renderWeekTiles(mDeals,mTotal);
-  // 4. Update deal table label + data
-  const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${w} · ${WK_DATES[w]}`;
-  renderWeeklyTable(mDeals.filter(d=>weekOfMonth(effectiveDate(d))===w));
-}
+// ── Panel renderer ──
+// Builds the full HTML for one week panel (W1–W4).
+// v = deals already filtered to this week bucket.
+// monthTotal = total revenue for the entire selected month (for % of month KPI).
+function renderWeekPanel(weekNum,v,monthTotal){
+  const LABELS=['','1–7','8–14','15–21','22–end'];
+  const HDR_BG=['','#FFDA30','#DDB800','#3B3561','#434343'];
+  const HDR_TC=['','#111','#111','#fff','#FFDA30'];
+  const bg=HDR_BG[weekNum],tc=HDR_TC[weekNum];
+  const subTc=tc==='#111'?'rgba(0,0,0,0.5)':'rgba(255,255,255,0.6)';
 
-// ── Table sort / pagination ──
-function sortWTable(k){if(wsk===k)wsd=wsd==='asc'?'desc':'asc';else{wsk=k;wsd='desc';}wpg=1;renderWeeklyTable(_wkDeals());}
-function goWPg(p){wpg=p;renderWeeklyTable(_wkDeals());}
+  if(!v.length)return`<div class="week-panel">
+    <div class="week-panel-hdr" style="background:${bg}">
+      <div class="wk-badge" style="color:${tc}">W${weekNum}</div>
+      <div class="wk-dates" style="color:${subTc}">${LABELS[weekNum]}</div>
+    </div>
+    <div style="text-align:center;padding:44px 16px 20px;color:#C0C0C0">
+      <div style="font-size:30px;margin-bottom:8px;opacity:.35">—</div>
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">No closes</div>
+    </div>
+  </div>`;
 
-// ── Shared Chart.js dataset factory — stores _wkBase for in-place highlight updates ──
-function _wkDs(label,data,color,extra={}){
-  return{label,data,backgroundColor:color,_wkBase:color,borderRadius:4,borderSkipped:false,
-    barPercentage:0.65,categoryPercentage:0.75,...extra};
-}
+  const m=mets(v);
+  const os=ostats(v);
+  const top=os.find(o=>o.posRev>0)||null;
+  const bs=bustats(v);
+  const hs=headstats(v);
+  const gs=geostats(v);
+  const et=engTypes(v);
+  const pct=monthTotal>0?Math.round(m.net/monthTotal*100):0;
 
-// ── Per-bar colour array: active week = full colour, others = 25% opacity ──
-function _wkColors(color,activeIdx){
-  return[0,1,2,3].map(i=>i===activeIdx?color:color+'40');
-}
+  // ── BU bars ──
+  const BU_BG={Digital:'#FFDA30',MarTech:'#434343'};
+  const BU_TC={Digital:'#111',MarTech:'#FFDA30'};
+  const buMx=Math.max(...bs.map(b=>Math.abs(b.rev)),1);
+  const buH=bs.length?bs.map(b=>`<div class="wk-bar-row">
+    <div class="wk-bar-badge" style="background:${BU_BG[b.bu]||'#9A9A9A'};color:${BU_TC[b.bu]||'#fff'}">${b.bu}</div>
+    <div class="wk-bar-track"><div class="wk-bar-fill" style="background:${BU_BG[b.bu]||'#9A9A9A'};width:${(Math.abs(b.rev)/buMx*100).toFixed(0)}%"></div></div>
+    <div class="wk-bar-val">${fmtShort(b.rev)}</div>
+  </div>`).join(''):'<div class="wk-no-data">—</div>';
 
-// ── Apply week highlight in-place (no chart destroy/recreate) ──
-// Used by setActiveWeek() for instant response on tile click.
-function _applyWeekHighlight(chart,activeIdx){
-  if(!chart)return;
-  chart.data.datasets.forEach(ds=>{
-    const base=ds._wkBase||'#9A9A9A';
-    ds.backgroundColor=[0,1,2,3].map(i=>i===activeIdx?base:base+'40');
-  });
-  chart.update('none');
-}
+  // ── Head bars ──
+  const HD_BG={'Jiggyasa Agrawal':'#FFDA30','Tanuj Gupta (UK)':'#DDB800','Tanuj Gupta (US)':'#F5C400','Nevilson Christan':'#434343','Jaydeep Salla':'#3B3561'};
+  const HD_TC={'Jiggyasa Agrawal':'#111','Tanuj Gupta (UK)':'#111','Tanuj Gupta (US)':'#111','Nevilson Christan':'#FFDA30','Jaydeep Salla':'#fff'};
+  const HD_NM={'Jiggyasa Agrawal':'Jiggyasa','Tanuj Gupta (UK)':'Tanuj UK','Tanuj Gupta (US)':'Tanuj US','Nevilson Christan':'Nevilson','Jaydeep Salla':'Jaydeep'};
+  const hdMx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
+  const hdH=hs.length?hs.map(h=>`<div class="wk-bar-row">
+    <div class="wk-bar-badge" style="background:${HD_BG[h.head]||'#9A9A9A'};color:${HD_TC[h.head]||'#fff'};font-size:7px">${HD_NM[h.head]||h.firstName}</div>
+    <div class="wk-bar-track"><div class="wk-bar-fill" style="background:${HD_BG[h.head]||'#9A9A9A'};width:${(Math.abs(h.rev)/hdMx*100).toFixed(0)}%"></div></div>
+    <div class="wk-bar-val">${fmtShort(h.rev)}</div>
+  </div>`).join(''):'<div class="wk-no-data">—</div>';
 
-// ── Shared Chart.js options ──
-function _wkOpts(stacked=false,tooltipSuffix=''){
-  return{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{
-      legend:{position:'top',labels:{font:TREND_FONT,color:'#434343',boxWidth:10,padding:10}},
-      tooltip:{
-        callbacks:{label:c=>`  ${fmtUSD(c.parsed.y)}${tooltipSuffix}`},
-        bodyFont:{family:'Montserrat',size:11},
-        titleFont:{family:'Montserrat',size:10,weight:'700'},
-        padding:10,cornerRadius:6,
-      }
-    },
-    scales:{
-      x:{stacked,grid:{display:false},border:{display:false},ticks:{...TREND_TICK,maxRotation:0}},
-      y:{stacked,grid:TREND_GRID,border:{display:false},ticks:{...TREND_TICK,callback:v=>fmtShort(v),maxTicksLimit:5}}
-    }
-  };
-}
+  // ── Region bars ──
+  const rmx=Math.max(...gs.map(g=>Math.abs(g.posRev)),1);
+  const regH=gs.length?gs.map(g=>`<div class="wk-bar-row">
+    <div class="wk-bar-badge" style="background:${GEO_COLORS[g.geo]||'#9A9A9A'};color:${g.geo==='AU'?'#FFDA30':'#111'}">${g.geo}</div>
+    <div class="wk-bar-track"><div class="wk-bar-fill" style="background:${GEO_COLORS[g.geo]||'#9A9A9A'};width:${(Math.abs(g.posRev)/rmx*100).toFixed(0)}%"></div></div>
+    <div class="wk-bar-val">${fmtShort(g.posRev)}</div>
+  </div>`).join(''):'<div class="wk-no-data">—</div>';
 
-// ── RENDER: 4 Summary Tiles ──
-function renderWeekTiles(monthDeals,monthTotal){
-  const el=$('wk-tiles');if(!el)return;
-  el.innerHTML=([1,2,3,4]).map(w=>{
-    const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w);
-    const rev=wv.reduce((s,d)=>s+d.amount,0);
-    const pct=monthTotal>0?Math.round(rev/monthTotal*100):0;
-    const isActive=weeklyActiveWeek===w;
-    const bg=WK_COLORS[w],tc=WK_TC[w];
-    return`<div class="wk-tile${isActive?' active':''}" onclick="setActiveWeek(${w})"
-      style="border-top-color:${bg}${isActive?';box-shadow:0 5px 20px rgba(67,67,67,.18),0 0 0 1.5px '+bg:''}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-        <div><div class="wkt-badge" style="background:${bg};color:${tc}">W${w}</div><div class="wkt-dates">${WK_DATES[w]}</div></div>
-        ${wv.length?`<div style="text-align:right"><div class="wkt-count">${wv.length} deal${wv.length!==1?'s':''}</div>${pct?`<div class="wkt-pct">${pct}%</div>`:''}</div>`:''}
+  // ── Service bars — aggregate directly from dealServiceMap ──
+  const svcM={};
+  v.forEach(d=>{(dealServiceMap[d.id]||[]).forEach(li=>{if(li.svc)svcM[li.svc]=(svcM[li.svc]||0)+li.amount;});});
+  const svcE=ALL_SERVICES.map(s=>({svc:s,rev:svcM[s]||0})).filter(e=>e.rev>0);
+  const smx=Math.max(...svcE.map(e=>e.rev),1);
+  const svcH=svcE.length?svcE.map(e=>`<div class="wk-bar-row">
+    <div class="wk-bar-badge" style="background:${SVC_COLORS[e.svc]||'#9A9A9A'};color:${e.svc==='Campaign'?'#111':'#fff'}">${e.svc}</div>
+    <div class="wk-bar-track"><div class="wk-bar-fill" style="background:${SVC_COLORS[e.svc]||'#9A9A9A'};width:${(e.rev/smx*100).toFixed(0)}%"></div></div>
+    <div class="wk-bar-val">${fmtShort(e.rev)}</div>
+  </div>`).join(''):'<div class="wk-no-data">—</div>';
+
+  // ── Engagement bars ──
+  const etE=Object.entries(et);
+  const emx=Math.max(...etE.map(([,r])=>r),1);
+  const ENG_BG={Recurring:'#FFDA30',P2P:'#EF2D56'};
+  const ENG_TC={Recurring:'#111',P2P:'#fff'};
+  const engH=etE.length?etE.map(([eg,rev])=>`<div class="wk-bar-row">
+    <div class="wk-bar-badge" style="background:${ENG_BG[eg]||'#9A9A9A'};color:${ENG_TC[eg]||'#fff'}">${eg}</div>
+    <div class="wk-bar-track"><div class="wk-bar-fill" style="background:${ENG_BG[eg]||'#9A9A9A'};width:${(rev/emx*100).toFixed(0)}%"></div></div>
+    <div class="wk-bar-val">${fmtShort(rev)}</div>
+  </div>`).join(''):'<div class="wk-no-data">—</div>';
+
+  return`<div class="week-panel">
+    <div class="week-panel-hdr" style="background:${bg}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div class="wk-badge" style="color:${tc}">W${weekNum}</div><div class="wk-dates" style="color:${subTc}">${LABELS[weekNum]}</div></div>
+        <div style="text-align:right">
+          <div style="font-size:10px;font-weight:800;color:${tc}">${m.count} deal${m.count!==1?'s':''}</div>
+          ${pct?`<div style="font-size:9px;color:${subTc}">${pct}% of month</div>`:''}
+        </div>
       </div>
-      ${wv.length?`<div class="wkt-rev">${fmtShort(rev)}</div>`
-        :`<div class="wkt-rev" style="color:#C0C0C0">—</div><div class="wkt-empty">No closes</div>`}
-    </div>`;
-  }).join('');
+    </div>
+    <div class="wk-body">
+      <div class="wk-kpi"><div class="wk-kpi-lbl">Net Revenue</div><div class="wk-kpi-val">${fmtShort(m.net)}</div></div>
+      <div class="wk-clients-row">
+        <div class="wk-mini-kpi"><div class="wk-mini-lbl">Clients</div><div class="wk-mini-val">${m.clients}</div></div>
+        <div class="wk-mini-kpi"><div class="wk-mini-lbl">Avg Deal</div><div class="wk-mini-val" style="font-size:13px">${fmtShort(m.avg)}</div></div>
+      </div>
+      ${top?`<div class="wk-top"><span class="wk-top-lbl">Top</span><span class="wk-top-name">${top.name.split(' ')[0]}</span><span class="wk-top-rev">${fmtShort(top.posRev)}</span></div>`:''}
+      <div class="wk-section-hdr">Business Unit</div><div class="wk-section">${buH}</div>
+      <div class="wk-section-hdr">Head</div><div class="wk-section">${hdH}</div>
+      <div class="wk-section-hdr">Region</div><div class="wk-section">${regH}</div>
+      <div class="wk-section-hdr">Service</div><div class="wk-section">${svcH}</div>
+      <div class="wk-section-hdr">Engagement</div><div class="wk-section" style="padding-bottom:14px">${engH}</div>
+    </div>
+  </div>`;
 }
 
-// ── RENDER: BU by Week — grouped vertical bars (3 series × 4 weeks) ──
-// Colors match Revenue Pulse BU Trend: Digital(Pure)=Gold, InterBU=Indigo, MarTech=Graphite
-function renderWkBUChart(monthDeals){
-  const ctx=$('wkBuChart')?.getContext('2d');if(!ctx)return;
-  if(wkBuChart){wkBuChart.destroy();wkBuChart=null;}
-  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
-  const digPure=[],interBU=[],martech=[];
-  [1,2,3,4].forEach(w=>{
-    const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w);
-    let sw=0,dnet=0,mt=0;
-    wv.forEach(d=>{
-      if(d.bu==='Digital'){dnet+=d.amount;(dealServiceMap[d.id]||[]).forEach(li=>{if(li.svc==='Search'||li.svc==='Web')sw+=li.amount;});}
-      else if(d.bu==='MarTech')mt+=d.amount;
-    });
-    digPure.push(sw);interBU.push(Math.max(0,dnet-sw));martech.push(mt);
-  });
-  wkBuChart=new Chart(ctx,{type:'bar',
-    data:{labels,datasets:[
-      _wkDs('Digital (Pure)',digPure,'#FFDA30'),
-      _wkDs('Inter BU',interBU,'#3B3561'),
-      _wkDs('MarTech',martech,'#473400'),
-    ]},
-    options:_wkOpts()
-  });
-  _applyWeekHighlight(wkBuChart,weeklyActiveWeek-1);
-}
-
-// ── RENDER: Region by Week — grouped vertical (3 series × 4 weeks) ──
-function renderWkRegionChart(monthDeals){
-  const ctx=$('wkRegChart')?.getContext('2d');if(!ctx)return;
-  if(wkRegChart){wkRegChart.destroy();wkRegChart=null;}
-  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
-  const geos=['US','UK','AU'];
-  const datasets=geos.map(g=>{
-    const data=[1,2,3,4].map(w=>{
-      const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w&&d.region===g);
-      return wv.reduce((s,d)=>s+d.amount,0);
-    });
-    return _wkDs(g,data,GEO_COLORS[g]||'#9A9A9A');
-  });
-  wkRegChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
-  _applyWeekHighlight(wkRegChart,weeklyActiveWeek-1);
-}
-
-// ── RENDER: Head by Week — grouped bar chart (5 heads × 4 weeks) ──
-// Consistent with BU and Region: x-axis = weeks, series = heads.
-// 5 distinct palette colours — no two heads share a colour.
-const WK_HEAD_COLS={
-  'Tanuj Gupta (US)':'#FFDA30',
-  'Tanuj Gupta (UK)':'#006E5E',
-  'Jiggyasa Agrawal':'#0CCE6B',
-  'Jaydeep Salla'   :'#3B3561',
-  'Nevilson Christan':'#473400',
-};
-const WK_HEAD_SHORT={
-  'Tanuj Gupta (US)':'Tanuj US',
-  'Tanuj Gupta (UK)':'Tanuj UK',
-  'Jiggyasa Agrawal':'Jiggyasa',
-  'Jaydeep Salla'   :'Jaydeep',
-  'Nevilson Christan':'Nevilson',
-};
-function renderWkHeadChart(monthDeals){
-  const ctx=$('wkHeadChart')?.getContext('2d');if(!ctx)return;
-  if(wkHeadChart){wkHeadChart.destroy();wkHeadChart=null;}
-  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
-  const headOrder=Object.keys(WK_HEAD_COLS);
-  const datasets=headOrder.map(h=>{
-    const color=WK_HEAD_COLS[h];
-    const data=[1,2,3,4].map(w=>{
-      const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w&&d.head===h);
-      return wv.reduce((s,d)=>s+d.amount,0);
-    });
-    return _wkDs(WK_HEAD_SHORT[h]||h,data,color);
-  });
-  wkHeadChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
-  _applyWeekHighlight(wkHeadChart,weeklyActiveWeek-1);
-}
-
-// ── RENDER: Deal table for active week ──
-function renderWeeklyTable(v){
-  const srt=[...v].sort((a,b)=>{const mul=wsd==='asc'?1:-1;
-    if(wsk==='amount')return mul*(a.amount-b.amount);
-    if(wsk==='effdate')return mul*(effectiveDate(a)).localeCompare(effectiveDate(b));
-    if(wsk==='client')return mul*(a.client||'').localeCompare(b.client||'');
-    return mul*(a.dealname||'').localeCompare(b.dealname||'');
-  });
-  const tot=Math.max(1,Math.ceil(srt.length/WPER));
-  if(wpg>tot)wpg=tot;
-  const paged=srt.slice((wpg-1)*WPER,wpg*WPER);
-  $('wtmeta').textContent=`${v.length} deal${v.length!==1?'s':''} · Page ${wpg} of ${tot}`;
-  const ar=k=>wsk===k?(wsd==='asc'?' ↑':' ↓'):'';
-  $('wdth').innerHTML=`<tr>
-    <th onclick="sortWTable('dealname')">Deal Name${ar('dealname')}</th>
-    <th onclick="sortWTable('client')">Client${ar('client')}</th>
-    <th>Owner</th><th>Head</th><th>Region</th>
-    <th onclick="sortWTable('amount')" style="text-align:right">Amount${ar('amount')}</th>
-    <th>Engagement</th>
-    <th onclick="sortWTable('effdate')">Date${ar('effdate')}</th>
-    <th style="text-align:center">↗</th>
-  </tr>`;
-  if(!paged.length){
-    $('wdtb').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A">No deals in this week</td></tr>`;
-    $('wpgs').innerHTML='';return;
-  }
-  $('wdtb').innerHTML=paged.map((d,i)=>{
-    const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
-    const bg=i%2===0?'#fff':'#F9F9F9',ac=neg?'#9A9A9A':big?'#111':'#434343',fw=big?'800':'600';
-    const geo=d.region||'',gc=geo==='AU'?'geo-AU':'geo-'+geo;
-    const rh=(d.head||'').replace(' Gupta (UK)','').replace(' Gupta (US)','').replace(' Agrawal','').replace(' Salla','').replace(' Christan','');
-    const ed=effectiveDate(d);
-    const dateNote=(!d.closedate&&d.createdate)?` <span title="No closedate — using createdate" style="font-size:8px;color:#C0C0C0">cd</span>`:'';
-    return`<tr${neg?' class="cred"':''}>
-      <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
-      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${d.client}</td>
-      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
-      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${rh}</td>
-      <td style="background:${bg}"><span class="geo-tag ${gc}">${geo}</span></td>
-      <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
-      <td style="background:${bg}"><span class="inv-tag">${engGroup(d.eng_model)||''}</span></td>
-      <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(ed)}${dateNote}</td>
-      <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" onclick="event.stopPropagation()">↗</a></td>
-    </tr>`;
-  }).join('');
-  const prev=wpg>1?`<button class="pg pg-nav" onclick="goWPg(${wpg-1})">‹</button>`:`<button class="pg pg-nav" disabled>‹</button>`;
-  const next=wpg<tot?`<button class="pg pg-nav" onclick="goWPg(${wpg+1})">›</button>`:`<button class="pg pg-nav" disabled>›</button>`;
-  const pages=[1];const win=2,start=Math.max(2,wpg-win),end=Math.min(tot-1,wpg+win);
-  if(start>2)pages.push('...');for(let i=start;i<=end;i++)pages.push(i);if(end<tot-1)pages.push('...');if(tot>1)pages.push(tot);
-  $('wpgs').innerHTML=prev+pages.map(p=>p==='...'?`<span class="pg-ellipsis">…</span>`:`<button class="pg${wpg===p?' on':''}" onclick="goWPg(${p})">${p}</button>`).join('')+next;
-}
-
-// ════ MAIN: renderWeekly ════
-// Called on: tab click, month change, any shared filter change (via renderAll).
-// Destroys + recreates all charts. setActiveWeek() handles lighter tile+table-only updates.
+// ── Main weekly render ──
+// Called on: tab click, period change, any shared filter change (via renderAll).
+// Architecture: trendView() base → filter by closedate month + week bucket.
+// Zero API calls — reads from allDeals[] already in memory.
 function renderWeekly(){
-  const tilesEl=$('wk-tiles');if(!tilesEl)return;
+  const grid=$('weekly-grid');if(!grid)return;
   const selectedMonth=getWeeklyMonth();
-  if(!selectedMonth){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A">Select a month above.</div>`;return;}
-  if(!allDeals.length){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Waiting for data sync...</div>`;return;}
+  if(!selectedMonth){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A">Select a month above.</div>`;return;}
+  if(!allDeals.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Waiting for data sync...</div>`;
+    return;
+  }
 
-  // Destroy existing Chart.js instances before rebuilding
-  if(wkBuChart){wkBuChart.destroy();wkBuChart=null;}
-  if(wkRegChart){wkRegChart.destroy();wkRegChart=null;}
-  if(wkHeadChart){wkHeadChart.destroy();wkHeadChart=null;}
-
+  // Update header label
   const[mn,yr]=selectedMonth.split('-');
   const mLbl=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
   const hdr=$('weekly-month-hdr');if(hdr)hdr.textContent=mLbl;
 
+  // Base: all FY deals with attribution + filter-bar filters applied (same as trendView)
   const base=trendView();
 
-  // Filter using effectiveDate: closedate || createdate (Krishna-confirmed)
-  const monthDeals=base.filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===selectedMonth;});
+  // Filter to deals whose CLOSE DATE falls in the selected month.
+  // Deals without a closedate are EXCLUDED — see note above renderWeekPanel.
+  const monthDeals=base.filter(d=>d.closedate&&closeDateMonthVal(d.closedate)===selectedMonth);
   const monthTotal=monthDeals.reduce((s,d)=>s+d.amount,0);
 
-  // Diagnostic status — count createdate fallbacks
-  const usingCD=base.filter(d=>!d.closedate&&d.createdate&&d.month===selectedMonth).length;
+  // Diagnostic: count booking-month deals that have no closedate (excluded from weekly view)
+  const missingCD=base.filter(d=>!d.closedate&&d.month===selectedMonth).length;
   const statusEl=$('weekly-status');
   if(statusEl){
-    const note=usingCD>0?` · ${usingCD} using createdate`:'';
-    statusEl.textContent=`${monthDeals.length} deal${monthDeals.length!==1?'s':''}${note}`;
+    const note=missingCD>0?` · ${missingCD} w/o closedate excluded`:'';
+    statusEl.textContent=`${monthDeals.length} deal${monthDeals.length!==1?'s':''} · by close date${note}`;
   }
-  if(usingCD>0)console.log(`[Nexus Sprint] ${mLbl}: ${usingCD} deal${usingCD!==1?'s':''} using createdate fallback (no closedate).`);
-  const wCounts=[1,2,3,4].map(w=>monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w).length);
-  console.log(`[Nexus Sprint] ${mLbl} · $${Math.round(monthTotal).toLocaleString()} · W1:${wCounts[0]} W2:${wCounts[1]} W3:${wCounts[2]} W4:${wCounts[3]}`);
+  if(missingCD>0)console.warn(`[Nexus Weekly] ${mLbl}: ${missingCD} deal${missingCD!==1?'s':''} have no closedate — excluded from weekly view. Confirm with Krishna if booking-month fallback is needed.`);
 
-  // Render tiles
-  renderWeekTiles(monthDeals,monthTotal);
+  // Console diagnostics — useful during verification
+  const wCounts=[1,2,3,4].map(w=>monthDeals.filter(d=>weekOfMonth(d.closedate)===w).length);
+  console.log(`[Nexus Weekly] ${mLbl} · $${Math.round(monthTotal).toLocaleString()} · W1:${wCounts[0]} W2:${wCounts[1]} W3:${wCounts[2]} W4:${wCounts[3]} deals`);
 
-  // Render all 3 comparison charts (all 4 weeks simultaneously)
-  renderWkBUChart(monthDeals);
-  renderWkRegionChart(monthDeals);
-  renderWkHeadChart(monthDeals);
-
-  // Render deal table for active week
-  const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${weeklyActiveWeek} · ${WK_DATES[weeklyActiveWeek]}`;
-  renderWeeklyTable(monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===weeklyActiveWeek));
+  // Render 4 panels
+  grid.innerHTML=[1,2,3,4].map(w=>
+    renderWeekPanel(w,monthDeals.filter(d=>weekOfMonth(d.closedate)===w),monthTotal)
+  ).join('');
 }
 
-// ════ END WEEKLY SPRINT ════
+// ════ END WEEKLY NUMBERS ════
 
 // ════ END CLIENT CLUBS ════
 </script>
