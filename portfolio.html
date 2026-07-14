@@ -52,10 +52,13 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Nav sub-bar ── */
 .nav-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06);padding:0 28px}
 .nav-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0}
-.nav-pill{padding:9px 18px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);white-space:nowrap}
+.nav-pill{padding:9px 18px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);white-space:nowrap;display:flex;align-items:center;gap:8px}
 .bu-toggle-wrap{display:flex;gap:6px;margin-left:auto;padding:6px 0}
 .bu-btn{padding:4px 12px;border-radius:5px;border:1px solid rgba(255,218,48,.3);background:transparent;color:rgba(255,218,48,.7);font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s}
 .bu-btn.active,.bu-btn:hover{background:rgba(255,218,48,.15);border-color:#FFDA30;color:#FFDA30}
+
+/* ── Anchor chip ── */
+.anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase}
 
 /* ── Spinner ── */
 .lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
@@ -73,10 +76,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:700}
 .kpi-val{font-size:22px;font-weight:800;color:#434343;line-height:1}
 .kpi-sub{font-size:9px;color:#9A9A9A;margin-top:4px;font-weight:500}
-.kpi.active .kpi-val{color:#006E5E}
-.kpi.silent .kpi-val{color:#FFDA30}
-.kpi.inactive .kpi-val{color:#EF2D56}
-.kpi.lost .kpi-val{color:#696969}
+.kpi.k-active .kpi-val{color:#006E5E}
+.kpi.k-silent .kpi-val{color:#A07A00}
+.kpi.k-inactive .kpi-val{color:#EF2D56}
+.kpi.k-lost .kpi-val{color:#696969}
 
 /* ── Section header ── */
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
@@ -102,13 +105,8 @@ tbody td.num{text-align:right;font-weight:700}
 .head-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:11px;color:#434343}
 .head-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* ── Status pills ── */
-.s-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.s-active{background:#E6F7F4;color:#006E5E}
-.s-silent{background:#FFFBEA;color:#A07A00}
-.s-inactive{background:#FEE8ED;color:#C0143C}
-.s-lost{background:#F2F2F2;color:#696969}
-.s-never{background:#F7F2FE;color:#5B3B8C}
+/* ── BU pill ── */
+.bu-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
 
 /* ── Count cells ── */
 .cnt-active{color:#006E5E;font-weight:800}
@@ -123,14 +121,14 @@ tbody td.num{text-align:right;font-weight:700}
 .expand-arrow.open{transform:rotate(90deg)}
 
 /* ── Owner sub-rows ── */
-.owner-rows{display:none}
-.owner-rows.show{display:table-row-group}
-.owner-row td{background:#FAFFF8!important;padding:7px 14px;font-size:10.5px;border-bottom:1px solid #F0F0F0}
-.owner-row:hover td{background:#F5FFF0!important}
+.owner-sub{display:none}
+.owner-sub.show{display:table-row-group}
+.owner-sub tr td{background:#FAFFF8!important;padding:7px 14px;font-size:10.5px;border-bottom:1px solid #F0F0F0}
+.owner-sub tr:hover td{background:#F5FFF0!important}
 .owner-name-cell{padding-left:32px!important;color:#696969;font-weight:600}
 
 /* ── Health bar ── */
-.hbar-wrap{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:1px;min-width:120px}
+.hbar-wrap{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:1px;min-width:100px}
 .hbar-seg{height:100%;transition:width .6s ease}
 
 /* ── Error bar ── */
@@ -144,9 +142,6 @@ tbody td.num{text-align:right;font-weight:700}
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
-
-/* ── Anchor date chip ── */
-.anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase;margin-left:10px}
 
 /* ── Responsive ── */
 @media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
@@ -218,13 +213,14 @@ tbody td.num{text-align:right;font-weight:700}
   <!-- ── Sub nav ── -->
   <div class="nav-bar">
     <div class="nav-in">
-      <span class="nav-pill">Portfolio Health
-        <span class="anchor-chip" id="anchor-chip">Anchor: Jun 28, 2026</span>
+      <span class="nav-pill">
+        Portfolio Health
+        <span class="anchor-chip" id="anchor-chip">Anchor: —</span>
       </span>
       <div class="bu-toggle-wrap" id="bu-toggle-wrap">
-        <button class="bu-btn active" id="bu-all" onclick="setBU('')">All BUs</button>
-        <button class="bu-btn" id="bu-digital" onclick="setBU('Digital BU')">Digital</button>
-        <button class="bu-btn" id="bu-martech" onclick="setBU('MarTech BU')">MarTech</button>
+        <button class="bu-btn active" id="bu-all"     onclick="setBU('')">All BUs</button>
+        <button class="bu-btn"        id="bu-digital" onclick="setBU('Digital BU')">Digital</button>
+        <button class="bu-btn"        id="bu-martech" onclick="setBU('MarTech BU')">MarTech</button>
       </div>
     </div>
   </div>
@@ -232,17 +228,35 @@ tbody td.num{text-align:right;font-weight:700}
 
 <!-- ══ MAIN ══ -->
 <div class="main">
-
-  <!-- Error bar -->
   <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
 
   <!-- KPI Strip -->
-  <div class="kpi-strip" id="kpi-strip">
-    <div class="kpi"><div class="kpi-lbl">Total Kitty</div><div class="kpi-val" id="k-total">—</div><div class="kpi-sub">Existing kitty customers</div></div>
-    <div class="kpi active"><div class="kpi-lbl">Active</div><div class="kpi-val" id="k-active">—</div><div class="kpi-sub">Revenue in last 90 days</div></div>
-    <div class="kpi silent"><div class="kpi-lbl">Silent</div><div class="kpi-val" id="k-silent">—</div><div class="kpi-sub">91–180 days no revenue</div></div>
-    <div class="kpi inactive"><div class="kpi-lbl">Inactive</div><div class="kpi-val" id="k-inactive">—</div><div class="kpi-sub">181+ days no revenue</div></div>
-    <div class="kpi lost"><div class="kpi-lbl">Organic Lost</div><div class="kpi-val" id="k-lost">—</div><div class="kpi-sub">365+ days no revenue</div></div>
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="kpi-lbl">Total Kitty</div>
+      <div class="kpi-val" id="k-total">—</div>
+      <div class="kpi-sub">Existing kitty customers</div>
+    </div>
+    <div class="kpi k-active">
+      <div class="kpi-lbl">Active</div>
+      <div class="kpi-val" id="k-active">—</div>
+      <div class="kpi-sub" id="k-active-sub">Revenue in last 90 days</div>
+    </div>
+    <div class="kpi k-silent">
+      <div class="kpi-lbl">Silent</div>
+      <div class="kpi-val" id="k-silent">—</div>
+      <div class="kpi-sub">91–180 days no revenue</div>
+    </div>
+    <div class="kpi k-inactive">
+      <div class="kpi-lbl">Inactive</div>
+      <div class="kpi-val" id="k-inactive">—</div>
+      <div class="kpi-sub">181–364 days no revenue</div>
+    </div>
+    <div class="kpi k-lost">
+      <div class="kpi-lbl">Organic Lost</div>
+      <div class="kpi-val" id="k-lost">—</div>
+      <div class="kpi-sub">365+ days no revenue</div>
+    </div>
   </div>
 
   <!-- Legend -->
@@ -275,7 +289,7 @@ tbody td.num{text-align:right;font-weight:700}
             <th class="num">Inactive</th>
             <th class="num">Organic Lost</th>
             <th class="num">Never Active</th>
-            <th style="min-width:140px">Health</th>
+            <th style="min-width:120px">Health</th>
           </tr>
         </thead>
         <tbody id="portfolio-tbody">
@@ -286,17 +300,33 @@ tbody td.num{text-align:right;font-weight:700}
   </div>
 
   <div class="footer">PORTFOLIO HEALTH &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-</div><!-- /main -->
+</div>
 
 <script>
 // ════════════════════════════════════════════════
 // PORTFOLIO HEALTH — MAVLERS
 // Standalone page. Completely independent from Nexus index.html.
-// Data source: HubSpot Companies (Exisiting Kitty Customer + Registry Owners)
-// Classification: derived from deal history via /api (deal search proxy)
 // ════════════════════════════════════════════════
 
 const $=id=>document.getElementById(id);
+
+// ── Dynamic anchor: today's date, set at runtime ──
+const ANCHOR=(()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
+const ANCHOR_STR=(()=>{
+  const d=ANCHOR;
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return`${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+})();
+// Classification thresholds (days from anchor, counting backwards)
+const D_ACTIVE  =90;   // ≤90 days → Active
+const D_SILENT  =180;  // 91–180 days → Silent
+const D_INACTIVE=364;  // 181–364 days → Inactive
+                        // 365+ days → Organic Lost
+
+// HubSpot pipeline constants
+const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
+const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
+const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // ── Owner Registry (mirrors Nexus exactly) ──
 const OWNER_GROUPS={
@@ -339,28 +369,17 @@ const OWNER_GROUPS={
   "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
 };
 
-// All unique registry owner IDs
-const REGISTRY_IDS=(()=>{
-  const seen=new Set();
-  Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)seen.add(o.id);});
-  return [...seen];
-})();
+const REGISTRY_IDS=(()=>{const s=new Set();Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)s.add(o.id);});return[...s];})();
+const OWNER_NAME={};Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id&&!OWNER_NAME[o.id])OWNER_NAME[o.id]=o.name;});
 
-// Owner ID → name
-const OWNER_NAME={};
-Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id&&!OWNER_NAME[o.id])OWNER_NAME[o.id]=o.name;});
-
-// Head → owner IDs mapping
+// Head → owner IDs
 const HEAD_OWNERS={
-  "Jaydeep Salla":["17738843","46153051","93107638","86147905","85767516","89530815",
-                   "82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
+  "Jaydeep Salla" :["17738843","46153051","93107638","86147905","85767516","89530815","82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
   "Jiggyasa Agrawal":["131779647","78831011","94746500","176516495","263464861"],
-  "Tanuj Gupta":["17739173","46156316","37344296","24817892","31730801",
-                 "38568120","42663191","240935328","19799470","34558123","284770744","557894666"],
+  "Tanuj Gupta"   :["17739173","46156316","37344296","24817892","31730801","38568120","42663191","240935328","19799470","34558123","284770744","557894666"],
   "Nevilson Christan":["86940863","86813698","255830830","37762663"]
 };
 
-// Head display config
 const HEADS_CFG=[
   {id:"jaydeep", name:"Jaydeep Salla",    bu:"MarTech", color:"#3B3561"},
   {id:"jiggyasa",name:"Jiggyasa Agrawal", bu:"Digital", color:"#FFDA30"},
@@ -375,23 +394,33 @@ const HEADS_CONFIG=[
   {id:"tanuj",   name:"Tanuj Gupta",     bu:"Digital"}
 ];
 
-// ── Classification anchor & thresholds ──
-// Anchor = most recent closed deal date = June 28 2026
-const ANCHOR    = new Date("2026-06-28T00:00:00");
-const D_ACTIVE  = 90;   // ≤ 90 days from anchor → Active
-const D_SILENT  = 180;  // 91–180 days           → Silent
-const D_INACTIVE= 364;  // 181–364 days           → Inactive
-// 365+ days or no deal at all assessed per company → Organic Lost / Never
-
-// HubSpot pipeline constants (mirrors Nexus)
-const PIPELINE="115832232", STAGE="205348626";
-
 // ── State ──
-let kittyCompanies=[];   // [{id, name, owner_id, business_unit}]
-let dealIndex={};        // company_name (normalised) → latest effectiveDate
-let cloneHead=null;      // set by bootCloneMode()
-let activeBU="";         // BU filter state
+let kittyCompanies=[];
+let dealIndex={};       // normName → latest effectiveDate
+let cloneHead=null;
+let activeBU="";
 let isSyncing=false;
+
+// ── Helpers ──
+const normName=n=>(n||"").toLowerCase().trim();
+function fmtDate(d){
+  if(!d)return"";
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return`${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+// ── Classification ──
+function classifyCompany(company){
+  const key=normName(company.name);
+  const lastDate=dealIndex[key]||null;
+  if(!lastDate)return"never";
+  const diffDays=Math.floor((ANCHOR-lastDate)/(1000*60*60*24));
+  if(diffDays<0)    return"active";  // future-dated deal
+  if(diffDays<=D_ACTIVE)   return"active";
+  if(diffDays<=D_SILENT)   return"silent";
+  if(diffDays<=D_INACTIVE) return"inactive";
+  return"lost";
+}
 
 // ════ LOGIN ════
 async function doLogin(){
@@ -400,11 +429,7 @@ async function doLogin(){
   btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
   const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
   try{
-    const res=await fetch("/portfolio-auth",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({password:pw,head})
-    });
+    const res=await fetch("/portfolio-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
     const data=await res.json();
     if(data.success){
       $("login-overlay").style.display="none";
@@ -416,9 +441,7 @@ async function doLogin(){
     }
   }catch(e){
     err.textContent="Connection error. Check your network.";
-  }finally{
-    btn.disabled=false;btn.textContent="Access Dashboard";
-  }
+  }finally{btn.disabled=false;btn.textContent="Access Dashboard";}
 }
 
 // ════ CLONE MODE ════
@@ -435,9 +458,7 @@ function bootCloneMode(){
   $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Dashboard`;
   $("login-title").textContent=`${firstName}'s Portfolio`;
   $("login-footer").textContent=`${cfg.name} · ${cfg.bu}`;
-  // Update Nexus link with same head param
   $("nexus-link").href=`/?head=${param}`;
-  // Hide BU toggle in clone mode for MarTech (Jaydeep only has MarTech)
   if(cfg.bu==="MarTech")$("bu-toggle-wrap").style.display="none";
   document.body.setAttribute("data-clone",param);
   console.log(`[Portfolio] Clone mode → ${cfg.name}`);
@@ -453,63 +474,52 @@ function setBU(bu){
   renderTable();
 }
 
-// ════ CLASSIFICATION ENGINE ════
-// For each company, find its latest deal effective date from dealIndex
-// then classify based on days since anchor date.
-function classifyCompany(company){
-  const key=normName(company.name);
-  const lastDate=dealIndex[key]||null;
-  if(!lastDate)return"never";
-  const diffDays=Math.floor((ANCHOR-lastDate)/(1000*60*60*24));
-  if(diffDays<0)return"active";       // future-dated deal — treat as active
-  if(diffDays<=D_ACTIVE)return"active";
-  if(diffDays<=D_SILENT)return"silent";
-  if(diffDays<=D_INACTIVE)return"inactive";
-  return"lost";                        // 365+ days
-}
-
-function normName(n){return(n||"").toLowerCase().trim();}
-
 // ════ DATA FETCHING ════
 
-// Step 1: Fetch kitty companies from /portfolio endpoint
+// Step 1: Kitty companies from /portfolio endpoint
 async function fetchKittyCompanies(){
-  const ownerIds=cloneHead
-    ? HEAD_OWNERS[cloneHead]||[]
-    : REGISTRY_IDS;
-
-  const res=await fetch("/portfolio",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ownerIds})
-  });
-  if(!res.ok)throw new Error("Portfolio API "+res.status);
+  const ownerIds=cloneHead?HEAD_OWNERS[cloneHead]||[]:REGISTRY_IDS;
+  const res=await fetch("/portfolio",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ownerIds})});
+  if(!res.ok){const t=await res.text();throw new Error(`Portfolio API ${res.status}: ${t}`);}
   const data=await res.json();
   return data.companies||[];
 }
 
-// Step 2: Fetch historical deals going back to Jun 2025
-// Uses the existing /api (deal search proxy) with a broad date range
-// to build company_name → latest effectiveDate index
+// Step 2: Deal history — 365 days back from anchor date
+// Uses /api (existing deal search proxy) — same endpoint as Nexus
 async function fetchDealHistory(){
-  // We need all months from Jul 2025 → Jun 2026 plus FY2026 (Apr 2026+)
-  // Use a broad filter: closedate >= 2025-06-28 (365 days back from anchor)
   const idx={};
-  let after=null;
-  const cutoff=new Date("2025-06-28T00:00:00");
+  // Compute cutoff: anchor minus 365 days
+  const cutoff=new Date(ANCHOR);
+  cutoff.setDate(cutoff.getDate()-365);
+  const cutoffStr=cutoff.toISOString().split("T")[0];
 
+  let after=null;
   do{
     const body={
       filterGroups:[{
         filters:[
-          {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
-          {propertyName:"dealstage",operator:"EQ",value:STAGE},
-          {propertyName:"closedate",operator:"GTE",value:"2025-06-28"}
+          {propertyName:"pipeline",   operator:"EQ", value:PIPELINE},
+          {propertyName:"dealstage",  operator:"EQ", value:STAGE},
+          {propertyName:"closedate",  operator:"GTE",value:cutoffStr}
+        ]
+      },{
+        // Also catch online orders without closedate — use createdate fallback
+        filters:[
+          {propertyName:"pipeline",    operator:"EQ", value:PIPELINE},
+          {propertyName:"dealstage",   operator:"EQ", value:STAGE},
+          {propertyName:"createdate",  operator:"GTE",value:cutoffStr},
+          {propertyName:"closedate",   operator:"NOT_HAS_PROPERTY"}
         ]
       }],
       properties:[
-        "dealname","company_name__invoice_app_","zoho_display_name__invoice_app_",
-        "contact_name__invoice_app_","closedate","createdate","amount_in_home_currency",
+        "dealname",
+        "company_name__invoice_app_",
+        "zoho_display_name__invoice_app_",
+        "contact_name__invoice_app_",
+        "closedate",
+        "createdate",
+        "amount_in_home_currency",
         "engagement_model__invoice_app_"
       ],
       limit:200,
@@ -517,34 +527,35 @@ async function fetchDealHistory(){
     };
     if(after)body.after=after;
 
-    const res=await fetch("/api",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(body)
-    });
-    if(!res.ok)throw new Error("Deal API "+res.status);
+    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error(`Deal API ${res.status}`);
     const data=await res.json();
 
     (data.results||[]).forEach(r=>{
-      // Exclusions (mirrors Nexus)
+      // Exclusions — mirror Nexus
       const co=(r.properties?.company_name__invoice_app_||"").trim();
-      if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].includes(co))return;
+      if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
 
-      // Effective date: closedate || createdate (for online orders)
+      // Effective date: closedate || createdate
       const cd=(r.properties?.closedate||"").split("T")[0];
       const cre=(r.properties?.createdate||"").split("T")[0];
       const effStr=cd||cre;
       if(!effStr)return;
       const effDate=new Date(effStr+"T00:00:00");
-      if(isNaN(effDate)||effDate<cutoff)return;
+      if(isNaN(effDate))return;
 
-      // Index by company name (normalised)
-      const displayName=(r.properties?.zoho_display_name__invoice_app_||
-                         r.properties?.contact_name__invoice_app_||
-                         r.properties?.company_name__invoice_app_||"").trim();
-      if(!displayName)return;
-      const key=normName(displayName);
-      if(!idx[key]||effDate>idx[key])idx[key]=effDate;
+      // Index by all name variants
+      const names=new Set();
+      const zoho=(r.properties?.zoho_display_name__invoice_app_||"").trim();
+      const contact=(r.properties?.contact_name__invoice_app_||"").trim();
+      const company=(r.properties?.company_name__invoice_app_||"").trim();
+      if(zoho)names.add(normName(zoho));
+      if(contact)names.add(normName(contact));
+      if(company)names.add(normName(company));
+
+      names.forEach(key=>{
+        if(!idx[key]||effDate>idx[key])idx[key]=effDate;
+      });
     });
 
     after=data.paging?.next?.after||null;
@@ -562,25 +573,15 @@ async function doSync(force=false){
   $("lo").classList.add("show");
   $("rfbtn").disabled=true;
   $("err-bar").style.display="none";
+  ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
 
   try{
-    // Parallel fetch: kitty companies + deal history
-    [$("k-total"),$("k-active"),$("k-silent"),$("k-inactive"),$("k-lost")]
-      .forEach(el=>{if(el)el.textContent="…";});
-
-    [kittyCompanies,dealIndex]=await Promise.all([
-      fetchKittyCompanies(),
-      fetchDealHistory()
-    ]);
-
-    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies | ${Object.keys(dealIndex).length} companies in deal index`);
-
+    [kittyCompanies,dealIndex]=await Promise.all([fetchKittyCompanies(),fetchDealHistory()]);
+    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies | ${Object.keys(dealIndex).length} deal index entries`);
     renderAll();
-
     $("sdot").style.background="#FFDA30";
-    $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
+    $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
     $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
-
   }catch(e){
     console.error(e);
     $("err-msg").textContent=e.message;
@@ -596,112 +597,67 @@ async function doSync(force=false){
 
 // ════ RENDER ════
 function renderAll(){
-  // Apply BU filter
-  const filtered=activeBU
-    ? kittyCompanies.filter(c=>c.business_unit===activeBU)
-    : kittyCompanies;
-
-  // Classify every company
+  const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
   const classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
 
-  // Global KPIs
   const total=classified.length;
-  const byStatus=s=>classified.filter(c=>c.status===s).length;
-  const nActive  =byStatus("active");
-  const nSilent  =byStatus("silent");
-  const nInactive=byStatus("inactive");
-  const nLost    =byStatus("lost");
-  const nNever   =byStatus("never");
-
+  const n=s=>classified.filter(c=>c.status===s).length;
   $("k-total").textContent   =total.toLocaleString();
-  $("k-active").textContent  =nActive.toLocaleString();
-  $("k-silent").textContent  =nSilent.toLocaleString();
-  $("k-inactive").textContent=nInactive.toLocaleString();
-  $("k-lost").textContent    =nLost.toLocaleString();
-
-  $("table-meta").textContent=
-    `${total.toLocaleString()} clients · ${activeBU||"All BUs"} · anchor Jun 28 2026`;
-
+  $("k-active").textContent  =n("active").toLocaleString();
+  $("k-silent").textContent  =n("silent").toLocaleString();
+  $("k-inactive").textContent=n("inactive").toLocaleString();
+  $("k-lost").textContent    =n("lost").toLocaleString();
+  $("k-active-sub").textContent=`Revenue since ${ANCHOR_STR} (−90d)`;
+  $("table-meta").textContent=`${total.toLocaleString()} clients · anchor ${ANCHOR_STR} · ${activeBU||"All BUs"}`;
   renderTable(classified);
 }
 
 function renderTable(classified){
   if(!classified){
-    const filtered=activeBU
-      ? kittyCompanies.filter(c=>c.business_unit===activeBU)
-      : kittyCompanies;
+    const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
     classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
   }
-
-  // Build head-level aggregates
-  const headsToShow=cloneHead
-    ? HEADS_CFG.filter(h=>h.name===cloneHead)
-    : HEADS_CFG;
-
+  const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
   let totals={kitty:0,active:0,silent:0,inactive:0,lost:0,never:0};
-  const rows=[];
+  let html="";
 
-  headsToShow.forEach(hcfg=>{
-    const ownerIds=new Set(HEAD_OWNERS[hcfg.name]||[]);
-    const hCompanies=classified.filter(c=>ownerIds.has(c.owner_id));
-
+  headsToShow.forEach((hcfg,ri)=>{
+    const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
+    const hc=classified.filter(c=>ownerSet.has(c.owner_id));
     const agg={
-      kitty   :hCompanies.length,
-      active  :hCompanies.filter(c=>c.status==="active").length,
-      silent  :hCompanies.filter(c=>c.status==="silent").length,
-      inactive:hCompanies.filter(c=>c.status==="inactive").length,
-      lost    :hCompanies.filter(c=>c.status==="lost").length,
-      never   :hCompanies.filter(c=>c.status==="never").length
+      kitty:hc.length,
+      active:hc.filter(c=>c.status==="active").length,
+      silent:hc.filter(c=>c.status==="silent").length,
+      inactive:hc.filter(c=>c.status==="inactive").length,
+      lost:hc.filter(c=>c.status==="lost").length,
+      never:hc.filter(c=>c.status==="never").length
     };
+    Object.keys(totals).forEach(k=>totals[k]+=agg[k]);
 
-    totals.kitty   +=agg.kitty;
-    totals.active  +=agg.active;
-    totals.silent  +=agg.silent;
-    totals.inactive+=agg.inactive;
-    totals.lost    +=agg.lost;
-    totals.never   +=agg.never;
-
-    // Owner-level breakdown for drilldown
+    // Owner drilldown rows
     const ownerRows=[];
     (HEAD_OWNERS[hcfg.name]||[]).forEach(oid=>{
-      const oCompanies=hCompanies.filter(c=>c.owner_id===oid);
-      if(!oCompanies.length)return;
+      const oc=hc.filter(c=>c.owner_id===oid);
+      if(!oc.length)return;
       ownerRows.push({
-        name   :OWNER_NAME[oid]||oid,
-        kitty  :oCompanies.length,
-        active :oCompanies.filter(c=>c.status==="active").length,
-        silent :oCompanies.filter(c=>c.status==="silent").length,
-        inactive:oCompanies.filter(c=>c.status==="inactive").length,
-        lost   :oCompanies.filter(c=>c.status==="lost").length,
-        never  :oCompanies.filter(c=>c.status==="never").length
+        name:OWNER_NAME[oid]||oid,
+        kitty:oc.length,
+        active:oc.filter(c=>c.status==="active").length,
+        silent:oc.filter(c=>c.status==="silent").length,
+        inactive:oc.filter(c=>c.status==="inactive").length,
+        lost:oc.filter(c=>c.status==="lost").length,
+        never:oc.filter(c=>c.status==="never").length
       });
     });
     ownerRows.sort((a,b)=>b.kitty-a.kitty);
 
-    rows.push({hcfg,agg,ownerRows});
-  });
+    const rowId=`hr-${ri}`;
+    const buColor=hcfg.bu==="MarTech"?"#EEE8FF":"#E6F2FF";
+    const buText =hcfg.bu==="MarTech"?"#5B3B8C":"#006E5E";
 
-  // Render HTML
-  const tbody=$("portfolio-tbody");
-  if(!classified.length){
-    tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No kitty data found. Try refreshing.</td></tr>`;
-    return;
-  }
-
-  let html="";
-  rows.forEach(({hcfg,agg,ownerRows},ri)=>{
-    const rowId=`head-${ri}`;
-    const hasOwners=ownerRows.length>0;
-    html+=`
-    <tr onclick="${hasOwners?`toggleOwners('${rowId}')`:''}" id="row-${rowId}">
-      <td>
-        <span class="head-badge">
-          <span class="head-dot" style="background:${hcfg.color}"></span>
-          ${hcfg.name.split(" ")[0]}
-          ${hasOwners?`<span class="expand-arrow" id="arr-${rowId}">▶</span>`:""}
-        </span>
-      </td>
-      <td><span class="s-pill" style="background:${hcfg.bu==="MarTech"?"#EEE8FF":"#E6F2FF"};color:${hcfg.bu==="MarTech"?"#5B3B8C":"#006E5E"}">${hcfg.bu}</span></td>
+    html+=`<tr id="row-${rowId}" onclick="toggleOwners('${rowId}')" style="cursor:pointer">
+      <td><span class="head-badge"><span class="head-dot" style="background:${hcfg.color}"></span>${hcfg.name}<span class="expand-arrow" id="arr-${rowId}">▶</span></span></td>
+      <td><span class="bu-pill" style="background:${buColor};color:${buText}">${hcfg.bu}</span></td>
       <td class="num cnt-total">${agg.kitty}</td>
       <td class="num cnt-active">${agg.active}</td>
       <td class="num cnt-silent">${agg.silent}</td>
@@ -711,13 +667,11 @@ function renderTable(classified){
       <td>${healthBar(agg)}</td>
     </tr>`;
 
-    // Owner sub-rows
-    if(hasOwners){
-      html+=`<tbody class="owner-rows" id="${rowId}">`;
+    if(ownerRows.length){
+      html+=`<tbody class="owner-sub" id="${rowId}">`;
       ownerRows.forEach(o=>{
-        html+=`<tr class="owner-row">
-          <td class="owner-name-cell">${o.name}</td>
-          <td></td>
+        html+=`<tr>
+          <td class="owner-name-cell">${o.name}</td><td></td>
           <td class="num" style="color:#434343;font-weight:600">${o.kitty}</td>
           <td class="num cnt-active">${o.active||"—"}</td>
           <td class="num cnt-silent">${o.silent||"—"}</td>
@@ -731,11 +685,9 @@ function renderTable(classified){
     }
   });
 
-  // Totals row
-  html+=`
-  <tr class="total-row">
-    <td style="font-size:10px;letter-spacing:.06em;text-transform:uppercase">Total</td>
-    <td></td>
+  // Grand total
+  html+=`<tr class="total-row">
+    <td style="font-size:10px;letter-spacing:.06em;text-transform:uppercase">Grand Total</td><td></td>
     <td class="num cnt-total">${totals.kitty}</td>
     <td class="num cnt-active">${totals.active}</td>
     <td class="num cnt-silent">${totals.silent}</td>
@@ -745,38 +697,34 @@ function renderTable(classified){
     <td>${healthBar(totals)}</td>
   </tr>`;
 
-  tbody.innerHTML=html;
+  $("portfolio-tbody").innerHTML=html;
 }
 
 function healthBar(agg){
   const t=agg.kitty||1;
-  const pA=(agg.active/t*100).toFixed(1);
-  const pS=(agg.silent/t*100).toFixed(1);
-  const pI=(agg.inactive/t*100).toFixed(1);
-  const pL=(agg.lost/t*100).toFixed(1);
-  const pN=(agg.never/t*100).toFixed(1);
+  const pct=k=>((agg[k]||0)/t*100).toFixed(1);
   return`<div class="hbar-wrap">
-    <div class="hbar-seg" style="width:${pA}%;background:#006E5E" title="Active ${pA}%"></div>
-    <div class="hbar-seg" style="width:${pS}%;background:#FFDA30" title="Silent ${pS}%"></div>
-    <div class="hbar-seg" style="width:${pI}%;background:#EF2D56" title="Inactive ${pI}%"></div>
-    <div class="hbar-seg" style="width:${pL}%;background:#696969" title="Lost ${pL}%"></div>
-    <div class="hbar-seg" style="width:${pN}%;background:#5B3B8C" title="Never ${pN}%"></div>
+    <div class="hbar-seg" style="width:${pct("active")}%;background:#006E5E" title="Active ${pct("active")}%"></div>
+    <div class="hbar-seg" style="width:${pct("silent")}%;background:#FFDA30" title="Silent ${pct("silent")}%"></div>
+    <div class="hbar-seg" style="width:${pct("inactive")}%;background:#EF2D56" title="Inactive ${pct("inactive")}%"></div>
+    <div class="hbar-seg" style="width:${pct("lost")}%;background:#696969" title="Lost ${pct("lost")}%"></div>
+    <div class="hbar-seg" style="width:${pct("never")}%;background:#5B3B8C" title="Never ${pct("never")}%"></div>
   </div>`;
 }
 
 function toggleOwners(rowId){
-  const tbody=document.getElementById(rowId);
+  const sub=document.getElementById(rowId);
   const arrow=document.getElementById("arr-"+rowId);
-  if(!tbody)return;
-  const isOpen=tbody.classList.toggle("show");
-  if(arrow)arrow.classList.toggle("open",isOpen);
-  // Highlight expanded head row
-  const headRow=document.getElementById("row-"+rowId);
-  if(headRow)headRow.classList.toggle("expanded",isOpen);
+  if(!sub)return;
+  const open=sub.classList.toggle("show");
+  if(arrow)arrow.classList.toggle("open",open);
+  document.getElementById("row-"+rowId)?.classList.toggle("expanded",open);
 }
 
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",function(){
+  // Set dynamic anchor chip
+  $("anchor-chip").textContent=`Anchor: ${ANCHOR_STR}`;
   bootCloneMode();
   doSync(true);
 });
