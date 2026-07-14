@@ -1,10 +1,25 @@
 export async function onRequestPost(context) {
   try {
-    const { password } = await context.request.json();
-    const correct = context.env.NEXUS_PASSWORD;
+    const { password, head } = await context.request.json();
+
+    // ── Determine which password env var to check ──
+    // head param sent by the client at login time:
+    //   ""           → master dashboard → NEXUS_PASSWORD
+    //   "jiggyasa"   → clone            → NEXUS_PASSWORD_JIGGYASA
+    //   "jaydeep"    → clone            → NEXUS_PASSWORD_JAYDEEP
+    //   "tanuj"      → clone            → NEXUS_PASSWORD_TANUJ
+    const CLONE_VAR_MAP = {
+      jiggyasa: "NEXUS_PASSWORD_JIGGYASA",
+      jaydeep:  "NEXUS_PASSWORD_JAYDEEP",
+      tanuj:    "NEXUS_PASSWORD_TANUJ"
+    };
+
+    const isClone  = !!head && !!CLONE_VAR_MAP[head];
+    const envVarName = isClone ? CLONE_VAR_MAP[head] : "NEXUS_PASSWORD";
+    const correct  = context.env[envVarName];
 
     if (!correct) {
-      return new Response(JSON.stringify({ error: "NEXUS_PASSWORD not configured in environment" }), {
+      return new Response(JSON.stringify({ error: `${envVarName} not configured in environment` }), {
         status: 500, headers: { "Content-Type": "application/json" }
       });
     }
