@@ -11,10 +11,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden}
-body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
 
 /* ── Login ── */
-.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-overlay{position:fixed;inset:0;background:#434343;z-index:9999;display:flex;align-items:center;justify-content:center}
 .login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
 .login-logo{margin-bottom:22px}
 .login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
@@ -29,7 +29,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
 
 /* ── Header ── */
-.hdr{background:#473400}
+.hdr{background:#434343}
 .hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
@@ -114,7 +114,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
 .sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
 .nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
-.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
+.nbd-toggle:hover{border-color:#DDB800;background:#FFFBEA;color:#434343}
 .nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
 .main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
@@ -195,9 +195,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .amt{text-align:right;font-weight:800;font-size:11px}
 .cred td{background:#FAFAFA!important}
 .geo-tag{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:3px;cursor:pointer}
-.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#ffffff}.geo-AU{background:#473400;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
+.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#DDB800;color:#111}.geo-AU{background:#434343;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
 .inv-tag{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;background:#F2F2F2;color:#696969;cursor:pointer}
-.hs-a{color:#006E5E;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
+.hs-a{color:#DDB800;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
 .hs-a:hover{color:#FFDA30}
 .pgs{padding:10px 16px;border-top:1px solid #F2F2F2;display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap}
 .pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
@@ -306,8 +306,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 @media(max-width:600px){.tier-grid{grid-template-columns:1fr}}
 
 /* ── Weekly Sprint ── */
-.weekly-layout{display:none;flex:1;min-width:0}
-.weekly-main{max-width:1440px;padding:18px 28px 48px}
+.weekly-layout{display:none}
+.weekly-main{max-width:1540px;margin:0 auto;padding:18px 28px 48px}
 /* Tiles */
 .wk-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .wk-tile{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #E2E2E2;padding:13px 15px 14px;cursor:pointer;transition:box-shadow .2s,transform .15s}
@@ -319,6 +319,17 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .wkt-count{font-size:10px;font-weight:700;color:#696969}
 .wkt-pct{font-size:10px;font-weight:600;color:#9A9A9A}
 .wkt-empty{font-size:11px;font-weight:600;color:#C0C0C0;margin-top:4px}
+/* Head-by-Week HTML bar grid */
+.wk-hd-grid{display:flex;flex-direction:column;gap:16px;padding:4px 0 2px}
+.wk-hd-row{display:grid;grid-template-columns:82px 1fr;align-items:start;gap:10px}
+.wk-hd-name{font-size:9.5px;font-weight:700;color:#434343;padding-top:7px;text-align:right;line-height:1.3}
+.wk-hd-weeks{display:flex;flex-direction:column;gap:5px}
+.wk-hd-week{display:grid;grid-template-columns:26px 1fr 46px;align-items:center;gap:6px}
+.wk-hd-lbl{font-size:7.5px;font-weight:800;color:#9A9A9A;text-align:right;letter-spacing:.04em}
+.wk-hd-track{height:5px;background:#F2F2F2;border-radius:3px;overflow:hidden}
+.wk-hd-fill{height:5px;border-radius:3px;transition:width .5s ease}
+.wk-hd-val{font-size:9px;font-weight:700;color:#434343;text-align:right;white-space:nowrap}
+.wk-hd-zero{font-size:9px;color:#D0D0D0;text-align:right}
 /* Active week deal table section label */
 .wk-tbl-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
 @media(max-width:900px){.wk-tiles{grid-template-columns:repeat(2,1fr)}}
@@ -378,7 +389,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </a>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#DDB800"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
         <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
@@ -549,7 +560,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </aside>
 
   <!-- MAIN -->
-  <div class="main" id="rev-main">
+  <div class="main">
   <div class="sec">Key Metrics</div>
   <div class="kpi-grid" id="kpi-grid"></div>
 
@@ -638,9 +649,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   </div><!-- /deal-records-section -->
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-</div><!-- /rev-main -->
+</div>
+</div><!-- /app-layout -->
 
-<!-- ════ WEEKLY SPRINT — inside app-layout, shares the sidebar ════ -->
+<!-- ════ WEEKLY SPRINT LAYOUT ════ -->
 <div class="weekly-layout" id="weekly-layout">
   <div class="weekly-main">
 
@@ -650,7 +662,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div id="weekly-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
     </div>
 
-    <!-- 4 Tiles -->
+    <!-- 4 Tiles — navigation + month summary -->
     <div class="wk-tiles" id="wk-tiles">
       <div style="grid-column:1/-1;text-align:center;padding:28px;color:#9A9A9A;font-weight:600">Loading sprint data...</div>
     </div>
@@ -669,14 +681,28 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
     </div>
 
-    <!-- Row 2: Head by Week (full width — 5 series need space) -->
+    <!-- Row 2: Head by Week (full-width HTML bars — 5 heads × 4 weeks) -->
     <div class="card" style="margin-bottom:14px">
       <div class="card-ttl">Head by Week</div>
-      <div class="card-sub" id="whead-sub">Net revenue per head · all 4 weeks compared</div>
-      <div style="position:relative;height:230px"><canvas id="wkHeadChart"></canvas></div>
+      <div class="card-sub" id="whead-sub">Net revenue per head — all 4 weeks compared</div>
+      <div class="wk-hd-grid" id="wkHeadBars"></div>
     </div>
 
-    <!-- Deal Records filtered to active week -->
+    <!-- Row 3: Service by Week + Engagement by Week -->
+    <div class="chart-row">
+      <div class="card">
+        <div class="card-ttl">Service by Week</div>
+        <div class="card-sub" id="wsvc-sub">Stacked by service — all 4 weeks</div>
+        <div style="position:relative;height:210px"><canvas id="wkSvcChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-ttl">Engagement by Week</div>
+        <div class="card-sub" id="weng-sub">Recurring · P2P — all 4 weeks</div>
+        <div style="position:relative;height:210px"><canvas id="wkEngChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Deal Records — filtered to active week -->
     <div class="wk-tbl-hdr">
       <div class="sec" style="margin-bottom:0">Deal Records</div>
       <span id="wk-active-lbl" style="font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em"></span>
@@ -695,8 +721,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div>
 </div><!-- /weekly-layout -->
 
-</div><!-- /app-layout -->
-
 <!-- ════ CLIENT CLUBS LAYOUT (hidden by default) ════ -->
 <div class="clubs-layout" id="clubs-layout">
 
@@ -709,7 +733,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
           <span>Tier</span>
           <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
+            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
             <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
           </span>
         </div>
@@ -727,7 +751,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
           <span>Movement</span>
           <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
+            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
             <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
           </span>
         </div>
@@ -954,8 +978,8 @@ function geoFromDeal(d){
   if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#006E5E","Digital — AU":"#473400","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#006E5E","MarTech — AU":"#473400","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
-const GEO_COLORS={US:"#FFDA30",UK:"#006E5E",AU:"#473400"};
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
+const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
 // ── Flat ordered owner list for UI display — exact sequence confirmed by management.
 // Attribution logic uses OWNER_GROUPS; this list is UI-only.
 const ORDERED_OWNERS=[
@@ -1253,7 +1277,7 @@ function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTim
 
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
-const SVC_COLORS={"Campaign":"#FFDA30","Email":"#006E5E","Design":"#3B3561","Search":"#0CCE6B","Web":"#473400"};
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#3B3561","Search":"#0CCE6B","Web":"#434343"};
 
 // ════ SERVICE CLASSIFIER ════
 // BU-aware: classifyLineItem returns {svc, bu} based on line item name
@@ -1548,7 +1572,7 @@ async function doFYSync(force=false){
   isSyncing=true;
   const errBar=$("err-bar");
   errBar.style.display="none";
-  $("sdot").style.background="#006E5E";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
+  $("sdot").style.background="#DDB800";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
   $("lo").classList.add("show");$("rfbtn").disabled=true;$("resetbtn").disabled=true;
   try{
     const fyMonths=getFY2026Months();
@@ -1919,7 +1943,7 @@ function renderGeoBars(_v){
   const mx=Math.max(...gs.map(g=>g.posRev),1);
   $("geo-bars").innerHTML=gs.map(g=>`
     <div class="gbar-row${drill.region===g.geo?" drill-active":""}" onclick="setDrill('region','${g.geo}')" title="${g.geo}">
-      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#fff"}">${g.geo}</div>
+      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#111"}">${g.geo}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${GEO_COLORS[g.geo]};width:${(g.posRev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(g.posRev)}</div><div class="gbar-cnt">${g.count} deals · ${g.share.toFixed(1)}%</div></div>
     </div>`).join("");
@@ -2003,7 +2027,7 @@ function renderBUBars(_v){
     return;
   }
   const mx=Math.max(...bs.map(b=>b.rev),1);
-  const buColors={"Digital":"#FFDA30","MarTech":"#473400"};
+  const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
   $("bu-bars").innerHTML=bs.map(b=>`
     <div class="gbar-row${($("bu-sel")?.value||"")=== b.bu?" drill-active":""}" onclick="toggleBUFilter('${b.bu}')" title="${b.bu}">
       <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
@@ -2019,11 +2043,11 @@ function renderHeadBars(_v){
   if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
   const mx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
   const headColors={
-    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#006E5E","Tanuj Gupta (US)":"#FFDA30",
-    "Nevilson Christan":"#473400","Jaydeep Salla":"#3B3561"
+    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#DDB800","Tanuj Gupta (US)":"#F5C400",
+    "Nevilson Christan":"#434343","Jaydeep Salla":"#3B3561"
   };
   const headTextColors={
-    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#fff","Tanuj Gupta (US)":"#111",
+    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#111","Tanuj Gupta (US)":"#111",
     "Nevilson Christan":"#FFDA30","Jaydeep Salla":"#fff"
   };
   $("head-bars").innerHTML=hs.map(h=>`
@@ -2260,8 +2284,8 @@ function renderTrends(months,src){
       labels,
       datasets:[{
         label:"Avg Rev / Client",data:avg,
-        borderColor:"#006E5E",backgroundColor:"rgba(0,110,94,0.07)",
-        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#006E5E",
+        borderColor:"#DDB800",backgroundColor:"rgba(221,184,0,0.07)",
+        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#DDB800",
         fill:true,tension:0.35
       }]
     },
@@ -2436,25 +2460,22 @@ function setScreen(name){
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Swap Period inner — one per screen
+  // Swap Period inner — one per screen, all live inside #rev-period-wrap
   const rpi=$('rev-period-inner');
   const wpi=$('weekly-period-inner');
   const cpi=$('clubs-period-inner');
   if(rpi)rpi.style.display=isRevenue?'flex':'none';
   if(wpi)wpi.style.display=isWeekly?'flex':'none';
   if(cpi)cpi.style.display=isClubs?'flex':'none';
-  // Clear inactive custom ranges
+  // Clear custom ranges on inactive screens
   if(!isRevenue)$('custom-range')?.classList.remove('show');
   if(!isClubs){$('clubs-custom-range')?.classList.remove('show');}
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
-  // app-layout: visible on Revenue AND Weekly (sidebar is shared between both)
-  // Toggle rev-main vs weekly-layout within the shared app-layout flex container
-  const al=$('app-layout');if(al)al.style.display=(isRevenue||isWeekly)?'flex':'none';
-  const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
+  // Layout visibility — exactly one visible at a time
+  const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
-  // Clubs layout — separate, own sidebar
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
@@ -2901,13 +2922,13 @@ function renderClubsRosterOnly(){
 // All 4 weeks rendered simultaneously — comparison-native, no navigation needed.
 
 // ── Constants ──
-const WK_COLORS=['','#FFDA30','#006E5E','#3B3561','#473400'];
-const WK_TC    =['','#111','#fff','#fff','#FFDA30'];
+const WK_COLORS=['','#FFDA30','#DDB800','#3B3561','#434343'];
+const WK_TC    =['','#111','#111','#fff','#FFDA30'];
 const WK_DATES =['','1–7','8–14','15–21','22–end'];
 
 // ── State ──
 let weeklyActiveWeek=1;
-let wkBuChart=null,wkRegChart=null,wkHeadChart=null; // 3 grouped bar charts
+let wkBuChart=null,wkRegChart=null,wkSvcChart=null,wkEngChart=null;
 let wsk='amount',wsd='desc',wpg=1;
 const WPER=10;
 
@@ -2951,20 +2972,17 @@ function _wkDeals(){
   return trendView().filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel&&weekOfMonth(ed)===weeklyActiveWeek;});
 }
 
-// ── Week tile click — instant response: highlight charts in-place, update table ──
+// ── Week tile / chart click — lighter than full re-render ──
+// Charts already show all 4 weeks; only tiles + table need updating.
 function setActiveWeek(w){
   weeklyActiveWeek=w;wpg=1;
-  // 1. Highlight active week column in all 3 charts (zero flash)
-  [wkBuChart,wkRegChart,wkHeadChart].forEach(c=>_applyWeekHighlight(c,w-1));
-  // 2. Recompute month deals for tiles
   const sel=getWeeklyMonth();if(!sel)return;
   const base=trendView();
   const mDeals=base.filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel;});
   const mTotal=mDeals.reduce((s,d)=>s+d.amount,0);
-  // 3. Re-render tiles (active state border)
   renderWeekTiles(mDeals,mTotal);
-  // 4. Update deal table label + data
-  const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${w} · ${WK_DATES[w]}`;
+  const lbl=$('wk-active-lbl');
+  if(lbl)lbl.textContent=`W${w} · ${WK_DATES[w]}`;
   renderWeeklyTable(mDeals.filter(d=>weekOfMonth(effectiveDate(d))===w));
 }
 
@@ -2972,26 +2990,10 @@ function setActiveWeek(w){
 function sortWTable(k){if(wsk===k)wsd=wsd==='asc'?'desc':'asc';else{wsk=k;wsd='desc';}wpg=1;renderWeeklyTable(_wkDeals());}
 function goWPg(p){wpg=p;renderWeeklyTable(_wkDeals());}
 
-// ── Shared Chart.js dataset factory — stores _wkBase for in-place highlight updates ──
+// ── Shared Chart.js dataset factory ──
 function _wkDs(label,data,color,extra={}){
-  return{label,data,backgroundColor:color,_wkBase:color,borderRadius:4,borderSkipped:false,
+  return{label,data,backgroundColor:color,borderRadius:4,borderSkipped:false,
     barPercentage:0.65,categoryPercentage:0.75,...extra};
-}
-
-// ── Per-bar colour array: active week = full colour, others = 25% opacity ──
-function _wkColors(color,activeIdx){
-  return[0,1,2,3].map(i=>i===activeIdx?color:color+'40');
-}
-
-// ── Apply week highlight in-place (no chart destroy/recreate) ──
-// Used by setActiveWeek() for instant response on tile click.
-function _applyWeekHighlight(chart,activeIdx){
-  if(!chart)return;
-  chart.data.datasets.forEach(ds=>{
-    const base=ds._wkBase||'#9A9A9A';
-    ds.backgroundColor=[0,1,2,3].map(i=>i===activeIdx?base:base+'40');
-  });
-  chart.update('none');
 }
 
 // ── Shared Chart.js options ──
@@ -3055,11 +3057,10 @@ function renderWkBUChart(monthDeals){
     data:{labels,datasets:[
       _wkDs('Digital (Pure)',digPure,'#FFDA30'),
       _wkDs('Inter BU',interBU,'#3B3561'),
-      _wkDs('MarTech',martech,'#473400'),
+      _wkDs('MarTech',martech,'#434343'),
     ]},
     options:_wkOpts()
   });
-  _applyWeekHighlight(wkBuChart,weeklyActiveWeek-1);
 }
 
 // ── RENDER: Region by Week — grouped vertical (3 series × 4 weeks) ──
@@ -3076,41 +3077,78 @@ function renderWkRegionChart(monthDeals){
     return _wkDs(g,data,GEO_COLORS[g]||'#9A9A9A');
   });
   wkRegChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
-  _applyWeekHighlight(wkRegChart,weeklyActiveWeek-1);
 }
 
-// ── RENDER: Head by Week — grouped bar chart (5 heads × 4 weeks) ──
-// Consistent with BU and Region: x-axis = weeks, series = heads.
-// 5 distinct palette colours — no two heads share a colour.
-const WK_HEAD_COLS={
-  'Tanuj Gupta (US)':'#FFDA30',
-  'Tanuj Gupta (UK)':'#006E5E',
-  'Jiggyasa Agrawal':'#0CCE6B',
-  'Jaydeep Salla'   :'#3B3561',
-  'Nevilson Christan':'#473400',
-};
-const WK_HEAD_SHORT={
-  'Tanuj Gupta (US)':'Tanuj US',
-  'Tanuj Gupta (UK)':'Tanuj UK',
-  'Jiggyasa Agrawal':'Jiggyasa',
-  'Jaydeep Salla'   :'Jaydeep',
-  'Nevilson Christan':'Nevilson',
-};
-function renderWkHeadChart(monthDeals){
-  const ctx=$('wkHeadChart')?.getContext('2d');if(!ctx)return;
-  if(wkHeadChart){wkHeadChart.destroy();wkHeadChart=null;}
-  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
-  const headOrder=Object.keys(WK_HEAD_COLS);
-  const datasets=headOrder.map(h=>{
-    const color=WK_HEAD_COLS[h];
-    const data=[1,2,3,4].map(w=>{
+// ── RENDER: Head by Week — HTML bars (5 heads × 4 week mini-bars per row) ──
+// Uses week colors as the series (W1=Gold … W4=Graphite) for clear week identification.
+function renderWkHeadBars(monthDeals){
+  const el=$('wkHeadBars');if(!el)return;
+  // Collect all heads that appear in this month's data
+  const headOrder=['Tanuj Gupta (US)','Tanuj Gupta (UK)','Jiggyasa Agrawal','Jaydeep Salla','Nevilson Christan'];
+  const extraHeads=[];
+  monthDeals.forEach(d=>{if(d.head&&!headOrder.includes(d.head)&&!extraHeads.includes(d.head))extraHeads.push(d.head);});
+  const heads=[...headOrder,...extraHeads];
+  // Pre-compute revenue per head per week
+  const headData={};
+  heads.forEach(h=>{
+    headData[h]=[1,2,3,4].map(w=>{
       const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w&&d.head===h);
       return wv.reduce((s,d)=>s+d.amount,0);
     });
-    return _wkDs(WK_HEAD_SHORT[h]||h,data,color);
   });
-  wkHeadChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
-  _applyWeekHighlight(wkHeadChart,weeklyActiveWeek-1);
+  // Filter out heads with zero revenue this month
+  const active=heads.filter(h=>headData[h].some(v=>v>0));
+  if(!active.length){el.innerHTML=`<div style="text-align:center;padding:24px;color:#9A9A9A;font-size:10px">No data for selected filters</div>`;return;}
+  // Row-max for bar scaling (each head self-scaled)
+  el.innerHTML=active.map(h=>{
+    const vals=headData[h];
+    const rowMax=Math.max(...vals,1);
+    const shortName=h.replace(' Gupta',' G.').replace(' Agrawal','').replace(' Christan','').replace(' Salla','');
+    const weekRows=[1,2,3,4].map(w=>{
+      const v=vals[w-1];
+      const pct=(v/rowMax*100).toFixed(0);
+      return`<div class="wk-hd-week">
+        <div class="wk-hd-lbl">W${w}</div>
+        <div class="wk-hd-track"><div class="wk-hd-fill" style="width:${v?pct:0}%;background:${WK_COLORS[w]}"></div></div>
+        ${v?`<div class="wk-hd-val">${fmtShort(v)}</div>`:`<div class="wk-hd-zero">—</div>`}
+      </div>`;
+    }).join('');
+    return`<div class="wk-hd-row"><div class="wk-hd-name">${shortName}</div><div class="wk-hd-weeks">${weekRows}</div></div>`;
+  }).join('');
+}
+
+// ── RENDER: Service by Week — stacked vertical (5 services, 4 bars) ──
+function renderWkSvcChart(monthDeals){
+  const ctx=$('wkSvcChart')?.getContext('2d');if(!ctx)return;
+  if(wkSvcChart){wkSvcChart.destroy();wkSvcChart=null;}
+  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
+  const datasets=ALL_SERVICES.map(svc=>{
+    const data=[1,2,3,4].map(w=>{
+      const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w);
+      let rev=0;wv.forEach(d=>{(dealServiceMap[d.id]||[]).forEach(li=>{if(li.svc===svc)rev+=li.amount;});});
+      return rev;
+    });
+    return _wkDs(svc,data,SVC_COLORS[svc]||'#9A9A9A',{
+      borderColor:'rgba(255,255,255,0.6)',borderWidth:1,borderRadius:0,borderSkipped:'bottom'
+    });
+  });
+  wkSvcChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts(true)});
+}
+
+// ── RENDER: Engagement by Week — grouped vertical (2 series × 4 weeks) ──
+function renderWkEngChart(monthDeals){
+  const ctx=$('wkEngChart')?.getContext('2d');if(!ctx)return;
+  if(wkEngChart){wkEngChart.destroy();wkEngChart=null;}
+  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
+  const engCols={Recurring:'#FFDA30',P2P:'#EF2D56'};
+  const datasets=Object.entries(engCols).map(([eg,color])=>{
+    const data=[1,2,3,4].map(w=>{
+      const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w);
+      return wv.filter(d=>engGroup(d.eng_model)===eg).reduce((s,d)=>s+d.amount,0);
+    });
+    return _wkDs(eg,data,color);
+  });
+  wkEngChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
 }
 
 // ── RENDER: Deal table for active week ──
@@ -3174,10 +3212,15 @@ function renderWeekly(){
   if(!selectedMonth){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A">Select a month above.</div>`;return;}
   if(!allDeals.length){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Waiting for data sync...</div>`;return;}
 
-  // Destroy existing Chart.js instances before rebuilding
+  // Destroy existing chart instances before rebuilding
+  [['wkBuChart',v=>wkBuChart=v],['wkRegChart',v=>wkRegChart=v],['wkSvcChart',v=>wkSvcChart=v],['wkEngChart',v=>wkEngChart=v]].forEach(([k,set])=>{
+    if(window[k]){window[k].destroy();set(null);}
+  });
+  // Direct reference destroy (safer)
   if(wkBuChart){wkBuChart.destroy();wkBuChart=null;}
   if(wkRegChart){wkRegChart.destroy();wkRegChart=null;}
-  if(wkHeadChart){wkHeadChart.destroy();wkHeadChart=null;}
+  if(wkSvcChart){wkSvcChart.destroy();wkSvcChart=null;}
+  if(wkEngChart){wkEngChart.destroy();wkEngChart=null;}
 
   const[mn,yr]=selectedMonth.split('-');
   const mLbl=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
@@ -3203,10 +3246,12 @@ function renderWeekly(){
   // Render tiles
   renderWeekTiles(monthDeals,monthTotal);
 
-  // Render all 3 comparison charts (all 4 weeks simultaneously)
+  // Render all comparison charts (all 4 weeks simultaneously)
   renderWkBUChart(monthDeals);
   renderWkRegionChart(monthDeals);
-  renderWkHeadChart(monthDeals);
+  renderWkHeadBars(monthDeals);
+  renderWkSvcChart(monthDeals);
+  renderWkEngChart(monthDeals);
 
   // Render deal table for active week
   const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${weeklyActiveWeek} · ${WK_DATES[weeklyActiveWeek]}`;
