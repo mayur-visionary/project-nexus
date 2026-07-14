@@ -2972,17 +2972,22 @@ function _wkDeals(){
   return trendView().filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel&&weekOfMonth(ed)===weeklyActiveWeek;});
 }
 
-// ── Week tile / chart click — lighter than full re-render ──
-// Charts already show all 4 weeks; only tiles + table need updating.
+// ── Week tile click — instant response: highlight charts in-place, update head bars + table ──
+// Charts are NOT destroyed/recreated — only bar colours updated via _applyWeekHighlight.
 function setActiveWeek(w){
   weeklyActiveWeek=w;wpg=1;
+  // 1. Highlight active week column in all 4 charts (zero flash)
+  [wkBuChart,wkRegChart,wkSvcChart,wkEngChart].forEach(c=>_applyWeekHighlight(c,w-1));
+  // 2. Recompute month deals for tiles + head bars
   const sel=getWeeklyMonth();if(!sel)return;
   const base=trendView();
   const mDeals=base.filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel;});
   const mTotal=mDeals.reduce((s,d)=>s+d.amount,0);
+  // 3. Re-render tiles (active state border) + head bars (opacity per week)
   renderWeekTiles(mDeals,mTotal);
-  const lbl=$('wk-active-lbl');
-  if(lbl)lbl.textContent=`W${w} · ${WK_DATES[w]}`;
+  renderWkHeadBars(mDeals);
+  // 4. Update deal table label + data
+  const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${w} · ${WK_DATES[w]}`;
   renderWeeklyTable(mDeals.filter(d=>weekOfMonth(effectiveDate(d))===w));
 }
 
@@ -2990,10 +2995,26 @@ function setActiveWeek(w){
 function sortWTable(k){if(wsk===k)wsd=wsd==='asc'?'desc':'asc';else{wsk=k;wsd='desc';}wpg=1;renderWeeklyTable(_wkDeals());}
 function goWPg(p){wpg=p;renderWeeklyTable(_wkDeals());}
 
-// ── Shared Chart.js dataset factory ──
+// ── Shared Chart.js dataset factory — stores _wkBase for in-place highlight updates ──
 function _wkDs(label,data,color,extra={}){
-  return{label,data,backgroundColor:color,borderRadius:4,borderSkipped:false,
+  return{label,data,backgroundColor:color,_wkBase:color,borderRadius:4,borderSkipped:false,
     barPercentage:0.65,categoryPercentage:0.75,...extra};
+}
+
+// ── Per-bar colour array: active week = full colour, others = 25% opacity ──
+function _wkColors(color,activeIdx){
+  return[0,1,2,3].map(i=>i===activeIdx?color:color+'40');
+}
+
+// ── Apply week highlight in-place (no chart destroy/recreate) ──
+// Used by setActiveWeek() for instant response on tile click.
+function _applyWeekHighlight(chart,activeIdx){
+  if(!chart)return;
+  chart.data.datasets.forEach(ds=>{
+    const base=ds._wkBase||'#9A9A9A';
+    ds.backgroundColor=[0,1,2,3].map(i=>i===activeIdx?base:base+'40');
+  });
+  chart.update('none');
 }
 
 // ── Shared Chart.js options ──
@@ -3061,6 +3082,7 @@ function renderWkBUChart(monthDeals){
     ]},
     options:_wkOpts()
   });
+  _applyWeekHighlight(wkBuChart,weeklyActiveWeek-1);
 }
 
 // ── RENDER: Region by Week — grouped vertical (3 series × 4 weeks) ──
@@ -3077,6 +3099,7 @@ function renderWkRegionChart(monthDeals){
     return _wkDs(g,data,GEO_COLORS[g]||'#9A9A9A');
   });
   wkRegChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
+  _applyWeekHighlight(wkRegChart,weeklyActiveWeek-1);
 }
 
 // ── RENDER: Head by Week — HTML bars (5 heads × 4 week mini-bars per row) ──
@@ -3107,8 +3130,9 @@ function renderWkHeadBars(monthDeals){
     const weekRows=[1,2,3,4].map(w=>{
       const v=vals[w-1];
       const pct=(v/rowMax*100).toFixed(0);
-      return`<div class="wk-hd-week">
-        <div class="wk-hd-lbl">W${w}</div>
+      const isWkActive=weeklyActiveWeek===w;
+      return`<div class="wk-hd-week" style="opacity:${isWkActive?'1':'0.32'}">
+        <div class="wk-hd-lbl" style="color:${isWkActive?WK_COLORS[w]:'#9A9A9A'};font-weight:${isWkActive?'800':'700'}">W${w}</div>
         <div class="wk-hd-track"><div class="wk-hd-fill" style="width:${v?pct:0}%;background:${WK_COLORS[w]}"></div></div>
         ${v?`<div class="wk-hd-val">${fmtShort(v)}</div>`:`<div class="wk-hd-zero">—</div>`}
       </div>`;
@@ -3133,6 +3157,7 @@ function renderWkSvcChart(monthDeals){
     });
   });
   wkSvcChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts(true)});
+  _applyWeekHighlight(wkSvcChart,weeklyActiveWeek-1);
 }
 
 // ── RENDER: Engagement by Week — grouped vertical (2 series × 4 weeks) ──
@@ -3149,6 +3174,7 @@ function renderWkEngChart(monthDeals){
     return _wkDs(eg,data,color);
   });
   wkEngChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
+  _applyWeekHighlight(wkEngChart,weeklyActiveWeek-1);
 }
 
 // ── RENDER: Deal table for active week ──
