@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Health · Mavlers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+
+/* ── Login ── */
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
+.login-logo{margin-bottom:22px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── Header ── */
+.hdr{background:#473400}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* ── Nav sub-bar ── */
+.nav-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06);padding:0 28px}
+.nav-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0}
+.nav-pill{padding:9px 18px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);white-space:nowrap}
+.bu-toggle-wrap{display:flex;gap:6px;margin-left:auto;padding:6px 0}
+.bu-btn{padding:4px 12px;border-radius:5px;border:1px solid rgba(255,218,48,.3);background:transparent;color:rgba(255,218,48,.7);font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s}
+.bu-btn.active,.bu-btn:hover{background:rgba(255,218,48,.15);border-color:#FFDA30;color:#FFDA30}
+
+/* ── Spinner ── */
+.lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
+.lo.show{display:flex}
+.spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Main ── */
+.main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
+
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s}
+.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.1);transform:translateY(-1px)}
+.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:700}
+.kpi-val{font-size:22px;font-weight:800;color:#434343;line-height:1}
+.kpi-sub{font-size:9px;color:#9A9A9A;margin-top:4px;font-weight:500}
+.kpi.active .kpi-val{color:#006E5E}
+.kpi.silent .kpi-val{color:#FFDA30}
+.kpi.inactive .kpi-val{color:#EF2D56}
+.kpi.lost .kpi-val{color:#696969}
+
+/* ── Section header ── */
+.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
+
+/* ── Head table ── */
+.tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
+.tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tcard-ttl h3{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
+.tcard-ttl p{font-size:10px;color:#9A9A9A;margin-top:2px;font-weight:500}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:760px}
+thead th{padding:9px 14px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
+thead th.num{text-align:right}
+tbody tr{border-bottom:1px solid #F5F5F5;transition:background .1s;cursor:pointer}
+tbody tr:hover td{background:#FFFBEA!important}
+tbody tr.expanded td{background:#FFFBEA!important}
+tbody td{padding:10px 14px;white-space:nowrap}
+tbody td.num{text-align:right;font-weight:700}
+.total-row td{background:#F7F7F7!important;font-weight:800;border-top:2px solid #E2E2E2;cursor:default}
+.total-row:hover td{background:#F7F7F7!important}
+
+/* ── Head badge ── */
+.head-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:11px;color:#434343}
+.head-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── Status pills ── */
+.s-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.s-active{background:#E6F7F4;color:#006E5E}
+.s-silent{background:#FFFBEA;color:#A07A00}
+.s-inactive{background:#FEE8ED;color:#C0143C}
+.s-lost{background:#F2F2F2;color:#696969}
+.s-never{background:#F7F2FE;color:#5B3B8C}
+
+/* ── Count cells ── */
+.cnt-active{color:#006E5E;font-weight:800}
+.cnt-silent{color:#A07A00;font-weight:800}
+.cnt-inactive{color:#C0143C;font-weight:800}
+.cnt-lost{color:#696969;font-weight:700}
+.cnt-never{color:#5B3B8C;font-weight:700}
+.cnt-total{color:#434343;font-weight:800}
+
+/* ── Expand arrow ── */
+.expand-arrow{display:inline-block;transition:transform .2s;font-size:10px;color:#9A9A9A;margin-left:6px}
+.expand-arrow.open{transform:rotate(90deg)}
+
+/* ── Owner sub-rows ── */
+.owner-rows{display:none}
+.owner-rows.show{display:table-row-group}
+.owner-row td{background:#FAFFF8!important;padding:7px 14px;font-size:10.5px;border-bottom:1px solid #F0F0F0}
+.owner-row:hover td{background:#F5FFF0!important}
+.owner-name-cell{padding-left:32px!important;color:#696969;font-weight:600}
+
+/* ── Health bar ── */
+.hbar-wrap{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:1px;min-width:120px}
+.hbar-seg{height:100%;transition:width .6s ease}
+
+/* ── Error bar ── */
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 18px;font-size:11px;color:#ccc;display:none;margin-bottom:16px;border-radius:6px;font-weight:500}
+.err-bar strong{color:#FFDA30}
+
+/* ── Legend ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#696969;text-transform:uppercase;letter-spacing:.06em}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── Footer ── */
+.footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+
+/* ── Anchor date chip ── */
+.anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase;margin-left:10px}
+
+/* ── Responsive ── */
+@media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.nav-bar{padding:0 18px}}
+@media(max-width:400px){.kpi-strip{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg height="26" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+        <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+        <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+        <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+        <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+        <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+        <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+        <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+        <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title" id="login-title">Portfolio Health</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer" id="login-footer">The Live Health of Mavlers Client Portfolio</div>
+  </div>
+</div>
+
+<div class="lo" id="lo"><div class="spin"></div></div>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" onclick="location.reload()" title="Reload Portfolio Health" role="button">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+          <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+          <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+          <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+          <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+          <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+          <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title" id="hdr-title">Portfolio Health</div>
+          <div class="hdr-sub" id="hdr-sub">The Live Health of Mavlers Client Portfolio</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="last-sync" id="last-sync"></div>
+        </div>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
+        <a class="nexus-btn" id="nexus-link" href="/" target="_blank">↗ Revenue Nexus</a>
+      </div>
+    </div>
+  </div>
+  <!-- ── Sub nav ── -->
+  <div class="nav-bar">
+    <div class="nav-in">
+      <span class="nav-pill">Portfolio Health
+        <span class="anchor-chip" id="anchor-chip">Anchor: Jun 28, 2026</span>
+      </span>
+      <div class="bu-toggle-wrap" id="bu-toggle-wrap">
+        <button class="bu-btn active" id="bu-all" onclick="setBU('')">All BUs</button>
+        <button class="bu-btn" id="bu-digital" onclick="setBU('Digital BU')">Digital</button>
+        <button class="bu-btn" id="bu-martech" onclick="setBU('MarTech BU')">MarTech</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- Error bar -->
+  <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
+
+  <!-- KPI Strip -->
+  <div class="kpi-strip" id="kpi-strip">
+    <div class="kpi"><div class="kpi-lbl">Total Kitty</div><div class="kpi-val" id="k-total">—</div><div class="kpi-sub">Existing kitty customers</div></div>
+    <div class="kpi active"><div class="kpi-lbl">Active</div><div class="kpi-val" id="k-active">—</div><div class="kpi-sub">Revenue in last 90 days</div></div>
+    <div class="kpi silent"><div class="kpi-lbl">Silent</div><div class="kpi-val" id="k-silent">—</div><div class="kpi-sub">91–180 days no revenue</div></div>
+    <div class="kpi inactive"><div class="kpi-lbl">Inactive</div><div class="kpi-val" id="k-inactive">—</div><div class="kpi-sub">181+ days no revenue</div></div>
+    <div class="kpi lost"><div class="kpi-lbl">Organic Lost</div><div class="kpi-val" id="k-lost">—</div><div class="kpi-sub">365+ days no revenue</div></div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#006E5E"></div>Active (≤90 days)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#FFDA30"></div>Silent (91–180 days)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#EF2D56"></div>Inactive (181–364 days)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (365+ days)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#5B3B8C"></div>Never Active</div>
+  </div>
+
+  <!-- Head-level table -->
+  <div class="sec">Head · Team Breakdown</div>
+  <div class="tcard">
+    <div class="tcard-hdr">
+      <div class="tcard-ttl">
+        <h3>Portfolio by Team Lead</h3>
+        <p id="table-meta">Loading portfolio data...</p>
+      </div>
+    </div>
+    <div class="twrap">
+      <table id="portfolio-table">
+        <thead>
+          <tr>
+            <th>Team Lead</th>
+            <th>BU</th>
+            <th class="num">Total Kitty</th>
+            <th class="num">Active</th>
+            <th class="num">Silent</th>
+            <th class="num">Inactive</th>
+            <th class="num">Organic Lost</th>
+            <th class="num">Never Active</th>
+            <th style="min-width:140px">Health</th>
+          </tr>
+        </thead>
+        <tbody id="portfolio-tbody">
+          <tr><td colspan="9" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">PORTFOLIO HEALTH &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+</div><!-- /main -->
+
+<script>
+// ════════════════════════════════════════════════
+// PORTFOLIO HEALTH — MAVLERS
+// Standalone page. Completely independent from Nexus index.html.
+// Data source: HubSpot Companies (Exisiting Kitty Customer + Registry Owners)
+// Classification: derived from deal history via /api (deal search proxy)
+// ════════════════════════════════════════════════
+
+const $=id=>document.getElementById(id);
+
+// ── Owner Registry (mirrors Nexus exactly) ──
+const OWNER_GROUPS={
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},
+    {id:"17738843",name:"Jaydeep Salla"},{id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713",name:"Krunal Bakraniya"},{id:"34140174",name:"Mrugesh Dabhi"},
+    {id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}
+  ],
+  "Digital — US":[
+    {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
+  ],
+  "Digital — UK":[
+    {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
+  ],
+  "Digital — AU":[
+    {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+    {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
+    {id:"263464861",name:"Saquib Khan"}
+  ],
+  "Nevilson — Team":[
+    {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663",name:"Malav Modi"}
+  ],
+  "MarTech — US":[
+    {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
+    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815",name:"Vinita Raidu"}
+  ],
+  "MarTech — UK":[
+    {id:"82911376",name:"Divya S"},{id:"916030451",name:"Kamesh Biniwale"},
+    {id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
+  ],
+  "MarTech — AU":[{id:"467997340",name:"Karan Doshi"}],
+  "Reactivation":[{id:"41490632",name:"Mukund Basita"}],
+  "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
+};
+
+// All unique registry owner IDs
+const REGISTRY_IDS=(()=>{
+  const seen=new Set();
+  Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)seen.add(o.id);});
+  return [...seen];
+})();
+
+// Owner ID → name
+const OWNER_NAME={};
+Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id&&!OWNER_NAME[o.id])OWNER_NAME[o.id]=o.name;});
+
+// Head → owner IDs mapping
+const HEAD_OWNERS={
+  "Jaydeep Salla":["17738843","46153051","93107638","86147905","85767516","89530815",
+                   "82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
+  "Jiggyasa Agrawal":["131779647","78831011","94746500","176516495","263464861"],
+  "Tanuj Gupta":["17739173","46156316","37344296","24817892","31730801",
+                 "38568120","42663191","240935328","19799470","34558123","284770744","557894666"],
+  "Nevilson Christan":["86940863","86813698","255830830","37762663"]
+};
+
+// Head display config
+const HEADS_CFG=[
+  {id:"jaydeep", name:"Jaydeep Salla",    bu:"MarTech", color:"#3B3561"},
+  {id:"jiggyasa",name:"Jiggyasa Agrawal", bu:"Digital", color:"#FFDA30"},
+  {id:"tanuj",   name:"Tanuj Gupta",      bu:"Digital", color:"#006E5E"},
+  {id:"nevilson",name:"Nevilson Christan",bu:"Digital", color:"#473400"}
+];
+
+const HEADS_CONFIG=[
+  {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
+  {id:"jaydeep", name:"Jaydeep Salla",   bu:"MarTech"},
+  {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
+  {id:"tanuj",   name:"Tanuj Gupta",     bu:"Digital"}
+];
+
+// ── Classification anchor & thresholds ──
+// Anchor = most recent closed deal date = June 28 2026
+const ANCHOR    = new Date("2026-06-28T00:00:00");
+const D_ACTIVE  = 90;   // ≤ 90 days from anchor → Active
+const D_SILENT  = 180;  // 91–180 days           → Silent
+const D_INACTIVE= 364;  // 181–364 days           → Inactive
+// 365+ days or no deal at all assessed per company → Organic Lost / Never
+
+// HubSpot pipeline constants (mirrors Nexus)
+const PIPELINE="115832232", STAGE="205348626";
+
+// ── State ──
+let kittyCompanies=[];   // [{id, name, owner_id, business_unit}]
+let dealIndex={};        // company_name (normalised) → latest effectiveDate
+let cloneHead=null;      // set by bootCloneMode()
+let activeBU="";         // BU filter state
+let isSyncing=false;
+
+// ════ LOGIN ════
+async function doLogin(){
+  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
+  if(!pw){err.textContent="Please enter the access password.";return;}
+  btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  try{
+    const res=await fetch("/portfolio-auth",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({password:pw,head})
+    });
+    const data=await res.json();
+    if(data.success){
+      $("login-overlay").style.display="none";
+    }else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
+    }else{
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value="";$("pw-input").focus();
+    }
+  }catch(e){
+    err.textContent="Connection error. Check your network.";
+  }finally{
+    btn.disabled=false;btn.textContent="Access Dashboard";
+  }
+}
+
+// ════ CLONE MODE ════
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param)return;
+  const cfg=HEADS_CONFIG.find(h=>h.id===param);
+  if(!cfg){console.warn(`[Portfolio] Unknown ?head= param: "${param}"`);return;}
+  cloneHead=cfg.name;
+  const firstName=cfg.name.split(" ")[0];
+  document.title=`${firstName}'s Portfolio Health · Mavlers`;
+  $("hdr-title").textContent=`${firstName}'s Portfolio Health`;
+  $("hdr-sub").textContent=`${cfg.name} · ${cfg.bu} Portfolio`;
+  $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Dashboard`;
+  $("login-title").textContent=`${firstName}'s Portfolio`;
+  $("login-footer").textContent=`${cfg.name} · ${cfg.bu}`;
+  // Update Nexus link with same head param
+  $("nexus-link").href=`/?head=${param}`;
+  // Hide BU toggle in clone mode for MarTech (Jaydeep only has MarTech)
+  if(cfg.bu==="MarTech")$("bu-toggle-wrap").style.display="none";
+  document.body.setAttribute("data-clone",param);
+  console.log(`[Portfolio] Clone mode → ${cfg.name}`);
+}
+
+// ════ BU FILTER ════
+function setBU(bu){
+  activeBU=bu;
+  ["bu-all","bu-digital","bu-martech"].forEach(id=>$(id)?.classList.remove("active"));
+  if(!bu)$("bu-all")?.classList.add("active");
+  else if(bu==="Digital BU")$("bu-digital")?.classList.add("active");
+  else if(bu==="MarTech BU")$("bu-martech")?.classList.add("active");
+  renderTable();
+}
+
+// ════ CLASSIFICATION ENGINE ════
+// For each company, find its latest deal effective date from dealIndex
+// then classify based on days since anchor date.
+function classifyCompany(company){
+  const key=normName(company.name);
+  const lastDate=dealIndex[key]||null;
+  if(!lastDate)return"never";
+  const diffDays=Math.floor((ANCHOR-lastDate)/(1000*60*60*24));
+  if(diffDays<0)return"active";       // future-dated deal — treat as active
+  if(diffDays<=D_ACTIVE)return"active";
+  if(diffDays<=D_SILENT)return"silent";
+  if(diffDays<=D_INACTIVE)return"inactive";
+  return"lost";                        // 365+ days
+}
+
+function normName(n){return(n||"").toLowerCase().trim();}
+
+// ════ DATA FETCHING ════
+
+// Step 1: Fetch kitty companies from /portfolio endpoint
+async function fetchKittyCompanies(){
+  const ownerIds=cloneHead
+    ? HEAD_OWNERS[cloneHead]||[]
+    : REGISTRY_IDS;
+
+  const res=await fetch("/portfolio",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ownerIds})
+  });
+  if(!res.ok)throw new Error("Portfolio API "+res.status);
+  const data=await res.json();
+  return data.companies||[];
+}
+
+// Step 2: Fetch historical deals going back to Jun 2025
+// Uses the existing /api (deal search proxy) with a broad date range
+// to build company_name → latest effectiveDate index
+async function fetchDealHistory(){
+  // We need all months from Jul 2025 → Jun 2026 plus FY2026 (Apr 2026+)
+  // Use a broad filter: closedate >= 2025-06-28 (365 days back from anchor)
+  const idx={};
+  let after=null;
+  const cutoff=new Date("2025-06-28T00:00:00");
+
+  do{
+    const body={
+      filterGroups:[{
+        filters:[
+          {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
+          {propertyName:"dealstage",operator:"EQ",value:STAGE},
+          {propertyName:"closedate",operator:"GTE",value:"2025-06-28"}
+        ]
+      }],
+      properties:[
+        "dealname","company_name__invoice_app_","zoho_display_name__invoice_app_",
+        "contact_name__invoice_app_","closedate","createdate","amount_in_home_currency",
+        "engagement_model__invoice_app_"
+      ],
+      limit:200,
+      sorts:[{propertyName:"closedate",direction:"DESCENDING"}]
+    };
+    if(after)body.after=after;
+
+    const res=await fetch("/api",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body)
+    });
+    if(!res.ok)throw new Error("Deal API "+res.status);
+    const data=await res.json();
+
+    (data.results||[]).forEach(r=>{
+      // Exclusions (mirrors Nexus)
+      const co=(r.properties?.company_name__invoice_app_||"").trim();
+      if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].includes(co))return;
+
+      // Effective date: closedate || createdate (for online orders)
+      const cd=(r.properties?.closedate||"").split("T")[0];
+      const cre=(r.properties?.createdate||"").split("T")[0];
+      const effStr=cd||cre;
+      if(!effStr)return;
+      const effDate=new Date(effStr+"T00:00:00");
+      if(isNaN(effDate)||effDate<cutoff)return;
+
+      // Index by company name (normalised)
+      const displayName=(r.properties?.zoho_display_name__invoice_app_||
+                         r.properties?.contact_name__invoice_app_||
+                         r.properties?.company_name__invoice_app_||"").trim();
+      if(!displayName)return;
+      const key=normName(displayName);
+      if(!idx[key]||effDate>idx[key])idx[key]=effDate;
+    });
+
+    after=data.paging?.next?.after||null;
+  }while(after);
+
+  return idx;
+}
+
+// ════ MAIN SYNC ════
+async function doSync(force=false){
+  if(isSyncing&&!force)return;
+  isSyncing=true;
+  $("sdot").style.background="#006E5E";
+  $("stxt").textContent="SYNCING...";
+  $("lo").classList.add("show");
+  $("rfbtn").disabled=true;
+  $("err-bar").style.display="none";
+
+  try{
+    // Parallel fetch: kitty companies + deal history
+    [$("k-total"),$("k-active"),$("k-silent"),$("k-inactive"),$("k-lost")]
+      .forEach(el=>{if(el)el.textContent="…";});
+
+    [kittyCompanies,dealIndex]=await Promise.all([
+      fetchKittyCompanies(),
+      fetchDealHistory()
+    ]);
+
+    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies | ${Object.keys(dealIndex).length} companies in deal index`);
+
+    renderAll();
+
+    $("sdot").style.background="#FFDA30";
+    $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
+    $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
+
+  }catch(e){
+    console.error(e);
+    $("err-msg").textContent=e.message;
+    $("err-bar").style.display="block";
+    $("sdot").style.background="#696969";
+    $("stxt").textContent="SYNC FAILED";
+  }finally{
+    $("lo").classList.remove("show");
+    $("rfbtn").disabled=false;
+    isSyncing=false;
+  }
+}
+
+// ════ RENDER ════
+function renderAll(){
+  // Apply BU filter
+  const filtered=activeBU
+    ? kittyCompanies.filter(c=>c.business_unit===activeBU)
+    : kittyCompanies;
+
+  // Classify every company
+  const classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
+
+  // Global KPIs
+  const total=classified.length;
+  const byStatus=s=>classified.filter(c=>c.status===s).length;
+  const nActive  =byStatus("active");
+  const nSilent  =byStatus("silent");
+  const nInactive=byStatus("inactive");
+  const nLost    =byStatus("lost");
+  const nNever   =byStatus("never");
+
+  $("k-total").textContent   =total.toLocaleString();
+  $("k-active").textContent  =nActive.toLocaleString();
+  $("k-silent").textContent  =nSilent.toLocaleString();
+  $("k-inactive").textContent=nInactive.toLocaleString();
+  $("k-lost").textContent    =nLost.toLocaleString();
+
+  $("table-meta").textContent=
+    `${total.toLocaleString()} clients · ${activeBU||"All BUs"} · anchor Jun 28 2026`;
+
+  renderTable(classified);
+}
+
+function renderTable(classified){
+  if(!classified){
+    const filtered=activeBU
+      ? kittyCompanies.filter(c=>c.business_unit===activeBU)
+      : kittyCompanies;
+    classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
+  }
+
+  // Build head-level aggregates
+  const headsToShow=cloneHead
+    ? HEADS_CFG.filter(h=>h.name===cloneHead)
+    : HEADS_CFG;
+
+  let totals={kitty:0,active:0,silent:0,inactive:0,lost:0,never:0};
+  const rows=[];
+
+  headsToShow.forEach(hcfg=>{
+    const ownerIds=new Set(HEAD_OWNERS[hcfg.name]||[]);
+    const hCompanies=classified.filter(c=>ownerIds.has(c.owner_id));
+
+    const agg={
+      kitty   :hCompanies.length,
+      active  :hCompanies.filter(c=>c.status==="active").length,
+      silent  :hCompanies.filter(c=>c.status==="silent").length,
+      inactive:hCompanies.filter(c=>c.status==="inactive").length,
+      lost    :hCompanies.filter(c=>c.status==="lost").length,
+      never   :hCompanies.filter(c=>c.status==="never").length
+    };
+
+    totals.kitty   +=agg.kitty;
+    totals.active  +=agg.active;
+    totals.silent  +=agg.silent;
+    totals.inactive+=agg.inactive;
+    totals.lost    +=agg.lost;
+    totals.never   +=agg.never;
+
+    // Owner-level breakdown for drilldown
+    const ownerRows=[];
+    (HEAD_OWNERS[hcfg.name]||[]).forEach(oid=>{
+      const oCompanies=hCompanies.filter(c=>c.owner_id===oid);
+      if(!oCompanies.length)return;
+      ownerRows.push({
+        name   :OWNER_NAME[oid]||oid,
+        kitty  :oCompanies.length,
+        active :oCompanies.filter(c=>c.status==="active").length,
+        silent :oCompanies.filter(c=>c.status==="silent").length,
+        inactive:oCompanies.filter(c=>c.status==="inactive").length,
+        lost   :oCompanies.filter(c=>c.status==="lost").length,
+        never  :oCompanies.filter(c=>c.status==="never").length
+      });
+    });
+    ownerRows.sort((a,b)=>b.kitty-a.kitty);
+
+    rows.push({hcfg,agg,ownerRows});
+  });
+
+  // Render HTML
+  const tbody=$("portfolio-tbody");
+  if(!classified.length){
+    tbody.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No kitty data found. Try refreshing.</td></tr>`;
+    return;
+  }
+
+  let html="";
+  rows.forEach(({hcfg,agg,ownerRows},ri)=>{
+    const rowId=`head-${ri}`;
+    const hasOwners=ownerRows.length>0;
+    html+=`
+    <tr onclick="${hasOwners?`toggleOwners('${rowId}')`:''}" id="row-${rowId}">
+      <td>
+        <span class="head-badge">
+          <span class="head-dot" style="background:${hcfg.color}"></span>
+          ${hcfg.name.split(" ")[0]}
+          ${hasOwners?`<span class="expand-arrow" id="arr-${rowId}">▶</span>`:""}
+        </span>
+      </td>
+      <td><span class="s-pill" style="background:${hcfg.bu==="MarTech"?"#EEE8FF":"#E6F2FF"};color:${hcfg.bu==="MarTech"?"#5B3B8C":"#006E5E"}">${hcfg.bu}</span></td>
+      <td class="num cnt-total">${agg.kitty}</td>
+      <td class="num cnt-active">${agg.active}</td>
+      <td class="num cnt-silent">${agg.silent}</td>
+      <td class="num cnt-inactive">${agg.inactive}</td>
+      <td class="num cnt-lost">${agg.lost}</td>
+      <td class="num cnt-never">${agg.never}</td>
+      <td>${healthBar(agg)}</td>
+    </tr>`;
+
+    // Owner sub-rows
+    if(hasOwners){
+      html+=`<tbody class="owner-rows" id="${rowId}">`;
+      ownerRows.forEach(o=>{
+        html+=`<tr class="owner-row">
+          <td class="owner-name-cell">${o.name}</td>
+          <td></td>
+          <td class="num" style="color:#434343;font-weight:600">${o.kitty}</td>
+          <td class="num cnt-active">${o.active||"—"}</td>
+          <td class="num cnt-silent">${o.silent||"—"}</td>
+          <td class="num cnt-inactive">${o.inactive||"—"}</td>
+          <td class="num cnt-lost">${o.lost||"—"}</td>
+          <td class="num cnt-never">${o.never||"—"}</td>
+          <td>${healthBar(o)}</td>
+        </tr>`;
+      });
+      html+=`</tbody>`;
+    }
+  });
+
+  // Totals row
+  html+=`
+  <tr class="total-row">
+    <td style="font-size:10px;letter-spacing:.06em;text-transform:uppercase">Total</td>
+    <td></td>
+    <td class="num cnt-total">${totals.kitty}</td>
+    <td class="num cnt-active">${totals.active}</td>
+    <td class="num cnt-silent">${totals.silent}</td>
+    <td class="num cnt-inactive">${totals.inactive}</td>
+    <td class="num cnt-lost">${totals.lost}</td>
+    <td class="num cnt-never">${totals.never}</td>
+    <td>${healthBar(totals)}</td>
+  </tr>`;
+
+  tbody.innerHTML=html;
+}
+
+function healthBar(agg){
+  const t=agg.kitty||1;
+  const pA=(agg.active/t*100).toFixed(1);
+  const pS=(agg.silent/t*100).toFixed(1);
+  const pI=(agg.inactive/t*100).toFixed(1);
+  const pL=(agg.lost/t*100).toFixed(1);
+  const pN=(agg.never/t*100).toFixed(1);
+  return`<div class="hbar-wrap">
+    <div class="hbar-seg" style="width:${pA}%;background:#006E5E" title="Active ${pA}%"></div>
+    <div class="hbar-seg" style="width:${pS}%;background:#FFDA30" title="Silent ${pS}%"></div>
+    <div class="hbar-seg" style="width:${pI}%;background:#EF2D56" title="Inactive ${pI}%"></div>
+    <div class="hbar-seg" style="width:${pL}%;background:#696969" title="Lost ${pL}%"></div>
+    <div class="hbar-seg" style="width:${pN}%;background:#5B3B8C" title="Never ${pN}%"></div>
+  </div>`;
+}
+
+function toggleOwners(rowId){
+  const tbody=document.getElementById(rowId);
+  const arrow=document.getElementById("arr-"+rowId);
+  if(!tbody)return;
+  const isOpen=tbody.classList.toggle("show");
+  if(arrow)arrow.classList.toggle("open",isOpen);
+  // Highlight expanded head row
+  const headRow=document.getElementById("row-"+rowId);
+  if(headRow)headRow.classList.toggle("expanded",isOpen);
+}
+
+// ════ BOOT ════
+window.addEventListener("DOMContentLoaded",function(){
+  bootCloneMode();
+  doSync(true);
+});
+</script>
+</body>
+</html>
