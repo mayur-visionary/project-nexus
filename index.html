@@ -252,6 +252,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
 .nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
 .nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
+.nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important;text-decoration:none}
+.nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
 
 /* ── Clubs Filter Bar ── */
 .clubs-fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
@@ -2463,7 +2465,9 @@ function bootCloneMode(){
   // Update the sidebar logo sub-label if present
   const eyebrow=document.querySelector(".login-eyebrow");
   if(eyebrow)eyebrow.textContent=`Mavlers · ${firstName}'s Dashboard`;
-
+  // Update Portfolio Health link to carry the same ?head= param
+  const portfolioLink=$("portfolio-link");
+  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
   console.log(`[Nexus] Clone mode: ${cfg.name} (${param})`);
 }
 // ════ BOOT ════
