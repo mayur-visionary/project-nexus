@@ -11,10 +11,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden}
-body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
 
 /* ── Login ── */
-.login-overlay{position:fixed;inset:0;background:#434343;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
 .login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
 .login-logo{margin-bottom:22px}
 .login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
@@ -29,7 +29,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
 
 /* ── Header ── */
-.hdr{background:#434343}
+.hdr{background:#473400}
 .hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
@@ -114,7 +114,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2F2F2;color:
 .sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
 .sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
 .nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
-.nbd-toggle:hover{border-color:#DDB800;background:#FFFBEA;color:#434343}
+.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
 .nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
 .main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
@@ -195,9 +195,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .amt{text-align:right;font-weight:800;font-size:11px}
 .cred td{background:#FAFAFA!important}
 .geo-tag{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:3px;cursor:pointer}
-.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#DDB800;color:#111}.geo-AU{background:#434343;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
+.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#fff}.geo-AU{background:#473400;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
 .inv-tag{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;background:#F2F2F2;color:#696969;cursor:pointer}
-.hs-a{color:#DDB800;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
+.hs-a{color:#006E5E;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
 .hs-a:hover{color:#FFDA30}
 .pgs{padding:10px 16px;border-top:1px solid #F2F2F2;display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap}
 .pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
@@ -389,7 +389,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </a>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="stxt"><div class="sdot" id="sdot" style="background:#DDB800"></div><span id="stxt">Connecting...</span></div>
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
         <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
@@ -733,7 +733,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
           <span>Tier</span>
           <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
+            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
             <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
           </span>
         </div>
@@ -751,7 +751,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
           <span>Movement</span>
           <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#DDB800;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
+            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
             <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
           </span>
         </div>
@@ -978,8 +978,8 @@ function geoFromDeal(d){
   if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#DDB800","Digital — AU":"#434343","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#DDB800","MarTech — AU":"#434343","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
-const GEO_COLORS={US:"#FFDA30",UK:"#DDB800",AU:"#434343"};
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#006E5E","Digital — AU":"#473400","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#006E5E","MarTech — AU":"#473400","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
+const GEO_COLORS={US:"#FFDA30",UK:"#006E5E",AU:"#473400"};
 // ── Flat ordered owner list for UI display — exact sequence confirmed by management.
 // Attribution logic uses OWNER_GROUPS; this list is UI-only.
 const ORDERED_OWNERS=[
@@ -1277,7 +1277,7 @@ function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTim
 
 // ════ SERVICE MULTI-SELECT ════
 const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
-const SVC_COLORS={"Campaign":"#FFDA30","Email":"#DDB800","Design":"#3B3561","Search":"#0CCE6B","Web":"#434343"};
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#006E5E","Design":"#3B3561","Search":"#0CCE6B","Web":"#473400"};
 
 // ════ SERVICE CLASSIFIER ════
 // BU-aware: classifyLineItem returns {svc, bu} based on line item name
@@ -1572,7 +1572,7 @@ async function doFYSync(force=false){
   isSyncing=true;
   const errBar=$("err-bar");
   errBar.style.display="none";
-  $("sdot").style.background="#DDB800";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
+  $("sdot").style.background="#006E5E";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
   $("lo").classList.add("show");$("rfbtn").disabled=true;$("resetbtn").disabled=true;
   try{
     const fyMonths=getFY2026Months();
@@ -2027,7 +2027,7 @@ function renderBUBars(_v){
     return;
   }
   const mx=Math.max(...bs.map(b=>b.rev),1);
-  const buColors={"Digital":"#FFDA30","MarTech":"#434343"};
+  const buColors={"Digital":"#FFDA30","MarTech":"#473400"};
   $("bu-bars").innerHTML=bs.map(b=>`
     <div class="gbar-row${($("bu-sel")?.value||"")=== b.bu?" drill-active":""}" onclick="toggleBUFilter('${b.bu}')" title="${b.bu}">
       <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
@@ -2043,11 +2043,11 @@ function renderHeadBars(_v){
   if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
   const mx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
   const headColors={
-    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#DDB800","Tanuj Gupta (US)":"#F5C400",
-    "Nevilson Christan":"#434343","Jaydeep Salla":"#3B3561"
+    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#006E5E","Tanuj Gupta (US)":"#FFDA30",
+    "Nevilson Christan":"#473400","Jaydeep Salla":"#3B3561"
   };
   const headTextColors={
-    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#111","Tanuj Gupta (US)":"#111",
+    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#fff","Tanuj Gupta (US)":"#111",
     "Nevilson Christan":"#FFDA30","Jaydeep Salla":"#fff"
   };
   $("head-bars").innerHTML=hs.map(h=>`
@@ -2284,8 +2284,8 @@ function renderTrends(months,src){
       labels,
       datasets:[{
         label:"Avg Rev / Client",data:avg,
-        borderColor:"#DDB800",backgroundColor:"rgba(221,184,0,0.07)",
-        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#DDB800",
+        borderColor:"#006E5E",backgroundColor:"rgba(0,110,94,0.07)",
+        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#006E5E",
         fill:true,tension:0.35
       }]
     },
@@ -2922,8 +2922,8 @@ function renderClubsRosterOnly(){
 // All 4 weeks rendered simultaneously — comparison-native, no navigation needed.
 
 // ── Constants ──
-const WK_COLORS=['','#FFDA30','#DDB800','#3B3561','#434343'];
-const WK_TC    =['','#111','#111','#fff','#FFDA30'];
+const WK_COLORS=['','#FFDA30','#006E5E','#3B3561','#473400'];
+const WK_TC    =['','#111','#fff','#fff','#FFDA30'];
 const WK_DATES =['','1–7','8–14','15–21','22–end'];
 
 // ── State ──
@@ -3057,7 +3057,7 @@ function renderWkBUChart(monthDeals){
     data:{labels,datasets:[
       _wkDs('Digital (Pure)',digPure,'#FFDA30'),
       _wkDs('Inter BU',interBU,'#3B3561'),
-      _wkDs('MarTech',martech,'#434343'),
+      _wkDs('MarTech',martech,'#473400'),
     ]},
     options:_wkOpts()
   });
@@ -3212,11 +3212,7 @@ function renderWeekly(){
   if(!selectedMonth){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A">Select a month above.</div>`;return;}
   if(!allDeals.length){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Waiting for data sync...</div>`;return;}
 
-  // Destroy existing chart instances before rebuilding
-  [['wkBuChart',v=>wkBuChart=v],['wkRegChart',v=>wkRegChart=v],['wkSvcChart',v=>wkSvcChart=v],['wkEngChart',v=>wkEngChart=v]].forEach(([k,set])=>{
-    if(window[k]){window[k].destroy();set(null);}
-  });
-  // Direct reference destroy (safer)
+  // Destroy existing Chart.js instances before rebuilding
   if(wkBuChart){wkBuChart.destroy();wkBuChart=null;}
   if(wkRegChart){wkRegChart.destroy();wkRegChart=null;}
   if(wkSvcChart){wkSvcChart.destroy();wkSvcChart=null;}
