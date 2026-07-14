@@ -1,7 +1,8 @@
 // functions/portfolio.js
 // Cloudflare Pages Function — fetches Existing Kitty Customer companies from HubSpot
-// with pagination, returning all records with owner_id, name, client_status,
-// business_unit, and createdate for classification engine.
+// Fix: hubspot_owner_id on Companies does NOT support IN operator.
+// Solution: fetch all Exisiting Kitty Customer companies, then filter by ownerIds client-side.
+// This is safe — total universe is ~2,030 records, well within memory limits.
 
 export async function onRequestPost(context) {
   try {
@@ -12,57 +13,45 @@ export async function onRequestPost(context) {
       });
     }
 
-    const { ownerIds } = await context.request.json();
-    if (!ownerIds || !ownerIds.length) {
-      return new Response(JSON.stringify({ error: "ownerIds required" }), {
-        status: 400, headers: { "Content-Type": "application/json" }
-      });
-    }
+    const body = await context.request.json();
+    const ownerIds = new Set((body.ownerIds || []).map(String));
 
     const hdrs = {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`
     };
 
-    // ── Fetch all Existing Kitty Customer companies for supplied owner IDs ──
-    // Paginate until all records retrieved (HubSpot max 200 per page)
+    // ── Fetch ALL Existing Kitty Customer companies (no owner filter in API) ──
+    // HubSpot Companies API does not support IN operator on hubspot_owner_id.
+    // We fetch the full kitty universe and filter by ownerIds server-side.
     const companies = [];
     let after = null;
 
     do {
-      const body = {
+      const reqBody = {
         filterGroups: [{
-          filters: [
-            {
-              propertyName: "kitty_management_system__don_t_delete_",
-              operator: "EQ",
-              value: "Exisiting Kitty Customer"
-            },
-            {
-              propertyName: "hubspot_owner_id",
-              operator: "IN",
-              values: ownerIds.map(String)
-            }
-          ]
+          filters: [{
+            propertyName: "kitty_management_system__don_t_delete_",
+            operator: "EQ",
+            value: "Exisiting Kitty Customer"
+          }]
         }],
         properties: [
           "name",
           "hubspot_owner_id",
-          "client_status",
           "business_unit",
-          "kitty_management_system__don_t_delete_",
           "createdate"
         ],
         limit: 200,
         sorts: [{ propertyName: "name", direction: "ASCENDING" }]
       };
 
-      if (after) body.after = after;
+      if (after) reqBody.after = after;
 
       const res = await fetch("https://api.hubapi.com/crm/v3/objects/companies/search", {
         method: "POST",
         headers: hdrs,
-        body: JSON.stringify(body)
+        body: JSON.stringify(reqBody)
       });
 
       if (!res.ok) {
@@ -71,11 +60,15 @@ export async function onRequestPost(context) {
       }
 
       const data = await res.json();
+
       (data.results || []).forEach(r => {
+        const ownerId = String(r.properties?.hubspot_owner_id || "");
+        // Filter by registry owners server-side
+        if (ownerIds.size > 0 && !ownerIds.has(ownerId)) return;
         companies.push({
           id: String(r.id),
           name: r.properties?.name || "",
-          owner_id: String(r.properties?.hubspot_owner_id || ""),
+          owner_id: ownerId,
           business_unit: r.properties?.business_unit || "",
           createdate: (r.properties?.createdate || "").split("T")[0]
         });
