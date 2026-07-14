@@ -261,7 +261,19 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .clubs-main{flex:1;min-width:0;padding:18px 28px 48px}
 
 /* ── Clubs Main Layout ── */
-.clubs-layout{display:none}
+.clubs-layout{display:none;flex:1;min-width:0}
+
+/* ── Owner dropdown: constrain to sidebar width — prevents overflow into clubs-sidebar ── */
+.sidebar .ms-dropdown{min-width:100%}
+
+/* ── Tier Sidebar Buttons — colours match KPI badge exactly per tier ── */
+.tb{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
+.tb:hover{opacity:.65;transform:scale(1.02)}
+.tb.active{opacity:1}
+.tb-premier{background:#3B3561;color:#FFDA30}
+.tb-select{background:#FFDA30;color:#111}
+.tb-core{background:#5C5C5C;color:#fff}
+.tb-base{background:#9A9A9A;color:#fff}
 
 /* ── Tier Cards ── */
 .tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
@@ -286,12 +298,20 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .t-avg{font-size:10px;font-weight:600;color:#9A9A9A}
 .t-spark{position:absolute;bottom:14px;right:16px;opacity:.55;pointer-events:none}
 
-/* ── Movement Flags ── */
+/* ── Movement Flags (roster badges) ── */
 .mvt{font-size:8px;font-weight:800;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.mvt-new{background:#0CCE6B;color:#fff}
-.mvt-retained{background:#EDEDED;color:#696969}
+.mvt-new{background:#0CCE6B;color:#111}
+.mvt-retained{background:#006E5E;color:#fff}
 .mvt-upgraded{background:#FFDA30;color:#111}
 .mvt-atrisk{background:#EF2D56;color:#fff}
+/* ── Movement Sidebar Buttons (mirrors Tier style, semantic colours) ── */
+.mvt-btn{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
+.mvt-btn:hover{opacity:.65;transform:scale(1.02)}
+.mvt-btn.active{opacity:1}
+.mb-new{background:#0CCE6B;color:#111}
+.mb-retained{background:#006E5E;color:#fff}
+.mb-upgraded{background:#FFDA30;color:#111}
+.mb-atrisk{background:#EF2D56;color:#fff}
 
 /* ── Tier group header rows in roster table ── */
 .tier-group-hdr td{background:#F7F7F7!important;padding:7px 12px!important;font-size:9px!important;font-weight:800!important;text-transform:uppercase!important;letter-spacing:.1em!important;color:#434343!important;border-top:2px solid #E2E2E2!important;border-bottom:1px solid #E8E8E8!important;cursor:default!important}
@@ -306,8 +326,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 @media(max-width:600px){.tier-grid{grid-template-columns:1fr}}
 
 /* ── Weekly Sprint ── */
-.weekly-layout{display:none}
-.weekly-main{max-width:1540px;margin:0 auto;padding:18px 28px 48px}
+.weekly-layout{display:none;flex:1;min-width:0}
+.weekly-main{max-width:1440px;padding:18px 28px 48px}
 /* Tiles */
 .wk-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .wk-tile{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #E2E2E2;padding:13px 15px 14px;cursor:pointer;transition:box-shadow .2s,transform .15s}
@@ -319,17 +339,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .wkt-count{font-size:10px;font-weight:700;color:#696969}
 .wkt-pct{font-size:10px;font-weight:600;color:#9A9A9A}
 .wkt-empty{font-size:11px;font-weight:600;color:#C0C0C0;margin-top:4px}
-/* Head-by-Week HTML bar grid */
-.wk-hd-grid{display:flex;flex-direction:column;gap:16px;padding:4px 0 2px}
-.wk-hd-row{display:grid;grid-template-columns:82px 1fr;align-items:start;gap:10px}
-.wk-hd-name{font-size:9.5px;font-weight:700;color:#434343;padding-top:7px;text-align:right;line-height:1.3}
-.wk-hd-weeks{display:flex;flex-direction:column;gap:5px}
-.wk-hd-week{display:grid;grid-template-columns:26px 1fr 46px;align-items:center;gap:6px}
-.wk-hd-lbl{font-size:7.5px;font-weight:800;color:#9A9A9A;text-align:right;letter-spacing:.04em}
-.wk-hd-track{height:5px;background:#F2F2F2;border-radius:3px;overflow:hidden}
-.wk-hd-fill{height:5px;border-radius:3px;transition:width .5s ease}
-.wk-hd-val{font-size:9px;font-weight:700;color:#434343;text-align:right;white-space:nowrap}
-.wk-hd-zero{font-size:9px;color:#D0D0D0;text-align:right}
 /* Active week deal table section label */
 .wk-tbl-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
 @media(max-width:900px){.wk-tiles{grid-template-columns:repeat(2,1fr)}}
@@ -557,10 +566,45 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <option value="Recurring">Recurring</option>
       </select>
     </div>
+    <!-- ── Client Club filters — shown only on Client Club tab ── -->
+    <div id="sidebar-clubs-section" style="display:none">
+      <div class="sb-divider"></div>
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Tier</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="tb tb-premier active" id="ct-premier" onclick="toggleClubsTier('Premier')">Premier</button>
+          <button class="tb tb-select active"  id="ct-select"  onclick="toggleClubsTier('Select')">Select</button>
+          <button class="tb tb-core active"    id="ct-core"    onclick="toggleClubsTier('Core')">Core</button>
+          <button class="tb tb-base active"    id="ct-base"    onclick="toggleClubsTier('Base')">Base</button>
+        </div>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-section">
+        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Movement</span>
+          <span style="display:flex;gap:6px">
+            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
+            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="mvt-btn mb-new active"      id="mb-new"      onclick="toggleClubsMovement('New')">New</button>
+          <button class="mvt-btn mb-retained active" id="mb-retained" onclick="toggleClubsMovement('Retained')">Retained</button>
+          <button class="mvt-btn mb-upgraded active" id="mb-upgraded" onclick="toggleClubsMovement('Upgraded')">Upgraded</button>
+          <button class="mvt-btn mb-atrisk active"   id="mb-atrisk"   onclick="toggleClubsMovement('At-risk')">At-risk</button>
+        </div>
+      </div>
+    </div>
   </aside>
 
   <!-- MAIN -->
-  <div class="main">
+  <div class="main" id="rev-main">
   <div class="sec">Key Metrics</div>
   <div class="kpi-grid" id="kpi-grid"></div>
 
@@ -649,10 +693,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   </div><!-- /deal-records-section -->
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-</div>
-</div><!-- /app-layout -->
+</div><!-- /rev-main -->
 
-<!-- ════ WEEKLY SPRINT LAYOUT ════ -->
+<!-- ════ WEEKLY SPRINT — inside app-layout, shares the sidebar ════ -->
 <div class="weekly-layout" id="weekly-layout">
   <div class="weekly-main">
 
@@ -662,7 +705,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div id="weekly-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
     </div>
 
-    <!-- 4 Tiles — navigation + month summary -->
+    <!-- 4 Tiles -->
     <div class="wk-tiles" id="wk-tiles">
       <div style="grid-column:1/-1;text-align:center;padding:28px;color:#9A9A9A;font-weight:600">Loading sprint data...</div>
     </div>
@@ -681,28 +724,14 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       </div>
     </div>
 
-    <!-- Row 2: Head by Week (full-width HTML bars — 5 heads × 4 weeks) -->
+    <!-- Row 2: Head by Week (full width — 5 series need space) -->
     <div class="card" style="margin-bottom:14px">
       <div class="card-ttl">Head by Week</div>
-      <div class="card-sub" id="whead-sub">Net revenue per head — all 4 weeks compared</div>
-      <div class="wk-hd-grid" id="wkHeadBars"></div>
+      <div class="card-sub" id="whead-sub">Net revenue per head · all 4 weeks compared</div>
+      <div style="position:relative;height:230px"><canvas id="wkHeadChart"></canvas></div>
     </div>
 
-    <!-- Row 3: Service by Week + Engagement by Week -->
-    <div class="chart-row">
-      <div class="card">
-        <div class="card-ttl">Service by Week</div>
-        <div class="card-sub" id="wsvc-sub">Stacked by service — all 4 weeks</div>
-        <div style="position:relative;height:210px"><canvas id="wkSvcChart"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="card-ttl">Engagement by Week</div>
-        <div class="card-sub" id="weng-sub">Recurring · P2P — all 4 weeks</div>
-        <div style="position:relative;height:210px"><canvas id="wkEngChart"></canvas></div>
-      </div>
-    </div>
-
-    <!-- Deal Records — filtered to active week -->
+    <!-- Deal Records filtered to active week -->
     <div class="wk-tbl-hdr">
       <div class="sec" style="margin-bottom:0">Deal Records</div>
       <span id="wk-active-lbl" style="font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em"></span>
@@ -721,50 +750,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div>
 </div><!-- /weekly-layout -->
 
-<!-- ════ CLIENT CLUBS LAYOUT (hidden by default) ════ -->
+<!-- ════ CLIENT CLUB — inside app-layout, shares the sidebar ════ -->
 <div class="clubs-layout" id="clubs-layout">
-
-  <div class="clubs-app-layout">
-
-    <!-- CLUBS SIDEBAR -->
-    <aside class="clubs-sidebar">
-
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Tier</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="nbd-toggle active" id="ct-premier" onclick="toggleClubsTier('Premier')" style="flex:1;min-width:60px">Premier</button>
-          <button class="nbd-toggle active" id="ct-select" onclick="toggleClubsTier('Select')" style="flex:1;min-width:60px">Select</button>
-          <button class="nbd-toggle active" id="ct-core" onclick="toggleClubsTier('Core')" style="flex:1;min-width:60px">Core</button>
-          <button class="nbd-toggle active" id="ct-base" onclick="toggleClubsTier('Base')" style="flex:1;min-width:60px">Base</button>
-        </div>
-      </div>
-
-      <div class="sb-divider"></div>
-
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Movement</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
-          </span>
-        </div>
-        <div class="ms-item"><input type="checkbox" id="mvt-new" checked onchange="toggleClubsMovement('New')"><label for="mvt-new">New</label></div>
-        <div class="ms-item"><input type="checkbox" id="mvt-retained" checked onchange="toggleClubsMovement('Retained')"><label for="mvt-retained">Retained</label></div>
-        <div class="ms-item"><input type="checkbox" id="mvt-upgraded" checked onchange="toggleClubsMovement('Upgraded')"><label for="mvt-upgraded">Upgraded</label></div>
-        <div class="ms-item"><input type="checkbox" id="mvt-atrisk" checked onchange="toggleClubsMovement('At-risk')"><label for="mvt-atrisk">At-risk</label></div>
-      </div>
-
-    </aside>
-
-    <!-- CLUBS MAIN -->
-    <div class="clubs-main">
+  <div class="clubs-main">
 
       <!-- Section header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -823,9 +811,10 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
       <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 
-    </div><!-- /clubs-main -->
-  </div><!-- /clubs-app-layout -->
+  </div><!-- /clubs-main -->
 </div><!-- /clubs-layout -->
+
+</div><!-- /app-layout -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
@@ -1395,7 +1384,7 @@ function initOwners(){
 function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
 function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
 function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
-function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
 document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");if(!$("clubs-geo-wrap")?.contains(e.target))$("clubs-geo-dropdown")?.classList.remove("open");});
 
@@ -1409,7 +1398,7 @@ function toggleBUFilter(bu){
   if(sel.value===bu){sel.value="";}else{sel.value=bu;}
   renderAll();
 }
-function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 
 // ════ QUICK FILTERS ════
 const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
@@ -1426,17 +1415,17 @@ function _clearQuickFilters(){
 function toggleExisting(){
   const wasActive=existingActive;_clearQuickFilters();
   if(!wasActive){existingActive=true;$("existing-toggle").classList.add("active");}
-  renderAll();
+  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
 }
 function toggleNBD(){
   const wasActive=nbdActive;_clearQuickFilters();
   if(!wasActive){nbdActive=true;$("nbd-toggle").classList.add("active");}
-  renderAll();
+  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
 }
 function toggleReactivation(){
   const wasActive=reactivationActive;_clearQuickFilters();
   if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}
-  renderAll();
+  renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}
 }
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 
@@ -1943,7 +1932,7 @@ function renderGeoBars(_v){
   const mx=Math.max(...gs.map(g=>g.posRev),1);
   $("geo-bars").innerHTML=gs.map(g=>`
     <div class="gbar-row${drill.region===g.geo?" drill-active":""}" onclick="setDrill('region','${g.geo}')" title="${g.geo}">
-      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#111"}">${g.geo}</div>
+      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#fff"}">${g.geo}</div>
       <div class="gbar-track"><div class="gbar-fill" style="background:${GEO_COLORS[g.geo]};width:${(g.posRev/mx*100).toFixed(1)}%"></div></div>
       <div class="gbar-info"><div class="gbar-rev">${fmtShort(g.posRev)}</div><div class="gbar-cnt">${g.count} deals · ${g.share.toFixed(1)}%</div></div>
     </div>`).join("");
@@ -2407,7 +2396,8 @@ async function doLogin(){
   if(!pw){err.textContent="Please enter the access password.";return;}
   btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
   try{
-    const res=await fetch("/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
+    const _cloneHead=new URLSearchParams(location.search).get("head")||"";
+    const res=await fetch("/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:_cloneHead})});
     const data=await res.json();
     if(data.success){
       document.getElementById("login-overlay").style.display="none";
@@ -2424,7 +2414,57 @@ async function doLogin(){
   }
   finally{btn.disabled=false;btn.textContent="Access Dashboard";}
 }
+// ════ CLONE MODE ════
+// Reads ?head= URL param and pre-locks the dashboard to that head's view.
+// No param → master dashboard, no changes applied.
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param)return; // Master dashboard — nothing to do
 
+  // Find the matching head config
+  const cfg=HEADS_CONFIG.find(h=>h.id===param);
+  if(!cfg){
+    console.warn(`[Nexus] Unknown ?head= param: "${param}" — loading master view`);
+    return;
+  }
+
+  // ── 1. Pre-set Head filter: uncheck all, check only this head ──
+  ALL_HEADS.forEach(h=>{
+    const el=$("head-"+h.replace(/\s/g,"_"));
+    if(el)el.checked=(h===cfg.name);
+  });
+  updateHeadLabel();
+  updateSmartFilters(); // cascades BU + Region + Owner
+
+  // ── 2. Lock Head filter: hide it from the top bar ──
+  const headWrap=$("head-ms-wrap");
+  if(headWrap){
+    headWrap.style.display="none";
+    // Also hide the divider immediately before it
+    const vdivs=document.querySelectorAll(".vdiv");
+    vdivs.forEach(d=>{
+      if(d.nextElementSibling===headWrap||d.previousElementSibling===headWrap)
+        d.style.display="none";
+    });
+  }
+  // Hide the "Head" label span (the <span class="fl"> just before the head wrap)
+  const headLabel=headWrap?.previousElementSibling;
+  if(headLabel&&headLabel.classList.contains("fl"))headLabel.style.display="none";
+
+  // ── 3. Update page title + header ──
+  const firstName=cfg.name.split(" ")[0]; // "Jiggyasa", "Jaydeep", "Tanuj"
+  document.title=`${firstName}'s Nexus · Mavlers`;
+
+  // Update the status bar text prefix (stxt set later by renderAll, but title is immediate)
+  // Mark body for any CSS overrides needed for clone mode
+  document.body.setAttribute("data-clone",param);
+
+  // Update the sidebar logo sub-label if present
+  const eyebrow=document.querySelector(".login-eyebrow");
+  if(eyebrow)eyebrow.textContent=`Mavlers · ${firstName}'s Dashboard`;
+
+  console.log(`[Nexus] Clone mode: ${cfg.name} (${param})`);
+}
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",function(){
   try{
@@ -2440,6 +2480,7 @@ window.addEventListener("DOMContentLoaded",function(){
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     // Single unified sync — fetches all FY months, one source of truth for everything
+    bootCloneMode(); // ← must run before doFYSync so filters are pre-set
     doFYSync(true);
   }catch(e){
     console.error("Nexus boot error:",e);
@@ -2460,23 +2501,27 @@ function setScreen(name){
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Swap Period inner — one per screen, all live inside #rev-period-wrap
+  // Swap Period inner — one per screen
   const rpi=$('rev-period-inner');
   const wpi=$('weekly-period-inner');
   const cpi=$('clubs-period-inner');
   if(rpi)rpi.style.display=isRevenue?'flex':'none';
   if(wpi)wpi.style.display=isWeekly?'flex':'none';
   if(cpi)cpi.style.display=isClubs?'flex':'none';
-  // Clear custom ranges on inactive screens
+  // Clear inactive custom ranges
   if(!isRevenue)$('custom-range')?.classList.remove('show');
   if(!isClubs){$('clubs-custom-range')?.classList.remove('show');}
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
-  // Layout visibility — exactly one visible at a time
-  const al=$('app-layout');if(al)al.style.display=isRevenue?'':'none';
+  // app-layout: always visible — sidebar is shared across all three tabs
+  // Each tab shows exactly one content div; the other two are hidden.
+  const al=$('app-layout');if(al)al.style.display='flex';
+  const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
+  // Tier + Movement sections in shared sidebar — visible on Client Club only
+  const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
@@ -2888,20 +2933,24 @@ function updateTrendChartForTier(){
 }
 
 // ── Clubs Sidebar: Movement Filter ──
-const MVT_IDS={New:'mvt-new',Retained:'mvt-retained',Upgraded:'mvt-upgraded','At-risk':'mvt-atrisk'};
+// ── Movement button ID map ──
+const MVT_BTN_IDS={New:'mb-new',Retained:'mb-retained',Upgraded:'mb-upgraded','At-risk':'mb-atrisk'};
+
 function toggleClubsMovement(mvt){
   const idx=clubsMovementFilter.indexOf(mvt);
   if(idx>=0)clubsMovementFilter.splice(idx,1);else clubsMovementFilter.push(mvt);
+  const btn=$(MVT_BTN_IDS[mvt]);
+  if(btn)btn.classList.toggle('active',clubsMovementFilter.includes(mvt));
   renderClubsRosterOnly();
 }
 function selectAllMovements(){
   clubsMovementFilter=['New','Retained','Upgraded','At-risk'];
-  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=true;});
+  Object.values(MVT_BTN_IDS).forEach(id=>{$(id)?.classList.add('active');});
   renderClubsRosterOnly();
 }
 function deselectAllMovements(){
   clubsMovementFilter=[];
-  Object.values(MVT_IDS).forEach(id=>{const e=$(id);if(e)e.checked=false;});
+  Object.values(MVT_BTN_IDS).forEach(id=>{$(id)?.classList.remove('active');});
   renderClubsRosterOnly();
 }
 
@@ -2928,7 +2977,7 @@ const WK_DATES =['','1–7','8–14','15–21','22–end'];
 
 // ── State ──
 let weeklyActiveWeek=1;
-let wkBuChart=null,wkRegChart=null,wkSvcChart=null,wkEngChart=null;
+let wkBuChart=null,wkRegChart=null,wkHeadChart=null; // 3 grouped bar charts
 let wsk='amount',wsd='desc',wpg=1;
 const WPER=10;
 
@@ -2972,20 +3021,18 @@ function _wkDeals(){
   return trendView().filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel&&weekOfMonth(ed)===weeklyActiveWeek;});
 }
 
-// ── Week tile click — instant response: highlight charts in-place, update head bars + table ──
-// Charts are NOT destroyed/recreated — only bar colours updated via _applyWeekHighlight.
+// ── Week tile click — instant response: highlight charts in-place, update table ──
 function setActiveWeek(w){
   weeklyActiveWeek=w;wpg=1;
-  // 1. Highlight active week column in all 4 charts (zero flash)
-  [wkBuChart,wkRegChart,wkSvcChart,wkEngChart].forEach(c=>_applyWeekHighlight(c,w-1));
-  // 2. Recompute month deals for tiles + head bars
+  // 1. Highlight active week column in all 3 charts (zero flash)
+  [wkBuChart,wkRegChart,wkHeadChart].forEach(c=>_applyWeekHighlight(c,w-1));
+  // 2. Recompute month deals for tiles
   const sel=getWeeklyMonth();if(!sel)return;
   const base=trendView();
   const mDeals=base.filter(d=>{const ed=effectiveDate(d);return ed&&closeDateMonthVal(ed)===sel;});
   const mTotal=mDeals.reduce((s,d)=>s+d.amount,0);
-  // 3. Re-render tiles (active state border) + head bars (opacity per week)
+  // 3. Re-render tiles (active state border)
   renderWeekTiles(mDeals,mTotal);
-  renderWkHeadBars(mDeals);
   // 4. Update deal table label + data
   const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${w} · ${WK_DATES[w]}`;
   renderWeeklyTable(mDeals.filter(d=>weekOfMonth(effectiveDate(d))===w));
@@ -3102,79 +3149,38 @@ function renderWkRegionChart(monthDeals){
   _applyWeekHighlight(wkRegChart,weeklyActiveWeek-1);
 }
 
-// ── RENDER: Head by Week — HTML bars (5 heads × 4 week mini-bars per row) ──
-// Uses week colors as the series (W1=Gold … W4=Graphite) for clear week identification.
-function renderWkHeadBars(monthDeals){
-  const el=$('wkHeadBars');if(!el)return;
-  // Collect all heads that appear in this month's data
-  const headOrder=['Tanuj Gupta (US)','Tanuj Gupta (UK)','Jiggyasa Agrawal','Jaydeep Salla','Nevilson Christan'];
-  const extraHeads=[];
-  monthDeals.forEach(d=>{if(d.head&&!headOrder.includes(d.head)&&!extraHeads.includes(d.head))extraHeads.push(d.head);});
-  const heads=[...headOrder,...extraHeads];
-  // Pre-compute revenue per head per week
-  const headData={};
-  heads.forEach(h=>{
-    headData[h]=[1,2,3,4].map(w=>{
+// ── RENDER: Head by Week — grouped bar chart (5 heads × 4 weeks) ──
+// Consistent with BU and Region: x-axis = weeks, series = heads.
+// 5 distinct palette colours — no two heads share a colour.
+const WK_HEAD_COLS={
+  'Tanuj Gupta (US)':'#FFDA30',
+  'Tanuj Gupta (UK)':'#006E5E',
+  'Jiggyasa Agrawal':'#0CCE6B',
+  'Jaydeep Salla'   :'#3B3561',
+  'Nevilson Christan':'#473400',
+};
+const WK_HEAD_SHORT={
+  'Tanuj Gupta (US)':'Tanuj US',
+  'Tanuj Gupta (UK)':'Tanuj UK',
+  'Jiggyasa Agrawal':'Jiggyasa',
+  'Jaydeep Salla'   :'Jaydeep',
+  'Nevilson Christan':'Nevilson',
+};
+function renderWkHeadChart(monthDeals){
+  const ctx=$('wkHeadChart')?.getContext('2d');if(!ctx)return;
+  if(wkHeadChart){wkHeadChart.destroy();wkHeadChart=null;}
+  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
+  const headOrder=Object.keys(WK_HEAD_COLS);
+  const datasets=headOrder.map(h=>{
+    const color=WK_HEAD_COLS[h];
+    const data=[1,2,3,4].map(w=>{
       const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w&&d.head===h);
       return wv.reduce((s,d)=>s+d.amount,0);
     });
+    return _wkDs(WK_HEAD_SHORT[h]||h,data,color);
   });
-  // Filter out heads with zero revenue this month
-  const active=heads.filter(h=>headData[h].some(v=>v>0));
-  if(!active.length){el.innerHTML=`<div style="text-align:center;padding:24px;color:#9A9A9A;font-size:10px">No data for selected filters</div>`;return;}
-  // Row-max for bar scaling (each head self-scaled)
-  el.innerHTML=active.map(h=>{
-    const vals=headData[h];
-    const rowMax=Math.max(...vals,1);
-    const shortName=h.replace(' Gupta',' G.').replace(' Agrawal','').replace(' Christan','').replace(' Salla','');
-    const weekRows=[1,2,3,4].map(w=>{
-      const v=vals[w-1];
-      const pct=(v/rowMax*100).toFixed(0);
-      const isWkActive=weeklyActiveWeek===w;
-      return`<div class="wk-hd-week" style="opacity:${isWkActive?'1':'0.32'}">
-        <div class="wk-hd-lbl" style="color:${isWkActive?WK_COLORS[w]:'#9A9A9A'};font-weight:${isWkActive?'800':'700'}">W${w}</div>
-        <div class="wk-hd-track"><div class="wk-hd-fill" style="width:${v?pct:0}%;background:${WK_COLORS[w]}"></div></div>
-        ${v?`<div class="wk-hd-val">${fmtShort(v)}</div>`:`<div class="wk-hd-zero">—</div>`}
-      </div>`;
-    }).join('');
-    return`<div class="wk-hd-row"><div class="wk-hd-name">${shortName}</div><div class="wk-hd-weeks">${weekRows}</div></div>`;
-  }).join('');
-}
-
-// ── RENDER: Service by Week — stacked vertical (5 services, 4 bars) ──
-function renderWkSvcChart(monthDeals){
-  const ctx=$('wkSvcChart')?.getContext('2d');if(!ctx)return;
-  if(wkSvcChart){wkSvcChart.destroy();wkSvcChart=null;}
-  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
-  const datasets=ALL_SERVICES.map(svc=>{
-    const data=[1,2,3,4].map(w=>{
-      const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w);
-      let rev=0;wv.forEach(d=>{(dealServiceMap[d.id]||[]).forEach(li=>{if(li.svc===svc)rev+=li.amount;});});
-      return rev;
-    });
-    return _wkDs(svc,data,SVC_COLORS[svc]||'#9A9A9A',{
-      borderColor:'rgba(255,255,255,0.6)',borderWidth:1,borderRadius:0,borderSkipped:'bottom'
-    });
-  });
-  wkSvcChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts(true)});
-  _applyWeekHighlight(wkSvcChart,weeklyActiveWeek-1);
-}
-
-// ── RENDER: Engagement by Week — grouped vertical (2 series × 4 weeks) ──
-function renderWkEngChart(monthDeals){
-  const ctx=$('wkEngChart')?.getContext('2d');if(!ctx)return;
-  if(wkEngChart){wkEngChart.destroy();wkEngChart=null;}
-  const labels=[['W1','1–7'],['W2','8–14'],['W3','15–21'],['W4','22–end']];
-  const engCols={Recurring:'#FFDA30',P2P:'#EF2D56'};
-  const datasets=Object.entries(engCols).map(([eg,color])=>{
-    const data=[1,2,3,4].map(w=>{
-      const wv=monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===w);
-      return wv.filter(d=>engGroup(d.eng_model)===eg).reduce((s,d)=>s+d.amount,0);
-    });
-    return _wkDs(eg,data,color);
-  });
-  wkEngChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
-  _applyWeekHighlight(wkEngChart,weeklyActiveWeek-1);
+  wkHeadChart=new Chart(ctx,{type:'bar',data:{labels,datasets},options:_wkOpts()});
+  _applyWeekHighlight(wkHeadChart,weeklyActiveWeek-1);
 }
 
 // ── RENDER: Deal table for active week ──
@@ -3241,8 +3247,7 @@ function renderWeekly(){
   // Destroy existing Chart.js instances before rebuilding
   if(wkBuChart){wkBuChart.destroy();wkBuChart=null;}
   if(wkRegChart){wkRegChart.destroy();wkRegChart=null;}
-  if(wkSvcChart){wkSvcChart.destroy();wkSvcChart=null;}
-  if(wkEngChart){wkEngChart.destroy();wkEngChart=null;}
+  if(wkHeadChart){wkHeadChart.destroy();wkHeadChart=null;}
 
   const[mn,yr]=selectedMonth.split('-');
   const mLbl=`${MSHRT[MFULL.indexOf(mn)]} ${yr}`;
@@ -3268,12 +3273,10 @@ function renderWeekly(){
   // Render tiles
   renderWeekTiles(monthDeals,monthTotal);
 
-  // Render all comparison charts (all 4 weeks simultaneously)
+  // Render all 3 comparison charts (all 4 weeks simultaneously)
   renderWkBUChart(monthDeals);
   renderWkRegionChart(monthDeals);
-  renderWkHeadBars(monthDeals);
-  renderWkSvcChart(monthDeals);
-  renderWkEngChart(monthDeals);
+  renderWkHeadChart(monthDeals);
 
   // Render deal table for active week
   const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${weeklyActiveWeek} · ${WK_DATES[weeklyActiveWeek]}`;
