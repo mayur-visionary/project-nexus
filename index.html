@@ -2671,7 +2671,7 @@ function getMovementFlag(billingId,currentTier,prevMonths,allFiltered){
   const prev=prevData.find(c=>c.billing_id===billingId);
   if(!prev)return'New';
   if(prev.tier===currentTier)return'Retained';
-  const rank={Bronze:1,Silver:2,Gold:3};
+  const rank={Base:1,Core:2,Select:3,Premier:4};
   return rank[currentTier]>rank[prev.tier]?'Upgraded':'At-risk';
 }
 
