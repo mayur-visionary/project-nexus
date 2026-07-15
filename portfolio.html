@@ -486,9 +486,8 @@ async function fetchKittyCompanies(){
 }
 
 // Step 2: Deal history — 365 days back from anchor date.
-// Strategy: one fetch per registry owner (37 owners → 37 parallel requests).
-// Each owner's deal volume is well under HubSpot's 10,000-record Search API limit.
-// Hierarchy: Registry Owner → Kitty Company → Deal → effectiveDate → Status.
+// Strategy: fetch per owner in batches of 5, 300ms apart — avoids 429 rate-limit.
+// Hierarchy: Registry Owner → Deal → effectiveDate → classify against Kitty list.
 async function fetchDealHistory(){
   const idx={};
 
@@ -497,12 +496,12 @@ async function fetchDealHistory(){
   cutoff.setDate(cutoff.getDate()-365);
   const cutoffStr=cutoff.toISOString().split("T")[0];
 
-  // Owners to fetch for — respect clone mode scope
+  // Owners to fetch — respect clone mode scope
   const ownerScope=cloneHead
     ? (HEAD_OWNERS[cloneHead]||[])
     : REGISTRY_IDS;
 
-  // Fetch all deals for a single owner, paginating fully
+  // Fetch all deals for one owner, paginating fully
   async function fetchOwnerDeals(ownerId){
     const ownerIdx={};
     let after=null;
@@ -535,11 +534,11 @@ async function fetchDealHistory(){
       const data=await res.json();
 
       (data.results||[]).forEach(r=>{
-        // Exclusions
+        // Exclusions — mirror Nexus
         const co=(r.properties?.company_name__invoice_app_||"").trim();
         if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
 
-        // Effective date: closedate for normal deals, createdate for ON (online orders)
+        // Effective date: closedate; createdate only for ON order_type with no closedate
         const cd=(r.properties?.closedate||"").split("T")[0];
         const cre=(r.properties?.createdate||"").split("T")[0];
         const orderType=(r.properties?.order_type||"").trim().toUpperCase();
@@ -567,17 +566,25 @@ async function fetchDealHistory(){
     return ownerIdx;
   }
 
-  // Run all owner fetches in parallel
-  const results=await Promise.all(ownerScope.map(id=>fetchOwnerDeals(id)));
+  // Batched execution — 5 owners at a time, 300ms between batches
+  const BATCH=5, DELAY=300;
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const allResults=[];
+  for(let i=0;i<ownerScope.length;i+=BATCH){
+    const batch=ownerScope.slice(i,i+BATCH);
+    const batchResults=await Promise.all(batch.map(id=>fetchOwnerDeals(id)));
+    allResults.push(...batchResults);
+    if(i+BATCH<ownerScope.length)await sleep(DELAY);
+  }
 
-  // Merge all per-owner indexes — keep latest date per client
-  results.forEach(ownerIdx=>{
+  // Merge per-owner indexes — keep latest date per client
+  allResults.forEach(ownerIdx=>{
     Object.entries(ownerIdx).forEach(([key,date])=>{
       if(!idx[key]||date>idx[key])idx[key]=date;
     });
   });
 
-  console.log(`[Portfolio] dealIndex: ${Object.keys(idx).length} unique clients, ${ownerScope.length} owners`);
+  console.log(`[Portfolio] dealIndex: ${Object.keys(idx).length} unique clients across ${ownerScope.length} owners`);
   return idx;
 }
 
