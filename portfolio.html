@@ -486,20 +486,17 @@ async function fetchKittyCompanies(){
 }
 
 // Step 2: Deal history — 365 days back from anchor date.
-// Strategy: fetch per owner in batches of 5, 300ms apart — avoids 429 rate-limit.
+// Strategy: one fetch per owner, in batches of 5 with 400ms gap — avoids 429.
 // Hierarchy: Registry Owner → Deal → effectiveDate → classify against Kitty list.
 async function fetchDealHistory(){
   const idx={};
 
-  // Cutoff: anchor minus 365 days
   const cutoff=new Date(ANCHOR);
   cutoff.setDate(cutoff.getDate()-365);
   const cutoffStr=cutoff.toISOString().split("T")[0];
 
   // Owners to fetch — respect clone mode scope
-  const ownerScope=cloneHead
-    ? (HEAD_OWNERS[cloneHead]||[])
-    : REGISTRY_IDS;
+  const ownerScope=cloneHead?(HEAD_OWNERS[cloneHead]||[]):REGISTRY_IDS;
 
   // Fetch all deals for one owner, paginating fully
   async function fetchOwnerDeals(ownerId){
@@ -534,11 +531,9 @@ async function fetchDealHistory(){
       const data=await res.json();
 
       (data.results||[]).forEach(r=>{
-        // Exclusions — mirror Nexus
         const co=(r.properties?.company_name__invoice_app_||"").trim();
         if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
 
-        // Effective date: closedate; createdate only for ON order_type with no closedate
         const cd=(r.properties?.closedate||"").split("T")[0];
         const cre=(r.properties?.createdate||"").split("T")[0];
         const orderType=(r.properties?.order_type||"").trim().toUpperCase();
@@ -547,7 +542,6 @@ async function fetchDealHistory(){
         const effDate=new Date(effStr+"T00:00:00");
         if(isNaN(effDate))return;
 
-        // Index by all name variants — keep latest date per client
         const names=new Set();
         const zoho=(r.properties?.zoho_display_name__invoice_app_||"").trim();
         const contact=(r.properties?.contact_name__invoice_app_||"").trim();
@@ -566,8 +560,8 @@ async function fetchDealHistory(){
     return ownerIdx;
   }
 
-  // Batched execution — 5 owners at a time, 300ms between batches
-  const BATCH=5, DELAY=300;
+  // Batched execution — 5 owners at a time, 400ms between batches
+  const BATCH=5,DELAY=400;
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   const allResults=[];
   for(let i=0;i<ownerScope.length;i+=BATCH){
@@ -584,7 +578,6 @@ async function fetchDealHistory(){
     });
   });
 
-  console.log(`[Portfolio] dealIndex: ${Object.keys(idx).length} unique clients across ${ownerScope.length} owners`);
   return idx;
 }
 
@@ -600,8 +593,12 @@ async function doSync(force=false){
   ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
 
   try{
-    [kittyCompanies,dealIndex]=await Promise.all([fetchKittyCompanies(),fetchDealHistory()]);
-    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies | ${Object.keys(dealIndex).length} deal index entries`);
+    // Sequential — avoid HubSpot secondly rate-limit (SECONDLY policy)
+    // Companies Search + Deal Search share the same quota; parallel fires too many at once.
+    kittyCompanies=await fetchKittyCompanies();
+    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies fetched`);
+    dealIndex=await fetchDealHistory();
+    console.log(`[Portfolio] dealIndex: ${Object.keys(dealIndex).length} unique clients`);
     renderAll();
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
