@@ -485,78 +485,99 @@ async function fetchKittyCompanies(){
   return data.companies||[];
 }
 
-// Step 2: Deal history — 365 days back from anchor date
-// Uses /api (existing deal search proxy) — same endpoint as Nexus
+// Step 2: Deal history — 365 days back from anchor date.
+// Strategy: one fetch per registry owner (37 owners → 37 parallel requests).
+// Each owner's deal volume is well under HubSpot's 10,000-record Search API limit.
+// Hierarchy: Registry Owner → Kitty Company → Deal → effectiveDate → Status.
 async function fetchDealHistory(){
   const idx={};
-  // Compute cutoff: anchor minus 365 days
+
+  // Cutoff: anchor minus 365 days
   const cutoff=new Date(ANCHOR);
   cutoff.setDate(cutoff.getDate()-365);
   const cutoffStr=cutoff.toISOString().split("T")[0];
 
-  let after=null;
-  do{
-    const body={
-      filterGroups:[{
-        filters:[
-          {propertyName:"pipeline",          operator:"EQ",  value:PIPELINE},
-          {propertyName:"dealstage",         operator:"EQ",  value:STAGE},
-          {propertyName:"closedate",         operator:"GTE", value:cutoffStr},
-          {propertyName:"hubspot_owner_id",  operator:"IN",  values:REGISTRY_IDS}
-        ]
-      }],
-      // Fix 1: NOT_HAS_PROPERTY unsupported — removed second filterGroup.
-      // Fix 2: hubspot_owner_id IN filter scopes to our 37 owners,
-      //        preventing the HubSpot 10,000-record pagination hard limit.
-      properties:[
-        "dealname",
-        "company_name__invoice_app_",
-        "zoho_display_name__invoice_app_",
-        "contact_name__invoice_app_",
-        "closedate",
-        "createdate",
-        "amount_in_home_currency",
-        "engagement_model__invoice_app_"
-      ],
-      limit:200,
-      sorts:[{propertyName:"closedate",direction:"DESCENDING"}]
-    };
-    if(after)body.after=after;
+  // Owners to fetch for — respect clone mode scope
+  const ownerScope=cloneHead
+    ? (HEAD_OWNERS[cloneHead]||[])
+    : REGISTRY_IDS;
 
-    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok)throw new Error(`Deal API ${res.status}`);
-    const data=await res.json();
+  // Fetch all deals for a single owner, paginating fully
+  async function fetchOwnerDeals(ownerId){
+    const ownerIdx={};
+    let after=null;
+    do{
+      const body={
+        filterGroups:[{
+          filters:[
+            {propertyName:"pipeline",        operator:"EQ", value:PIPELINE},
+            {propertyName:"dealstage",       operator:"EQ", value:STAGE},
+            {propertyName:"closedate",       operator:"GTE",value:cutoffStr},
+            {propertyName:"hubspot_owner_id",operator:"EQ", value:ownerId}
+          ]
+        }],
+        properties:[
+          "dealname",
+          "company_name__invoice_app_",
+          "zoho_display_name__invoice_app_",
+          "contact_name__invoice_app_",
+          "closedate",
+          "createdate",
+          "order_type"
+        ],
+        limit:200,
+        sorts:[{propertyName:"closedate",direction:"DESCENDING"}]
+      };
+      if(after)body.after=after;
 
-    (data.results||[]).forEach(r=>{
-      // Exclusions — mirror Nexus
-      const co=(r.properties?.company_name__invoice_app_||"").trim();
-      if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
+      const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok)throw new Error(`Deal API ${res.status} (owner ${ownerId})`);
+      const data=await res.json();
 
-      // Effective date: closedate || createdate
-      const cd=(r.properties?.closedate||"").split("T")[0];
-      const cre=(r.properties?.createdate||"").split("T")[0];
-      const effStr=cd||cre;
-      if(!effStr)return;
-      const effDate=new Date(effStr+"T00:00:00");
-      if(isNaN(effDate))return;
+      (data.results||[]).forEach(r=>{
+        // Exclusions
+        const co=(r.properties?.company_name__invoice_app_||"").trim();
+        if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
 
-      // Index by all name variants
-      const names=new Set();
-      const zoho=(r.properties?.zoho_display_name__invoice_app_||"").trim();
-      const contact=(r.properties?.contact_name__invoice_app_||"").trim();
-      const company=(r.properties?.company_name__invoice_app_||"").trim();
-      if(zoho)names.add(normName(zoho));
-      if(contact)names.add(normName(contact));
-      if(company)names.add(normName(company));
+        // Effective date: closedate for normal deals, createdate for ON (online orders)
+        const cd=(r.properties?.closedate||"").split("T")[0];
+        const cre=(r.properties?.createdate||"").split("T")[0];
+        const orderType=(r.properties?.order_type||"").trim().toUpperCase();
+        const effStr=(orderType==="ON"&&!cd)?cre:(cd||cre);
+        if(!effStr)return;
+        const effDate=new Date(effStr+"T00:00:00");
+        if(isNaN(effDate))return;
 
-      names.forEach(key=>{
-        if(!idx[key]||effDate>idx[key])idx[key]=effDate;
+        // Index by all name variants — keep latest date per client
+        const names=new Set();
+        const zoho=(r.properties?.zoho_display_name__invoice_app_||"").trim();
+        const contact=(r.properties?.contact_name__invoice_app_||"").trim();
+        const company=(r.properties?.company_name__invoice_app_||"").trim();
+        if(zoho)names.add(normName(zoho));
+        if(contact)names.add(normName(contact));
+        if(company)names.add(normName(company));
+
+        names.forEach(key=>{
+          if(!ownerIdx[key]||effDate>ownerIdx[key])ownerIdx[key]=effDate;
+        });
       });
+
+      after=data.paging?.next?.after||null;
+    }while(after);
+    return ownerIdx;
+  }
+
+  // Run all owner fetches in parallel
+  const results=await Promise.all(ownerScope.map(id=>fetchOwnerDeals(id)));
+
+  // Merge all per-owner indexes — keep latest date per client
+  results.forEach(ownerIdx=>{
+    Object.entries(ownerIdx).forEach(([key,date])=>{
+      if(!idx[key]||date>idx[key])idx[key]=date;
     });
+  });
 
-    after=data.paging?.next?.after||null;
-  }while(after);
-
+  console.log(`[Portfolio] dealIndex: ${Object.keys(idx).length} unique clients, ${ownerScope.length} owners`);
   return idx;
 }
 
