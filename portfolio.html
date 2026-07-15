@@ -396,7 +396,6 @@ const HEADS_CONFIG=[
 
 // ── State ──
 let kittyCompanies=[];
-let dealIndex={};       // normName → latest effectiveDate
 let cloneHead=null;
 let activeBU="";
 let isSyncing=false;
@@ -410,12 +409,14 @@ function fmtDate(d){
 }
 
 // ── Classification ──
+// Uses recent_deal_close_date from Company record — no deal fetch needed.
 function classifyCompany(company){
-  const key=normName(company.name);
-  const lastDate=dealIndex[key]||null;
-  if(!lastDate)return"never";
+  const dateStr=company.recent_deal_close_date||"";
+  if(!dateStr)return"never";
+  const lastDate=new Date(dateStr+"T00:00:00");
+  if(isNaN(lastDate))return"never";
   const diffDays=Math.floor((ANCHOR-lastDate)/(1000*60*60*24));
-  if(diffDays<0)    return"active";  // future-dated deal
+  if(diffDays<0)         return"active"; // future-dated
   if(diffDays<=D_ACTIVE)   return"active";
   if(diffDays<=D_SILENT)   return"silent";
   if(diffDays<=D_INACTIVE) return"inactive";
@@ -485,102 +486,6 @@ async function fetchKittyCompanies(){
   return data.companies||[];
 }
 
-// Step 2: Deal history — 365 days back from anchor date.
-// Strategy: one fetch per owner, in batches of 5 with 400ms gap — avoids 429.
-// Hierarchy: Registry Owner → Deal → effectiveDate → classify against Kitty list.
-async function fetchDealHistory(){
-  const idx={};
-
-  const cutoff=new Date(ANCHOR);
-  cutoff.setDate(cutoff.getDate()-365);
-  const cutoffStr=cutoff.toISOString().split("T")[0];
-
-  // Owners to fetch — respect clone mode scope
-  const ownerScope=cloneHead?(HEAD_OWNERS[cloneHead]||[]):REGISTRY_IDS;
-
-  // Fetch all deals for one owner, paginating fully
-  async function fetchOwnerDeals(ownerId){
-    const ownerIdx={};
-    let after=null;
-    do{
-      const body={
-        filterGroups:[{
-          filters:[
-            {propertyName:"pipeline",        operator:"EQ", value:PIPELINE},
-            {propertyName:"dealstage",       operator:"EQ", value:STAGE},
-            {propertyName:"closedate",       operator:"GTE",value:cutoffStr},
-            {propertyName:"hubspot_owner_id",operator:"EQ", value:ownerId}
-          ]
-        }],
-        properties:[
-          "dealname",
-          "company_name__invoice_app_",
-          "zoho_display_name__invoice_app_",
-          "contact_name__invoice_app_",
-          "closedate",
-          "createdate",
-          "order_type"
-        ],
-        limit:200,
-        sorts:[{propertyName:"closedate",direction:"DESCENDING"}]
-      };
-      if(after)body.after=after;
-
-      const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-      if(!res.ok)throw new Error(`Deal API ${res.status} (owner ${ownerId})`);
-      const data=await res.json();
-
-      (data.results||[]).forEach(r=>{
-        const co=(r.properties?.company_name__invoice_app_||"").trim();
-        if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
-
-        const cd=(r.properties?.closedate||"").split("T")[0];
-        const cre=(r.properties?.createdate||"").split("T")[0];
-        const orderType=(r.properties?.order_type||"").trim().toUpperCase();
-        const effStr=(orderType==="ON"&&!cd)?cre:(cd||cre);
-        if(!effStr)return;
-        const effDate=new Date(effStr+"T00:00:00");
-        if(isNaN(effDate))return;
-
-        const names=new Set();
-        const zoho=(r.properties?.zoho_display_name__invoice_app_||"").trim();
-        const contact=(r.properties?.contact_name__invoice_app_||"").trim();
-        const company=(r.properties?.company_name__invoice_app_||"").trim();
-        if(zoho)names.add(normName(zoho));
-        if(contact)names.add(normName(contact));
-        if(company)names.add(normName(company));
-
-        names.forEach(key=>{
-          if(!ownerIdx[key]||effDate>ownerIdx[key])ownerIdx[key]=effDate;
-        });
-      });
-
-      after=data.paging?.next?.after||null;
-    }while(after);
-    return ownerIdx;
-  }
-
-  // Batched execution — 5 owners at a time, 400ms between batches
-  const BATCH=5,DELAY=400;
-  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-  const allResults=[];
-  for(let i=0;i<ownerScope.length;i+=BATCH){
-    const batch=ownerScope.slice(i,i+BATCH);
-    const batchResults=await Promise.all(batch.map(id=>fetchOwnerDeals(id)));
-    allResults.push(...batchResults);
-    if(i+BATCH<ownerScope.length)await sleep(DELAY);
-  }
-
-  // Merge per-owner indexes — keep latest date per client
-  allResults.forEach(ownerIdx=>{
-    Object.entries(ownerIdx).forEach(([key,date])=>{
-      if(!idx[key]||date>idx[key])idx[key]=date;
-    });
-  });
-
-  return idx;
-}
-
 // ════ MAIN SYNC ════
 async function doSync(force=false){
   if(isSyncing&&!force)return;
@@ -593,16 +498,17 @@ async function doSync(force=false){
   ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
 
   try{
-    // Sequential — avoid HubSpot secondly rate-limit (SECONDLY policy)
-    // Companies Search + Deal Search share the same quota; parallel fires too many at once.
+    // Single fetch — classification uses recent_deal_close_date on company record.
+    // No deal fetching needed at all.
     kittyCompanies=await fetchKittyCompanies();
-    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies fetched`);
-    dealIndex=await fetchDealHistory();
-    console.log(`[Portfolio] dealIndex: ${Object.keys(dealIndex).length} unique clients`);
+    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies loaded`);
     renderAll();
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
     $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
+    // Note: recent_deal_close_date null count logged for data quality awareness
+    const nullCount=kittyCompanies.filter(c=>!c.recent_deal_close_date).length;
+    if(nullCount)console.log(`[Portfolio] ${nullCount} companies with no recent_deal_close_date → classified as Never Active`);
   }catch(e){
     console.error(e);
     $("err-msg").textContent=e.message;
