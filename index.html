@@ -1894,11 +1894,12 @@ function renderKPIs(_v){
   // Formula: Digital BU Net Revenue − Search line items − Web line items
   // Computed from the current filtered view (v) — responds to all active filters.
   let digitalNetRev=0,searchWebRev=0;
+  const selectedSvcs=new Set(getSelectedServices());
   v.forEach(d=>{
     if(d.bu==="Digital"){
       digitalNetRev+=d.amount;
       (dealServiceMap[d.id]||[]).forEach(li=>{
-        if(li.svc==="Search"||li.svc==="Web")searchWebRev+=li.amount;
+        if((li.svc==="Search"||li.svc==="Web")&&selectedSvcs.has(li.svc))searchWebRev+=li.amount;
       });
     }
   });
