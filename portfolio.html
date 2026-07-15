@@ -499,15 +499,15 @@ async function fetchDealHistory(){
     const body={
       filterGroups:[{
         filters:[
-          {propertyName:"pipeline",  operator:"EQ", value:PIPELINE},
-          {propertyName:"dealstage", operator:"EQ", value:STAGE},
-          {propertyName:"closedate", operator:"GTE",value:cutoffStr}
+          {propertyName:"pipeline",          operator:"EQ",  value:PIPELINE},
+          {propertyName:"dealstage",         operator:"EQ",  value:STAGE},
+          {propertyName:"closedate",         operator:"GTE", value:cutoffStr},
+          {propertyName:"hubspot_owner_id",  operator:"IN",  values:REGISTRY_IDS}
         ]
       }],
-      // NOTE: NOT_HAS_PROPERTY is unsupported by /api proxy — removed.
-      // Deals without closedate that fall within cutoff won't appear here.
-      // classifyCompany() uses effectiveDate(closedate||createdate) for any
-      // deal that does return; clients with zero deals remain "never" — correct.
+      // Fix 1: NOT_HAS_PROPERTY unsupported — removed second filterGroup.
+      // Fix 2: hubspot_owner_id IN filter scopes to our 37 owners,
+      //        preventing the HubSpot 10,000-record pagination hard limit.
       properties:[
         "dealname",
         "company_name__invoice_app_",
