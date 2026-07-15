@@ -219,8 +219,8 @@ tbody td.num{text-align:right;font-weight:700}
       </span>
       <div class="bu-toggle-wrap" id="bu-toggle-wrap">
         <button class="bu-btn active" id="bu-all"     onclick="setBU('')">All BUs</button>
-        <button class="bu-btn"        id="bu-digital" onclick="setBU('Digital BU')">Digital</button>
-        <button class="bu-btn"        id="bu-martech" onclick="setBU('MarTech BU')">MarTech</button>
+        <button class="bu-btn"        id="bu-digital" onclick="setBU('Digital')">Digital</button>
+        <button class="bu-btn"        id="bu-martech" onclick="setBU('MarTech')">MarTech</button>
       </div>
     </div>
   </div>
@@ -235,7 +235,7 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="kpi">
       <div class="kpi-lbl">Total Kitty</div>
       <div class="kpi-val" id="k-total">—</div>
-      <div class="kpi-sub">Existing kitty customers</div>
+      <div class="kpi-sub" id="k-total-sub">Unique clients from deal history</div>
     </div>
     <div class="kpi k-active">
       <div class="kpi-lbl">Active</div>
@@ -265,7 +265,6 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="leg-item"><div class="leg-dot" style="background:#FFDA30"></div>Silent (91–180 days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#EF2D56"></div>Inactive (181–364 days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (365+ days)</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#5B3B8C"></div>Never Active</div>
   </div>
 
   <!-- Head-level table -->
@@ -288,12 +287,11 @@ tbody td.num{text-align:right;font-weight:700}
             <th class="num">Silent</th>
             <th class="num">Inactive</th>
             <th class="num">Organic Lost</th>
-            <th class="num">Never Active</th>
             <th style="min-width:120px">Health</th>
           </tr>
         </thead>
         <tbody id="portfolio-tbody">
-          <tr><td colspan="9" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
+          <tr><td colspan="8" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -304,31 +302,31 @@ tbody td.num{text-align:right;font-weight:700}
 
 <script>
 // ════════════════════════════════════════════════
-// PORTFOLIO HEALTH — MAVLERS
-// Standalone page. Completely independent from Nexus index.html.
+// PORTFOLIO HEALTH — MAVLERS (v2.0 — Deals-Only)
+// No Companies API. No portfolio.js Cloudflare function.
+// Derives all data from /api (HubSpot Deals Search proxy).
+// Universe: unique clients from 365-day deal history, owner in registry.
 // ════════════════════════════════════════════════
 
 const $=id=>document.getElementById(id);
 
-// ── Dynamic anchor: today's date, set at runtime ──
+// ── Dynamic anchor: today at midnight, set at runtime ──
 const ANCHOR=(()=>{const d=new Date();d.setHours(0,0,0,0);return d;})();
 const ANCHOR_STR=(()=>{
-  const d=ANCHOR;
   const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return`${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return`${months[ANCHOR.getMonth()]} ${ANCHOR.getDate()}, ${ANCHOR.getFullYear()}`;
 })();
-// Classification thresholds (days from anchor, counting backwards)
-const D_ACTIVE  =90;   // ≤90 days → Active
-const D_SILENT  =180;  // 91–180 days → Silent
-const D_INACTIVE=364;  // 181–364 days → Inactive
-                        // 365+ days → Organic Lost
+
+// Classification thresholds (days back from anchor)
+const D_ACTIVE  =90;   // ≤90 → Active
+const D_SILENT  =180;  // 91–180 → Silent
+const D_INACTIVE=364;  // 181–364 → Inactive
+                        // 365+ → Organic Lost
 
 // HubSpot pipeline constants
-const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
-const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
-const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const PIPELINE="115832232", STAGE="205348626";
 
-// ── Owner Registry (mirrors Nexus exactly) ──
+// ── Owner Registry (mirrors Nexus exactly — 37 owners) ──
 const OWNER_GROUPS={
   "Leaders / Heads":[
     {id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},
@@ -369,24 +367,71 @@ const OWNER_GROUPS={
   "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
 };
 
-const REGISTRY_IDS=(()=>{const s=new Set();Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)s.add(o.id);});return[...s];})();
-const OWNER_NAME={};Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id&&!OWNER_NAME[o.id])OWNER_NAME[o.id]=o.name;});
+// Flat unique ID set for registry membership check
+const REGISTRY_ID_SET=(()=>{
+  const s=new Set();
+  Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)s.add(o.id);});
+  return s;
+})();
 
-// Head → owner IDs
-const HEAD_OWNERS={
-  "Jaydeep Salla" :["17738843","46153051","93107638","86147905","85767516","89530815","82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
-  "Jiggyasa Agrawal":["131779647","78831011","94746500","176516495","263464861"],
-  "Tanuj Gupta"   :["17739173","46156316","37344296","24817892","31730801","38568120","42663191","240935328","19799470","34558123","284770744","557894666"],
-  "Nevilson Christan":["86940863","86813698","255830830","37762663"]
-};
+// Owner name lookup
+const OWNER_NAME={};
+Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id&&!OWNER_NAME[o.id])OWNER_NAME[o.id]=o.name;});
 
+// ── BU attribution (owner-based, mirrors Nexus OWNER_BU_MAP) ──
+const OWNER_BU_MAP=(()=>{
+  const m={};
+  // Default all Leaders to Digital first, then overwrite with real team groups
+  OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    if(g==="Leaders / Heads")return;
+    const bu=(g.startsWith("MarTech")||g==="Reactivation")?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  // MarTech leaders explicit override
+  m["107178262"]="MarTech"; // Chintan Doshi
+  m["34140174"] ="MarTech"; // Mrugesh Dabhi
+  m["17738843"] ="MarTech"; // Jaydeep Salla
+  // Digital leaders explicit
+  m["17739173"] ="Digital"; // Tanuj Gupta
+  m["86940863"] ="Digital"; // Nevilson Christan
+  m["17739548"] ="Digital"; // Darshan Modi
+  m["79217713"] ="Digital"; // Krunal Bakraniya
+  m["82663745"] ="Digital"; // Prativa Dubey
+  return m;
+})();
+
+// ── Head attribution (owner-based) ──
+// Maps each owner ID → their head name
+const OWNER_HEAD_MAP=(()=>{
+  const m={};
+  // Jaydeep's team: MarTech owners
+  ["17738843","46153051","93107638","86147905","85767516","89530815",
+   "82911376","916030451","82030736","107178262","467997340","41490632","34140174"]
+    .forEach(id=>{m[id]="Jaydeep Salla";});
+  // Jiggyasa's team: Digital AU
+  ["131779647","78831011","94746500","176516495","263464861"]
+    .forEach(id=>{m[id]="Jiggyasa Agrawal";});
+  // Tanuj's team: Digital UK + Digital US + Digital Leaders
+  ["17739173","46156316","37344296","24817892","31730801",
+   "38568120","42663191","240935328","19799470","34558123","284770744","557894666",
+   "17739548","79217713","82663745"]
+    .forEach(id=>{m[id]="Tanuj Gupta";});
+  // Nevilson's team
+  ["86940863","86813698","255830830","37762663"]
+    .forEach(id=>{m[id]="Nevilson Christan";});
+  return m;
+})();
+
+// ── Heads config (display order + colours) ──
 const HEADS_CFG=[
-  {id:"jaydeep", name:"Jaydeep Salla",    bu:"MarTech", color:"#3B3561"},
-  {id:"jiggyasa",name:"Jiggyasa Agrawal", bu:"Digital", color:"#FFDA30"},
-  {id:"tanuj",   name:"Tanuj Gupta",      bu:"Digital", color:"#006E5E"},
-  {id:"nevilson",name:"Nevilson Christan",bu:"Digital", color:"#473400"}
+  {id:"jaydeep", name:"Jaydeep Salla",     bu:"MarTech", color:"#3B3561"},
+  {id:"jiggyasa",name:"Jiggyasa Agrawal",  bu:"Digital", color:"#FFDA30"},
+  {id:"tanuj",   name:"Tanuj Gupta",       bu:"Digital", color:"#006E5E"},
+  {id:"nevilson",name:"Nevilson Christan", bu:"Digital", color:"#473400"}
 ];
 
+// ── Clone mode config (mirrors Nexus) ──
 const HEADS_CONFIG=[
   {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
   {id:"jaydeep", name:"Jaydeep Salla",   bu:"MarTech"},
@@ -394,11 +439,18 @@ const HEADS_CONFIG=[
   {id:"tanuj",   name:"Tanuj Gupta",     bu:"Digital"}
 ];
 
+// ── Head → owner IDs (for drilldown and clone filtering) ──
+const HEAD_OWNERS={
+  "Jaydeep Salla"    :["17738843","46153051","93107638","86147905","85767516","89530815","82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
+  "Jiggyasa Agrawal" :["131779647","78831011","94746500","176516495","263464861"],
+  "Tanuj Gupta"      :["17739173","46156316","37344296","24817892","31730801","38568120","42663191","240935328","19799470","34558123","284770744","557894666","17739548","79217713","82663745"],
+  "Nevilson Christan":["86940863","86813698","255830830","37762663"]
+};
+
 // ── State ──
-let kittyCompanies=[];
-let dealIndex={};       // normName → latest effectiveDate
-let cloneHead=null;
-let activeBU="";
+let clientMap={};   // billingKey → {name, owner_id, head, bu, lastDate}
+let cloneHead=null; // head name if in clone mode, else null
+let activeBU="";    // "" | "Digital" | "MarTech"
 let isSyncing=false;
 
 // ── Helpers ──
@@ -410,15 +462,13 @@ function fmtDate(d){
 }
 
 // ── Classification ──
-function classifyCompany(company){
-  const key=normName(company.name);
-  const lastDate=dealIndex[key]||null;
-  if(!lastDate)return"never";
+function classify(lastDate){
+  if(!lastDate)return"lost"; // never seen in 365d window = organic lost
   const diffDays=Math.floor((ANCHOR-lastDate)/(1000*60*60*24));
-  if(diffDays<0)    return"active";  // future-dated deal
-  if(diffDays<=D_ACTIVE)   return"active";
-  if(diffDays<=D_SILENT)   return"silent";
-  if(diffDays<=D_INACTIVE) return"inactive";
+  if(diffDays<0)         return"active"; // future-dated deal
+  if(diffDays<=D_ACTIVE) return"active";
+  if(diffDays<=D_SILENT) return"silent";
+  if(diffDays<=D_INACTIVE)return"inactive";
   return"lost";
 }
 
@@ -459,6 +509,7 @@ function bootCloneMode(){
   $("login-title").textContent=`${firstName}'s Portfolio`;
   $("login-footer").textContent=`${cfg.name} · ${cfg.bu}`;
   $("nexus-link").href=`/?head=${param}`;
+  // MarTech clone has only one BU — hide the BU toggle
   if(cfg.bu==="MarTech")$("bu-toggle-wrap").style.display="none";
   document.body.setAttribute("data-clone",param);
   console.log(`[Portfolio] Clone mode → ${cfg.name}`);
@@ -469,58 +520,44 @@ function setBU(bu){
   activeBU=bu;
   ["bu-all","bu-digital","bu-martech"].forEach(id=>$(id)?.classList.remove("active"));
   if(!bu)$("bu-all")?.classList.add("active");
-  else if(bu==="Digital BU")$("bu-digital")?.classList.add("active");
-  else if(bu==="MarTech BU")$("bu-martech")?.classList.add("active");
+  else if(bu==="Digital")$("bu-digital")?.classList.add("active");
+  else if(bu==="MarTech")$("bu-martech")?.classList.add("active");
   renderTable();
 }
 
 // ════ DATA FETCHING ════
-
-// Step 1: Kitty companies from /portfolio endpoint
-async function fetchKittyCompanies(){
-  const ownerIds=cloneHead?HEAD_OWNERS[cloneHead]||[]:REGISTRY_IDS;
-  const res=await fetch("/portfolio",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ownerIds})});
-  if(!res.ok){const t=await res.text();throw new Error(`Portfolio API ${res.status}: ${t}`);}
-  const data=await res.json();
-  return data.companies||[];
-}
-
-// Step 2: Deal history — 365 days back from anchor date
-// Uses /api (existing deal search proxy) — same endpoint as Nexus
-async function fetchDealHistory(){
-  const idx={};
-  // Compute cutoff: anchor minus 365 days
+// Fetches all closed/won deals from the last 365 days via /api proxy.
+// Single filterGroup — closedate GTE cutoff.
+// effectiveDate fallback (closedate || createdate) handled client-side.
+// No NOT_HAS_PROPERTY operator — that caused the 400 error in v1.
+async function fetchDeals(){
   const cutoff=new Date(ANCHOR);
   cutoff.setDate(cutoff.getDate()-365);
   const cutoffStr=cutoff.toISOString().split("T")[0];
 
+  // Build the client map: billingKey → {name, owner_id, head, bu, lastDate}
+  const map={};
   let after=null;
+
   do{
     const body={
       filterGroups:[{
         filters:[
-          {propertyName:"pipeline",   operator:"EQ", value:PIPELINE},
-          {propertyName:"dealstage",  operator:"EQ", value:STAGE},
-          {propertyName:"closedate",  operator:"GTE",value:cutoffStr}
-        ]
-      },{
-        // Also catch online orders without closedate — use createdate fallback
-        filters:[
-          {propertyName:"pipeline",    operator:"EQ", value:PIPELINE},
-          {propertyName:"dealstage",   operator:"EQ", value:STAGE},
-          {propertyName:"createdate",  operator:"GTE",value:cutoffStr},
-          {propertyName:"closedate",   operator:"NOT_HAS_PROPERTY"}
+          {propertyName:"pipeline",  operator:"EQ", value:PIPELINE},
+          {propertyName:"dealstage", operator:"EQ", value:STAGE},
+          {propertyName:"closedate", operator:"GTE",value:cutoffStr}
         ]
       }],
       properties:[
         "dealname",
+        "hubspot_owner_id",
         "company_name__invoice_app_",
         "zoho_display_name__invoice_app_",
         "contact_name__invoice_app_",
+        "zoho_billing_id__invoice_app_",
         "closedate",
         "createdate",
-        "amount_in_home_currency",
-        "engagement_model__invoice_app_"
+        "amount_in_home_currency"
       ],
       limit:200,
       sorts:[{propertyName:"closedate",direction:"DESCENDING"}]
@@ -528,40 +565,65 @@ async function fetchDealHistory(){
     if(after)body.after=after;
 
     const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok)throw new Error(`Deal API ${res.status}`);
+    if(!res.ok){
+      const txt=await res.text();
+      throw new Error(`Deal API ${res.status}: ${txt}`);
+    }
     const data=await res.json();
 
     (data.results||[]).forEach(r=>{
-      // Exclusions — mirror Nexus
-      const co=(r.properties?.company_name__invoice_app_||"").trim();
+      const p=r.properties||{};
+
+      // Exclusions — mirror Nexus exactly
+      const co=(p.company_name__invoice_app_||"").trim();
       if(["InboxArmy","Uplers","Solomax","Wallet","Special Engagement"].some(x=>co.includes(x)))return;
 
-      // Effective date: closedate || createdate
-      const cd=(r.properties?.closedate||"").split("T")[0];
-      const cre=(r.properties?.createdate||"").split("T")[0];
+      // Owner must be in registry
+      const ownerId=String(p.hubspot_owner_id||"").trim();
+      if(!REGISTRY_ID_SET.has(ownerId))return;
+
+      // Effective date: closedate || createdate (Krishna-confirmed fallback)
+      const cd=(p.closedate||"").split("T")[0];
+      const cre=(p.createdate||"").split("T")[0];
       const effStr=cd||cre;
       if(!effStr)return;
       const effDate=new Date(effStr+"T00:00:00");
       if(isNaN(effDate))return;
 
-      // Index by all name variants
-      const names=new Set();
-      const zoho=(r.properties?.zoho_display_name__invoice_app_||"").trim();
-      const contact=(r.properties?.contact_name__invoice_app_||"").trim();
-      const company=(r.properties?.company_name__invoice_app_||"").trim();
-      if(zoho)names.add(normName(zoho));
-      if(contact)names.add(normName(contact));
-      if(company)names.add(normName(company));
+      // Client identity key: zoho_billing_id preferred, else normalised display name
+      const billingId=(p.zoho_billing_id__invoice_app_||"").trim();
+      const zoho=(p.zoho_display_name__invoice_app_||"").trim();
+      const contact=(p.contact_name__invoice_app_||"").trim();
+      const displayName=zoho||contact||co||"Unknown";
+      const clientKey=billingId?`bid:${billingId}`:`name:${normName(displayName)}`;
 
-      names.forEach(key=>{
-        if(!idx[key]||effDate>idx[key])idx[key]=effDate;
-      });
+      // Head + BU from owner registry (attribution is owner-based, never deal-field-based)
+      const head=OWNER_HEAD_MAP[ownerId]||"Tanuj Gupta";
+      const bu=OWNER_BU_MAP[ownerId]||"Digital";
+
+      if(!map[clientKey]){
+        map[clientKey]={
+          key:clientKey,
+          name:displayName,
+          owner_id:ownerId,
+          head,
+          bu,
+          lastDate:effDate
+        };
+      }else{
+        // Keep latest effectiveDate across deals
+        if(effDate>map[clientKey].lastDate)map[clientKey].lastDate=effDate;
+        // Owner attribution: keep the owner of the most recent deal (already done by DESCENDING sort)
+        // but since we update lastDate conditionally, also update head/bu if this is a newer deal
+        // Actually: since deals arrive DESCENDING, first encounter = most recent owner — keep it.
+        // No update needed; just update lastDate.
+      }
     });
 
     after=data.paging?.next?.after||null;
   }while(after);
 
-  return idx;
+  return map;
 }
 
 // ════ MAIN SYNC ════
@@ -573,15 +635,18 @@ async function doSync(force=false){
   $("lo").classList.add("show");
   $("rfbtn").disabled=true;
   $("err-bar").style.display="none";
-  ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
+  ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{
+    const el=$(id);if(el)el.textContent="…";
+  });
 
   try{
-    [kittyCompanies,dealIndex]=await Promise.all([fetchKittyCompanies(),fetchDealHistory()]);
-    console.log(`[Portfolio] ${kittyCompanies.length} kitty companies | ${Object.keys(dealIndex).length} deal index entries`);
+    clientMap=await fetchDeals();
+    const total=Object.keys(clientMap).length;
+    console.log(`[Portfolio] ${total} unique clients from deal history`);
     renderAll();
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
-    $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
+    $("stxt").textContent=`LIVE · ${total} CLIENTS`;
   }catch(e){
     console.error(e);
     $("err-msg").textContent=e.message;
@@ -596,66 +661,71 @@ async function doSync(force=false){
 }
 
 // ════ RENDER ════
-function renderAll(){
-  const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
-  const classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
-
-  const total=classified.length;
-  const n=s=>classified.filter(c=>c.status===s).length;
-  $("k-total").textContent   =total.toLocaleString();
-  $("k-active").textContent  =n("active").toLocaleString();
-  $("k-silent").textContent  =n("silent").toLocaleString();
-  $("k-inactive").textContent=n("inactive").toLocaleString();
-  $("k-lost").textContent    =n("lost").toLocaleString();
-  $("k-active-sub").textContent=`Revenue since ${ANCHOR_STR} (−90d)`;
-  $("table-meta").textContent=`${total.toLocaleString()} clients · anchor ${ANCHOR_STR} · ${activeBU||"All BUs"}`;
-  renderTable(classified);
+function view(){
+  // Returns filtered client array based on activeBU and cloneHead
+  let clients=Object.values(clientMap);
+  if(cloneHead)clients=clients.filter(c=>c.head===cloneHead);
+  if(activeBU)clients=clients.filter(c=>c.bu===activeBU);
+  return clients;
 }
 
-function renderTable(classified){
-  if(!classified){
-    const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
-    classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
-  }
-  const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
-  let totals={kitty:0,active:0,silent:0,inactive:0,lost:0,never:0};
+function renderAll(){
+  const clients=view();
+  const total=clients.length;
+  const n=s=>clients.filter(c=>classify(c.lastDate)===s).length;
+
+  $("k-total").textContent    =total.toLocaleString();
+  $("k-active").textContent   =n("active").toLocaleString();
+  $("k-silent").textContent   =n("silent").toLocaleString();
+  $("k-inactive").textContent =n("inactive").toLocaleString();
+  $("k-lost").textContent     =n("lost").toLocaleString();
+  $("k-active-sub").textContent=`Revenue since ${ANCHOR_STR} (−90d)`;
+  $("k-total-sub").textContent =`Unique clients · anchor ${ANCHOR_STR}`;
+  $("table-meta").textContent  =`${total.toLocaleString()} clients · anchor ${ANCHOR_STR}${activeBU?" · "+activeBU+" BU":""}`;
+  renderTable();
+}
+
+function renderTable(){
+  const clients=view();
+  // Attach status to each client
+  const withStatus=clients.map(c=>({...c,status:classify(c.lastDate)}));
+
+  const headsToShow=cloneHead
+    ?HEADS_CFG.filter(h=>h.name===cloneHead)
+    :HEADS_CFG;
+
+  let totals={kitty:0,active:0,silent:0,inactive:0,lost:0};
   let html="";
 
   headsToShow.forEach((hcfg,ri)=>{
-    const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
-    const hc=classified.filter(c=>ownerSet.has(c.owner_id));
+    // All clients attributed to this head (after BU filter already applied in view())
+    const hc=withStatus.filter(c=>c.head===hcfg.name);
     const agg={
-      kitty:hc.length,
-      active:hc.filter(c=>c.status==="active").length,
-      silent:hc.filter(c=>c.status==="silent").length,
+      kitty   :hc.length,
+      active  :hc.filter(c=>c.status==="active").length,
+      silent  :hc.filter(c=>c.status==="silent").length,
       inactive:hc.filter(c=>c.status==="inactive").length,
-      lost:hc.filter(c=>c.status==="lost").length,
-      never:hc.filter(c=>c.status==="never").length
+      lost    :hc.filter(c=>c.status==="lost").length
     };
     Object.keys(totals).forEach(k=>totals[k]+=agg[k]);
 
-    // Owner drilldown rows
-    const ownerRows=[];
-    (HEAD_OWNERS[hcfg.name]||[]).forEach(oid=>{
-      const oc=hc.filter(c=>c.owner_id===oid);
-      if(!oc.length)return;
-      ownerRows.push({
-        name:OWNER_NAME[oid]||oid,
-        kitty:oc.length,
-        active:oc.filter(c=>c.status==="active").length,
-        silent:oc.filter(c=>c.status==="silent").length,
-        inactive:oc.filter(c=>c.status==="inactive").length,
-        lost:oc.filter(c=>c.status==="lost").length,
-        never:oc.filter(c=>c.status==="never").length
-      });
+    // Owner drilldown rows — group clients by owner_id
+    const ownerAgg={};
+    hc.forEach(c=>{
+      const oid=c.owner_id;
+      if(!ownerAgg[oid])ownerAgg[oid]={kitty:0,active:0,silent:0,inactive:0,lost:0};
+      ownerAgg[oid].kitty++;
+      ownerAgg[oid][c.status]=(ownerAgg[oid][c.status]||0)+1;
     });
-    ownerRows.sort((a,b)=>b.kitty-a.kitty);
+    const ownerRows=Object.entries(ownerAgg)
+      .map(([oid,o])=>({name:OWNER_NAME[oid]||oid,...o}))
+      .sort((a,b)=>b.kitty-a.kitty);
 
     const rowId=`hr-${ri}`;
     const buColor=hcfg.bu==="MarTech"?"#EEE8FF":"#E6F2FF";
     const buText =hcfg.bu==="MarTech"?"#5B3B8C":"#006E5E";
 
-    html+=`<tr id="row-${rowId}" onclick="toggleOwners('${rowId}')" style="cursor:pointer">
+    html+=`<tr id="row-${rowId}" onclick="toggleOwners('${rowId}')">
       <td><span class="head-badge"><span class="head-dot" style="background:${hcfg.color}"></span>${hcfg.name}<span class="expand-arrow" id="arr-${rowId}">▶</span></span></td>
       <td><span class="bu-pill" style="background:${buColor};color:${buText}">${hcfg.bu}</span></td>
       <td class="num cnt-total">${agg.kitty}</td>
@@ -663,7 +733,6 @@ function renderTable(classified){
       <td class="num cnt-silent">${agg.silent}</td>
       <td class="num cnt-inactive">${agg.inactive}</td>
       <td class="num cnt-lost">${agg.lost}</td>
-      <td class="num cnt-never">${agg.never}</td>
       <td>${healthBar(agg)}</td>
     </tr>`;
 
@@ -677,7 +746,6 @@ function renderTable(classified){
           <td class="num cnt-silent">${o.silent||"—"}</td>
           <td class="num cnt-inactive">${o.inactive||"—"}</td>
           <td class="num cnt-lost">${o.lost||"—"}</td>
-          <td class="num cnt-never">${o.never||"—"}</td>
           <td>${healthBar(o)}</td>
         </tr>`;
       });
@@ -685,7 +753,7 @@ function renderTable(classified){
     }
   });
 
-  // Grand total
+  // Grand total row
   html+=`<tr class="total-row">
     <td style="font-size:10px;letter-spacing:.06em;text-transform:uppercase">Grand Total</td><td></td>
     <td class="num cnt-total">${totals.kitty}</td>
@@ -693,7 +761,6 @@ function renderTable(classified){
     <td class="num cnt-silent">${totals.silent}</td>
     <td class="num cnt-inactive">${totals.inactive}</td>
     <td class="num cnt-lost">${totals.lost}</td>
-    <td class="num cnt-never">${totals.never}</td>
     <td>${healthBar(totals)}</td>
   </tr>`;
 
@@ -704,11 +771,10 @@ function healthBar(agg){
   const t=agg.kitty||1;
   const pct=k=>((agg[k]||0)/t*100).toFixed(1);
   return`<div class="hbar-wrap">
-    <div class="hbar-seg" style="width:${pct("active")}%;background:#006E5E" title="Active ${pct("active")}%"></div>
-    <div class="hbar-seg" style="width:${pct("silent")}%;background:#FFDA30" title="Silent ${pct("silent")}%"></div>
+    <div class="hbar-seg" style="width:${pct("active")}%;background:#006E5E"   title="Active ${pct("active")}%"></div>
+    <div class="hbar-seg" style="width:${pct("silent")}%;background:#FFDA30"   title="Silent ${pct("silent")}%"></div>
     <div class="hbar-seg" style="width:${pct("inactive")}%;background:#EF2D56" title="Inactive ${pct("inactive")}%"></div>
-    <div class="hbar-seg" style="width:${pct("lost")}%;background:#696969" title="Lost ${pct("lost")}%"></div>
-    <div class="hbar-seg" style="width:${pct("never")}%;background:#5B3B8C" title="Never ${pct("never")}%"></div>
+    <div class="hbar-seg" style="width:${pct("lost")}%;background:#696969"     title="Lost ${pct("lost")}%"></div>
   </div>`;
 }
 
@@ -723,7 +789,6 @@ function toggleOwners(rowId){
 
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",function(){
-  // Set dynamic anchor chip
   $("anchor-chip").textContent=`Anchor: ${ANCHOR_STR}`;
   bootCloneMode();
   doSync(true);
