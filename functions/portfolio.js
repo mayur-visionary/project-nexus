@@ -40,7 +40,8 @@ export async function onRequestPost(context) {
           "name",
           "hubspot_owner_id",
           "business_unit",
-          "createdate"
+          "createdate",
+          "recent_deal_close_date"
         ],
         limit: 200,
         sorts: [{ propertyName: "name", direction: "ASCENDING" }]
@@ -70,7 +71,8 @@ export async function onRequestPost(context) {
           name: r.properties?.name || "",
           owner_id: ownerId,
           business_unit: r.properties?.business_unit || "",
-          createdate: (r.properties?.createdate || "").split("T")[0]
+          createdate: (r.properties?.createdate || "").split("T")[0],
+          recent_deal_close_date: (r.properties?.recent_deal_close_date || "").split("T")[0]
         });
       });
 
