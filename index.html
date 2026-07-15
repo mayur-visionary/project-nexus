@@ -2650,7 +2650,7 @@ function buildClubData(filteredDeals){
     if(d.bu)cmap[d.billing_id].bus.add(d.bu);
   });
   return Object.values(cmap).map(c=>{
-    const tier=c.total>20000?'Premier':c.total>10000?'Select':c.total>5000?'Core':c.total>0?'Base':null;
+    const tier=c.total>=20000?'Premier':c.total>=15000?'Select':c.total>=10000?'Core':c.total>=5000?'Base':null;
     return{billing_id:c.billing_id,name:c.name,total:c.total,regions:[...c.regions],bus:[...c.bus],tier};
   }).filter(c=>c.tier!==null).sort((a,b)=>b.total-a.total);
 }
@@ -2718,10 +2718,10 @@ function renderSparkline(values,color,w,h){
 // ── Render: Tier KPI Cards ──
 function renderTierCards(data,trend,fyMonths){
   const TIERS=[
-    {key:'Premier',range:'>$20k',color:'#3B3561'},
-    {key:'Select', range:'$10k–$20k',color:'#FFDA30'},
-    {key:'Core',   range:'$5k–$10k', color:'#5C5C5C'},
-    {key:'Base',   range:'$0–$5k',   color:'#9A9A9A'}
+    {key:'Premier',range:'≥$20k',    color:'#3B3561'},
+  {key:'Select', range:'$15k–$20k',color:'#FFDA30'},
+  {key:'Core',   range:'$10k–$15k',color:'#5C5C5C'},
+  {key:'Base',   range:'$5k–$10k', color:'#9A9A9A'}
   ];
   $('tier-grid').innerHTML=TIERS.map(t=>{
     const clients=data.filter(c=>c.tier===t.key);
