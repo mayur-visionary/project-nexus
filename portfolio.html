@@ -195,27 +195,34 @@ tbody td.num{text-align:right;font-weight:700}
 .rec-zero{text-align:center;padding:24px;color:#9A9A9A;font-size:11px;font-weight:500}
 @media(max-width:900px){.recovery-strip{grid-template-columns:1fr}}
 
-/* ── Portfolio Health Donut ── */
-.donut-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.donut-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:20px 16px;text-align:center;transition:box-shadow .2s;position:relative}
-.donut-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
-.donut-head-lbl{font-size:10px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
-.donut-wrap{position:relative;width:130px;height:130px;margin:0 auto 14px}
+/* Portfolio Health Donut - rebuilt */
+.donut-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:24px}
+.donut-card{background:#fff;border-radius:18px;border:1px solid #E8E8E8;border-left:5px solid #E2E2E2;padding:28px 24px 22px;text-align:center;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.34,1.2,.64,1),box-shadow .28s ease;cursor:default}
+.donut-card::after{content:'';position:absolute;inset:0;border-radius:18px;background:radial-gradient(ellipse at 50% 0%,rgba(255,218,48,.06),transparent 65%);pointer-events:none;opacity:0;transition:opacity .3s}
+.donut-card:hover{transform:translateY(-6px) scale(1.012);box-shadow:0 20px 48px rgba(67,67,67,.14)}
+.donut-card:hover::after{opacity:1}
+.donut-card[data-head="jaydeep"]{border-left-color:#3B3561}
+.donut-card[data-head="jiggyasa"]{border-left-color:#FFDA30}
+.donut-card[data-head="tanuj"]{border-left-color:#006E5E}
+.donut-head-lbl{display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px}
+.donut-head-badge{display:inline-block;font-size:8px;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em}
+.donut-wrap{position:relative;width:164px;height:164px;margin:0 auto 22px}
 .donut-wrap svg{transform:rotate(-90deg);display:block}
-.donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;gap:0}
-.donut-score{font-size:20px;font-weight:800;line-height:1}
-.donut-score-lbl{font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
-.donut-kitty-count{font-size:8.5px;font-weight:600;color:#C0C0C0;margin-top:3px}
-.donut-legend{display:flex;flex-direction:column;gap:5px}
-.donut-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:3px 6px;border-radius:4px;transition:background .15s}
-.donut-row:hover{background:#F7F7F7}
-.donut-row-left{display:flex;align-items:center;gap:6px}
-.donut-seg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-.donut-seg-lbl{font-size:9.5px;font-weight:600;color:#434343}
-.donut-seg-cnt{font-size:9.5px;font-weight:800;color:#434343}
-.donut-seg-pct{font-size:8.5px;font-weight:500;color:#9A9A9A;min-width:28px;text-align:right}
-@media(max-width:1100px){.donut-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.donut-grid{grid-template-columns:1fr}}
+.donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-score{font-size:30px;font-weight:800;line-height:1;transition:color .4s}
+.donut-score-lbl{font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-top:3px}
+.donut-kitty-count{font-size:9px;font-weight:600;color:#C0C0C0;margin-top:5px}
+.donut-legend{display:flex;flex-direction:column;gap:2px;text-align:left}
+.donut-legend-row{display:grid;grid-template-columns:10px 1fr auto auto;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .15s}
+.donut-legend-row:hover{background:#F7F7F7}
+.donut-legend-row.seg-highlight{background:#F0FAF7}
+.donut-seg-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.donut-seg-lbl{font-size:10px;font-weight:600;color:#434343}
+.donut-seg-cnt{font-size:10px;font-weight:800;color:#434343;text-align:right}
+.donut-seg-pct{font-size:9px;font-weight:500;color:#9A9A9A;text-align:right;min-width:36px}
+.donut-arc-group{cursor:pointer}
+@media(max-width:1000px){.donut-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.donut-grid{grid-template-columns:1fr}}
 
 /* ── At-Risk Radar ── */
 .radar-banner{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-left:4px solid #FFDA30;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -1370,9 +1377,15 @@ function buildDonutArcs(segments,r){
 
 function renderHealthDonuts(classified){
   const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
-  const R=52,CX=65,CY=65,SW=13; // radius, centre x/y, stroke-width
+  // Geometry: larger ring, thinner stroke for elegance
+  const R=66,CX=82,CY=82,SW=9;
   const VIEWBOX=`0 0 ${CX*2} ${CY*2}`;
-  const CIRC=2*Math.PI*R;
+  // Head badge styling
+  const HEAD_BADGE={
+    "jaydeep": {bg:"#EEE8FF",color:"#3B3561"},
+    "jiggyasa":{bg:"#FFFBEA",color:"#A07A00"},
+    "tanuj":   {bg:"#E6F4F1",color:"#006E5E"}
+  };
 
   const cards=headsToShow.map(hcfg=>{
     const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
@@ -1381,50 +1394,68 @@ function renderHealthDonuts(classified){
     if(!total)return null;
 
     const counts={
-      active :hc.filter(c=>c.status==="active").length,
-      silent :hc.filter(c=>c.status==="silent").length,
+      active  :hc.filter(c=>c.status==="active").length,
+      silent  :hc.filter(c=>c.status==="silent").length,
       inactive:hc.filter(c=>c.status==="inactive").length,
-      lost   :hc.filter(c=>c.status==="lost").length,
-      never  :hc.filter(c=>c.status==="never").length
+      lost    :hc.filter(c=>c.status==="lost").length,
+      never   :hc.filter(c=>c.status==="never").length
     };
 
-    const segments=["active","silent","inactive","lost","never"]
-      .map(k=>({key:k,count:counts[k]}));
-    const arcs=buildDonutArcs(segments,R);
-
     const score=Math.round(((counts.active*4)+(counts.silent*2)+(counts.inactive*1))/(total*4)*100);
-    const scoreCol=score>=75?"#006E5E":score>=50?"#FFDA30":score>=25?"#EF2D56":"#696969";
+    const scoreCol=score>=75?"#006E5E":score>=50?"#A07A00":score>=25?"#EF2D56":"#696969";
+    const badge=HEAD_BADGE[hcfg.id]||{bg:"#F2F2F2",color:"#696969"};
 
-    // SVG arc paths
-    const arcsSVG=arcs.map(a=>`
-      <circle cx="${CX}" cy="${CY}" r="${R}"
-        fill="none" stroke="${a.color}" stroke-width="${SW}"
-        stroke-dasharray="${a.len.toFixed(2)} ${a.circ.toFixed(2)}"
-        stroke-dashoffset="${(-a.offset).toFixed(2)}"
-        stroke-linecap="butt"/>`).join("");
+    // Build arcs — thinner stroke, small gap
+    const CIRC=2*Math.PI*R;
+    const GAP=1.5;
+    let offset=0;
+    const STATUS_ORDER=["active","silent","inactive","lost","never"];
+    const arcsSVG=STATUS_ORDER.map(key=>{
+      const count=counts[key];
+      if(!count)return"";
+      const frac=count/total;
+      const len=Math.max(0,(frac*CIRC)-GAP);
+      const dashOffset=(-offset).toFixed(2);
+      offset+=frac*CIRC;
+      const uid=`arc-${hcfg.id}-${key}`;
+      return`<circle
+        id="${uid}"
+        cx="${CX}" cy="${CY}" r="${R}"
+        fill="none" stroke="${DONUT_COLORS[key]}" stroke-width="${SW}"
+        stroke-dasharray="${len.toFixed(2)} ${CIRC.toFixed(2)}"
+        stroke-dashoffset="${dashOffset}"
+        stroke-linecap="butt"
+        class="donut-arc-group"
+        onclick="donutSegClick('${hcfg.id}','${key}',this)"
+        style="cursor:pointer;transition:opacity .2s,stroke-width .2s"/>`;
+    }).join("");
 
-    // Legend rows
-    const legendRows=segments.filter(s=>s.count>0).map(s=>{
-      const pct=total>0?((s.count/total)*100).toFixed(1):"0";
-      return`<div class="donut-row">
-        <div class="donut-row-left">
-          <div class="donut-seg-dot" style="background:${DONUT_COLORS[s.key]}"></div>
-          <span class="donut-seg-lbl">${DONUT_LABELS[s.key]}</span>
-        </div>
-        <span class="donut-seg-cnt">${s.count}</span>
+    // Legend rows — interactive, aligned grid
+    const legendRows=STATUS_ORDER.filter(k=>counts[k]>0).map(key=>{
+      const pct=total>0?((counts[key]/total)*100).toFixed(1):"0";
+      const label={active:"Active",silent:"Silent",inactive:"Inactive",lost:"Org. Lost",never:"Never"}[key];
+      return`<div class="donut-legend-row" id="leg-${hcfg.id}-${key}"
+        onclick="donutSegClick('${hcfg.id}','${key}',null)"
+        title="Click to highlight ${label}">
+        <div class="donut-seg-dot" style="background:${DONUT_COLORS[key]}"></div>
+        <span class="donut-seg-lbl">${label}</span>
+        <span class="donut-seg-cnt">${counts[key].toLocaleString()}</span>
         <span class="donut-seg-pct">${pct}%</span>
       </div>`;
     }).join("");
 
-    return`<div class="donut-card">
-      <div class="donut-head-lbl">${hcfg.name.split(" ")[0]}<span style="font-weight:500;color:#9A9A9A;font-size:9px"> · ${hcfg.bu}</span></div>
+    return`<div class="donut-card" data-head="${hcfg.id}" id="dcard-${hcfg.id}">
+      <div class="donut-head-lbl">
+        <span>${hcfg.name.split(" ")[0]}</span>
+        <span class="donut-head-badge" style="background:${badge.bg};color:${badge.color}">${hcfg.bu}</span>
+      </div>
       <div class="donut-wrap">
         <svg width="${CX*2}" height="${CY*2}" viewBox="${VIEWBOX}" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#F2F2F2" stroke-width="${SW}"/>
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#F0F0F0" stroke-width="${SW}"/>
           ${arcsSVG}
         </svg>
         <div class="donut-centre">
-          <div class="donut-score" style="color:${scoreCol}">${score}%</div>
+          <div class="donut-score" id="dscore-${hcfg.id}" style="color:${scoreCol}" data-target="${score}">0%</div>
           <div class="donut-score-lbl">Health</div>
           <div class="donut-kitty-count">${total.toLocaleString()} Kitty</div>
         </div>
@@ -1434,7 +1465,53 @@ function renderHealthDonuts(classified){
   }).filter(Boolean);
 
   $("donut-grid").innerHTML=cards.join("")||
-    `<div style="grid-column:1/-1;text-align:center;padding:32px;color:#9A9A9A;font-size:11px;font-weight:500">No data for selected filters.</div>`;
+    `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-size:11px;font-weight:500">No data for selected filters.</div>`;
+
+  // Animate score count-up after render
+  requestAnimationFrame(()=>animateScores());
+}
+
+// Animate health score from 0 → target on each render
+function animateScores(){
+  document.querySelectorAll(".donut-score[data-target]").forEach(el=>{
+    const target=parseInt(el.getAttribute("data-target"),10);
+    const color=el.style.color;
+    let current=0;
+    const step=Math.max(1,Math.ceil(target/30));
+    el.textContent="0%";
+    const timer=setInterval(()=>{
+      current=Math.min(current+step,target);
+      el.textContent=current+"%";
+      if(current>=target)clearInterval(timer);
+    },22);
+  });
+}
+
+// Interactive segment click — highlights arc + legend row, dims others
+const _donutActiveSegs={};
+function donutSegClick(headId,key,arcEl){
+  const card=$(`dcard-${headId}`);
+  if(!card)return;
+  const prev=_donutActiveSegs[headId];
+  // Toggle off if same segment clicked again
+  if(prev===key){
+    delete _donutActiveSegs[headId];
+    // Reset all arcs and legend rows for this card
+    card.querySelectorAll(".donut-arc-group").forEach(c=>{c.style.opacity="1";c.style.strokeWidth="";});
+    card.querySelectorAll(".donut-legend-row").forEach(r=>r.classList.remove("seg-highlight"));
+    return;
+  }
+  _donutActiveSegs[headId]=key;
+  // Highlight selected arc, dim others
+  card.querySelectorAll(".donut-arc-group").forEach(c=>{
+    const isSelected=c.id===`arc-${headId}-${key}`;
+    c.style.opacity=isSelected?"1":"0.22";
+    c.style.strokeWidth=isSelected?String(parseFloat(c.getAttribute("stroke-width")||9)+2):"";
+  });
+  // Highlight selected legend row
+  card.querySelectorAll(".donut-legend-row").forEach(r=>{
+    r.classList.toggle("seg-highlight",r.id===`leg-${headId}-${key}`);
+  });
 }
 
 function scoreColor(pct){
