@@ -363,9 +363,24 @@ tbody td.num{text-align:right;font-weight:700}
     </div>
   </div>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; PORTFOLIO HEALTH &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  <!-- ══ KITTY PORTFOLIO TREND ══ -->
+  <div class="sec" style="margin-top:24px">Portfolio Health Trend · FY 2026 (Apr → present)</div>
+  <div class="tcard" style="margin-bottom:24px">
+    <div class="tcard-hdr">
+      <div class="tcard-ttl">
+        <h3>Kitty Status Month-on-Month</h3>
+        <p id="trend-meta">Total Kitty · Active · Silent · Inactive · Organic Lost</p>
+      </div>
+    </div>
+    <div style="padding:16px 18px">
+      <div style="position:relative;height:280px"><canvas id="kitty-trend-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ════════════════════════════════════════════════
 // PORTFOLIO HEALTH — MAVLERS
@@ -631,6 +646,9 @@ function renderAll(revMap){
     const recovery=buildRecovery(allClassified,revMap);
     renderRecovery(recovery);
   }
+
+  // Trend — always uses full kitty universe regardless of BU toggle
+  renderKittyTrend(kittyCompanies);
 
   renderTable(classified);
 }
@@ -933,6 +951,99 @@ function renderRecoveryDetail(type){
         <tbody>${rowsHTML}</tbody>
       </table>
     </div>`;
+}
+
+// ════ PORTFOLIO HEALTH TREND ════
+// Reconstructs month-on-month kitty status counts from Apr 2026 → today.
+// Uses classifyWithAnchor() against month-end anchors — no additional API calls.
+// April 2026 is the FY start. New months are appended automatically.
+
+let kittyTrendChart=null;
+
+// Build month-end anchor dates from Apr 2026 → current month
+function getTrendMonths(){
+  const now=new Date();
+  const months=[];
+  // Apr 2026 = index 3, year 2026
+  let yr=2026,m=3; // April
+  while(yr<now.getFullYear()||(yr===now.getFullYear()&&m<=now.getMonth())){
+    months.push({
+      label:`${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m]} ${yr}`,
+      anchor:m===now.getMonth()&&yr===now.getFullYear()
+        ? new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0) // today for current month
+        : new Date(yr,m+1,1,0,0,0,0) // 1st of next month = end of this month
+    });
+    m++;if(m>11){m=0;yr++;}
+  }
+  return months;
+}
+
+function buildTrendData(companies){
+  const months=getTrendMonths();
+  return months.map(({label,anchor})=>{
+    let total=0,active=0,silent=0,inactive=0,lost=0,never=0;
+    companies.forEach(c=>{
+      total++;
+      const s=classifyWithAnchor(c,anchor);
+      if(s==="active")active++;
+      else if(s==="silent")silent++;
+      else if(s==="inactive")inactive++;
+      else if(s==="lost")lost++;
+      else never++;
+    });
+    return{label,total,active,silent,inactive,lost,never};
+  });
+}
+
+function renderKittyTrend(companies){
+  const ctx=$("kitty-trend-chart")?.getContext("2d");
+  if(!ctx)return;
+  if(kittyTrendChart){kittyTrendChart.destroy();kittyTrendChart=null;}
+
+  const data=buildTrendData(companies);
+  const labels=data.map(d=>d.label);
+  const FONT={family:"Montserrat",size:9};
+  const TICK={font:FONT,color:"#9A9A9A"};
+  const GRID={color:"rgba(0,0,0,0.04)"};
+
+  kittyTrendChart=new Chart(ctx,{
+    type:"line",
+    data:{
+      labels,
+      datasets:[
+        {label:"Total Kitty",  data:data.map(d=>d.total),   borderColor:"#434343",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#434343",tension:0.3,borderDash:[4,3]},
+        {label:"Active",       data:data.map(d=>d.active),  borderColor:"#006E5E",backgroundColor:"rgba(0,110,94,0.06)",borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#006E5E",tension:0.3,fill:false},
+        {label:"Silent",       data:data.map(d=>d.silent),  borderColor:"#FFDA30",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#FFDA30",tension:0.3},
+        {label:"Inactive",     data:data.map(d=>d.inactive),borderColor:"#EF2D56",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#EF2D56",tension:0.3},
+        {label:"Organic Lost", data:data.map(d=>d.lost),    borderColor:"#696969",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#696969",tension:0.3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{
+          position:"bottom",
+          labels:{font:FONT,color:"#434343",boxWidth:12,padding:16,usePointStyle:true}
+        },
+        tooltip:{
+          bodyFont:{family:"Montserrat",size:10},
+          titleFont:{family:"Montserrat",size:10,weight:"700"},
+          padding:10,cornerRadius:6,
+          callbacks:{
+            label:c=>`  ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
+          }
+        }
+      },
+      scales:{
+        x:{ticks:TICK,grid:GRID,border:{display:false}},
+        y:{ticks:{...TICK,callback:v=>v.toLocaleString()},grid:GRID,border:{display:false},
+           title:{display:true,text:"Clients",font:FONT,color:"#9A9A9A"}}
+      }
+    }
+  });
+
+  $("trend-meta").textContent=`${data.length} months · Apr 2026 → ${data[data.length-1].label} · ${companies.length.toLocaleString()} kitty clients`;
 }
 
 // ════ BOOT ════
