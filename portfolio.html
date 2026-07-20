@@ -140,6 +140,34 @@ tbody td.num{text-align:right;font-weight:700}
 .leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#696969;text-transform:uppercase;letter-spacing:.06em}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
+/* ── Client Recovery Intelligence ── */
+.recovery-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px}
+.rec-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;position:relative;transition:box-shadow .2s}
+.rec-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
+.rec-silent{border-top:3px solid #FFDA30}
+.rec-inactive{border-top:3px solid #EF2D56}
+.rec-lost{border-top:3px solid #696969}
+.rec-arrow{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:8px}
+.rec-silent .rec-arrow{color:#A07A00}
+.rec-inactive .rec-arrow{color:#C0143C}
+.rec-lost .rec-arrow{color:#696969}
+.rec-count{font-size:36px;font-weight:800;color:#434343;line-height:1;margin-bottom:2px}
+.rec-lbl{font-size:9px;font-weight:600;color:#9A9A9A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.rec-rev{font-size:16px;font-weight:800;color:#006E5E;margin-bottom:2px}
+.rec-sublbl{font-size:9px;font-weight:500;color:#9A9A9A;margin-bottom:14px}
+.rec-toggle{width:100%;padding:6px 0;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s}
+.rec-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
+.rec-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
+.rec-detail{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:12px}
+.rec-detail table{min-width:500px;font-size:11px}
+.rec-detail thead th{padding:8px 14px;background:#F7F7F7;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;text-align:left}
+.rec-detail thead th.num{text-align:right}
+.rec-detail tbody td{padding:8px 14px;border-bottom:1px solid #F5F5F5;white-space:nowrap}
+.rec-detail tbody td.num{text-align:right;font-weight:700}
+.rec-detail tbody tr:hover td{background:#FFFBEA}
+.rec-zero{text-align:center;padding:24px;color:#9A9A9A;font-size:11px;font-weight:500}
+@media(max-width:900px){.recovery-strip{grid-template-columns:1fr}}
+
 /* ── Footer ── */
 .footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
@@ -250,7 +278,7 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="kpi k-inactive">
       <div class="kpi-lbl">Inactive</div>
       <div class="kpi-val" id="k-inactive">—</div>
-      <div class="kpi-sub">181–364 days no revenue</div>
+      <div class="kpi-sub">181–365 days no revenue</div>
     </div>
     <div class="kpi k-lost">
       <div class="kpi-lbl">Organic Lost</div>
@@ -263,9 +291,45 @@ tbody td.num{text-align:right;font-weight:700}
   <div class="legend">
     <div class="leg-item"><div class="leg-dot" style="background:#006E5E"></div>Active (≤90 days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#FFDA30"></div>Silent (91–180 days)</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#EF2D56"></div>Inactive (181–364 days)</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (365+ days)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#EF2D56"></div>Inactive (181–365 days)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (366+ days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#5B3B8C"></div>Never Active</div>
+  </div>
+
+  <!-- ══ CLIENT RECOVERY INTELLIGENCE ══ -->
+  <div class="sec" style="margin-top:8px">Client Recovery · <span id="recovery-period-label" style="font-weight:600;color:#434343;text-transform:none;letter-spacing:0;font-size:11px"></span></div>
+  <div class="recovery-strip" id="recovery-strip">
+    <div class="rec-card rec-silent" id="rec-silent-card">
+      <div class="rec-arrow">Silent → Active</div>
+      <div class="rec-count" id="rec-silent-count">—</div>
+      <div class="rec-lbl">clients recovered</div>
+      <div class="rec-rev" id="rec-silent-rev">—</div>
+      <div class="rec-sublbl">revenue this month</div>
+      <button class="rec-toggle" id="rec-silent-btn" onclick="toggleRecovery('silent')">Show Clients ▾</button>
+    </div>
+    <div class="rec-card rec-inactive" id="rec-inactive-card">
+      <div class="rec-arrow">Inactive → Active</div>
+      <div class="rec-count" id="rec-inactive-count">—</div>
+      <div class="rec-lbl">clients recovered</div>
+      <div class="rec-rev" id="rec-inactive-rev">—</div>
+      <div class="rec-sublbl">revenue this month</div>
+      <button class="rec-toggle" id="rec-inactive-btn" onclick="toggleRecovery('inactive')">Show Clients ▾</button>
+    </div>
+    <div class="rec-card rec-lost" id="rec-lost-card">
+      <div class="rec-arrow">Organic Lost → Active</div>
+      <div class="rec-count" id="rec-lost-count">—</div>
+      <div class="rec-lbl">clients recovered</div>
+      <div class="rec-rev" id="rec-lost-rev">—</div>
+      <div class="rec-sublbl">revenue this month</div>
+      <button class="rec-toggle" id="rec-lost-btn" onclick="toggleRecovery('lost')">Show Clients ▾</button>
+    </div>
+  </div>
+  <!-- Drilldown tables — one per movement type -->
+  <div class="rec-detail" id="rec-detail-silent" style="display:none"></div>
+  <div class="rec-detail" id="rec-detail-inactive" style="display:none"></div>
+  <div class="rec-detail" id="rec-detail-lost" style="display:none"></div>
+  <div id="recovery-note" style="font-size:9px;color:#9A9A9A;font-weight:500;margin-bottom:20px;display:none">
+    ⓘ Revenue shown is from this month's closed deals matched to recovered kitty clients.
   </div>
 
   <!-- Head-level table -->
@@ -299,7 +363,7 @@ tbody td.num{text-align:right;font-weight:700}
     </div>
   </div>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; PORTFOLIO HEALTH &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
 <script>
@@ -320,8 +384,8 @@ const ANCHOR_STR=(()=>{
 // Classification thresholds (days from anchor, counting backwards)
 const D_ACTIVE  =90;   // ≤90 days → Active
 const D_SILENT  =180;  // 91–180 days → Silent
-const D_INACTIVE=364;  // 181–364 days → Inactive
-                        // 365+ days → Organic Lost
+const D_INACTIVE=365;  // 181–365 days → Inactive
+                        // 366+ days → Organic Lost
 
 // HubSpot pipeline constants
 const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
@@ -517,11 +581,15 @@ async function doSync(force=false){
   ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
 
   try{
-    // Single fetch — classification uses recent_deal_close_date on company record.
-    // No deal fetching needed at all.
-    kittyCompanies=await fetchKittyCompanies();
+    // Parallel fetch: kitty companies + this month's deals (for recovery revenue)
+    $("stxt").textContent="SYNCING...";
+    const [fetchedCompanies, revMap] = await Promise.all([
+      fetchKittyCompanies(),
+      fetchThisMonthDeals().catch(e=>{console.warn("[Portfolio] Deal fetch failed:",e);return{};})
+    ]);
+    kittyCompanies=fetchedCompanies;
     console.log(`[Portfolio] ${kittyCompanies.length} kitty companies loaded`);
-    renderAll();
+    renderAll(revMap);
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
     $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
@@ -542,7 +610,7 @@ async function doSync(force=false){
 }
 
 // ════ RENDER ════
-function renderAll(){
+function renderAll(revMap){
   const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
   const classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
 
@@ -555,6 +623,15 @@ function renderAll(){
   $("k-lost").textContent    =n("lost").toLocaleString();
   $("k-active-sub").textContent=`Revenue since ${ANCHOR_STR} (−90d)`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR} · ${activeBU||"All BUs"}`;
+
+  // Recovery Intelligence — uses full kitty universe (not BU-filtered) for accuracy
+  // BU toggle only affects the portfolio table, not recovery metrics
+  if(revMap!==undefined){
+    const allClassified=kittyCompanies.map(c=>({...c,status:classifyCompany(c)}));
+    const recovery=buildRecovery(allClassified,revMap);
+    renderRecovery(recovery);
+  }
+
   renderTable(classified);
 }
 
@@ -665,6 +742,197 @@ function toggleOwners(rowId){
   const open=sub.classList.toggle("show");
   if(arrow)arrow.classList.toggle("open",open);
   document.getElementById("row-"+rowId)?.classList.toggle("expanded",open);
+}
+
+// ════ RECOVERY INTELLIGENCE ════
+// Compares each kitty client's status TODAY vs their status as of the
+// START of the current calendar month (= last month's end anchor).
+// Clients who were Silent/Inactive/Lost last month AND are Active today
+// are "recovered". Revenue is from this month's actual closed deals.
+
+// Last-month anchor = midnight on the 1st of the current month
+const LAST_MONTH_ANCHOR=(()=>{
+  const d=new Date();
+  return new Date(d.getFullYear(),d.getMonth(),1,0,0,0,0);
+})();
+
+// Current calendar month string e.g. "july-2026"
+const THIS_MONTH_VAL=(()=>{
+  const d=new Date();
+  return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;
+})();
+
+// Current month label e.g. "Jul 2026"
+const THIS_MONTH_LBL=(()=>{
+  const d=new Date();
+  return`${MSHRT[d.getMonth()]} ${d.getFullYear()}`;
+})();
+
+// Last month label e.g. "Jun 2026"
+const LAST_MONTH_LBL=(()=>{
+  const d=new Date();
+  const lm=new Date(d.getFullYear(),d.getMonth()-1,1);
+  return`${MSHRT[lm.getMonth()]} ${lm.getFullYear()}`;
+})();
+
+// Classify using any anchor date (reusable)
+function classifyWithAnchor(company,anchor){
+  const dateStr=company.recent_deal_close_date||"";
+  if(!dateStr)return"never";
+  const lastDate=new Date(dateStr+"T00:00:00");
+  if(isNaN(lastDate))return"never";
+  const diffDays=Math.floor((anchor-lastDate)/(1000*60*60*24));
+  if(diffDays<0)           return"active";
+  if(diffDays<=D_ACTIVE)   return"active";
+  if(diffDays<=D_SILENT)   return"silent";
+  if(diffDays<=D_INACTIVE) return"inactive";
+  return"lost";
+}
+
+// Fetch this month's deals via /api proxy (same pipeline/stage as Nexus)
+async function fetchThisMonthDeals(){
+  const body={
+    filterGroups:[{filters:[
+      {propertyName:"pipeline",         operator:"EQ",value:PIPELINE},
+      {propertyName:"dealstage",        operator:"EQ",value:STAGE},
+      {propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:THIS_MONTH_VAL},
+      {propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},
+      {propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}
+    ]}],
+    properties:[
+      "dealname","amount_in_home_currency","hubspot_owner_id",
+      "zoho_display_name__invoice_app_","contact_name__invoice_app_",
+      "zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_"
+    ],
+    limit:200
+  };
+  const deals=[];let after=null;
+  do{
+    if(after)body.after=after;
+    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error(`Deals API ${res.status}`);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      const amt=parseFloat(r.properties?.amount_in_home_currency||0)||0;
+      if(amt<=0)return; // exclude credits
+      deals.push({
+        client:(r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"").toLowerCase().trim(),
+        amount:amt
+      });
+    });
+    after=data.paging?.next?.after||null;
+  }while(after);
+
+  // Aggregate revenue by normalised client name
+  const revMap={};
+  deals.forEach(d=>{if(d.client)revMap[d.client]=(revMap[d.client]||0)+d.amount;});
+  return revMap; // {normalisedClientName → totalRevenue}
+}
+
+// Build recovery data: compare last-month vs today status per kitty company
+function buildRecovery(classified,revMap){
+  const result={silent:[],inactive:[],lost:[]};
+
+  classified.forEach(c=>{
+    const statusToday=c.status;
+    if(statusToday!=="active")return; // only care about clients active TODAY
+
+    const statusLastMonth=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
+    if(statusLastMonth==="active"||statusLastMonth==="never")return; // not recovered
+
+    // Lookup revenue: try display name, then company name
+    const key=(c.name||"").toLowerCase().trim();
+    const rev=revMap[key]||0;
+
+    const entry={name:c.name,owner:OWNER_NAME[c.owner_id]||c.owner_id,lastStatus:statusLastMonth,rev};
+
+    if(statusLastMonth==="silent")   result.silent.push(entry);
+    else if(statusLastMonth==="inactive") result.inactive.push(entry);
+    else if(statusLastMonth==="lost")     result.lost.push(entry);
+  });
+
+  // Sort each bucket by revenue desc
+  ["silent","inactive","lost"].forEach(k=>result[k].sort((a,b)=>b.rev-a.rev));
+  return result;
+}
+
+// State: which drilldown is open
+const recOpen={silent:false,inactive:false,lost:false};
+let recoveryData=null; // populated after sync
+
+const fmtUSD=n=>n>0?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n):"—";
+
+function renderRecovery(recovery){
+  recoveryData=recovery;
+  $("recovery-period-label").textContent=`${LAST_MONTH_LBL} → ${THIS_MONTH_LBL}`;
+  $("recovery-note").style.display="";
+
+  const buckets=[
+    {key:"silent",  countId:"rec-silent-count",  revId:"rec-silent-rev"},
+    {key:"inactive",countId:"rec-inactive-count",revId:"rec-inactive-rev"},
+    {key:"lost",    countId:"rec-lost-count",    revId:"rec-lost-rev"}
+  ];
+
+  buckets.forEach(({key,countId,revId})=>{
+    const rows=recovery[key]||[];
+    const totalRev=rows.reduce((s,r)=>s+r.rev,0);
+    $(countId).textContent=rows.length;
+    $(revId).textContent=totalRev>0?fmtUSD(totalRev):"—";
+  });
+}
+
+function toggleRecovery(type){
+  const detailEl=$(`rec-detail-${type}`);
+  const btn=$(`rec-${type}-btn`);
+  const isOpen=recOpen[type];
+
+  // Close all first
+  ["silent","inactive","lost"].forEach(k=>{
+    recOpen[k]=false;
+    $(`rec-detail-${k}`).style.display="none";
+    const b=$(`rec-${k}-btn`);
+    if(b){b.textContent="Show Clients ▾";b.classList.remove("open");}
+  });
+
+  if(!isOpen){
+    recOpen[type]=true;
+    detailEl.style.display="";
+    btn.textContent="Hide Clients ▴";
+    btn.classList.add("open");
+    renderRecoveryDetail(type);
+  }
+}
+
+function renderRecoveryDetail(type){
+  const detailEl=$(`rec-detail-${type}`);
+  const rows=(recoveryData&&recoveryData[type])||[];
+  const label={silent:"Silent",inactive:"Inactive",lost:"Organic Lost"}[type];
+
+  if(!rows.length){
+    detailEl.innerHTML=`<div class="rec-zero">No ${label} → Active recoveries this month.</div>`;
+    return;
+  }
+
+  const rowsHTML=rows.map((r,i)=>`
+    <tr>
+      <td style="color:#9A9A9A;font-size:10px;font-weight:700;width:32px;text-align:center">${i+1}</td>
+      <td style="font-weight:700;font-size:11px;color:#434343">${r.name}</td>
+      <td style="font-size:10px;color:#696969;font-weight:600">${r.owner}</td>
+      <td class="num" style="color:${r.rev>0?"#006E5E":"#9A9A9A"};font-size:11px">${r.rev>0?fmtUSD(r.rev):"No deal this month"}</td>
+    </tr>`).join("");
+
+  detailEl.innerHTML=`
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th style="width:32px;text-align:center">#</th>
+          <th>Client</th>
+          <th>Owner</th>
+          <th class="num">Revenue This Month</th>
+        </tr></thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+    </div>`;
 }
 
 // ════ BOOT ════
