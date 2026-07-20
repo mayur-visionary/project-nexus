@@ -187,6 +187,27 @@ tbody td.num{text-align:right;font-weight:700}
 .rec-zero{text-align:center;padding:24px;color:#9A9A9A;font-size:11px;font-weight:500}
 @media(max-width:900px){.recovery-strip{grid-template-columns:1fr}}
 
+/* ── Portfolio Health Donut ── */
+.donut-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.donut-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:20px 16px;text-align:center;transition:box-shadow .2s;position:relative}
+.donut-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
+.donut-head-lbl{font-size:10px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
+.donut-wrap{position:relative;width:130px;height:130px;margin:0 auto 14px}
+.donut-wrap svg{transform:rotate(-90deg);display:block}
+.donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-total{font-size:22px;font-weight:800;color:#434343;line-height:1}
+.donut-total-lbl{font-size:8px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.donut-legend{display:flex;flex-direction:column;gap:5px}
+.donut-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:3px 6px;border-radius:4px;transition:background .15s}
+.donut-row:hover{background:#F7F7F7}
+.donut-row-left{display:flex;align-items:center;gap:6px}
+.donut-seg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.donut-seg-lbl{font-size:9.5px;font-weight:600;color:#434343}
+.donut-seg-cnt{font-size:9.5px;font-weight:800;color:#434343}
+.donut-seg-pct{font-size:8.5px;font-weight:500;color:#9A9A9A;min-width:28px;text-align:right}
+@media(max-width:1100px){.donut-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.donut-grid{grid-template-columns:1fr}}
+
 /* ── At-Risk Radar ── */
 .radar-banner{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-left:4px solid #FFDA30;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .radar-left{display:flex;align-items:center;gap:14px}
@@ -420,6 +441,12 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="leg-item"><div class="leg-dot" style="background:#EF2D56"></div>Inactive (181–365 days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (366+ days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#5B3B8C"></div>Never Active</div>
+  </div>
+
+  <!-- ══ PORTFOLIO HEALTH DONUT ══ -->
+  <div class="sec" style="margin-top:8px">Portfolio Health Distribution <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· client status split per head</span></div>
+  <div class="donut-grid" id="donut-grid">
+    <div class="donut-card" style="opacity:.4"><div class="donut-head-lbl">Loading...</div></div>
   </div>
 
   <!-- ══ CLIENT RECOVERY INTELLIGENCE ══ -->
@@ -884,6 +911,7 @@ function renderAll(revMap){
   }
 
   // All four intelligence features — use filtered universe
+  renderHealthDonuts(classified);
   renderAtRisk(fc);
   renderHealthScores(classified);
   renderRevenueAtRisk(classified,revMap||{});
@@ -1283,6 +1311,102 @@ function renderRadarDetail(){
 // Formula: (Active×4 + Silent×2 + Inactive×1 + Lost×0) ÷ (Total×4) × 100
 // Interpretation: 100% = all clients Active. 0% = all clients Organic Lost or Never Active.
 
+// ════ PORTFOLIO HEALTH DONUT ════
+// Multi-segment SVG donut per head showing Active/Silent/Inactive/Lost/Never split.
+// Each arc is rendered using stroke-dasharray + stroke-dashoffset to position
+// segments sequentially around the circle. Zero dependencies — pure SVG.
+
+const DONUT_COLORS={
+  active:"#006E5E",
+  silent:"#FFDA30",
+  inactive:"#EF2D56",
+  lost:"#696969",
+  never:"#5B3B8C"
+};
+const DONUT_LABELS={active:"Active",silent:"Silent",inactive:"Inactive",lost:"Org. Lost",never:"Never"};
+
+function buildDonutArcs(segments,r){
+  // segments = [{key,count}] in display order
+  const circ=2*Math.PI*r;
+  const total=segments.reduce((s,g)=>s+g.count,0);
+  if(!total)return[];
+  const GAP=2; // px gap between segments
+  let offset=0;
+  return segments.map(seg=>{
+    if(!seg.count)return null;
+    const frac=seg.count/total;
+    const len=Math.max(0,(frac*circ)-GAP);
+    const arc={key:seg.key,color:DONUT_COLORS[seg.key],len,offset,circ,frac};
+    offset+=frac*circ;
+    return arc;
+  }).filter(Boolean);
+}
+
+function renderHealthDonuts(classified){
+  const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
+  const R=52,CX=65,CY=65,SW=13; // radius, centre x/y, stroke-width
+  const VIEWBOX=`0 0 ${CX*2} ${CY*2}`;
+  const CIRC=2*Math.PI*R;
+
+  const cards=headsToShow.map(hcfg=>{
+    const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
+    const hc=classified.filter(c=>ownerSet.has(c.owner_id));
+    const total=hc.length;
+    if(!total)return null;
+
+    const counts={
+      active :hc.filter(c=>c.status==="active").length,
+      silent :hc.filter(c=>c.status==="silent").length,
+      inactive:hc.filter(c=>c.status==="inactive").length,
+      lost   :hc.filter(c=>c.status==="lost").length,
+      never  :hc.filter(c=>c.status==="never").length
+    };
+
+    const segments=["active","silent","inactive","lost","never"]
+      .map(k=>({key:k,count:counts[k]}));
+    const arcs=buildDonutArcs(segments,R);
+
+    // SVG arc paths
+    const arcsSVG=arcs.map(a=>`
+      <circle cx="${CX}" cy="${CY}" r="${R}"
+        fill="none" stroke="${a.color}" stroke-width="${SW}"
+        stroke-dasharray="${a.len.toFixed(2)} ${a.circ.toFixed(2)}"
+        stroke-dashoffset="${(-a.offset).toFixed(2)}"
+        stroke-linecap="butt"/>`).join("");
+
+    // Legend rows
+    const legendRows=segments.filter(s=>s.count>0).map(s=>{
+      const pct=total>0?((s.count/total)*100).toFixed(1):"0";
+      return`<div class="donut-row">
+        <div class="donut-row-left">
+          <div class="donut-seg-dot" style="background:${DONUT_COLORS[s.key]}"></div>
+          <span class="donut-seg-lbl">${DONUT_LABELS[s.key]}</span>
+        </div>
+        <span class="donut-seg-cnt">${s.count}</span>
+        <span class="donut-seg-pct">${pct}%</span>
+      </div>`;
+    }).join("");
+
+    return`<div class="donut-card">
+      <div class="donut-head-lbl">${hcfg.name.split(" ")[0]}<span style="font-weight:500;color:#9A9A9A;font-size:9px"> · ${hcfg.bu}</span></div>
+      <div class="donut-wrap">
+        <svg width="${CX*2}" height="${CY*2}" viewBox="${VIEWBOX}" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#F2F2F2" stroke-width="${SW}"/>
+          ${arcsSVG}
+        </svg>
+        <div class="donut-centre">
+          <div class="donut-total">${total.toLocaleString()}</div>
+          <div class="donut-total-lbl">Kitty</div>
+        </div>
+      </div>
+      <div class="donut-legend">${legendRows}</div>
+    </div>`;
+  }).filter(Boolean);
+
+  $("donut-grid").innerHTML=cards.join("")||
+    `<div style="grid-column:1/-1;text-align:center;padding:32px;color:#9A9A9A;font-size:11px;font-weight:500">No data for selected filters.</div>`;
+}
+
 function scoreColor(pct){
   if(pct>=75)return"#006E5E";
   if(pct>=50)return"#FFDA30";
@@ -1542,10 +1666,10 @@ function reRender(){
   $("k-lost").textContent    =n("lost").toLocaleString();
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
-  // Recovery re-runs on filtered universe so clone/head filter is respected
   const revMap=window._lastRevMap||{};
   const recovery=buildRecovery(classified,revMap);
   renderRecovery(recovery);
+  renderHealthDonuts(classified);
   renderAtRisk(fc);
   renderHealthScores(classified);
   renderRevenueAtRisk(classified,revMap);
