@@ -196,8 +196,8 @@ tbody td.num{text-align:right;font-weight:700}
         </svg>
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
-          <div class="hdr-title" id="hdr-title">Portfolio Health</div>
-          <div class="hdr-sub" id="hdr-sub">The Live Health of Mavlers Client Portfolio</div>
+          <div class="hdr-title" id="hdr-title">Project Nexus</div>
+          <div class="hdr-sub" id="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
       </a>
       <div class="hdr-right">
@@ -215,7 +215,7 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="nav-in">
       <span class="nav-pill">
         Portfolio Health
-        <span class="anchor-chip" id="anchor-chip">Anchor: —</span>
+        <span class="anchor-chip" id="anchor-chip">—</span>
       </span>
       <div class="bu-toggle-wrap" id="bu-toggle-wrap">
         <button class="bu-btn active" id="bu-all"     onclick="setBU('')">All BUs</button>
@@ -299,7 +299,7 @@ tbody td.num{text-align:right;font-weight:700}
     </div>
   </div>
 
-  <div class="footer">PORTFOLIO HEALTH &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; PORTFOLIO HEALTH &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
 <script>
@@ -424,6 +424,12 @@ function classifyCompany(company){
 }
 
 // ════ LOGIN ════
+// SSO key strategy:
+//   Master login → localStorage["nexus_auth"] = "1"
+//   Clone login  → localStorage["nexus_auth_<head>"] = "1"
+// On boot, if the relevant key exists, skip overlay entirely.
+function getAuthKey(head){return head?`nexus_auth_${head}`:"nexus_auth";}
+
 async function doLogin(){
   const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
   if(!pw){err.textContent="Please enter the access password.";return;}
@@ -433,6 +439,7 @@ async function doLogin(){
     const res=await fetch("/portfolio-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
     const data=await res.json();
     if(data.success){
+      localStorage.setItem(getAuthKey(head),"1");
       $("login-overlay").style.display="none";
     }else if(res.status===500||data.error){
       err.textContent="Server config error. Contact Mayur.";
@@ -443,6 +450,18 @@ async function doLogin(){
   }catch(e){
     err.textContent="Connection error. Check your network.";
   }finally{btn.disabled=false;btn.textContent="Access Dashboard";}
+}
+
+// Check SSO — called before showing overlay
+function checkSSO(){
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  // Accept master token OR head-specific token
+  if(localStorage.getItem("nexus_auth")==="1"||
+     (head&&localStorage.getItem(getAuthKey(head))==="1")){
+    $("login-overlay").style.display="none";
+    return true;
+  }
+  return false;
 }
 
 // ════ CLONE MODE ════
@@ -535,7 +554,7 @@ function renderAll(){
   $("k-inactive").textContent=n("inactive").toLocaleString();
   $("k-lost").textContent    =n("lost").toLocaleString();
   $("k-active-sub").textContent=`Revenue since ${ANCHOR_STR} (−90d)`;
-  $("table-meta").textContent=`${total.toLocaleString()} clients · anchor ${ANCHOR_STR} · ${activeBU||"All BUs"}`;
+  $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR} · ${activeBU||"All BUs"}`;
   renderTable(classified);
 }
 
@@ -650,8 +669,8 @@ function toggleOwners(rowId){
 
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",function(){
-  // Set dynamic anchor chip
-  $("anchor-chip").textContent=`Anchor: ${ANCHOR_STR}`;
+  $("anchor-chip").textContent=ANCHOR_STR;
+  checkSSO(); // ← bypass overlay if already authenticated in Nexus
   bootCloneMode();
   doSync(true);
 });
