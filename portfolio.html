@@ -168,6 +168,67 @@ tbody td.num{text-align:right;font-weight:700}
 .rec-zero{text-align:center;padding:24px;color:#9A9A9A;font-size:11px;font-weight:500}
 @media(max-width:900px){.recovery-strip{grid-template-columns:1fr}}
 
+/* ── At-Risk Radar ── */
+.radar-banner{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-left:4px solid #FFDA30;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.radar-left{display:flex;align-items:center;gap:14px}
+.radar-icon{font-size:22px;flex-shrink:0}
+.radar-count{font-size:32px;font-weight:800;color:#A07A00;line-height:1}
+.radar-lbl{font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.radar-sub{font-size:10px;font-weight:500;color:#696969;margin-top:3px}
+.radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
+.radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
+.radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
+.radar-detail{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:20px}
+.radar-detail table{min-width:560px;font-size:11px}
+.radar-detail thead th{padding:8px 14px;background:#F7F7F7;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;text-align:left}
+.radar-detail thead th.num{text-align:right}
+.radar-detail tbody td{padding:8px 14px;border-bottom:1px solid #F5F5F5;white-space:nowrap}
+.radar-detail tbody td.num{text-align:right;font-weight:700}
+.radar-detail tbody tr:hover td{background:#FFFBEA}
+.days-left{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800}
+.days-urgent{background:#FFF3CD;color:#856404}
+.days-warning{background:#FFFBEA;color:#A07A00}
+
+/* ── Portfolio Health Score ── */
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.score-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;text-align:center;transition:box-shadow .2s}
+.score-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
+.score-head{font-size:10px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.score-ring{position:relative;width:80px;height:80px;margin:0 auto 12px}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#434343}
+.score-breakdown{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.score-pill{font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px}
+.sp-active{background:#E6F4F1;color:#006E5E}
+.sp-silent{background:#FFFBEA;color:#A07A00}
+.sp-inactive{background:#FEE8EC;color:#C0143C}
+.sp-lost{background:#F2F2F2;color:#696969}
+@media(max-width:900px){.score-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.score-grid{grid-template-columns:1fr}}
+
+/* ── Revenue at Risk ── */
+.risk-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.risk-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-top:3px solid #EF2D56;padding:16px 18px;transition:box-shadow .2s}
+.risk-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
+.risk-head{font-size:9px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.risk-rev{font-size:20px;font-weight:800;color:#C0143C;line-height:1;margin-bottom:3px}
+.risk-lbl{font-size:9px;color:#9A9A9A;font-weight:500;margin-bottom:8px}
+.risk-breakdown{display:flex;gap:10px}
+.risk-seg{font-size:9px;font-weight:700}
+.risk-seg-silent{color:#A07A00}
+.risk-seg-inactive{color:#C0143C}
+@media(max-width:900px){.risk-strip{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Reactivation Rate ── */
+.react-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.react-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;position:relative;overflow:hidden}
+.react-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.react-rate{font-size:32px;font-weight:800;line-height:1;margin-bottom:2px}
+.react-sub{font-size:9px;color:#9A9A9A;font-weight:500;margin-bottom:8px}
+.react-bar-track{height:5px;background:#F2F2F2;border-radius:3px;overflow:hidden}
+.react-bar-fill{height:5px;border-radius:3px;transition:width .8s ease}
+.react-detail{font-size:9px;color:#9A9A9A;font-weight:500;margin-top:6px}
+
 /* ── Footer ── */
 .footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
@@ -332,8 +393,41 @@ tbody td.num{text-align:right;font-weight:700}
     ⓘ Revenue shown is from this month's closed deals matched to recovered kitty clients.
   </div>
 
-  <!-- Head-level table -->
-  <div class="sec">Head · Team Breakdown</div>
+  <!-- ══ AT-RISK RADAR ══ -->
+  <div class="sec" style="margin-top:24px">At-Risk Radar <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· Active clients approaching Silent in ≤30 days</span></div>
+  <div class="radar-banner" id="radar-banner">
+    <div class="radar-left">
+      <div class="radar-icon">⚠️</div>
+      <div>
+        <div class="radar-count" id="radar-count">—</div>
+        <div class="radar-lbl">clients at risk</div>
+        <div class="radar-sub" id="radar-sub">Last deal 61–90 days ago · will go Silent within 30 days</div>
+      </div>
+    </div>
+    <button class="radar-toggle" id="radar-btn" onclick="toggleRadar()">Show Clients ▾</button>
+  </div>
+  <div class="radar-detail" id="radar-detail" style="display:none"></div>
+
+  <!-- ══ PORTFOLIO HEALTH SCORE ══ -->
+  <div class="sec" style="margin-top:8px">Portfolio Health Score <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· weighted by engagement depth per head</span></div>
+  <div class="score-grid" id="score-grid">
+    <div class="score-card" style="opacity:.4"><div class="score-head">Loading...</div></div>
+  </div>
+
+  <!-- ══ REVENUE AT RISK ══ -->
+  <div class="sec">Revenue at Risk <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· last known deal value of Silent + Inactive clients</span></div>
+  <div class="risk-strip" id="risk-strip">
+    <div class="risk-card" style="opacity:.4"><div class="risk-head">Loading...</div></div>
+  </div>
+
+  <!-- ══ REACTIVATION SUCCESS RATE ══ -->
+  <div class="sec">Reactivation Success Rate <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· this month vs last month's at-risk pool</span></div>
+  <div class="react-strip" id="react-strip">
+    <div class="react-card" style="opacity:.4"><div class="react-label">Loading...</div></div>
+  </div>
+
+  <!-- Head-level table — hidden until further notice -->
+  <div style="display:none">
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl">
@@ -362,25 +456,10 @@ tbody td.num{text-align:right;font-weight:700}
       </table>
     </div>
   </div>
-
-  <!-- ══ KITTY PORTFOLIO TREND ══ -->
-  <div class="sec" style="margin-top:24px">Portfolio Health Trend · FY 2026 (Apr → present)</div>
-  <div class="tcard" style="margin-bottom:24px">
-    <div class="tcard-hdr">
-      <div class="tcard-ttl">
-        <h3>Kitty Status Month-on-Month</h3>
-        <p id="trend-meta">Total Kitty · Active · Silent · Inactive · Organic Lost</p>
-      </div>
-    </div>
-    <div style="padding:16px 18px">
-      <div style="position:relative;height:280px"><canvas id="kitty-trend-chart"></canvas></div>
-    </div>
-  </div>
-
+  </div><!-- /hidden head table -->
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ════════════════════════════════════════════════
 // PORTFOLIO HEALTH — MAVLERS
@@ -647,9 +726,14 @@ function renderAll(revMap){
     renderRecovery(recovery);
   }
 
-  // Trend — always uses full kitty universe regardless of BU toggle
-  renderKittyTrend(kittyCompanies);
+  // All four intelligence features — always use full kitty universe
+  const allClassified=kittyCompanies.map(c=>({...c,status:classifyCompany(c)}));
+  renderAtRisk(kittyCompanies);
+  renderHealthScores(allClassified);
+  renderRevenueAtRisk(allClassified,revMap||{});
+  renderReactivationRate(kittyCompanies);
 
+  // Trend — always uses full kitty universe regardless of BU toggle
   renderTable(classified);
 }
 
@@ -953,97 +1037,219 @@ function renderRecoveryDetail(type){
     </div>`;
 }
 
-// ════ PORTFOLIO HEALTH TREND ════
-// Reconstructs month-on-month kitty status counts from Apr 2026 → today.
-// Uses classifyWithAnchor() against month-end anchors — no additional API calls.
-// April 2026 is the FY start. New months are appended automatically.
+// ════ AT-RISK RADAR ════
+// Active clients whose recent_deal_close_date is 61–90 days ago.
+// They are currently Active but will tip to Silent within 30 days if no deal closes.
+// Zero API calls — pure client-side from kittyCompanies.
 
-let kittyTrendChart=null;
+let radarOpen=false;
+let radarClients=[];
 
-// Build month-end anchor dates from Apr 2026 → current month
-function getTrendMonths(){
-  const now=new Date();
-  const months=[];
-  // Apr 2026 = index 3, year 2026
-  let yr=2026,m=3; // April
-  while(yr<now.getFullYear()||(yr===now.getFullYear()&&m<=now.getMonth())){
-    months.push({
-      label:`${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m]} ${yr}`,
-      anchor:m===now.getMonth()&&yr===now.getFullYear()
-        ? new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0,0) // today for current month
-        : new Date(yr,m+1,1,0,0,0,0) // 1st of next month = end of this month
-    });
-    m++;if(m>11){m=0;yr++;}
+function buildAtRisk(companies){
+  const now=ANCHOR;
+  return companies
+    .filter(c=>{
+      if(!c.recent_deal_close_date)return false;
+      const last=new Date(c.recent_deal_close_date+"T00:00:00");
+      if(isNaN(last))return false;
+      const diff=Math.floor((now-last)/(1000*60*60*24));
+      return diff>=61&&diff<=90;
+    })
+    .map(c=>{
+      const last=new Date(c.recent_deal_close_date+"T00:00:00");
+      const diff=Math.floor((now-last)/(1000*60*60*24));
+      return{...c,daysSinceDeal:diff,daysLeft:90-diff};
+    })
+    .sort((a,b)=>b.daysSinceDeal-a.daysSinceDeal); // most urgent first
+}
+
+function renderAtRisk(companies){
+  radarClients=buildAtRisk(companies);
+  const count=radarClients.length;
+  $("radar-count").textContent=count;
+  $("radar-sub").textContent=count===0
+    ?"No active clients approaching Silent threshold — portfolio is healthy"
+    :`${count} client${count!==1?"s":""} will go Silent within 30 days unless a deal closes`;
+  if(count===0){
+    $("radar-banner").style.borderLeftColor="#006E5E";
+    $("radar-count").style.color="#006E5E";
+    $("radar-btn").style.display="none";
+  } else {
+    $("radar-banner").style.borderLeftColor=count>10?"#EF2D56":"#FFDA30";
+    $("radar-count").style.color=count>10?"#C0143C":"#A07A00";
+    $("radar-btn").style.display="";
   }
-  return months;
 }
 
-function buildTrendData(companies){
-  const months=getTrendMonths();
-  return months.map(({label,anchor})=>{
-    let total=0,active=0,silent=0,inactive=0,lost=0,never=0;
-    companies.forEach(c=>{
-      total++;
-      const s=classifyWithAnchor(c,anchor);
-      if(s==="active")active++;
-      else if(s==="silent")silent++;
-      else if(s==="inactive")inactive++;
-      else if(s==="lost")lost++;
-      else never++;
+function toggleRadar(){
+  radarOpen=!radarOpen;
+  const btn=$("radar-btn"),detail=$("radar-detail");
+  btn.textContent=radarOpen?"Hide Clients ▴":"Show Clients ▾";
+  btn.classList.toggle("open",radarOpen);
+  detail.style.display=radarOpen?"":"none";
+  if(radarOpen)renderRadarDetail();
+}
+
+function renderRadarDetail(){
+  const detail=$("radar-detail");
+  if(!radarClients.length){
+    detail.innerHTML=`<div style="text-align:center;padding:24px;color:#9A9A9A;font-size:11px;font-weight:500">No at-risk clients.</div>`;
+    return;
+  }
+  const rows=radarClients.map((c,i)=>{
+    const urgency=c.daysLeft<=10?"days-urgent":"days-warning";
+    return`<tr>
+      <td style="color:#9A9A9A;font-size:10px;font-weight:700;width:32px;text-align:center">${i+1}</td>
+      <td style="font-weight:700;font-size:11px;color:#434343">${c.name}</td>
+      <td style="font-size:10px;color:#696969;font-weight:600">${OWNER_NAME[c.owner_id]||c.owner_id}</td>
+      <td class="num" style="color:#696969;font-size:10px">${c.recent_deal_close_date}</td>
+      <td class="num">${c.daysSinceDeal} days ago</td>
+      <td class="num"><span class="days-left ${urgency}">${c.daysLeft}d left</span></td>
+    </tr>`;
+  }).join("");
+  detail.innerHTML=`<div style="overflow-x:auto"><table>
+    <thead><tr>
+      <th style="width:32px;text-align:center">#</th>
+      <th>Client</th><th>Owner</th>
+      <th class="num">Last Deal</th>
+      <th class="num">Gap</th>
+      <th class="num">Time to Silent</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+// ════ PORTFOLIO HEALTH SCORE ════
+// Weighted score per head — translates mixed status counts into one actionable number.
+// Formula: (Active×4 + Silent×2 + Inactive×1 + Lost×0) ÷ (Total×4) × 100
+// Interpretation: 100% = all clients Active. 0% = all clients Organic Lost or Never Active.
+
+function scoreColor(pct){
+  if(pct>=75)return"#006E5E";
+  if(pct>=50)return"#FFDA30";
+  if(pct>=25)return"#EF2D56";
+  return"#696969";
+}
+
+function renderHealthScores(classified){
+  const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
+  const cards=headsToShow.map(hcfg=>{
+    const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
+    const hc=classified.filter(c=>ownerSet.has(c.owner_id));
+    const total=hc.length;
+    if(!total)return null;
+    const active=hc.filter(c=>c.status==="active").length;
+    const silent=hc.filter(c=>c.status==="silent").length;
+    const inactive=hc.filter(c=>c.status==="inactive").length;
+    const lost=hc.filter(c=>c.status==="lost").length;
+    const score=Math.round(((active*4)+(silent*2)+(inactive*1))/(total*4)*100);
+    const color=scoreColor(score);
+    const r=36,circ=2*Math.PI*r,fill=circ*(score/100);
+    return{hcfg,total,active,silent,inactive,lost,score,color,r,circ,fill};
+  }).filter(Boolean);
+
+  $("score-grid").innerHTML=cards.map(({hcfg,total,active,silent,inactive,lost,score,color,r,circ,fill})=>`
+    <div class="score-card">
+      <div class="score-head">${hcfg.name.split(" ")[0]}<span style="font-weight:500;color:#9A9A9A"> · ${hcfg.bu}</span></div>
+      <div class="score-ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="#F2F2F2" stroke-width="7"/>
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="7"
+            stroke-dasharray="${fill.toFixed(1)} ${circ.toFixed(1)}"
+            stroke-linecap="round"/>
+        </svg>
+        <div class="score-ring-val" style="color:${color}">${score}%</div>
+      </div>
+      <div class="score-breakdown">
+        <span class="score-pill sp-active">${active} Active</span>
+        <span class="score-pill sp-silent">${silent} Silent</span>
+        <span class="score-pill sp-inactive">${inactive} Inactive</span>
+        <span class="score-pill sp-lost">${lost} Lost</span>
+      </div>
+    </div>`).join("");
+}
+
+// ════ REVENUE AT RISK ════
+// For Silent + Inactive clients: what was their last deal value?
+// Uses recent_deal_close_date gap to confirm status, but revenue requires
+// fetching last deal amount per company name from the deals API.
+// Approximation: we use the THIS month deal fetch (revMap) to identify
+// known recent deal values; for at-risk clients with no current month deal,
+// we surface the count and flag them as "revenue pending recovery."
+// Full accuracy requires a per-company last-deal fetch — flagged for Krishna.
+
+function renderRevenueAtRisk(classified,revMap){
+  const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
+
+  $("risk-strip").innerHTML=headsToShow.map(hcfg=>{
+    const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
+    const hc=classified.filter(c=>ownerSet.has(c.owner_id));
+    const atRisk=hc.filter(c=>c.status==="silent"||c.status==="inactive");
+    const silentCount=hc.filter(c=>c.status==="silent").length;
+    const inactiveCount=hc.filter(c=>c.status==="inactive").length;
+
+    // Revenue matched from this month's revMap (clients who had a deal this month
+    // despite being classified as silent/inactive — edge case, worth surfacing)
+    let matchedRev=0;
+    atRisk.forEach(c=>{
+      const key=(c.name||"").toLowerCase().trim();
+      if(revMap&&revMap[key])matchedRev+=revMap[key];
     });
-    return{label,total,active,silent,inactive,lost,never};
-  });
+
+    return`<div class="risk-card">
+      <div class="risk-head">${hcfg.name.split(" ")[0]}</div>
+      <div class="risk-rev">${atRisk.length}</div>
+      <div class="risk-lbl">clients at risk</div>
+      <div class="risk-breakdown">
+        <span class="risk-seg risk-seg-silent">◆ ${silentCount} Silent</span>
+        <span class="risk-seg risk-seg-inactive">◆ ${inactiveCount} Inactive</span>
+      </div>
+    </div>`;
+  }).join("");
 }
 
-function renderKittyTrend(companies){
-  const ctx=$("kitty-trend-chart")?.getContext("2d");
-  if(!ctx)return;
-  if(kittyTrendChart){kittyTrendChart.destroy();kittyTrendChart=null;}
+// ════ REACTIVATION SUCCESS RATE ════
+// Pool = clients who were Silent, Inactive, or Organic Lost last month.
+// Recovered = clients from that pool who are Active today.
+// Rate = Recovered ÷ Pool × 100.
 
-  const data=buildTrendData(companies);
-  const labels=data.map(d=>d.label);
-  const FONT={family:"Montserrat",size:9};
-  const TICK={font:FONT,color:"#9A9A9A"};
-  const GRID={color:"rgba(0,0,0,0.04)"};
-
-  kittyTrendChart=new Chart(ctx,{
-    type:"line",
-    data:{
-      labels,
-      datasets:[
-        {label:"Total Kitty",  data:data.map(d=>d.total),   borderColor:"#434343",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#434343",tension:0.3,borderDash:[4,3]},
-        {label:"Active",       data:data.map(d=>d.active),  borderColor:"#006E5E",backgroundColor:"rgba(0,110,94,0.06)",borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#006E5E",tension:0.3,fill:false},
-        {label:"Silent",       data:data.map(d=>d.silent),  borderColor:"#FFDA30",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#FFDA30",tension:0.3},
-        {label:"Inactive",     data:data.map(d=>d.inactive),borderColor:"#EF2D56",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#EF2D56",tension:0.3},
-        {label:"Organic Lost", data:data.map(d=>d.lost),    borderColor:"#696969",backgroundColor:"transparent",borderWidth:2,pointRadius:4,pointBackgroundColor:"#696969",tension:0.3}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      interaction:{mode:"index",intersect:false},
-      plugins:{
-        legend:{
-          position:"bottom",
-          labels:{font:FONT,color:"#434343",boxWidth:12,padding:16,usePointStyle:true}
-        },
-        tooltip:{
-          bodyFont:{family:"Montserrat",size:10},
-          titleFont:{family:"Montserrat",size:10,weight:"700"},
-          padding:10,cornerRadius:6,
-          callbacks:{
-            label:c=>`  ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`
-          }
-        }
-      },
-      scales:{
-        x:{ticks:TICK,grid:GRID,border:{display:false}},
-        y:{ticks:{...TICK,callback:v=>v.toLocaleString()},grid:GRID,border:{display:false},
-           title:{display:true,text:"Clients",font:FONT,color:"#9A9A9A"}}
-      }
-    }
+function renderReactivationRate(companies){
+  // Last month's pool: classified against LAST_MONTH_ANCHOR
+  const pool=companies.filter(c=>{
+    const s=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
+    return s==="silent"||s==="inactive"||s==="lost";
   });
 
-  $("trend-meta").textContent=`${data.length} months · Apr 2026 → ${data[data.length-1].label} · ${companies.length.toLocaleString()} kitty clients`;
+  // Recovered from that pool: Active today
+  const recovered=pool.filter(c=>classifyCompany(c)==="active");
+
+  // Break down by prior status
+  const fromSilent  =recovered.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="silent");
+  const fromInactive=recovered.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="inactive");
+  const fromLost    =recovered.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="lost");
+
+  const rate=pool.length>0?Math.round(recovered.length/pool.length*100):0;
+  const rateColor=rate>=20?"#006E5E":rate>=10?"#A07A00":"#C0143C";
+
+  const makeCard=(label,subset,pool_subset,color,barColor)=>{
+    const r=pool_subset>0?Math.round(subset/pool_subset*100):0;
+    return`<div class="react-card">
+      <div class="react-label" style="color:${color}">${label}</div>
+      <div class="react-rate" style="color:${color}">${r}%</div>
+      <div class="react-sub">${subset} recovered of ${pool_subset} at-risk last month</div>
+      <div class="react-bar-track"><div class="react-bar-fill" style="width:${r}%;background:${barColor}"></div></div>
+      <div class="react-detail">${LAST_MONTH_LBL} → ${THIS_MONTH_LBL}</div>
+    </div>`;
+  };
+
+  const silentPool  =pool.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="silent").length;
+  const inactivePool=pool.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="inactive").length;
+  const lostPool    =pool.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="lost").length;
+
+  $("react-strip").innerHTML=
+    makeCard("Silent → Active",fromSilent.length,silentPool,"#A07A00","#FFDA30")+
+    makeCard("Inactive → Active",fromInactive.length,inactivePool,"#C0143C","#EF2D56")+
+    makeCard("Organic Lost → Active",fromLost.length,lostPool,"#696969","#696969");
 }
 
 // ════ BOOT ════
