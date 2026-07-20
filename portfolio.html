@@ -76,13 +76,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
 .ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
 
-/* ── Nav sub-bar ── */
-.nav-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06);padding:0 28px}
-.nav-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0}
-.nav-pill{padding:9px 18px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);white-space:nowrap;display:flex;align-items:center;gap:8px}
-.bu-btn{padding:4px 12px;border-radius:5px;border:1px solid rgba(255,218,48,.3);background:transparent;color:rgba(255,218,48,.7);font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s}
-.bu-btn.active,.bu-btn:hover{background:rgba(255,218,48,.15);border-color:#FFDA30;color:#FFDA30}
-
 /* ── Anchor chip ── */
 .anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase}
 
@@ -260,7 +253,7 @@ tbody td.num{text-align:right;font-weight:700}
 
 /* ── Responsive ── */
 @media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:700px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.nav-bar{padding:0 18px}}
+@media(max-width:700px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
 @media(max-width:400px){.kpi-strip{grid-template-columns:1fr}}
 </style>
 </head>
@@ -687,11 +680,11 @@ let cloneHead=null;
 let activeBU="";
 let isSyncing=false;
 
-// ── Filter state ──
-let activeRegions=new Set(["US","UK","AU"]); // all selected by default
+// ── Filter state ── (activeOwners populated by initPOwners() at boot)
+let activeRegions=new Set(["US","UK","AU"]);
 let activeHeads=new Set(["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"]);
-let activeOwners=new Set(REGISTRY_IDS||[]);  // populated after REGISTRY_IDS is built
-let ownerFilterActive=false; // true only if user manually changed owners
+let activeOwners=new Set(); // populated correctly in initPOwners()
+let ownerFilterActive=false;
 
 // ── All regions / heads for filter init ──
 const ALL_REGIONS_P=["US","UK","AU"];
@@ -884,10 +877,9 @@ function renderAll(revMap){
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
 
-  // Recovery — always uses full kitty universe for accuracy, then filters by head/owner
+  // Recovery — scoped to filtered universe (respects Head/Owner/BU/Region filters)
   if(revMap!==undefined){
-    const allClassified=kittyCompanies.map(c=>({...c,status:classifyCompany(c)}));
-    const recovery=buildRecovery(allClassified,revMap);
+    const recovery=buildRecovery(classified,revMap);
     renderRecovery(recovery);
   }
 
@@ -901,9 +893,10 @@ function renderAll(revMap){
 }
 
 function renderTable(classified){
+  // classified is always passed from renderAll/reRender — both use filteredCompanies()
+  // Fallback should also use filteredCompanies(), not the old activeBU pattern
   if(!classified){
-    const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
-    classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
+    classified=filteredCompanies().map(c=>({...c,status:classifyCompany(c)}));
   }
   const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
   let totals={kitty:0,active:0,silent:0,inactive:0,lost:0,never:0};
@@ -1549,9 +1542,13 @@ function reRender(){
   $("k-lost").textContent    =n("lost").toLocaleString();
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
+  // Recovery re-runs on filtered universe so clone/head filter is respected
+  const revMap=window._lastRevMap||{};
+  const recovery=buildRecovery(classified,revMap);
+  renderRecovery(recovery);
   renderAtRisk(fc);
   renderHealthScores(classified);
-  renderRevenueAtRisk(classified,window._lastRevMap||{});
+  renderRevenueAtRisk(classified,revMap);
   renderReactivationRate(fc);
   renderTable(classified);
 }
