@@ -88,20 +88,28 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Main ── */
 .main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
 
-/* ── KPI strip ── */
-.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
-.kpi{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s}
-.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.1);transform:translateY(-1px)}
-.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:700}
-.kpi-val{font-size:22px;font-weight:800;color:#434343;line-height:1}
-.kpi-sub{font-size:9px;color:#9A9A9A;margin-top:4px;font-weight:500}
+/* ── KPI strip — elevated hierarchy ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}
+.kpi{background:#fff;border-radius:12px;padding:20px 20px 16px;border:1px solid #E2E2E2;border-top:4px solid #FFDA30;transition:all .2s;position:relative}
+.kpi:hover{box-shadow:0 6px 24px rgba(67,67,67,.13);transform:translateY(-2px)}
+.kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
+.kpi-val{font-size:clamp(26px,2.2vw,36px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
+.kpi-sub{font-size:10px;color:#9A9A9A;font-weight:500}
+.kpi.k-active{border-top-color:#006E5E}
 .kpi.k-active .kpi-val{color:#006E5E}
+.kpi.k-silent{border-top-color:#FFDA30}
 .kpi.k-silent .kpi-val{color:#A07A00}
+.kpi.k-inactive{border-top-color:#EF2D56}
 .kpi.k-inactive .kpi-val{color:#EF2D56}
+.kpi.k-lost{border-top-color:#696969}
 .kpi.k-lost .kpi-val{color:#696969}
+@media(max-width:900px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:580px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
 
-/* ── Section header ── */
-.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
+/* ── Section labels — left accent bar + breathing room ── */
+.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#696969;margin-bottom:14px;margin-top:36px}
+.sec::before{content:'';display:block;width:3px;height:14px;border-radius:2px;background:#FFDA30;flex-shrink:0}
+.sec.first{margin-top:0}
 
 /* ── Head table ── */
 .tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
@@ -194,9 +202,10 @@ tbody td.num{text-align:right;font-weight:700}
 .donut-head-lbl{font-size:10px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
 .donut-wrap{position:relative;width:130px;height:130px;margin:0 auto 14px}
 .donut-wrap svg{transform:rotate(-90deg);display:block}
-.donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-.donut-total{font-size:22px;font-weight:800;color:#434343;line-height:1}
-.donut-total-lbl{font-size:8px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;gap:0}
+.donut-score{font-size:20px;font-weight:800;line-height:1}
+.donut-score-lbl{font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;margin-top:1px}
+.donut-kitty-count{font-size:8.5px;font-weight:600;color:#C0C0C0;margin-top:3px}
 .donut-legend{display:flex;flex-direction:column;gap:5px}
 .donut-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:3px 6px;border-radius:4px;transition:background .15s}
 .donut-row:hover{background:#F7F7F7}
@@ -261,6 +270,7 @@ tbody td.num{text-align:right;font-weight:700}
 
 /* ── Reactivation Rate ── */
 .react-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.react-strip > [style*="grid-column:1/-1"]{grid-column:1/-1}
 .react-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;position:relative;overflow:hidden}
 .react-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .react-rate{font-size:32px;font-weight:800;line-height:1;margin-bottom:2px}
@@ -334,6 +344,7 @@ tbody td.num{text-align:right;font-weight:700}
           <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
+        <span class="anchor-chip" id="anchor-chip" title="Portfolio anchor date">—</span>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
         <a class="nexus-btn" id="nexus-link" href="/" target="_blank">↗ Revenue Nexus</a>
       </div>
@@ -343,9 +354,7 @@ tbody td.num{text-align:right;font-weight:700}
   <!-- ══ FILTER BAR ══ -->
   <div class="fbar">
     <div class="fbar-in">
-      <span class="nav-pill" style="padding:0;margin-right:6px">
-        Portfolio Health &nbsp;<span class="anchor-chip" id="anchor-chip">—</span>
-      </span>
+      <span class="fl" style="color:rgba(255,255,255,.35);font-size:10px;font-weight:700;letter-spacing:.02em">Portfolio Health</span>
       <div class="vdiv"></div>
       <!-- BU -->
       <span class="fl">BU</span>
@@ -444,7 +453,7 @@ tbody td.num{text-align:right;font-weight:700}
   </div>
 
   <!-- ══ PORTFOLIO HEALTH DONUT ══ -->
-  <div class="sec" style="margin-top:8px">Portfolio Health Distribution <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· client status split per head</span></div>
+  <div class="sec first">Portfolio Health Distribution <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· client status split · health score per head</span></div>
   <div class="donut-grid" id="donut-grid">
     <div class="donut-card" style="opacity:.4"><div class="donut-head-lbl">Loading...</div></div>
   </div>
@@ -500,10 +509,12 @@ tbody td.num{text-align:right;font-weight:700}
   </div>
   <div class="radar-detail" id="radar-detail" style="display:none"></div>
 
-  <!-- ══ PORTFOLIO HEALTH SCORE ══ -->
+  <!-- ══ PORTFOLIO HEALTH SCORE — merged into donut centre ══ -->
+  <div style="display:none">
   <div class="sec" style="margin-top:8px">Portfolio Health Score <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· weighted by engagement depth per head</span></div>
   <div class="score-grid" id="score-grid">
     <div class="score-card" style="opacity:.4"><div class="score-head">Loading...</div></div>
+  </div>
   </div>
 
   <!-- ══ REVENUE AT RISK ══ -->
@@ -1254,17 +1265,32 @@ function renderAtRisk(companies){
   radarClients=buildAtRisk(companies);
   const count=radarClients.length;
   $("radar-count").textContent=count;
-  $("radar-sub").textContent=count===0
-    ?"No active clients approaching Silent threshold — portfolio is healthy"
-    :`${count} client${count!==1?"s":""} will go Silent within 30 days unless a deal closes`;
+
+  // Escalation thresholds
+  const isAlert=count>20;
+  const isCritical=count>40;
+  const borderColor=isCritical?"#EF2D56":isAlert?"#EF8C2D":"#FFDA30";
+  const countColor=isCritical?"#C0143C":isAlert?"#A05A00":"#A07A00";
+  const bgColor=isCritical?"#FFF5F7":isAlert?"#FFFBF0":"#fff";
+
+  $("radar-banner").style.borderLeftColor=borderColor;
+  $("radar-banner").style.borderLeftWidth=isCritical?"5px":"4px";
+  $("radar-banner").style.background=bgColor;
+  $("radar-count").style.color=countColor;
+  $("radar-count").style.fontSize=isCritical?"40px":isAlert?"36px":"32px";
+
   if(count===0){
-    $("radar-banner").style.borderLeftColor="#006E5E";
-    $("radar-count").style.color="#006E5E";
+    $("radar-sub").textContent="No active clients approaching Silent — portfolio is healthy";
     $("radar-btn").style.display="none";
+    $("radar-banner").style.borderLeftColor="#006E5E";
+    $("radar-banner").style.background="#fff";
+    $("radar-count").style.color="#006E5E";
   } else {
-    $("radar-banner").style.borderLeftColor=count>10?"#EF2D56":"#FFDA30";
-    $("radar-count").style.color=count>10?"#C0143C":"#A07A00";
+    $("radar-sub").textContent=`${count} client${count!==1?"s":""} will go Silent within 30 days unless a deal closes`;
     $("radar-btn").style.display="";
+    if(isCritical){
+      $("radar-sub").textContent=`⚠️ Critical — ${count} clients approaching Silent. Immediate owner action required.`;
+    }
   }
 }
 
@@ -1366,6 +1392,9 @@ function renderHealthDonuts(classified){
       .map(k=>({key:k,count:counts[k]}));
     const arcs=buildDonutArcs(segments,R);
 
+    const score=Math.round(((counts.active*4)+(counts.silent*2)+(counts.inactive*1))/(total*4)*100);
+    const scoreCol=score>=75?"#006E5E":score>=50?"#FFDA30":score>=25?"#EF2D56":"#696969";
+
     // SVG arc paths
     const arcsSVG=arcs.map(a=>`
       <circle cx="${CX}" cy="${CY}" r="${R}"
@@ -1395,8 +1424,9 @@ function renderHealthDonuts(classified){
           ${arcsSVG}
         </svg>
         <div class="donut-centre">
-          <div class="donut-total">${total.toLocaleString()}</div>
-          <div class="donut-total-lbl">Kitty</div>
+          <div class="donut-score" style="color:${scoreCol}">${score}%</div>
+          <div class="donut-score-lbl">Health</div>
+          <div class="donut-kitty-count">${total.toLocaleString()} Kitty</div>
         </div>
       </div>
       <div class="donut-legend">${legendRows}</div>
@@ -1463,26 +1493,28 @@ function renderHealthScores(classified){
 
 function renderRevenueAtRisk(classified,revMap){
   const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
+  // Estimate avg deal value from revMap — average of all matched clients this month
+  const revVals=Object.values(revMap||{}).filter(v=>v>0);
+  const avgDeal=revVals.length?revVals.reduce((s,v)=>s+v,0)/revVals.length:3500; // fallback ~$3.5k
 
   $("risk-strip").innerHTML=headsToShow.map(hcfg=>{
     const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
     const hc=classified.filter(c=>ownerSet.has(c.owner_id));
-    const atRisk=hc.filter(c=>c.status==="silent"||c.status==="inactive");
-    const silentCount=hc.filter(c=>c.status==="silent").length;
-    const inactiveCount=hc.filter(c=>c.status==="inactive").length;
-
-    // Revenue matched from this month's revMap (clients who had a deal this month
-    // despite being classified as silent/inactive — edge case, worth surfacing)
-    let matchedRev=0;
-    atRisk.forEach(c=>{
-      const key=(c.name||"").toLowerCase().trim();
-      if(revMap&&revMap[key])matchedRev+=revMap[key];
-    });
+    const silent=hc.filter(c=>c.status==="silent");
+    const inactive=hc.filter(c=>c.status==="inactive");
+    const atRisk=[...silent,...inactive];
+    const silentCount=silent.length;
+    const inactiveCount=inactive.length;
+    // Estimated revenue at risk = at-risk clients × avg deal size this month
+    const estRev=atRisk.length*avgDeal;
+    const fmtRisk=estRev>=1000?`~$${(estRev/1000).toFixed(0)}k`:"—";
 
     return`<div class="risk-card">
       <div class="risk-head">${hcfg.name.split(" ")[0]}</div>
-      <div class="risk-rev">${atRisk.length}</div>
-      <div class="risk-lbl">clients at risk</div>
+      <div class="risk-rev">${fmtRisk}</div>
+      <div class="risk-lbl">estimated revenue at risk</div>
+      <div style="font-size:18px;font-weight:800;color:#434343;margin-bottom:2px">${atRisk.length}</div>
+      <div style="font-size:9px;color:#9A9A9A;font-weight:500;margin-bottom:8px">clients silent or inactive</div>
       <div class="risk-breakdown">
         <span class="risk-seg risk-seg-silent">◆ ${silentCount} Silent</span>
         <span class="risk-seg risk-seg-inactive">◆ ${inactiveCount} Inactive</span>
@@ -1497,7 +1529,26 @@ function renderRevenueAtRisk(classified,revMap){
 // Rate = Recovered ÷ Pool × 100.
 
 function renderReactivationRate(companies){
-  // Last month's pool: classified against LAST_MONTH_ANCHOR
+  // Before mid-month (day < 15), recovery data is too sparse to be meaningful.
+  // Show a contextual message instead of three 0% cards.
+  const today=new Date();
+  if(today.getDate()<15){
+    $("react-strip").innerHTML=`
+      <div style="grid-column:1/-1;background:#fff;border-radius:12px;border:1px solid #E2E2E2;
+        border-left:4px solid #FFDA30;padding:20px 24px;display:flex;align-items:center;gap:14px">
+        <div style="font-size:20px;flex-shrink:0">📅</div>
+        <div>
+          <div style="font-size:11px;font-weight:800;color:#434343;margin-bottom:4px">
+            Check back after the 15th
+          </div>
+          <div style="font-size:10px;color:#696969;font-weight:500">
+            Recovery rate data becomes meaningful mid-month once deals have had time to close.
+            Current window: <strong>${LAST_MONTH_LBL} → ${THIS_MONTH_LBL}</strong>.
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
   const pool=companies.filter(c=>{
     const s=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
     return s==="silent"||s==="inactive"||s==="lost";
