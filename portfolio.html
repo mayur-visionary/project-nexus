@@ -49,11 +49,37 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 
+/* ── Filter bar (mirrors Nexus) ── */
+.fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+.fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
+.fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
+.fsel option{background:#333;color:#fff}
+.fsel.sm{max-width:120px}
+.vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+/* Multi-select dropdown (mirrors Nexus) */
+.ms-wrap{position:relative}
+.ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
+.ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:190px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:320px;overflow-y:auto}
+.ms-dropdown.open{display:block}
+.ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
+.ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
+.ms-actions{display:flex;gap:8px}
+.ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
+.ms-act:hover{opacity:.7}
+.ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
+.ms-item:hover{background:rgba(255,255,255,.07)}
+.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
+.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
+
 /* ── Nav sub-bar ── */
 .nav-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06);padding:0 28px}
 .nav-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0}
 .nav-pill{padding:9px 18px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);white-space:nowrap;display:flex;align-items:center;gap:8px}
-.bu-toggle-wrap{display:flex;gap:6px;margin-left:auto;padding:6px 0}
 .bu-btn{padding:4px 12px;border-radius:5px;border:1px solid rgba(255,218,48,.3);background:transparent;color:rgba(255,218,48,.7);font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s}
 .bu-btn.active,.bu-btn:hover{background:rgba(255,218,48,.15);border-color:#FFDA30;color:#FFDA30}
 
@@ -300,19 +326,65 @@ tbody td.num{text-align:right;font-weight:700}
     </div>
   </div>
   <!-- ── Sub nav ── -->
-  <div class="nav-bar">
-    <div class="nav-in">
-      <span class="nav-pill">
-        Portfolio Health
-        <span class="anchor-chip" id="anchor-chip">—</span>
+  <!-- ══ FILTER BAR ══ -->
+  <div class="fbar">
+    <div class="fbar-in">
+      <span class="nav-pill" style="padding:0;margin-right:6px">
+        Portfolio Health &nbsp;<span class="anchor-chip" id="anchor-chip">—</span>
       </span>
-      <div class="bu-toggle-wrap" id="bu-toggle-wrap">
-        <button class="bu-btn active" id="bu-all"     onclick="setBU('')">All BUs</button>
-        <button class="bu-btn"        id="bu-digital" onclick="setBU('Digital BU')">Digital</button>
-        <button class="bu-btn"        id="bu-martech" onclick="setBU('MarTech BU')">MarTech</button>
+      <div class="vdiv"></div>
+      <!-- BU -->
+      <span class="fl">BU</span>
+      <select class="fsel sm" id="p-bu-sel" onchange="onPortfolioBUChange()">
+        <option value="">All BUs</option>
+        <option value="Digital">Digital</option>
+        <option value="MarTech">MarTech</option>
+      </select>
+      <div class="vdiv"></div>
+      <!-- Region -->
+      <span class="fl">Region</span>
+      <div class="ms-wrap" id="p-geo-wrap">
+        <div class="ms-btn" id="p-geo-btn" onclick="togglePGeo(event)">
+          <span id="p-geo-label">All Regions</span><span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="p-geo-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Regions</span>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllPGeo()">All</span><span class="ms-act" onclick="deselectAllPGeo()">None</span></div>
+          </div>
+          <div id="p-geo-list"></div>
+        </div>
+      </div>
+      <div class="vdiv"></div>
+      <!-- Head -->
+      <span class="fl" id="p-head-lbl">Head</span>
+      <div class="ms-wrap" id="p-head-wrap">
+        <div class="ms-btn" id="p-head-btn" onclick="togglePHead(event)">
+          <span id="p-head-label">All Heads</span><span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="p-head-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Heads</span>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllPHeads()">All</span><span class="ms-act" onclick="deselectAllPHeads()">None</span></div>
+          </div>
+          <div id="p-head-list"></div>
+        </div>
+      </div>
+      <div class="vdiv"></div>
+      <!-- Owner -->
+      <span class="fl">Owner</span>
+      <div class="ms-wrap" id="p-owner-wrap">
+        <div class="ms-btn" id="p-owner-btn" onclick="togglePOwner(event)">
+          <span id="p-owner-label">All Owners</span><span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="p-owner-dropdown" style="min-width:210px">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Owners</span>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllPOwners()">All</span><span class="ms-act" onclick="deselectAllPOwners()">None</span></div>
+          </div>
+          <div id="p-owner-list"></div>
+        </div>
       </div>
     </div>
   </div>
+  <div class="yellow-rule"></div>
 </div>
 
 <!-- ══ MAIN ══ -->
@@ -530,6 +602,63 @@ const OWNER_GROUPS={
 const REGISTRY_IDS=(()=>{const s=new Set();Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)s.add(o.id);});return[...s];})();
 const OWNER_NAME={};Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id&&!OWNER_NAME[o.id])OWNER_NAME[o.id]=o.name;});
 
+// BU map — mirrors Nexus OWNER_BU_MAP exactly
+const OWNER_BU_MAP=(()=>{
+  const m={};
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  // MarTech Leaders explicit
+  m["107178262"]="MarTech"; // Chintan Doshi
+  m["34140174"] ="MarTech"; // Mrugesh Dabhi
+  m["17738843"] ="MarTech"; // Jaydeep Salla
+  // Digital Leaders
+  m["17739173"] ="Digital"; // Tanuj Gupta
+  m["86940863"] ="Digital"; // Nevilson Christan
+  m["17739548"] ="Digital"; // Darshan Modi
+  m["79217713"] ="Digital"; // Krunal Bakraniya
+  m["82663745"] ="Digital"; // Prativa Dubey
+  return m;
+})();
+
+// Region map — fixed per owner, mirrors Nexus OWNER_GEO exactly
+const OWNER_GEO={
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","19799470":"US","557894666":"US",
+  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
+  "86813698":"AU","255830830":"UK","37762663":"US",
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  "82030736":"UK","82911376":"UK","916030451":"US",
+  "467997340":"AU"
+};
+
+// Head map — fixed per owner
+const OWNER_HEAD_MAP=(()=>{
+  const m={};
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    owners.forEach(o=>{
+      if(g==="Leaders / Heads"||g==="Unclassified")return;
+      if(g.startsWith("MarTech")||g==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
+      if(g==="Nevilson — Team"){m[o.id]="Nevilson Christan";return;}
+      if(g==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}
+      if(g==="Digital — UK"){m[o.id]="Tanuj Gupta";return;}
+      if(g==="Digital — US"){m[o.id]="Tanuj Gupta";return;}
+    });
+  });
+  return m;
+})();
+
+// Stamp .bu / .region / .head on every company at load time (mirrors attributeDeals in Nexus)
+function attributeCompanies(companies){
+  companies.forEach(c=>{
+    const oid=String(c.owner_id||"");
+    c.bu    =OWNER_BU_MAP[oid]||"Digital";
+    c.region=OWNER_GEO[oid]||null;
+    c.head  =OWNER_HEAD_MAP[oid]||null;
+  });
+}
+
 // Head → owner IDs
 const HEAD_OWNERS={
   "Jaydeep Salla" :["17738843","46153051","93107638","86147905","85767516","89530815","82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
@@ -557,6 +686,27 @@ let kittyCompanies=[];
 let cloneHead=null;
 let activeBU="";
 let isSyncing=false;
+
+// ── Filter state ──
+let activeRegions=new Set(["US","UK","AU"]); // all selected by default
+let activeHeads=new Set(["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"]);
+let activeOwners=new Set(REGISTRY_IDS||[]);  // populated after REGISTRY_IDS is built
+let ownerFilterActive=false; // true only if user manually changed owners
+
+// ── All regions / heads for filter init ──
+const ALL_REGIONS_P=["US","UK","AU"];
+const ALL_HEADS_P=["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"];
+
+// ── Unified filter view — applies BU + Region + Head + Owner to kittyCompanies ──
+function filteredCompanies(){
+  return kittyCompanies.filter(c=>{
+    if(activeBU&&c.bu!==activeBU)return false;
+    if(activeRegions.size<ALL_REGIONS_P.length&&c.region&&!activeRegions.has(c.region))return false;
+    if(activeHeads.size<ALL_HEADS_P.length&&c.head&&!activeHeads.has(c.head))return false;
+    if(ownerFilterActive&&!activeOwners.has(String(c.owner_id)))return false;
+    return true;
+  });
+}
 
 // ── Helpers ──
 const normName=n=>(n||"").toLowerCase().trim();
@@ -637,19 +787,32 @@ function bootCloneMode(){
   $("login-title").textContent=`${firstName}'s Portfolio`;
   $("login-footer").textContent=`${cfg.name} · ${cfg.bu}`;
   $("nexus-link").href=`/?head=${param}`;
-  if(cfg.bu==="MarTech")$("bu-toggle-wrap").style.display="none";
   document.body.setAttribute("data-clone",param);
+
+  // Lock Head filter to this head only — hide Head dropdown from filter bar
+  ALL_HEADS_P.forEach(h=>{
+    const el=$(`phead-${h.replace(/\s/g,"_")}`);
+    if(el)el.checked=(h===cfg.name);
+  });
+  activeHeads=new Set([cfg.name]);
+  updatePHeadLabel();
+  // Hide head filter UI elements
+  const hw=$("p-head-wrap");if(hw)hw.style.display="none";
+  const hl=$("p-head-lbl");if(hl)hl.style.display="none";
+  // Cascade owners to match this head
+  cascadeOwnersByHead();
+  // Lock BU if single-BU head (MarTech → hide Digital option)
+  if(cfg.bu==="MarTech"){
+    const buSel=$("p-bu-sel");
+    if(buSel){buSel.value="MarTech";activeBU="MarTech";}
+  }
   console.log(`[Portfolio] Clone mode → ${cfg.name}`);
 }
 
-// ════ BU FILTER ════
-function setBU(bu){
-  activeBU=bu;
-  ["bu-all","bu-digital","bu-martech"].forEach(id=>$(id)?.classList.remove("active"));
-  if(!bu)$("bu-all")?.classList.add("active");
-  else if(bu==="Digital BU")$("bu-digital")?.classList.add("active");
-  else if(bu==="MarTech BU")$("bu-martech")?.classList.add("active");
-  renderTable();
+// ════ BU FILTER (updated — uses select, not buttons) ════
+function onPortfolioBUChange(){
+  activeBU=$("p-bu-sel").value;
+  reRender();
 }
 
 // ════ DATA FETCHING ════
@@ -705,8 +868,11 @@ async function doSync(force=false){
 
 // ════ RENDER ════
 function renderAll(revMap){
-  const filtered=activeBU?kittyCompanies.filter(c=>c.business_unit===activeBU):kittyCompanies;
-  const classified=filtered.map(c=>({...c,status:classifyCompany(c)}));
+  window._lastRevMap=revMap||{}; // store for filter re-renders
+  attributeCompanies(kittyCompanies); // stamp .bu/.region/.head on every company
+
+  const fc=filteredCompanies();
+  const classified=fc.map(c=>({...c,status:classifyCompany(c)}));
 
   const total=classified.length;
   const n=s=>classified.filter(c=>c.status===s).length;
@@ -715,25 +881,22 @@ function renderAll(revMap){
   $("k-silent").textContent  =n("silent").toLocaleString();
   $("k-inactive").textContent=n("inactive").toLocaleString();
   $("k-lost").textContent    =n("lost").toLocaleString();
-  $("k-active-sub").textContent=`Revenue since ${ANCHOR_STR} (−90d)`;
-  $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR} · ${activeBU||"All BUs"}`;
+  $("k-active-sub").textContent=`Revenue in last 90 days`;
+  $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
 
-  // Recovery Intelligence — uses full kitty universe (not BU-filtered) for accuracy
-  // BU toggle only affects the portfolio table, not recovery metrics
+  // Recovery — always uses full kitty universe for accuracy, then filters by head/owner
   if(revMap!==undefined){
     const allClassified=kittyCompanies.map(c=>({...c,status:classifyCompany(c)}));
     const recovery=buildRecovery(allClassified,revMap);
     renderRecovery(recovery);
   }
 
-  // All four intelligence features — always use full kitty universe
-  const allClassified=kittyCompanies.map(c=>({...c,status:classifyCompany(c)}));
-  renderAtRisk(kittyCompanies);
-  renderHealthScores(allClassified);
-  renderRevenueAtRisk(allClassified,revMap||{});
-  renderReactivationRate(kittyCompanies);
+  // All four intelligence features — use filtered universe
+  renderAtRisk(fc);
+  renderHealthScores(classified);
+  renderRevenueAtRisk(classified,revMap||{});
+  renderReactivationRate(fc);
 
-  // Trend — always uses full kitty universe regardless of BU toggle
   renderTable(classified);
 }
 
@@ -1255,11 +1418,150 @@ function renderReactivationRate(companies){
     makeCard("Organic Lost → Active",fromLost.length,lostPool,"#696969","#696969");
 }
 
+// ════ FILTER BAR — PORTFOLIO ════
+// BU / Region / Head / Owner — all client-side, zero API calls.
+// filteredCompanies() is the single view gate for all render functions.
+
+// ── BU ──
+function onPortfolioBUChange(){
+  activeBU=$("p-bu-sel").value;
+  reRender();
+}
+
+// ── Region ──
+function initPGeo(){
+  $("p-geo-list").innerHTML=ALL_REGIONS_P.map(r=>
+    `<div class="ms-item"><input type="checkbox" id="pgeo-${r}" checked onchange="onPGeoChange()"><label for="pgeo-${r}">${r}</label></div>`
+  ).join("");
+}
+function togglePGeo(e){e.stopPropagation();$("p-geo-dropdown").classList.toggle("open");}
+function onPGeoChange(){
+  activeRegions=new Set(ALL_REGIONS_P.filter(r=>{const el=$(`pgeo-${r}`);return!el||el.checked;}));
+  updatePGeoLabel();
+  reRender();
+}
+function updatePGeoLabel(){
+  const sel=[...activeRegions];
+  $("p-geo-label").textContent=sel.length===ALL_REGIONS_P.length?"All Regions":sel.length===0?"None":sel.join(" · ");
+}
+function selectAllPGeo(){ALL_REGIONS_P.forEach(r=>{const el=$(`pgeo-${r}`);if(el)el.checked=true;});activeRegions=new Set(ALL_REGIONS_P);updatePGeoLabel();reRender();}
+function deselectAllPGeo(){ALL_REGIONS_P.forEach(r=>{const el=$(`pgeo-${r}`);if(el)el.checked=false;});activeRegions=new Set();updatePGeoLabel();reRender();}
+
+// ── Head ──
+function initPHeads(){
+  $("p-head-list").innerHTML=ALL_HEADS_P.map(h=>
+    `<div class="ms-item"><input type="checkbox" id="phead-${h.replace(/\s/g,'_')}" checked onchange="onPHeadChange()"><label for="phead-${h.replace(/\s/g,'_')}">${h.split(" ")[0]}</label></div>`
+  ).join("");
+}
+function togglePHead(e){e.stopPropagation();$("p-head-dropdown").classList.toggle("open");}
+function onPHeadChange(){
+  activeHeads=new Set(ALL_HEADS_P.filter(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);return!el||el.checked;}));
+  updatePHeadLabel();
+  cascadeOwnersByHead();
+  reRender();
+}
+function updatePHeadLabel(){
+  const sel=[...activeHeads];
+  $("p-head-label").textContent=sel.length===ALL_HEADS_P.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:`${sel.length} Heads`;
+}
+function selectAllPHeads(){ALL_HEADS_P.forEach(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);if(el)el.checked=true;});activeHeads=new Set(ALL_HEADS_P);updatePHeadLabel();cascadeOwnersByHead();reRender();}
+function deselectAllPHeads(){ALL_HEADS_P.forEach(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);if(el)el.checked=false;});activeHeads=new Set();updatePHeadLabel();reRender();}
+
+// Cascade owners when head changes (uncheck owners not under selected heads)
+function cascadeOwnersByHead(){
+  if(activeHeads.size===ALL_HEADS_P.length){
+    // All heads — restore all owners
+    REGISTRY_IDS.forEach(id=>{const el=$(`pown-${id}`);if(el)el.checked=true;});
+    activeOwners=new Set(REGISTRY_IDS);
+    ownerFilterActive=false;
+  } else {
+    const validOwners=new Set();
+    [...activeHeads].forEach(h=>(HEAD_OWNERS[h]||[]).forEach(id=>validOwners.add(id)));
+    REGISTRY_IDS.forEach(id=>{const el=$(`pown-${id}`);if(el)el.checked=validOwners.has(id);});
+    activeOwners=validOwners;
+    ownerFilterActive=true;
+  }
+  updatePOwnerLabel();
+}
+
+// ── Owner ──
+const ORDERED_OWNERS_P=[
+  {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},{id:"34140174",name:"Mrugesh Dabhi"},
+  {id:"467997340",name:"Karan Doshi"},{id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},
+  {id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},{id:"86147905",name:"Preeti Thapliyal"},
+  {id:"85767516",name:"Rupali Sindhu"},{id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},
+  {id:"41490632",name:"Mukund Basita"},
+  {id:"17739548",name:"Darshan Modi"},{id:"79217713",name:"Krunal Bakraniya"},{id:"17739173",name:"Tanuj Gupta"},
+  {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},{id:"94746500",name:"Manvi Choumal"},
+  {id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"},
+  {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+  {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"},
+  {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+  {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+  {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},{id:"557894666",name:"Sudarshan Damani"},
+  {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},{id:"37762663",name:"Malav Modi"},
+  {id:"82663745",name:"Prativa Dubey"}
+];
+function initPOwners(){
+  $("p-owner-list").innerHTML=ORDERED_OWNERS_P.map(o=>
+    `<div class="ms-item"><input type="checkbox" id="pown-${o.id}" checked onchange="onPOwnerChange()"><label for="pown-${o.id}">${o.name}</label></div>`
+  ).join("");
+  activeOwners=new Set(ORDERED_OWNERS_P.map(o=>o.id));
+}
+function togglePOwner(e){e.stopPropagation();$("p-owner-dropdown").classList.toggle("open");}
+function onPOwnerChange(){
+  activeOwners=new Set(ORDERED_OWNERS_P.filter(o=>{const el=$(`pown-${o.id}`);return!el||el.checked;}).map(o=>o.id));
+  ownerFilterActive=activeOwners.size<ORDERED_OWNERS_P.length;
+  updatePOwnerLabel();
+  reRender();
+}
+function updatePOwnerLabel(){
+  const count=activeOwners.size;const total=ORDERED_OWNERS_P.length;
+  $("p-owner-label").textContent=count===total?"All Owners":count===0?"None":`${count} Selected`;
+}
+function selectAllPOwners(){ORDERED_OWNERS_P.forEach(o=>{const el=$(`pown-${o.id}`);if(el)el.checked=true;});activeOwners=new Set(ORDERED_OWNERS_P.map(o=>o.id));ownerFilterActive=false;updatePOwnerLabel();reRender();}
+function deselectAllPOwners(){ORDERED_OWNERS_P.forEach(o=>{const el=$(`pown-${o.id}`);if(el)el.checked=false;});activeOwners=new Set();ownerFilterActive=true;updatePOwnerLabel();reRender();}
+
+// Close all dropdowns on outside click
+document.addEventListener("click",e=>{
+  [["p-geo-wrap","p-geo-dropdown"],["p-head-wrap","p-head-dropdown"],["p-owner-wrap","p-owner-dropdown"]].forEach(([wrap,dd])=>{
+    if(!$(wrap)?.contains(e.target))$(dd)?.classList.remove("open");
+  });
+});
+
+// ── Init all filters ──
+function initPortfolioFilters(){
+  initPGeo();
+  initPHeads();
+  initPOwners();
+}
+
+// ── Re-render: re-runs all sections with current filter state ──
+function reRender(){
+  const fc=filteredCompanies();
+  const classified=fc.map(c=>({...c,status:classifyCompany(c)}));
+  const total=classified.length;
+  const n=s=>classified.filter(c=>c.status===s).length;
+  $("k-total").textContent   =total.toLocaleString();
+  $("k-active").textContent  =n("active").toLocaleString();
+  $("k-silent").textContent  =n("silent").toLocaleString();
+  $("k-inactive").textContent=n("inactive").toLocaleString();
+  $("k-lost").textContent    =n("lost").toLocaleString();
+  $("k-active-sub").textContent=`Revenue in last 90 days`;
+  $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
+  renderAtRisk(fc);
+  renderHealthScores(classified);
+  renderRevenueAtRisk(classified,window._lastRevMap||{});
+  renderReactivationRate(fc);
+  renderTable(classified);
+}
+
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",function(){
   $("anchor-chip").textContent=ANCHOR_STR;
-  checkSSO(); // ← bypass overlay if already authenticated in Nexus
-  bootCloneMode();
+  checkSSO();
+  initPortfolioFilters(); // ← init all filter dropdowns before clone mode
+  bootCloneMode();        // ← clone mode may lock/cascade filters
   doSync(true);
 });
 </script>
