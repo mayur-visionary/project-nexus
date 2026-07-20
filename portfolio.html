@@ -818,12 +818,16 @@ function bootCloneMode(){
   if(!cfg){console.warn(`[Portfolio] Unknown ?head= param: "${param}"`);return;}
   cloneHead=cfg.name;
   const firstName=cfg.name.split(" ")[0];
-  document.title=`${firstName}'s Portfolio Health · Mavlers`;
-  $("hdr-title").textContent=`${firstName}'s Portfolio Health`;
-  $("hdr-sub").textContent=`${cfg.name} · ${cfg.bu} Portfolio`;
+  // ── Browser tab: Firstname · Project Nexus · Mavlers ──
+  document.title=`${firstName} · Project Nexus · Mavlers`;
+  // ── Header title: stays PROJECT NEXUS (master brand unchanged) ──
+  // $("hdr-title") left as-is
+  // ── Header subtitle: personalised quietly beneath the master brand ──
+  $("hdr-sub").textContent=`${cfg.name} · ${cfg.bu} · Portfolio Health · Private View`;
+  // ── Login screen ──
   $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Dashboard`;
-  $("login-title").textContent=`${firstName}'s Portfolio`;
-  $("login-footer").textContent=`${cfg.name} · ${cfg.bu}`;
+  $("login-title").textContent=`Project Nexus`;
+  $("login-footer").textContent=`The Live Pulse of Mavlers Revenue`;
   $("nexus-link").href=`/?head=${param}`;
   document.body.setAttribute("data-clone",param);
 
