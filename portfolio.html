@@ -931,29 +931,32 @@ async function fetchThisMonthDeals(){
   return revMap; // {normalisedClientName → totalRevenue}
 }
 
-// Build recovery data: compare last-month vs today status per kitty company
+// Build recovery data: a client is recovered if and only if:
+//   1. They were Silent/Inactive/Lost as of last month's anchor (Jul 1), AND
+//   2. They have a confirmed booked deal in revMap this month (empirical evidence).
+// The "Active today" classification is dropped — revMap is the gate and the evidence.
+// Revenue figure is exact: directly from this month's invoice data, not inferred.
 function buildRecovery(classified,revMap){
   const result={silent:[],inactive:[],lost:[]};
 
   classified.forEach(c=>{
-    const statusToday=c.status;
-    if(statusToday!=="active")return; // only care about clients active TODAY
-
-    const statusLastMonth=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
-    if(statusLastMonth==="active"||statusLastMonth==="never")return; // not recovered
-
-    // Lookup revenue: try display name, then company name
+    // Gate 1: must have a confirmed deal booked this month
     const key=(c.name||"").toLowerCase().trim();
     const rev=revMap[key]||0;
+    if(rev<=0)return; // no confirmed deal this month — not a recovery
+
+    // Gate 2: must have been Silent/Inactive/Lost as of last month's anchor
+    const statusLastMonth=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
+    if(statusLastMonth==="active"||statusLastMonth==="never")return; // was already active, or never transacted
 
     const entry={name:c.name,owner:OWNER_NAME[c.owner_id]||c.owner_id,lastStatus:statusLastMonth,rev};
 
-    if(statusLastMonth==="silent")   result.silent.push(entry);
+    if(statusLastMonth==="silent")        result.silent.push(entry);
     else if(statusLastMonth==="inactive") result.inactive.push(entry);
     else if(statusLastMonth==="lost")     result.lost.push(entry);
   });
 
-  // Sort each bucket by revenue desc
+  // Sort each bucket by revenue desc — highest value recoveries first
   ["silent","inactive","lost"].forEach(k=>result[k].sort((a,b)=>b.rev-a.rev));
   return result;
 }
