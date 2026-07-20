@@ -690,15 +690,15 @@ const HEAD_OWNERS={
 const HEADS_CFG=[
   {id:"jaydeep", name:"Jaydeep Salla",    bu:"MarTech", color:"#3B3561"},
   {id:"jiggyasa",name:"Jiggyasa Agrawal", bu:"Digital", color:"#FFDA30"},
-  {id:"tanuj",   name:"Tanuj Gupta",      bu:"Digital", color:"#006E5E"},
-  {id:"nevilson",name:"Nevilson Christan",bu:"Digital", color:"#473400"}
+  {id:"tanuj",   name:"Tanuj Gupta",      bu:"Digital", color:"#006E5E"}
+  // Nevilson Christan excluded — team does not manage kitty accounts (confirmed Krishna)
 ];
 
 const HEADS_CONFIG=[
   {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
   {id:"jaydeep", name:"Jaydeep Salla",   bu:"MarTech"},
-  {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
   {id:"tanuj",   name:"Tanuj Gupta",     bu:"Digital"}
+  // Nevilson excluded — no kitty management role
 ];
 
 // ── State ──
@@ -709,13 +709,13 @@ let isSyncing=false;
 
 // ── Filter state ── (activeOwners populated by initPOwners() at boot)
 let activeRegions=new Set(["US","UK","AU"]);
-let activeHeads=new Set(["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"]);
+let activeHeads=new Set(["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta"]);
 let activeOwners=new Set(); // populated correctly in initPOwners()
 let ownerFilterActive=false;
 
 // ── All regions / heads for filter init ──
 const ALL_REGIONS_P=["US","UK","AU"];
-const ALL_HEADS_P=["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"];
+const ALL_HEADS_P=["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta"]; // Nevilson excluded — no kitty role
 
 // ── Unified filter view — applies BU + Region + Head + Owner to kittyCompanies ──
 function filteredCompanies(){
@@ -1669,15 +1669,16 @@ function reRender(){
   const revMap=window._lastRevMap||{};
   const recovery=buildRecovery(classified,revMap);
   renderRecovery(recovery);
+  // Re-render any open drilldown panel with fresh filtered data
+  ["silent","inactive","lost"].forEach(k=>{if(recOpen[k])renderRecoveryDetail(k);});
   renderHealthDonuts(classified);
   renderAtRisk(fc);
+  if(radarOpen)renderRadarDetail(); // re-render open radar detail with fresh data
   renderHealthScores(classified);
   renderRevenueAtRisk(classified,revMap);
   renderReactivationRate(fc);
   renderTable(classified);
 }
-
-// ════ BOOT ════
 window.addEventListener("DOMContentLoaded",function(){
   $("anchor-chip").textContent=ANCHOR_STR;
   checkSSO();
