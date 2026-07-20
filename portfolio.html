@@ -167,33 +167,6 @@ tbody td.num{text-align:right;font-weight:700}
 .leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#696969;text-transform:uppercase;letter-spacing:.06em}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
-/* ── Client Recovery Intelligence ── */
-.recovery-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px}
-.rec-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;position:relative;transition:box-shadow .2s}
-.rec-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
-.rec-silent{border-top:3px solid #FFDA30}
-.rec-inactive{border-top:3px solid #EF2D56}
-.rec-lost{border-top:3px solid #696969}
-.rec-arrow{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:8px}
-.rec-silent .rec-arrow{color:#A07A00}
-.rec-inactive .rec-arrow{color:#C0143C}
-.rec-lost .rec-arrow{color:#696969}
-.rec-count{font-size:36px;font-weight:800;color:#434343;line-height:1;margin-bottom:2px}
-.rec-lbl{font-size:9px;font-weight:600;color:#9A9A9A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
-.rec-rev{font-size:16px;font-weight:800;color:#006E5E;margin-bottom:2px}
-.rec-sublbl{font-size:9px;font-weight:500;color:#9A9A9A;margin-bottom:14px}
-.rec-toggle{width:100%;padding:6px 0;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s}
-.rec-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
-.rec-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
-.rec-detail{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:12px}
-.rec-detail table{min-width:500px;font-size:11px}
-.rec-detail thead th{padding:8px 14px;background:#F7F7F7;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;text-align:left}
-.rec-detail thead th.num{text-align:right}
-.rec-detail tbody td{padding:8px 14px;border-bottom:1px solid #F5F5F5;white-space:nowrap}
-.rec-detail tbody td.num{text-align:right;font-weight:700}
-.rec-detail tbody tr:hover td{background:#FFFBEA}
-.rec-zero{text-align:center;padding:24px;color:#9A9A9A;font-size:11px;font-weight:500}
-@media(max-width:900px){.recovery-strip{grid-template-columns:1fr}}
 
 /* Portfolio Health Donut - rebuilt */
 .donut-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:24px}
@@ -463,42 +436,6 @@ tbody td.num{text-align:right;font-weight:700}
   <div class="sec first">Portfolio Health Distribution <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· client status split · health score per head</span></div>
   <div class="donut-grid" id="donut-grid">
     <div class="donut-card" style="opacity:.4"><div class="donut-head-lbl">Loading...</div></div>
-  </div>
-
-  <!-- ══ CLIENT RECOVERY INTELLIGENCE ══ -->
-  <div class="sec" style="margin-top:8px">Client Recovery · <span id="recovery-period-label" style="font-weight:600;color:#434343;text-transform:none;letter-spacing:0;font-size:11px"></span></div>
-  <div class="recovery-strip" id="recovery-strip">
-    <div class="rec-card rec-silent" id="rec-silent-card">
-      <div class="rec-arrow">Silent → Active</div>
-      <div class="rec-count" id="rec-silent-count">—</div>
-      <div class="rec-lbl">clients recovered</div>
-      <div class="rec-rev" id="rec-silent-rev">—</div>
-      <div class="rec-sublbl">revenue this month</div>
-      <button class="rec-toggle" id="rec-silent-btn" onclick="toggleRecovery('silent')">Show Clients ▾</button>
-    </div>
-    <div class="rec-card rec-inactive" id="rec-inactive-card">
-      <div class="rec-arrow">Inactive → Active</div>
-      <div class="rec-count" id="rec-inactive-count">—</div>
-      <div class="rec-lbl">clients recovered</div>
-      <div class="rec-rev" id="rec-inactive-rev">—</div>
-      <div class="rec-sublbl">revenue this month</div>
-      <button class="rec-toggle" id="rec-inactive-btn" onclick="toggleRecovery('inactive')">Show Clients ▾</button>
-    </div>
-    <div class="rec-card rec-lost" id="rec-lost-card">
-      <div class="rec-arrow">Organic Lost → Active</div>
-      <div class="rec-count" id="rec-lost-count">—</div>
-      <div class="rec-lbl">clients recovered</div>
-      <div class="rec-rev" id="rec-lost-rev">—</div>
-      <div class="rec-sublbl">revenue this month</div>
-      <button class="rec-toggle" id="rec-lost-btn" onclick="toggleRecovery('lost')">Show Clients ▾</button>
-    </div>
-  </div>
-  <!-- Drilldown tables — one per movement type -->
-  <div class="rec-detail" id="rec-detail-silent" style="display:none"></div>
-  <div class="rec-detail" id="rec-detail-inactive" style="display:none"></div>
-  <div class="rec-detail" id="rec-detail-lost" style="display:none"></div>
-  <div id="recovery-note" style="font-size:9px;color:#9A9A9A;font-weight:500;margin-bottom:20px;display:none">
-    ⓘ Revenue shown is from this month's closed deals matched to recovered kitty clients.
   </div>
 
   <!-- ══ AT-RISK RADAR ══ -->
@@ -882,13 +819,9 @@ async function doSync(force=false){
   try{
     // Parallel fetch: kitty companies + this month's deals (for recovery revenue)
     $("stxt").textContent="SYNCING...";
-    const [fetchedCompanies, revMap] = await Promise.all([
-      fetchKittyCompanies(),
-      fetchThisMonthDeals().catch(e=>{console.warn("[Portfolio] Deal fetch failed:",e);return{};})
-    ]);
-    kittyCompanies=fetchedCompanies;
+    kittyCompanies=await fetchKittyCompanies();
     console.log(`[Portfolio] ${kittyCompanies.length} kitty companies loaded`);
-    renderAll(revMap);
+    renderAll();
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
     $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
@@ -909,8 +842,7 @@ async function doSync(force=false){
 }
 
 // ════ RENDER ════
-function renderAll(revMap){
-  window._lastRevMap=revMap||{}; // store for filter re-renders
+function renderAll(){
   attributeCompanies(kittyCompanies); // stamp .bu/.region/.head on every company
 
   const fc=filteredCompanies();
@@ -926,18 +858,11 @@ function renderAll(revMap){
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
 
-  // Recovery — scoped to filtered universe (respects Head/Owner/BU/Region filters)
-  if(revMap!==undefined){
-    const recovery=buildRecovery(classified,revMap);
-    renderRecovery(recovery);
-  }
-
-  // All four intelligence features — use filtered universe
+  // Intelligence features — use filtered universe
   renderHealthDonuts(classified);
   renderAtRisk(fc);
   renderHealthScores(classified);
-  renderRevenueAtRisk(classified,revMap||{});
-  renderReactivationRate(fc);
+  // renderRevenueAtRisk — hidden per management
 
   renderTable(classified);
 }
@@ -1052,199 +977,6 @@ function toggleOwners(rowId){
   document.getElementById("row-"+rowId)?.classList.toggle("expanded",open);
 }
 
-// ════ RECOVERY INTELLIGENCE ════
-// Compares each kitty client's status TODAY vs their status as of the
-// START of the current calendar month (= last month's end anchor).
-// Clients who were Silent/Inactive/Lost last month AND are Active today
-// are "recovered". Revenue is from this month's actual closed deals.
-
-// Last-month anchor = midnight on the 1st of the current month
-const LAST_MONTH_ANCHOR=(()=>{
-  const d=new Date();
-  return new Date(d.getFullYear(),d.getMonth(),1,0,0,0,0);
-})();
-
-// Current calendar month string e.g. "july-2026"
-const THIS_MONTH_VAL=(()=>{
-  const d=new Date();
-  return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;
-})();
-
-// Current month label e.g. "Jul 2026"
-const THIS_MONTH_LBL=(()=>{
-  const d=new Date();
-  return`${MSHRT[d.getMonth()]} ${d.getFullYear()}`;
-})();
-
-// Last month label e.g. "Jun 2026"
-const LAST_MONTH_LBL=(()=>{
-  const d=new Date();
-  const lm=new Date(d.getFullYear(),d.getMonth()-1,1);
-  return`${MSHRT[lm.getMonth()]} ${lm.getFullYear()}`;
-})();
-
-// Classify using any anchor date (reusable)
-function classifyWithAnchor(company,anchor){
-  const dateStr=company.recent_deal_close_date||"";
-  if(!dateStr)return"never";
-  const lastDate=new Date(dateStr+"T00:00:00");
-  if(isNaN(lastDate))return"never";
-  const diffDays=Math.floor((anchor-lastDate)/(1000*60*60*24));
-  if(diffDays<0)           return"active";
-  if(diffDays<=D_ACTIVE)   return"active";
-  if(diffDays<=D_SILENT)   return"silent";
-  if(diffDays<=D_INACTIVE) return"inactive";
-  return"lost";
-}
-
-// Fetch this month's deals via /api proxy (same pipeline/stage as Nexus)
-async function fetchThisMonthDeals(){
-  const body={
-    filterGroups:[{filters:[
-      {propertyName:"pipeline",         operator:"EQ",value:PIPELINE},
-      {propertyName:"dealstage",        operator:"EQ",value:STAGE},
-      {propertyName:"invoice_booking_month__invoice_app_",operator:"EQ",value:THIS_MONTH_VAL},
-      {propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},
-      {propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}
-    ]}],
-    properties:[
-      "dealname","amount_in_home_currency","hubspot_owner_id",
-      "zoho_display_name__invoice_app_","contact_name__invoice_app_",
-      "zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_"
-    ],
-    limit:200
-  };
-  const deals=[];let after=null;
-  do{
-    if(after)body.after=after;
-    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok)throw new Error(`Deals API ${res.status}`);
-    const data=await res.json();
-    (data.results||[]).forEach(r=>{
-      const amt=parseFloat(r.properties?.amount_in_home_currency||0)||0;
-      if(amt<=0)return; // exclude credits
-      deals.push({
-        client:(r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"").toLowerCase().trim(),
-        amount:amt
-      });
-    });
-    after=data.paging?.next?.after||null;
-  }while(after);
-
-  // Aggregate revenue by normalised client name
-  const revMap={};
-  deals.forEach(d=>{if(d.client)revMap[d.client]=(revMap[d.client]||0)+d.amount;});
-  return revMap; // {normalisedClientName → totalRevenue}
-}
-
-// Build recovery data: a client is recovered if and only if:
-//   1. They were Silent/Inactive/Lost as of last month's anchor (Jul 1), AND
-//   2. They have a confirmed booked deal in revMap this month (empirical evidence).
-// The "Active today" classification is dropped — revMap is the gate and the evidence.
-// Revenue figure is exact: directly from this month's invoice data, not inferred.
-function buildRecovery(classified,revMap){
-  const result={silent:[],inactive:[],lost:[]};
-
-  classified.forEach(c=>{
-    // Gate 1: must have a confirmed deal booked this month
-    const key=(c.name||"").toLowerCase().trim();
-    const rev=revMap[key]||0;
-    if(rev<=0)return; // no confirmed deal this month — not a recovery
-
-    // Gate 2: must have been Silent/Inactive/Lost as of last month's anchor
-    const statusLastMonth=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
-    if(statusLastMonth==="active"||statusLastMonth==="never")return; // was already active, or never transacted
-
-    const entry={name:c.name,owner:OWNER_NAME[c.owner_id]||c.owner_id,lastStatus:statusLastMonth,rev};
-
-    if(statusLastMonth==="silent")        result.silent.push(entry);
-    else if(statusLastMonth==="inactive") result.inactive.push(entry);
-    else if(statusLastMonth==="lost")     result.lost.push(entry);
-  });
-
-  // Sort each bucket by revenue desc — highest value recoveries first
-  ["silent","inactive","lost"].forEach(k=>result[k].sort((a,b)=>b.rev-a.rev));
-  return result;
-}
-
-// State: which drilldown is open
-const recOpen={silent:false,inactive:false,lost:false};
-let recoveryData=null; // populated after sync
-
-const fmtUSD=n=>n>0?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n):"—";
-
-function renderRecovery(recovery){
-  recoveryData=recovery;
-  $("recovery-period-label").textContent=`${LAST_MONTH_LBL} → ${THIS_MONTH_LBL}`;
-  $("recovery-note").style.display="";
-
-  const buckets=[
-    {key:"silent",  countId:"rec-silent-count",  revId:"rec-silent-rev"},
-    {key:"inactive",countId:"rec-inactive-count",revId:"rec-inactive-rev"},
-    {key:"lost",    countId:"rec-lost-count",    revId:"rec-lost-rev"}
-  ];
-
-  buckets.forEach(({key,countId,revId})=>{
-    const rows=recovery[key]||[];
-    const totalRev=rows.reduce((s,r)=>s+r.rev,0);
-    $(countId).textContent=rows.length;
-    $(revId).textContent=totalRev>0?fmtUSD(totalRev):"—";
-  });
-}
-
-function toggleRecovery(type){
-  const detailEl=$(`rec-detail-${type}`);
-  const btn=$(`rec-${type}-btn`);
-  const isOpen=recOpen[type];
-
-  // Close all first
-  ["silent","inactive","lost"].forEach(k=>{
-    recOpen[k]=false;
-    $(`rec-detail-${k}`).style.display="none";
-    const b=$(`rec-${k}-btn`);
-    if(b){b.textContent="Show Clients ▾";b.classList.remove("open");}
-  });
-
-  if(!isOpen){
-    recOpen[type]=true;
-    detailEl.style.display="";
-    btn.textContent="Hide Clients ▴";
-    btn.classList.add("open");
-    renderRecoveryDetail(type);
-  }
-}
-
-function renderRecoveryDetail(type){
-  const detailEl=$(`rec-detail-${type}`);
-  const rows=(recoveryData&&recoveryData[type])||[];
-  const label={silent:"Silent",inactive:"Inactive",lost:"Organic Lost"}[type];
-
-  if(!rows.length){
-    detailEl.innerHTML=`<div class="rec-zero">No ${label} → Active recoveries this month.</div>`;
-    return;
-  }
-
-  const rowsHTML=rows.map((r,i)=>`
-    <tr>
-      <td style="color:#9A9A9A;font-size:10px;font-weight:700;width:32px;text-align:center">${i+1}</td>
-      <td style="font-weight:700;font-size:11px;color:#434343">${r.name}</td>
-      <td style="font-size:10px;color:#696969;font-weight:600">${r.owner}</td>
-      <td class="num" style="color:${r.rev>0?"#006E5E":"#9A9A9A"};font-size:11px">${r.rev>0?fmtUSD(r.rev):"No deal this month"}</td>
-    </tr>`).join("");
-
-  detailEl.innerHTML=`
-    <div style="overflow-x:auto">
-      <table>
-        <thead><tr>
-          <th style="width:32px;text-align:center">#</th>
-          <th>Client</th>
-          <th>Owner</th>
-          <th class="num">Revenue This Month</th>
-        </tr></thead>
-        <tbody>${rowsHTML}</tbody>
-      </table>
-    </div>`;
-}
 
 // ════ AT-RISK RADAR ════
 // Active clients whose recent_deal_close_date is 61–90 days ago.
@@ -1604,68 +1336,7 @@ function renderRevenueAtRisk(classified,revMap){
   }).join("");
 }
 
-// ════ REACTIVATION SUCCESS RATE ════
-// Pool = clients who were Silent, Inactive, or Organic Lost last month.
-// Recovered = clients from that pool who are Active today.
-// Rate = Recovered ÷ Pool × 100.
-
-function renderReactivationRate(companies){
-  // Before mid-month (day < 15), recovery data is too sparse to be meaningful.
-  // Show a contextual message instead of three 0% cards.
-  const today=new Date();
-  if(today.getDate()<15){
-    $("react-strip").innerHTML=`
-      <div style="grid-column:1/-1;background:#fff;border-radius:12px;border:1px solid #E2E2E2;
-        border-left:4px solid #FFDA30;padding:20px 24px;display:flex;align-items:center;gap:14px">
-        <div style="font-size:20px;flex-shrink:0">📅</div>
-        <div>
-          <div style="font-size:11px;font-weight:800;color:#434343;margin-bottom:4px">
-            Check back after the 15th
-          </div>
-          <div style="font-size:10px;color:#696969;font-weight:500">
-            Recovery rate data becomes meaningful mid-month once deals have had time to close.
-            Current window: <strong>${LAST_MONTH_LBL} → ${THIS_MONTH_LBL}</strong>.
-          </div>
-        </div>
-      </div>`;
-    return;
-  }
-  const pool=companies.filter(c=>{
-    const s=classifyWithAnchor(c,LAST_MONTH_ANCHOR);
-    return s==="silent"||s==="inactive"||s==="lost";
-  });
-
-  // Recovered from that pool: Active today
-  const recovered=pool.filter(c=>classifyCompany(c)==="active");
-
-  // Break down by prior status
-  const fromSilent  =recovered.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="silent");
-  const fromInactive=recovered.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="inactive");
-  const fromLost    =recovered.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="lost");
-
-  const rate=pool.length>0?Math.round(recovered.length/pool.length*100):0;
-  const rateColor=rate>=20?"#006E5E":rate>=10?"#A07A00":"#C0143C";
-
-  const makeCard=(label,subset,pool_subset,color,barColor)=>{
-    const r=pool_subset>0?Math.round(subset/pool_subset*100):0;
-    return`<div class="react-card">
-      <div class="react-label" style="color:${color}">${label}</div>
-      <div class="react-rate" style="color:${color}">${r}%</div>
-      <div class="react-sub">${subset} recovered of ${pool_subset} at-risk last month</div>
-      <div class="react-bar-track"><div class="react-bar-fill" style="width:${r}%;background:${barColor}"></div></div>
-      <div class="react-detail">${LAST_MONTH_LBL} → ${THIS_MONTH_LBL}</div>
-    </div>`;
-  };
-
-  const silentPool  =pool.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="silent").length;
-  const inactivePool=pool.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="inactive").length;
-  const lostPool    =pool.filter(c=>classifyWithAnchor(c,LAST_MONTH_ANCHOR)==="lost").length;
-
-  $("react-strip").innerHTML=
-    makeCard("Silent → Active",fromSilent.length,silentPool,"#A07A00","#FFDA30")+
-    makeCard("Inactive → Active",fromInactive.length,inactivePool,"#C0143C","#EF2D56")+
-    makeCard("Organic Lost → Active",fromLost.length,lostPool,"#696969","#696969");
-}
+// renderReactivationRate — removed per management (feature pending data infrastructure)
 
 // ════ FILTER BAR — PORTFOLIO ════
 // BU / Region / Head / Owner — all client-side, zero API calls.
@@ -1798,17 +1469,11 @@ function reRender(){
   $("k-lost").textContent    =n("lost").toLocaleString();
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
-  const revMap=window._lastRevMap||{};
-  const recovery=buildRecovery(classified,revMap);
-  renderRecovery(recovery);
-  // Re-render any open drilldown panel with fresh filtered data
-  ["silent","inactive","lost"].forEach(k=>{if(recOpen[k])renderRecoveryDetail(k);});
   renderHealthDonuts(classified);
   renderAtRisk(fc);
   if(radarOpen)renderRadarDetail(); // re-render open radar detail with fresh data
   renderHealthScores(classified);
   renderRevenueAtRisk(classified,revMap);
-  renderReactivationRate(fc);
   renderTable(classified);
 }
 window.addEventListener("DOMContentLoaded",function(){
