@@ -1513,13 +1513,11 @@ function view(src,liMap){
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
       if(!_selOwners.includes(String(d.owner_id)))return null;
     }
-    // Engagement Model sidebar filter — _itype is "One Time" (→P2P) or "Recurring"
-    // d.inv_type holds raw values: "P2P","Time and Material","T&M","Time","Recurring","Dedicated FTE" etc.
-    // Must normalise via engGroup() so all P2P variants match "One Time" selection
+    // Engagement Model sidebar filter — uses line-item majority (mirrors Pie Chart attribution)
+    // engGroupFromLi(): majority by line-item amount → falls back to deal eng_model if no line items
     if(_itype){
-      const _eg=engGroup(d.inv_type);
       const _itypeGroup=_itype==="One Time"?"P2P":_itype; // map dropdown value to engGroup label
-      if(_eg!==_itypeGroup)return null;
+      if(engGroupFromLi(d)!==_itypeGroup)return null;
     }
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
