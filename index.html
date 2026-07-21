@@ -1966,7 +1966,7 @@ function renderTimeline(){
 function renderInvChart(_v){
   const ctx=$("itc").getContext("2d");
   if(itcChart){itcChart.destroy();itcChart=null;}
-  const types=engTypes(_v||view()),labels=Object.keys(types),vals=Object.values(types);
+  const types=engTypesLi(_v||view()),labels=Object.keys(types),vals=Object.values(types);
   if(!labels.length){return;}
   const palette={"Recurring":"#FFDA30","P2P":"#EF2D56"};
   const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
@@ -2102,6 +2102,9 @@ function getFY2026Months(){
 // Build month-keyed aggregates from the filtered FY dataset
 function buildTrendData(months,src){
   src=src||allDeals;
+  // Service filter state — captured once for engagement line-item filtering
+  const _trendSelSvc=getSelectedServices();
+  const _trendSvcFiltered=_trendSelSvc.length>0&&_trendSelSvc.length<ALL_SERVICES.length;
   // Initialise per-month buckets
   const byMonth={};
   months.forEach(m=>{
@@ -2133,10 +2136,20 @@ function buildTrendData(months,src){
       bkt.martech+=d.amount;
     }
 
-    // Engagement
-    const eg=engGroup(d.eng_model);
-    if(eg==="Recurring")bkt.recurring+=d.amount;
-    else if(eg==="P2P")bkt.p2p+=d.amount;
+    // Engagement — line-item based, respects service filter
+    const _lis=dealServiceMap[d.id]||[];
+    if(_lis.length){
+      _lis.forEach(li=>{
+        if(_trendSvcFiltered&&!_trendSelSvc.includes(li.svc))return;
+        const eg=engGroupFromLiName(li.name);
+        if(eg==="Recurring")bkt.recurring+=li.amount;
+        else if(eg==="P2P")bkt.p2p+=li.amount;
+      });
+    }else{
+      const eg=engGroup(d.eng_model);
+      if(eg==="Recurring")bkt.recurring+=d.amount;
+      else if(eg==="P2P")bkt.p2p+=d.amount;
+    }
   });
 
   // Derive Inter BU, Digital Pure, and Avg per month
