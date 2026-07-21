@@ -1515,7 +1515,7 @@ function view(src,liMap){
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
-    if(drill.eng_model){const eg=engGroup(d.eng_model);if(!eg||eg!==drill.eng_model)return null;}
+    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;} // line-item majority — matches Pie Chart attribution
     if(_svcFiltered){
       const dSvc=liMap[d.id]||[];
       if(!dSvc.length)return null;
@@ -2483,26 +2483,21 @@ function bootCloneMode(){
   // ── Mark body for CSS hooks (all clone types) ──
   document.body.setAttribute("data-clone",param);
 
-  // ── Portfolio Health link always carries ?head= param ──
-  const portfolioLink=$("portfolio-link");
-  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
-
   // ════ BRANCH A: BU clone — ?head=digital ════
+  // Portfolio Health link → master /portfolio (Jiggyasa + Tanuj have their own head-specific URLs)
   if(cfg.buClone){
+    const portfolioLink=$("portfolio-link");
+    if(portfolioLink)portfolioLink.href=`/portfolio`;
     // Lock BU filter to Digital, hide BU dropdown from filter bar
     const buSel=$("bu-sel");
     if(buSel){
       buSel.value="Digital";
-      // Hide the BU dropdown and its label + divider
       buSel.style.display="none";
       let prev=buSel.previousElementSibling;
       if(prev&&prev.classList.contains("fl"))prev.style.display="none";
-      // Hide divider after BU
       let next=buSel.nextElementSibling;
       if(next&&next.classList.contains("vdiv"))next.style.display="none";
     }
-    // All heads remain unlocked — VP Sales can drill into Jiggyasa vs Tanuj vs Nevilson
-    // Title + eyebrow
     document.title=`Digital BU · Nexus · Mavlers`;
     const eyebrow=document.querySelector(".login-eyebrow");
     if(eyebrow)eyebrow.textContent=`Mavlers · Digital BU Dashboard`;
@@ -2512,7 +2507,10 @@ function bootCloneMode(){
 
   // ════ BRANCH B: Inter BU clone — ?head=interbu ════
   // Locks BU=Digital + Service=Campaign/Email/Design (Digital minus Search & Web = Inter BU definition)
+  // Portfolio Health: hidden — no Inter BU portfolio view exists
   if(cfg.interbuClone){
+    const portfolioLink=$("portfolio-link");
+    if(portfolioLink)portfolioLink.style.display="none"; // No portfolio view for Inter BU
     // ── Lock BU = Digital, hide BU dropdown ──
     const buSel=$("bu-sel");
     if(buSel){
@@ -2523,7 +2521,6 @@ function bootCloneMode(){
       const buDivider=buSel.nextElementSibling;
       if(buDivider&&buDivider.classList.contains("vdiv"))buDivider.style.display="none";
     }
-
     // ── Lock Service = Campaign, Email, Design (exclude Search & Web) ──
     const INTERBU_SVCS=["Campaign","Email","Design"];
     ALL_SERVICES.forEach(s=>{
@@ -2531,7 +2528,6 @@ function bootCloneMode(){
       if(el)el.checked=INTERBU_SVCS.includes(s);
     });
     updateSvcLabel();
-    // Hide the Service multiselect from filter bar entirely
     const svcWrap=$("svc-ms-wrap");
     if(svcWrap){
       svcWrap.style.display="none";
@@ -2543,14 +2539,16 @@ function bootCloneMode(){
       const svcLabel=svcWrap.previousElementSibling;
       if(svcLabel&&svcLabel.classList.contains("fl"))svcLabel.style.display="none";
     }
-
-    // ── Title + eyebrow ──
     document.title=`Inter BU · Nexus · Mavlers`;
     const eyebrow=document.querySelector(".login-eyebrow");
     if(eyebrow)eyebrow.textContent=`Mavlers · Inter BU Dashboard`;
     console.log(`[Nexus] Clone mode: Inter BU (interbu) — BU=Digital, Svc=Campaign/Email/Design`);
     return;
   }
+
+  // ── Portfolio Health link carries ?head= param for head clones ──
+  const portfolioLink=$("portfolio-link");
+  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
 
   // ════ BRANCH C: Head clone — jiggyasa / jaydeep / tanuj / nevilson ════
 
