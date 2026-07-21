@@ -43,8 +43,9 @@ export async function onRequestPost(context) {
           "createdate",
           "recent_deal_close_date"
         ],
-        limit: 200,
-        sorts: [{ propertyName: "name", direction: "ASCENDING" }]
+        limit: 200
+        // No sorts — HubSpot search silently drops the final page when sort + large result set combine.
+        // Client-side classification does not depend on order.
       };
 
       if (after) reqBody.after = after;
