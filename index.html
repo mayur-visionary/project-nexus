@@ -2511,15 +2511,44 @@ function bootCloneMode(){
   }
 
   // ════ BRANCH B: Inter BU clone — ?head=interbu ════
+  // Locks BU=Digital + Service=Campaign/Email/Design (Digital minus Search & Web = Inter BU definition)
   if(cfg.interbuClone){
-    // No filter locks — full master data visible
-    // Title + eyebrow only
+    // ── Lock BU = Digital, hide BU dropdown ──
+    const buSel=$("bu-sel");
+    if(buSel){
+      buSel.value="Digital";
+      buSel.style.display="none";
+      const buLabel=buSel.previousElementSibling;
+      if(buLabel&&buLabel.classList.contains("fl"))buLabel.style.display="none";
+      const buDivider=buSel.nextElementSibling;
+      if(buDivider&&buDivider.classList.contains("vdiv"))buDivider.style.display="none";
+    }
+
+    // ── Lock Service = Campaign, Email, Design (exclude Search & Web) ──
+    const INTERBU_SVCS=["Campaign","Email","Design"];
+    ALL_SERVICES.forEach(s=>{
+      const el=$("svc-"+s);
+      if(el)el.checked=INTERBU_SVCS.includes(s);
+    });
+    updateSvcLabel();
+    // Hide the Service multiselect from filter bar entirely
+    const svcWrap=$("svc-ms-wrap");
+    if(svcWrap){
+      svcWrap.style.display="none";
+      const vdivs=document.querySelectorAll(".vdiv");
+      vdivs.forEach(d=>{
+        if(d.nextElementSibling===svcWrap||d.previousElementSibling===svcWrap)
+          d.style.display="none";
+      });
+      const svcLabel=svcWrap.previousElementSibling;
+      if(svcLabel&&svcLabel.classList.contains("fl"))svcLabel.style.display="none";
+    }
+
+    // ── Title + eyebrow ──
     document.title=`Inter BU · Nexus · Mavlers`;
     const eyebrow=document.querySelector(".login-eyebrow");
     if(eyebrow)eyebrow.textContent=`Mavlers · Inter BU Dashboard`;
-    // Signal to renderKPIs to visually highlight the Inter BU card
-    // (handled via data-clone="interbu" CSS rule below)
-    console.log(`[Nexus] Clone mode: Inter BU (interbu)`);
+    console.log(`[Nexus] Clone mode: Inter BU (interbu) — BU=Digital, Svc=Campaign/Email/Design`);
     return;
   }
 
