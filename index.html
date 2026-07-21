@@ -123,6 +123,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;min-width:0}
 .kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:default;overflow:hidden;min-width:0}
 .kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
+/* Inter BU clone — highlight the Inter BU KPI card with Teal accent */
+[data-clone="interbu"] .kpi.kpi-interbu{border-top-color:#006E5E;box-shadow:0 0 0 2px rgba(0,110,94,.12);background:#F0FAF8}
+[data-clone="interbu"] .kpi.kpi-interbu .kpi-lbl{color:#006E5E}
+[data-clone="interbu"] .kpi.kpi-interbu .kpi-val{color:#006E5E}
 .kpi-ico{font-size:14px;margin-bottom:7px}
 .kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
 .kpi-val{font-size:clamp(11px,1.15vw,16px);font-weight:800;color:#434343;line-height:1.15;word-break:break-all;overflow-wrap:anywhere}
@@ -903,7 +907,11 @@ const HEADS_CONFIG=[
   {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
   {id:"jaydeep",name:"Jaydeep Salla",bu:"MarTech"},
   {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
-  {id:"tanuj",name:"Tanuj Gupta",bu:"Digital"}
+  {id:"tanuj",name:"Tanuj Gupta",bu:"Digital"},
+  // BU-level clones — not head-locked, BU-locked instead
+  {id:"digital",name:"Digital BU",bu:"Digital",buClone:true},
+  // Senior audience clone — no filter locks, Inter BU KPI highlighted
+  {id:"interbu",name:"Inter BU",bu:null,interbuClone:true}
 ];
 // Region registry — CSV-confirmed fixed geo per owner.
 // Owners NOT listed here get region from GEO_MAP[d.geo__invoice_app_] per deal.
@@ -1505,7 +1513,14 @@ function view(src,liMap){
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
       if(!_selOwners.includes(String(d.owner_id)))return null;
     }
-    if(_itype&&d.inv_type!==_itype)return null;
+    // Engagement Model sidebar filter — _itype is "One Time" (→P2P) or "Recurring"
+    // d.inv_type holds raw values: "P2P","Time and Material","T&M","Time","Recurring","Dedicated FTE" etc.
+    // Must normalise via engGroup() so all P2P variants match "One Time" selection
+    if(_itype){
+      const _eg=engGroup(d.inv_type);
+      const _itypeGroup=_itype==="One Time"?"P2P":_itype; // map dropdown value to engGroup label
+      if(_eg!==_itypeGroup)return null;
+    }
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
@@ -1823,12 +1838,22 @@ function engTypesLi(v){
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
   const m={};
   v.forEach(d=>{
-    (dealServiceMap[d.id]||[]).forEach(li=>{
-      if(_svcDrill&&li.svc!==_svcDrill)return;
-      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
-      const eg=engGroupFromLiName(li.name);
-      if(eg)m[eg]=(m[eg]||0)+li.amount;
+    const _lis=(dealServiceMap[d.id]||[]).filter(li=>{
+      if(_svcDrill&&li.svc!==_svcDrill)return false;
+      if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+      return true;
     });
+    if(_lis.length){
+      // Try line-item name classification first
+      let classified=false;
+      _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){m[eg]=(m[eg]||0)+li.amount;classified=true;}});
+      // If line items passed filter but none matched a known name prefix, fall back to deal eng_model
+      if(!classified){const eg=engGroup(d.eng_model);if(eg)m[eg]=(m[eg]||0)+d.amount;}
+    } else {
+      // No line items (or all filtered out) — use deal-level eng_model with deal amount
+      const eg=engGroup(d.eng_model);
+      if(eg)m[eg]=(m[eg]||0)+d.amount;
+    }
   });
   const ordered={};
   ["Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
@@ -1904,10 +1929,12 @@ function renderKPIs(_v){
     }
   });
   const interBUConst=digitalNetRev-searchWebRev;
-  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"n/a",sub:"Digital excl. Search & Web",tip:"Digital Net Revenue − Search − Web · responds to all filters"});
+  const isInterBUClone=document.body.getAttribute("data-clone")==="interbu";
+  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"n/a",sub:"Digital excl. Search & Web",tip:"Digital Net Revenue − Search − Web · responds to all filters",interbu:true});
   $("kpi-grid").innerHTML=cards.map(c=>{
     const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
-    return`<div class="kpi"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
+    const extraClass=(c.interbu&&isInterBUClone)?" kpi-interbu":"";
+    return`<div class="kpi${extraClass}"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
   }).join("");
 }
 
@@ -2129,8 +2156,12 @@ function buildTrendData(months,src){
       bkt.digital+=d.amount;
       bkt.digitalNetRev+=d.amount;
       // Inter BU: Digital Net Rev minus Search & Web line items
+      // MUST respect the active service filter — if Search/Web are filtered out,
+      // those line items do not count toward searchWebRev (d.amount already excludes them)
       (dealServiceMap[d.id]||[]).forEach(li=>{
-        if(li.svc==="Search"||li.svc==="Web")bkt.searchWebRev+=li.amount;
+        if(li.svc!=="Search"&&li.svc!=="Web")return;
+        if(_trendSvcFiltered&&!_trendSelSvc.includes(li.svc))return; // honour service filter
+        bkt.searchWebRev+=li.amount;
       });
     } else if(d.bu==="MarTech"){
       bkt.martech+=d.amount;
@@ -2139,12 +2170,19 @@ function buildTrendData(months,src){
     // Engagement — line-item based, respects service filter
     const _lis=dealServiceMap[d.id]||[];
     if(_lis.length){
+      let classified=false;
       _lis.forEach(li=>{
         if(_trendSvcFiltered&&!_trendSelSvc.includes(li.svc))return;
         const eg=engGroupFromLiName(li.name);
-        if(eg==="Recurring")bkt.recurring+=li.amount;
-        else if(eg==="P2P")bkt.p2p+=li.amount;
+        if(eg==="Recurring"){bkt.recurring+=li.amount;classified=true;}
+        else if(eg==="P2P"){bkt.p2p+=li.amount;classified=true;}
       });
+      // If line items exist but none classified by name, fall back to deal eng_model
+      if(!classified){
+        const eg=engGroup(d.eng_model);
+        if(eg==="Recurring")bkt.recurring+=d.amount;
+        else if(eg==="P2P")bkt.p2p+=d.amount;
+      }
     }else{
       const eg=engGroup(d.eng_model);
       if(eg==="Recurring")bkt.recurring+=d.amount;
@@ -2435,6 +2473,11 @@ async function doLogin(){
 // ════ CLONE MODE ════
 // Reads ?head= URL param and pre-locks the dashboard to that head's view.
 // No param → master dashboard, no changes applied.
+//
+// Clone types:
+//   Head clone  (jiggyasa/jaydeep/tanuj/nevilson) — locks Head filter, hides Head dropdown
+//   BU clone    (digital)                          — locks BU=Digital, hides BU dropdown
+//   Inter BU    (interbu)                          — no filter locks, highlights Inter BU KPI
 function bootCloneMode(){
   const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
   if(!param)return; // Master dashboard — nothing to do
@@ -2445,6 +2488,51 @@ function bootCloneMode(){
     console.warn(`[Nexus] Unknown ?head= param: "${param}" — loading master view`);
     return;
   }
+
+  // ── Mark body for CSS hooks (all clone types) ──
+  document.body.setAttribute("data-clone",param);
+
+  // ── Portfolio Health link always carries ?head= param ──
+  const portfolioLink=$("portfolio-link");
+  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
+
+  // ════ BRANCH A: BU clone — ?head=digital ════
+  if(cfg.buClone){
+    // Lock BU filter to Digital, hide BU dropdown from filter bar
+    const buSel=$("bu-sel");
+    if(buSel){
+      buSel.value="Digital";
+      // Hide the BU dropdown and its label + divider
+      buSel.style.display="none";
+      let prev=buSel.previousElementSibling;
+      if(prev&&prev.classList.contains("fl"))prev.style.display="none";
+      // Hide divider after BU
+      let next=buSel.nextElementSibling;
+      if(next&&next.classList.contains("vdiv"))next.style.display="none";
+    }
+    // All heads remain unlocked — VP Sales can drill into Jiggyasa vs Tanuj vs Nevilson
+    // Title + eyebrow
+    document.title=`Digital BU · Nexus · Mavlers`;
+    const eyebrow=document.querySelector(".login-eyebrow");
+    if(eyebrow)eyebrow.textContent=`Mavlers · Digital BU Dashboard`;
+    console.log(`[Nexus] Clone mode: Digital BU (digital)`);
+    return;
+  }
+
+  // ════ BRANCH B: Inter BU clone — ?head=interbu ════
+  if(cfg.interbuClone){
+    // No filter locks — full master data visible
+    // Title + eyebrow only
+    document.title=`Inter BU · Nexus · Mavlers`;
+    const eyebrow=document.querySelector(".login-eyebrow");
+    if(eyebrow)eyebrow.textContent=`Mavlers · Inter BU Dashboard`;
+    // Signal to renderKPIs to visually highlight the Inter BU card
+    // (handled via data-clone="interbu" CSS rule below)
+    console.log(`[Nexus] Clone mode: Inter BU (interbu)`);
+    return;
+  }
+
+  // ════ BRANCH C: Head clone — jiggyasa / jaydeep / tanuj / nevilson ════
 
   // ── 1. Pre-set Head filter: uncheck all, check only this head ──
   ALL_HEADS.forEach(h=>{
@@ -2469,20 +2557,11 @@ function bootCloneMode(){
   const headLabel=headWrap?.previousElementSibling;
   if(headLabel&&headLabel.classList.contains("fl"))headLabel.style.display="none";
 
-  // ── 3. Update page title + header ──
+  // ── 3. Update page title + eyebrow ──
   const firstName=cfg.name.split(" ")[0]; // "Jiggyasa", "Jaydeep", "Tanuj"
   document.title=`${firstName}'s Nexus · Mavlers`;
-
-  // Update the status bar text prefix (stxt set later by renderAll, but title is immediate)
-  // Mark body for any CSS overrides needed for clone mode
-  document.body.setAttribute("data-clone",param);
-
-  // Update the sidebar logo sub-label if present
   const eyebrow=document.querySelector(".login-eyebrow");
   if(eyebrow)eyebrow.textContent=`Mavlers · ${firstName}'s Dashboard`;
-  // Update Portfolio Health link to carry the same ?head= param
-  const portfolioLink=$("portfolio-link");
-  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
   console.log(`[Nexus] Clone mode: ${cfg.name} (${param})`);
 }
 // ════ BOOT ════
