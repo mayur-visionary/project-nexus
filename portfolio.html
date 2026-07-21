@@ -183,8 +183,8 @@ tbody td.num{text-align:right;font-weight:700}
 .donut-wrap svg{transform:rotate(-90deg);display:block}
 .donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
 .donut-score{font-size:30px;font-weight:800;line-height:1;transition:color .4s}
-.donut-score-lbl{font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-top:3px}
-.donut-kitty-count{font-size:9px;font-weight:600;color:#C0C0C0;margin-top:5px}
+.donut-score-lbl{font-size:8.5px;font-weight:800;color:#696969;text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+.donut-kitty-count{font-size:9.5px;font-weight:700;color:#434343;margin-top:5px}
 .donut-legend{display:flex;flex-direction:column;gap:2px;text-align:left}
 .donut-legend-row{display:grid;grid-template-columns:10px 1fr auto auto;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .15s}
 .donut-legend-row:hover{background:#F7F7F7}
@@ -1207,17 +1207,19 @@ function renderHealthDonuts(classified){
   requestAnimationFrame(()=>animateScores());
 }
 
-// Animate health score from 0 → target on each render
+// Animate health score from 0 → target on each render — preserves inline colour
 function animateScores(){
   document.querySelectorAll(".donut-score[data-target]").forEach(el=>{
     const target=parseInt(el.getAttribute("data-target"),10);
-    const color=el.style.color;
+    const color=el.style.color; // preserve the scoreCol set at render time
     let current=0;
     const step=Math.max(1,Math.ceil(target/30));
     el.textContent="0%";
+    el.style.color=color; // re-apply immediately before animation starts
     const timer=setInterval(()=>{
       current=Math.min(current+step,target);
       el.textContent=current+"%";
+      el.style.color=color; // re-apply on every tick to survive any browser resets
       if(current>=target)clearInterval(timer);
     },22);
   });
