@@ -8,10 +8,14 @@ export async function onRequestPost(context) {
     //   "jiggyasa"   → clone            → NEXUS_PASSWORD_JIGGYASA
     //   "jaydeep"    → clone            → NEXUS_PASSWORD_JAYDEEP
     //   "tanuj"      → clone            → NEXUS_PASSWORD_TANUJ
+    //   "digital"    → BU clone         → NEXUS_PASSWORD_DIGITAL
+    //   "interbu"    → senior clone     → NEXUS_PASSWORD_INTERBU
     const CLONE_VAR_MAP = {
       jiggyasa: "NEXUS_PASSWORD_JIGGYASA",
       jaydeep:  "NEXUS_PASSWORD_JAYDEEP",
-      tanuj:    "NEXUS_PASSWORD_TANUJ"
+      tanuj:    "NEXUS_PASSWORD_TANUJ",
+      digital:  "NEXUS_PASSWORD_DIGITAL",
+      interbu:  "NEXUS_PASSWORD_INTERBU"
     };
 
     const isClone  = !!head && !!CLONE_VAR_MAP[head];
