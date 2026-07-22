@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Scout · Mavlers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+
+/* ── Login ── */
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center;border-top:3px solid #FFDA30}
+.login-logo{margin-bottom:22px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── Header ── */
+.hdr{background:#473400}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* ── Nav tabs ── */
+.hdr-nav{display:flex;gap:0;border-top:1px solid rgba(255,255,255,.08)}
+.nav-tab{padding:9px 18px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .18s;white-space:nowrap}
+.nav-tab.active,.nav-tab:hover{color:#FFDA30;border-bottom-color:#FFDA30}
+
+/* ── Filter bar ── */
+.fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+.fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
+.vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+
+/* Multi-select dropdown */
+.ms-wrap{position:relative}
+.ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
+.ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:190px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:320px;overflow-y:auto}
+.ms-dropdown.open{display:block}
+.ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
+.ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
+.ms-actions{display:flex;gap:8px}
+.ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
+.ms-act:hover{opacity:.7}
+.ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
+.ms-item:hover{background:rgba(255,255,255,.07)}
+.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
+.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
+
+/* ── Spinner ── */
+.lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
+.lo.show{display:flex}
+.spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Main ── */
+.main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
+
+/* ── Error bar ── */
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 18px;font-size:11px;color:#ccc;display:none;margin-bottom:16px;border-radius:6px;font-weight:500}
+.err-bar strong{color:#FFDA30}
+
+/* ── KPI strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.kpi{background:#fff;border-radius:12px;padding:20px 20px 16px;border:1px solid #E2E2E2;border-top:4px solid #FFDA30;transition:all .2s;position:relative}
+.kpi:hover{box-shadow:0 6px 24px rgba(67,67,67,.13);transform:translateY(-2px)}
+.kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
+.kpi-val{font-size:clamp(24px,2vw,34px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
+.kpi-sub{font-size:10px;color:#9A9A9A;font-weight:500}
+.kpi.k-value{border-top-color:#006E5E}.kpi.k-value .kpi-val{color:#006E5E}
+.kpi.k-deals{border-top-color:#3B3561}.kpi.k-deals .kpi-val{color:#3B3561}
+.kpi.k-avg{border-top-color:#FFDA30}.kpi.k-avg .kpi-val{color:#A07A00}
+.kpi.k-winrate{border-top-color:#EF2D56}.kpi.k-winrate .kpi-val{color:#C0143C}
+@media(max-width:900px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.kpi-strip{grid-template-columns:1fr}}
+
+/* ── Section labels ── */
+.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#696969;margin-bottom:14px;margin-top:36px}
+.sec::before{content:'';display:block;width:3px;height:14px;border-radius:2px;background:#FFDA30;flex-shrink:0}
+.sec.first{margin-top:0}
+
+/* ── Funnel ── */
+.funnel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+.funnel-band{background:#fff;border-radius:14px;border:1px solid #E2E2E2;padding:22px 20px 18px;position:relative;overflow:hidden;transition:all .22s}
+.funnel-band:hover{box-shadow:0 6px 24px rgba(67,67,67,.12);transform:translateY(-3px)}
+.funnel-band::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.funnel-band.f-prospect::before{background:#FFDA30}
+.funnel-band.f-engage::before{background:#3B3561}
+.funnel-band.f-propose::before{background:#F07A00}
+.funnel-band.f-nurture::before{background:#696969}
+.funnel-icon{font-size:22px;margin-bottom:10px}
+.funnel-label{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:6px}
+.funnel-count{font-size:36px;font-weight:800;line-height:1;margin-bottom:4px}
+.funnel-band.f-prospect .funnel-count{color:#A07A00}
+.funnel-band.f-engage   .funnel-count{color:#3B3561}
+.funnel-band.f-propose  .funnel-count{color:#F07A00}
+.funnel-band.f-nurture  .funnel-count{color:#696969}
+.funnel-value{font-size:13px;font-weight:700;color:#696969;margin-bottom:10px}
+.funnel-stages{display:flex;flex-direction:column;gap:4px}
+.funnel-stage-row{display:flex;justify-content:space-between;align-items:center;font-size:9.5px;padding:3px 0;border-bottom:1px solid #F5F5F5}
+.funnel-stage-row:last-child{border-bottom:none}
+.funnel-stage-name{color:#696969;font-weight:500;flex:1}
+.funnel-stage-cnt{font-weight:800;color:#434343;min-width:28px;text-align:right}
+.funnel-stage-amt{font-weight:600;color:#9A9A9A;min-width:60px;text-align:right;font-size:9px}
+@media(max-width:900px){.funnel-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.funnel-grid{grid-template-columns:1fr}}
+
+/* ── Pipeline bar ── */
+.pipe-bar-wrap{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 22px;margin-bottom:24px}
+.pipe-bar-track{height:12px;border-radius:6px;background:#F2F2F2;display:flex;overflow:hidden;gap:2px;margin:10px 0 8px}
+.pipe-bar-seg{height:100%;border-radius:3px;transition:width .6s ease;cursor:pointer;position:relative}
+.pipe-bar-legend{display:flex;gap:14px;flex-wrap:wrap}
+.pipe-leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#696969;letter-spacing:.04em;text-transform:uppercase}
+.pipe-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── By-Owner Table ── */
+.tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
+.tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tcard-ttl h3{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
+.tcard-ttl p{font-size:10px;color:#9A9A9A;margin-top:2px;font-weight:500}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:640px}
+thead th{padding:9px 14px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
+thead th.num{text-align:right}
+tbody tr{border-bottom:1px solid #F5F5F5;transition:background .1s}
+tbody tr:hover td{background:#FFFBEA!important}
+tbody td{padding:9px 14px;white-space:nowrap}
+tbody td.num{text-align:right;font-weight:700}
+.total-row td{background:#F7F7F7!important;font-weight:800;border-top:2px solid #E2E2E2}
+.total-row:hover td{background:#F7F7F7!important}
+
+/* Stage pill */
+.stage-pill{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.sp-prospect{background:#FFFBEA;color:#A07A00}
+.sp-engage{background:#EEE9FF;color:#3B3561}
+.sp-propose{background:#FFF0E0;color:#D46000}
+.sp-nurture{background:#F2F2F2;color:#696969}
+
+/* Head badge */
+.head-badge{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:10.5px;color:#434343}
+.head-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── Win Rate card ── */
+.winrate-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.wr-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:20px 22px}
+.wr-label{font-size:9px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.wr-val{font-size:32px;font-weight:800;line-height:1;margin-bottom:4px}
+.wr-sub{font-size:10px;color:#9A9A9A;font-weight:500}
+.wr-bar-track{height:8px;border-radius:4px;background:#F2F2F2;margin-top:12px;overflow:hidden}
+.wr-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+@media(max-width:600px){.winrate-grid{grid-template-columns:1fr}}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:32px 0 16px;font-size:9px;font-weight:700;color:#9A9A9A;letter-spacing:.16em;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN OVERLAY ══ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg" fill="#111">
+        <path d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Pipeline Scout</div>
+    <div class="login-title" id="login-title">Project Nexus</div>
+    <input class="login-input" id="pw-input" type="password" placeholder="Enter access password"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer" id="login-footer">The Live Pulse of Mavlers Revenue</div>
+  </div>
+</div>
+
+<!-- ══ SPINNER ══ -->
+<div class="lo" id="lo"><div class="spin"></div></div>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" id="nexus-link" href="/">
+        <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Project Nexus · Mavlers</span></div>
+          <div class="hdr-title" id="hdr-title">Pipeline Scout</div>
+          <div class="hdr-sub" id="hdr-sub">New Business · Forward View</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><span class="sdot" id="sdot" style="background:#696969"></span><span id="stxt">LOADING...</span></div>
+          <div class="last-sync" id="last-sync">—</div>
+        </div>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">↺ Refresh</button>
+        <a class="nexus-btn" id="nexus-link2" href="/">← Revenue Pulse</a>
+      </div>
+    </div>
+    <!-- Nav tabs: one tab per view — extendable -->
+    <div class="hdr-nav">
+      <button class="nav-tab active">NBD Pipeline</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Filter bar ── -->
+<div class="fbar">
+  <div class="fbar-in">
+    <!-- Head filter -->
+    <span class="fl" id="head-lbl">Head</span>
+    <div class="ms-wrap" id="head-wrap">
+      <div class="ms-btn" id="head-btn" onclick="toggleHeadDD(event)">
+        <span id="head-label">All Heads</span><span class="ms-arrow">▼</span>
+      </div>
+      <div class="ms-dropdown" id="head-dropdown">
+        <div class="ms-ctrl">
+          <span class="ms-ctrl-lbl">Heads</span>
+          <div class="ms-actions">
+            <span class="ms-act" onclick="selectAllHeads()">All</span>
+            <span class="ms-act" onclick="deselectAllHeads()">None</span>
+          </div>
+        </div>
+        <div id="head-list"></div>
+      </div>
+    </div>
+    <div class="vdiv"></div>
+    <!-- Owner filter -->
+    <span class="fl">Owner</span>
+    <div class="ms-wrap" id="owner-wrap">
+      <div class="ms-btn" id="owner-btn" onclick="toggleOwnerDD(event)">
+        <span id="owner-label">All Owners</span><span class="ms-arrow">▼</span>
+      </div>
+      <div class="ms-dropdown" id="owner-dropdown" style="min-width:210px">
+        <div class="ms-ctrl">
+          <span class="ms-ctrl-lbl">Owners</span>
+          <div class="ms-actions">
+            <span class="ms-act" onclick="selectAllOwners()">All</span>
+            <span class="ms-act" onclick="deselectAllOwners()">None</span>
+          </div>
+        </div>
+        <div id="owner-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="yellow-rule"></div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
+
+  <!-- KPI Strip -->
+  <div class="sec first">Pipeline at a Glance <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· open deals only · excludes rejected &amp; lost</span></div>
+  <div class="kpi-strip">
+    <div class="kpi k-value">
+      <div class="kpi-lbl">Pipeline Value</div>
+      <div class="kpi-val" id="k-value">—</div>
+      <div class="kpi-sub">Total open deal value (USD)</div>
+    </div>
+    <div class="kpi k-deals">
+      <div class="kpi-lbl">Active Deals</div>
+      <div class="kpi-val" id="k-deals">—</div>
+      <div class="kpi-sub">Open, actionable deals</div>
+    </div>
+    <div class="kpi k-avg">
+      <div class="kpi-lbl">Avg Deal Size</div>
+      <div class="kpi-val" id="k-avg">—</div>
+      <div class="kpi-sub">Pipeline value ÷ active deals</div>
+    </div>
+    <div class="kpi k-winrate">
+      <div class="kpi-lbl">Win Rate</div>
+      <div class="kpi-val" id="k-winrate">—</div>
+      <div class="kpi-sub" id="k-winrate-sub">Closed won ÷ (won + lost)</div>
+    </div>
+  </div>
+
+  <!-- Funnel Bands -->
+  <div class="sec">Funnel Breakdown <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· deals by stage group</span></div>
+  <div class="funnel-grid" id="funnel-grid">
+    <div class="funnel-band f-prospect"><div class="funnel-label">Loading...</div></div>
+  </div>
+
+  <!-- Pipeline distribution bar -->
+  <div class="pipe-bar-wrap" id="pipe-bar-wrap">
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:2px">Pipeline Distribution</div>
+    <div style="font-size:10px;color:#696969;font-weight:500">Share of active deals by stage group</div>
+    <div class="pipe-bar-track" id="pipe-bar-track"></div>
+    <div class="pipe-bar-legend" id="pipe-bar-legend"></div>
+  </div>
+
+  <!-- Win Rate detail -->
+  <div class="sec">Conversion Snapshot <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· all-time closed deals in this pipeline</span></div>
+  <div class="winrate-grid">
+    <div class="wr-card">
+      <div class="wr-label">Closed Won</div>
+      <div class="wr-val" id="wr-won" style="color:#006E5E">—</div>
+      <div class="wr-sub" id="wr-won-val">— deals</div>
+      <div class="wr-bar-track"><div class="wr-bar-fill" id="wr-won-bar" style="background:#006E5E;width:0%"></div></div>
+    </div>
+    <div class="wr-card">
+      <div class="wr-label">Closed Lost</div>
+      <div class="wr-val" id="wr-lost" style="color:#C0143C">—</div>
+      <div class="wr-sub" id="wr-lost-val">— deals</div>
+      <div class="wr-bar-track"><div class="wr-bar-fill" id="wr-lost-bar" style="background:#EF2D56;width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- By-Owner Table -->
+  <div class="sec">Pipeline by Owner <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· active deals · sorted by value</span></div>
+  <div class="tcard">
+    <div class="tcard-hdr">
+      <div class="tcard-ttl">
+        <h3>Owner Breakdown</h3>
+        <p id="table-meta">Loading pipeline data...</p>
+      </div>
+    </div>
+    <div class="twrap">
+      <table id="owner-table">
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Head</th>
+            <th class="num">Deals</th>
+            <th class="num">Pipeline Value</th>
+            <th class="num">Avg Deal Size</th>
+            <th>Stage Mix</th>
+          </tr>
+        </thead>
+        <tbody id="owner-tbody">
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// PIPELINE SCOUT — MAVLERS
+// Standalone page. Completely independent from index.html and portfolio.html.
+// Data source: HubSpot NBD Pipeline 85124147 via /api proxy (same as index.html)
+// ════════════════════════════════════════════════
+
+const $=id=>document.getElementById(id);
+
+// ── Pipeline constants ──
+const NBD_PIPELINE   = "85124147";
+const PORTAL         = "2700725";
+
+// ── Stage map: ID → { label, band } ──
+// Bands: prospect | engage | propose | nurture
+// Excluded from active funnel (tracked separately): won, lost, rejected, routed
+const STAGE_MAP = {
+  "159144307": { label:"SQL Received",         band:"prospect" },
+  "159154702": { label:"MQL/SQL Accepted",     band:"prospect" },
+  "159144308": { label:"1:1 Video Sent",       band:"engage"   },
+  "159144309": { label:"Discovery Scheduled",  band:"engage"   },
+  "159144310": { label:"Discovery Done",       band:"engage"   },
+  "159144311": { label:"Negotiation/Proposal", band:"propose"  },
+  "159144312": { label:"Proposal Sent",        band:"propose"  },
+  "159154704": { label:"Hold / Nurture",       band:"nurture"  },
+  // Terminal stages — tracked for win rate, excluded from funnel
+  "159154703": { label:"Closed Won",           band:"won"      },
+  "159144313": { label:"Closed Lost",          band:"lost"     },
+  "159154701": { label:"MQL/SQL Rejected",     band:"excluded" },
+  "161372220": { label:"Move to Direct",       band:"excluded" }
+};
+
+const ACTIVE_BANDS   = ["prospect","engage","propose","nurture"];
+const BAND_CFG = {
+  prospect: { label:"Prospecting",  icon:"🔍", cls:"f-prospect", color:"#FFDA30", textColor:"#A07A00",  pillCls:"sp-prospect" },
+  engage:   { label:"Engaging",     icon:"🤝", cls:"f-engage",   color:"#3B3561", textColor:"#3B3561",  pillCls:"sp-engage"   },
+  propose:  { label:"Proposing",    icon:"📋", cls:"f-propose",  color:"#F07A00", textColor:"#D46000",  pillCls:"sp-propose"  },
+  nurture:  { label:"Nurture",      icon:"⏸️", cls:"f-nurture",  color:"#696969", textColor:"#696969",  pillCls:"sp-nurture"  }
+};
+
+// ── Head colours for badge dots ──
+const HEAD_COLORS = {
+  "Jaydeep Salla":    "#3B3561",
+  "Jiggyasa Agrawal": "#FFDA30",
+  "Tanuj Gupta":      "#006E5E",
+  "Nevilson Christan":"#EF2D56"
+};
+
+// ════ OWNER REGISTRY (mirrors index.html exactly) ════
+const OWNER_GROUPS = {
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},   {id:"17739548",name:"Darshan Modi"},
+    {id:"17738843",name:"Jaydeep Salla"},    {id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713",name:"Krunal Bakraniya"}, {id:"34140174",name:"Mrugesh Dabhi"},
+    {id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}
+  ],
+  "Digital — US":[
+    {id:"38568120",name:"Baspin Thomas"},    {id:"42663191",name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"}, {id:"19799470",name:"Jebin Joy"},
+    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
+  ],
+  "Digital — UK":[
+    {id:"46156316",name:"Flintoff Mehta"},  {id:"37344296",name:"Kalgi Shah"},
+    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
+  ],
+  "Digital — AU":[
+    {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+    {id:"94746500",name:"Manvi Choumal"},   {id:"176516495",name:"Prachi Porwal"},
+    {id:"263464861",name:"Saquib Khan"}
+  ],
+  "Nevilson — Team":[
+    {id:"86813698",name:"Aman Acharya"},    {id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663",name:"Malav Modi"}
+  ],
+  "MarTech — US":[
+    {id:"46153051",name:"Ayush Rathi"},     {id:"93107638",name:"Ayush Dhupar"},
+    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815",name:"Vinita Raidu"}
+  ],
+  "MarTech — UK":[
+    {id:"82911376",name:"Divya S"},         {id:"916030451",name:"Kamesh Biniwale"},
+    {id:"82030736",name:"Sakshi Bissa"},    {id:"107178262",name:"Chintan Doshi"}
+  ],
+  "MarTech — AU":[ {id:"467997340",name:"Karan Doshi"} ],
+  "Reactivation":[ {id:"41490632",name:"Mukund Basita"} ],
+  "Unclassified":[ {id:"82663745",name:"Prativa Dubey"} ]
+};
+
+const OWNER_NAME = {};
+Object.values(OWNER_GROUPS).flat().forEach(o=>{ if(o.id && !OWNER_NAME[o.id]) OWNER_NAME[o.id]=o.name; });
+const REGISTRY_IDS = (()=>{ const s=new Set(); Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)s.add(o.id);}); return[...s]; })();
+
+// BU map
+const OWNER_BU_MAP = (()=>{
+  const m={};
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  m["107178262"]="MarTech"; m["34140174"]="MarTech"; m["17738843"]="MarTech";
+  m["17739173"]="Digital";  m["86940863"]="Digital"; m["17739548"]="Digital";
+  m["79217713"]="Digital";  m["82663745"]="Digital";
+  return m;
+})();
+
+// Head map (fixed per owner)
+const OWNER_HEAD_MAP = (()=>{
+  const m={};
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    owners.forEach(o=>{
+      if(g==="Leaders / Heads"||g==="Unclassified") return;
+      if(g.startsWith("MarTech")||g==="Reactivation"){ m[o.id]="Jaydeep Salla"; return; }
+      if(g==="Nevilson — Team"){ m[o.id]="Nevilson Christan"; return; }
+      if(g==="Digital — AU")   { m[o.id]="Jiggyasa Agrawal";  return; }
+      if(g==="Digital — UK")   { m[o.id]="Tanuj Gupta";        return; }
+      if(g==="Digital — US")   { m[o.id]="Tanuj Gupta";        return; }
+    });
+  });
+  return m;
+})();
+
+// Head → owner IDs (for clone scoping + filter cascade)
+const HEAD_OWNERS = {
+  "Jaydeep Salla"    :["17738843","46153051","93107638","86147905","85767516","89530815","82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
+  "Jiggyasa Agrawal" :["131779647","78831011","94746500","176516495","263464861"],
+  "Tanuj Gupta"      :["17739173","46156316","37344296","24817892","31730801","38568120","42663191","240935328","19799470","34558123","284770744","557894666","79217713","17739548"],
+  "Nevilson Christan":["86940863","86813698","255830830","37762663"]
+};
+
+const ALL_HEADS_S = ["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"];
+
+// Flat ordered owner list for filter UI (management sequence)
+const ORDERED_OWNERS_S = [
+  {id:"107178262",name:"Chintan Doshi"},    {id:"17738843",name:"Jaydeep Salla"},
+  {id:"34140174",name:"Mrugesh Dabhi"},     {id:"467997340",name:"Karan Doshi"},
+  {id:"82911376",name:"Divya S"},           {id:"82030736",name:"Sakshi Bissa"},
+  {id:"93107638",name:"Ayush Dhupar"},      {id:"46153051",name:"Ayush Rathi"},
+  {id:"86147905",name:"Preeti Thapliyal"},  {id:"85767516",name:"Rupali Sindhu"},
+  {id:"89530815",name:"Vinita Raidu"},      {id:"916030451",name:"Kamesh Biniwale"},
+  {id:"41490632",name:"Mukund Basita"},
+  {id:"17739548",name:"Darshan Modi"},      {id:"79217713",name:"Krunal Bakraniya"},
+  {id:"17739173",name:"Tanuj Gupta"},
+  {id:"131779647",name:"Jiggyasa Agrawal"}, {id:"78831011",name:"Kunal Gohil"},
+  {id:"94746500",name:"Manvi Choumal"},     {id:"176516495",name:"Prachi Porwal"},
+  {id:"263464861",name:"Saquib Khan"},
+  {id:"46156316",name:"Flintoff Mehta"},    {id:"37344296",name:"Kalgi Shah"},
+  {id:"24817892",name:"Sheldon Fernandes"}, {id:"31730801",name:"Vikram Sahi"},
+  {id:"38568120",name:"Baspin Thomas"},     {id:"42663191",name:"Dhaval Damania"},
+  {id:"240935328",name:"Hammad Bhaldar"},   {id:"19799470",name:"Jebin Joy"},
+  {id:"34558123",name:"Kaustubh Agrawal"},  {id:"284770744",name:"Sourya Ghosh"},
+  {id:"557894666",name:"Sudarshan Damani"},
+  {id:"86813698",name:"Aman Acharya"},      {id:"255830830",name:"Devanshu Kumar"},
+  {id:"37762663",name:"Malav Modi"},
+  {id:"82663745",name:"Prativa Dubey"}
+];
+
+// ════ STATE ════
+let allDeals       = []; // all fetched pipeline deals (stamped)
+let cloneHead      = null;
+let isSyncing      = false;
+let activeHeads    = new Set(ALL_HEADS_S);
+let activeOwners   = new Set(ORDERED_OWNERS_S.map(o=>o.id));
+let ownerFilterActive = false;
+
+// ════ ATTRIBUTION ════
+// Mirrors index.html attributeDeals() — stamps .head on every deal
+function attributeDeals(deals){
+  deals.forEach(d=>{
+    const oid = String(d.owner_id||"");
+    d.bu   = OWNER_BU_MAP[oid]   || "Digital";
+    d.head = OWNER_HEAD_MAP[oid] || null;
+    // Leader fallback: if no fixed head, derive from BU (leaders manage their own BU)
+    if(!d.head){
+      d.head = (d.bu==="MarTech") ? "Jaydeep Salla" : null;
+    }
+  });
+}
+
+// ════ FILTER ════
+function filteredDeals(){
+  return allDeals.filter(d=>{
+    if(activeHeads.size < ALL_HEADS_S.length && d.head && !activeHeads.has(d.head)) return false;
+    if(ownerFilterActive && !activeOwners.has(String(d.owner_id))) return false;
+    return true;
+  });
+}
+
+function activeFunnelDeals(deals){
+  return deals.filter(d=>{
+    const s = STAGE_MAP[d.dealstage];
+    return s && ACTIVE_BANDS.includes(s.band);
+  });
+}
+
+// ════ HELPERS ════
+function fmt$(n){
+  if(n>=1000000) return `$${(n/1000000).toFixed(2)}M`;
+  if(n>=1000)    return `$${Math.round(n/1000)}K`;
+  return `$${Math.round(n).toLocaleString()}`;
+}
+function fmtNum(n){ return n.toLocaleString(); }
+function fmtDate(d){
+  if(!d)return"—";
+  const m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return`${m[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+// ════ LOGIN ════
+function getAuthKey(head){ return head ? `nexus_auth_${head}` : "nexus_auth"; }
+
+async function doLogin(){
+  const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
+  if(!pw){ err.textContent="Please enter the access password."; return; }
+  btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  try{
+    const res=await fetch("/pipeline-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem(getAuthKey(head),"1");
+      $("login-overlay").style.display="none";
+    } else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
+    } else {
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value=""; $("pw-input").focus();
+    }
+  }catch(e){
+    err.textContent="Connection error. Check your network.";
+  }finally{ btn.disabled=false; btn.textContent="Access Dashboard"; }
+}
+
+function checkSSO(){
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(localStorage.getItem("nexus_auth")==="1" ||
+     (head && localStorage.getItem(getAuthKey(head))==="1")){
+    $("login-overlay").style.display="none";
+    return true;
+  }
+  return false;
+}
+
+// ════ CLONE MODE ════
+// Same pattern as portfolio.html: locks Head filter, cascades owners, updates branding
+const HEADS_CONFIG_S = [
+  {id:"jiggyasa", name:"Jiggyasa Agrawal", bu:"Digital"},
+  {id:"jaydeep",  name:"Jaydeep Salla",    bu:"MarTech"},
+  {id:"tanuj",    name:"Tanuj Gupta",      bu:"Digital"},
+  {id:"nevilson", name:"Nevilson Christan",bu:"Digital"}
+];
+
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param) return;
+  const cfg=HEADS_CONFIG_S.find(h=>h.id===param);
+  if(!cfg){ console.warn(`[Scout] Unknown ?head= param: "${param}"`); return; }
+  cloneHead=cfg.name;
+  const firstName=cfg.name.split(" ")[0];
+  document.title=`${firstName} · Pipeline Scout · Mavlers`;
+  $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Pipeline`;
+  $("login-title").textContent=`Project Nexus`;
+  $("login-footer").textContent=`The Live Pulse of Mavlers Revenue`;
+  $("nexus-link").href=`/?head=${param}`;
+  $("nexus-link2").href=`/?head=${param}`;
+  document.body.setAttribute("data-clone",param);
+
+  // Lock Head filter — pre-check only this head
+  ALL_HEADS_S.forEach(h=>{
+    const el=$(`head-${h.replace(/\s/g,"_")}`);
+    if(el) el.checked=(h===cfg.name);
+  });
+  activeHeads=new Set([cfg.name]);
+  updateHeadLabel();
+  // Hide head UI
+  const hw=$("head-wrap"); if(hw)hw.style.display="none";
+  const hl=$("head-lbl");  if(hl)hl.style.display="none";
+  // Cascade owners
+  cascadeOwnersByHead();
+  console.log(`[Scout] Clone mode → ${cfg.name}`);
+}
+
+// ════ FILTER INIT ════
+function initHeadFilter(){
+  $("head-list").innerHTML=ALL_HEADS_S.map(h=>`
+    <div class="ms-item">
+      <input type="checkbox" id="head-${h.replace(/\s/g,"_")}" checked onchange="onHeadChange()">
+      <label for="head-${h.replace(/\s/g,"_")}">${h.split(" ")[0]}</label>
+    </div>`).join("");
+  activeHeads=new Set(ALL_HEADS_S);
+}
+
+function initOwnerFilter(){
+  $("owner-list").innerHTML=ORDERED_OWNERS_S.map(o=>`
+    <div class="ms-item">
+      <input type="checkbox" id="sown-${o.id}" checked onchange="onOwnerChange()">
+      <label for="sown-${o.id}">${o.name}</label>
+    </div>`).join("");
+  activeOwners=new Set(ORDERED_OWNERS_S.map(o=>o.id));
+}
+
+function toggleHeadDD(e){ e.stopPropagation(); $("head-dropdown").classList.toggle("open"); }
+function toggleOwnerDD(e){ e.stopPropagation(); $("owner-dropdown").classList.toggle("open"); }
+
+function onHeadChange(){
+  activeHeads=new Set(ALL_HEADS_S.filter(h=>{const el=$(`head-${h.replace(/\s/g,"_")}`);return !el||el.checked;}));
+  updateHeadLabel();
+  cascadeOwnersByHead();
+  renderAll();
+}
+function onOwnerChange(){
+  activeOwners=new Set(ORDERED_OWNERS_S.filter(o=>{const el=$(`sown-${o.id}`);return !el||el.checked;}).map(o=>o.id));
+  ownerFilterActive=activeOwners.size<ORDERED_OWNERS_S.length;
+  updateOwnerLabel();
+  renderAll();
+}
+
+function updateHeadLabel(){
+  const sel=[...activeHeads];
+  $("head-label").textContent=sel.length===ALL_HEADS_S.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:`${sel.length} Heads`;
+}
+function updateOwnerLabel(){
+  const c=activeOwners.size,t=ORDERED_OWNERS_S.length;
+  $("owner-label").textContent=c===t?"All Owners":c===0?"None":`${c} Selected`;
+}
+
+function cascadeOwnersByHead(){
+  if(activeHeads.size===ALL_HEADS_S.length){
+    ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=true;});
+    activeOwners=new Set(ORDERED_OWNERS_S.map(o=>o.id));
+    ownerFilterActive=false;
+  } else {
+    const valid=new Set();
+    [...activeHeads].forEach(h=>(HEAD_OWNERS[h]||[]).forEach(id=>valid.add(id)));
+    ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=valid.has(o.id);});
+    activeOwners=valid;
+    ownerFilterActive=true;
+  }
+  updateOwnerLabel();
+}
+
+function selectAllHeads(){ ALL_HEADS_S.forEach(h=>{const el=$(`head-${h.replace(/\s/g,"_")}`);if(el)el.checked=true;}); activeHeads=new Set(ALL_HEADS_S); updateHeadLabel(); cascadeOwnersByHead(); renderAll(); }
+function deselectAllHeads(){ ALL_HEADS_S.forEach(h=>{const el=$(`head-${h.replace(/\s/g,"_")}`);if(el)el.checked=false;}); activeHeads=new Set(); updateHeadLabel(); renderAll(); }
+function selectAllOwners(){ ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=true;}); activeOwners=new Set(ORDERED_OWNERS_S.map(o=>o.id)); ownerFilterActive=false; updateOwnerLabel(); renderAll(); }
+function deselectAllOwners(){ ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=false;}); activeOwners=new Set(); ownerFilterActive=true; updateOwnerLabel(); renderAll(); }
+
+// Close dropdowns on outside click
+document.addEventListener("click",e=>{
+  [["head-wrap","head-dropdown"],["owner-wrap","owner-dropdown"]].forEach(([w,d])=>{
+    if(!$(w)?.contains(e.target)) $(d)?.classList.remove("open");
+  });
+});
+
+// ════ DATA FETCH ════
+// Uses the existing /api Cloudflare Function proxy (same as index.html)
+// No line items needed — amount_in_home_currency is correct for open pipeline deals
+async function fetchPipelineDeals(){
+  const fetched=[]; let after=null;
+  do {
+    const body={
+      filterGroups:[{filters:[
+        {propertyName:"pipeline", operator:"EQ",  value:NBD_PIPELINE}
+      ]}],
+      properties:["dealname","amount_in_home_currency","hubspot_owner_id","dealstage","createdate","closedate"],
+      limit:200
+    };
+    // No sorts param — prevents silent pagination truncation (per architecture rules)
+    if(after) body.after=after;
+    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok) throw new Error(`API ${res.status}`);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      fetched.push({
+        id          : String(r.id),
+        dealname    : (r.properties?.dealname||"").trim(),
+        amount      : parseFloat(r.properties?.amount_in_home_currency||0)||0,
+        owner_id    : String(r.properties?.hubspot_owner_id||""),
+        dealstage   : String(r.properties?.dealstage||""),
+        createdate  : (r.properties?.createdate||"").split("T")[0],
+        closedate   : (r.properties?.closedate||"").split("T")[0]
+      });
+    });
+    after = data.paging?.next?.after || null;
+  } while(after);
+  return fetched;
+}
+
+// ════ MAIN SYNC ════
+async function doSync(force=false){
+  if(isSyncing&&!force) return;
+  isSyncing=true;
+  $("sdot").style.background="#006E5E";
+  $("stxt").textContent="SYNCING...";
+  $("lo").classList.add("show");
+  $("rfbtn").disabled=true;
+  $("err-bar").style.display="none";
+  ["k-value","k-deals","k-avg","k-winrate"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
+
+  try{
+    const raw=await fetchPipelineDeals();
+    attributeDeals(raw);
+    allDeals=raw;
+    console.log(`[Scout] ${allDeals.length} pipeline deals loaded`);
+    renderAll();
+    $("sdot").style.background="#FFDA30";
+    $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
+    $("stxt").textContent=`LIVE · ${allDeals.length} PIPELINE DEALS`;
+  }catch(e){
+    console.error(e);
+    $("err-msg").textContent=e.message;
+    $("err-bar").style.display="block";
+    $("sdot").style.background="#696969";
+    $("stxt").textContent="SYNC FAILED";
+  }finally{
+    $("lo").classList.remove("show");
+    $("rfbtn").disabled=false;
+    isSyncing=false;
+  }
+}
+
+// ════ RENDER ════
+function renderAll(){
+  const fd  = filteredDeals();
+  const afd = activeFunnelDeals(fd); // open, actionable deals only
+
+  renderKPIs(fd, afd);
+  renderFunnel(afd);
+  renderPipeBar(afd);
+  renderWinRate(fd);
+  renderOwnerTable(afd);
+}
+
+// ── KPIs ──
+function renderKPIs(fd, afd){
+  const totalValue  = afd.reduce((s,d)=>s+d.amount, 0);
+  const totalDeals  = afd.length;
+  const avgDeal     = totalDeals ? totalValue/totalDeals : 0;
+  const wonDeals    = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="won");
+  const lostDeals   = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="lost");
+  const winDenom    = wonDeals.length + lostDeals.length;
+  const winRate     = winDenom ? Math.round((wonDeals.length/winDenom)*100) : 0;
+
+  $("k-value").textContent   = fmt$(totalValue);
+  $("k-deals").textContent   = fmtNum(totalDeals);
+  $("k-avg").textContent     = totalDeals ? fmt$(avgDeal) : "—";
+  $("k-winrate").textContent = winDenom  ? `${winRate}%`  : "—";
+  $("k-winrate-sub").textContent = winDenom
+    ? `${wonDeals.length} won · ${lostDeals.length} lost`
+    : "No closed deals yet";
+}
+
+// ── Funnel Bands ──
+function renderFunnel(afd){
+  // Aggregate by band
+  const bandStats = {};
+  ACTIVE_BANDS.forEach(b=>{ bandStats[b]={count:0, value:0, stages:{}}; });
+  afd.forEach(d=>{
+    const s=STAGE_MAP[d.dealstage];
+    if(!s||!ACTIVE_BANDS.includes(s.band)) return;
+    bandStats[s.band].count++;
+    bandStats[s.band].value+=d.amount;
+    if(!bandStats[s.band].stages[d.dealstage]) bandStats[s.band].stages[d.dealstage]={label:s.label,count:0,value:0};
+    bandStats[s.band].stages[d.dealstage].count++;
+    bandStats[s.band].stages[d.dealstage].value+=d.amount;
+  });
+
+  $("funnel-grid").innerHTML=ACTIVE_BANDS.map(band=>{
+    const cfg=BAND_CFG[band];
+    const st=bandStats[band];
+    const stageRows=Object.values(st.stages)
+      .sort((a,b)=>b.count-a.count)
+      .map(s=>`
+        <div class="funnel-stage-row">
+          <span class="funnel-stage-name">${s.label}</span>
+          <span class="funnel-stage-cnt">${s.count}</span>
+          <span class="funnel-stage-amt">${s.value?fmt$(s.value):""}</span>
+        </div>`).join("");
+    return`<div class="funnel-band ${cfg.cls}">
+      <div class="funnel-icon">${cfg.icon}</div>
+      <div class="funnel-label">${cfg.label}</div>
+      <div class="funnel-count">${st.count}</div>
+      <div class="funnel-value">${st.value?fmt$(st.value):"No value set"}</div>
+      <div class="funnel-stages">${stageRows||'<div style="font-size:9px;color:#C0C0C0;padding:4px 0">No deals</div>'}</div>
+    </div>`;
+  }).join("");
+}
+
+// ── Pipeline distribution bar ──
+function renderPipeBar(afd){
+  const total=afd.length;
+  const track=$("pipe-bar-track");
+  const legend=$("pipe-bar-legend");
+  if(!total){ track.innerHTML=""; legend.innerHTML=""; return; }
+
+  const counts={};
+  ACTIVE_BANDS.forEach(b=>counts[b]=0);
+  afd.forEach(d=>{ const s=STAGE_MAP[d.dealstage]; if(s&&ACTIVE_BANDS.includes(s.band)) counts[s.band]++; });
+
+  track.innerHTML=ACTIVE_BANDS.map(band=>{
+    const pct=(counts[band]/total*100).toFixed(1);
+    return`<div class="pipe-bar-seg" style="width:${pct}%;background:${BAND_CFG[band].color};min-width:${counts[band]?2:0}px" title="${BAND_CFG[band].label}: ${counts[band]} deals (${pct}%)"></div>`;
+  }).join("");
+
+  legend.innerHTML=ACTIVE_BANDS.map(band=>`
+    <div class="pipe-leg-item">
+      <div class="pipe-leg-dot" style="background:${BAND_CFG[band].color}"></div>
+      ${BAND_CFG[band].label} · ${counts[band]} (${(counts[band]/total*100).toFixed(0)}%)
+    </div>`).join("");
+}
+
+// ── Win Rate detail cards ──
+function renderWinRate(fd){
+  const won =fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="won");
+  const lost=fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="lost");
+  const total=won.length+lost.length;
+  const wonVal =won.reduce((s,d)=>s+d.amount,0);
+  const lostVal=lost.reduce((s,d)=>s+d.amount,0);
+  const wonPct =total?Math.round(won.length/total*100):0;
+  const lostPct=total?100-wonPct:0;
+
+  $("wr-won").textContent  = `${wonPct}%`;
+  $("wr-won-val").textContent = `${won.length} deals${wonVal?` · ${fmt$(wonVal)}`:""}`;
+  $("wr-won-bar").style.width = `${wonPct}%`;
+  $("wr-lost").textContent = `${lostPct}%`;
+  $("wr-lost-val").textContent= `${lost.length} deals${lostVal?` · ${fmt$(lostVal)}`:""}`;
+  $("wr-lost-bar").style.width= `${lostPct}%`;
+}
+
+// ── By-Owner Table ──
+function renderOwnerTable(afd){
+  // Aggregate by owner_id
+  const ownerStats={};
+  afd.forEach(d=>{
+    const oid=d.owner_id;
+    if(!ownerStats[oid]) ownerStats[oid]={count:0,value:0,bands:{}};
+    ownerStats[oid].count++;
+    ownerStats[oid].value+=d.amount;
+    const band=STAGE_MAP[d.dealstage]?.band;
+    if(band){ ownerStats[oid].bands[band]=(ownerStats[oid].bands[band]||0)+1; }
+  });
+
+  const rows=Object.entries(ownerStats)
+    .sort(([,a],[,b])=>b.value-a.value)
+    .map(([oid,st])=>{
+      const name=OWNER_NAME[oid]||oid;
+      const head=OWNER_HEAD_MAP[oid]||"—";
+      const hcolor=HEAD_COLORS[head]||"#9A9A9A";
+      const avg=st.count?fmt$(st.value/st.count):"—";
+      const pills=ACTIVE_BANDS.filter(b=>st.bands[b]).map(b=>
+        `<span class="stage-pill ${BAND_CFG[b].pillCls}">${BAND_CFG[b].label.slice(0,4)} ${st.bands[b]}</span>`
+      ).join(" ");
+      return`<tr>
+        <td style="font-weight:700">${name}</td>
+        <td><div class="head-badge"><div class="head-dot" style="background:${hcolor}"></div>${head.split(" ")[0]}</div></td>
+        <td class="num">${st.count}</td>
+        <td class="num">${st.value?fmt$(st.value):"—"}</td>
+        <td class="num">${avg}</td>
+        <td>${pills||"—"}</td>
+      </tr>`;
+    });
+
+  // Totals row
+  const totalCount=afd.length;
+  const totalValue=afd.reduce((s,d)=>s+d.amount,0);
+
+  $("owner-tbody").innerHTML=rows.length
+    ? rows.join("")+`<tr class="total-row">
+        <td colspan="2">Total</td>
+        <td class="num">${totalCount}</td>
+        <td class="num">${fmt$(totalValue)}</td>
+        <td class="num">${totalCount?fmt$(totalValue/totalCount):"—"}</td>
+        <td></td>
+      </tr>`
+    : `<tr><td colspan="6" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No deals match current filters.</td></tr>`;
+
+  $("table-meta").textContent=`${totalCount} active deals · ${fmt$(totalValue)} pipeline value`;
+}
+
+// ════ INIT ════
+window.addEventListener("DOMContentLoaded",function(){
+  checkSSO();
+  initHeadFilter();
+  initOwnerFilter();
+  bootCloneMode();
+  doSync(true);
+});
+</script>
+</body>
+</html>
