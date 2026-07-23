@@ -78,6 +78,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
 .ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
 
+/* Single-select (Stage Band, Deal Age) */
+.ss-wrap{position:relative}
+.ss-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
+.ss-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.ss-btn.active-filter{border-color:#FFDA30;color:#FFDA30}
+.ss-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:160px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden}
+.ss-dropdown.open{display:block}
+.ss-item{padding:7px 12px;font-size:10px;font-weight:600;color:rgba(255,255,255,.72);cursor:pointer;font-family:'Montserrat',sans-serif;transition:background .12s;letter-spacing:.02em}
+.ss-item:hover{background:rgba(255,255,255,.07)}
+.ss-item.selected{color:#FFDA30;font-weight:800}
+
 /* ── Spinner ── */
 .lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
 .lo.show{display:flex}
@@ -159,6 +170,8 @@ tbody td{padding:9px 14px;white-space:nowrap}
 tbody td.num{text-align:right;font-weight:700}
 .total-row td{background:#F7F7F7!important;font-weight:800;border-top:2px solid #E2E2E2}
 .total-row:hover td{background:#F7F7F7!important}
+.unassigned-row td{background:#FFF8F8!important;color:#9A9A9A;font-style:italic}
+.unassigned-row:hover td{background:#FFF0F0!important}
 
 /* Stage pill */
 .stage-pill{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
@@ -166,10 +179,6 @@ tbody td.num{text-align:right;font-weight:700}
 .sp-engage{background:#EEE9FF;color:#3B3561}
 .sp-propose{background:#FFF0E0;color:#D46000}
 .sp-nurture{background:#F2F2F2;color:#696969}
-
-/* Head badge */
-.head-badge{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:10.5px;color:#434343}
-.head-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
 /* ── Win Rate card ── */
 .winrate-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
@@ -180,6 +189,20 @@ tbody td.num{text-align:right;font-weight:700}
 .wr-bar-track{height:8px;border-radius:4px;background:#F2F2F2;margin-top:12px;overflow:hidden}
 .wr-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
 @media(max-width:600px){.winrate-grid{grid-template-columns:1fr}}
+
+/* ── Stale Deal Alert ── */
+.stale-wrap{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-left:4px solid #EF2D56;overflow:hidden;margin-bottom:24px}
+.stale-hdr{padding:14px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.stale-title{font-size:11px;font-weight:800;color:#C0143C;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
+.stale-badge{background:#EF2D56;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:.04em}
+.stale-meta{font-size:10px;color:#9A9A9A;font-weight:500}
+.stale-empty{padding:24px 18px;font-size:11px;color:#006E5E;font-weight:700;display:flex;align-items:center;gap:7px}
+table.stale-table{min-width:560px}
+thead.stale-head th{background:#FFF5F5}
+.age-pill{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.04em}
+.age-fresh{background:#E8F5E9;color:#2E7D32}
+.age-maturing{background:#FFF8E1;color:#F57F17}
+.age-stale{background:#FFEBEE;color:#C0143C}
 
 /* ── Footer ── */
 .footer{text-align:center;padding:32px 0 16px;font-size:9px;font-weight:700;color:#9A9A9A;letter-spacing:.16em;text-transform:uppercase}
@@ -240,7 +263,6 @@ tbody td.num{text-align:right;font-weight:700}
         <a class="nexus-btn" id="nexus-link" href="/" target="_blank">↗ Revenue Nexus</a>
       </div>
     </div>
-    <!-- Nav tabs -->
     <div class="hdr-nav">
       <button class="nav-tab active">Pipeline Scout</button>
     </div>
@@ -251,26 +273,23 @@ tbody td.num{text-align:right;font-weight:700}
 <div class="fbar">
   <div class="fbar-in">
     <span class="fl" style="color:rgba(255,255,255,.35);font-size:10px;font-weight:700;letter-spacing:.02em">Pipeline Scout</span>
+
     <div class="vdiv"></div>
-    <!-- Head filter -->
-    <span class="fl" id="head-lbl">Head</span>
-    <div class="ms-wrap" id="head-wrap">
-      <div class="ms-btn" id="head-btn" onclick="toggleHeadDD(event)">
-        <span id="head-label">All Heads</span><span class="ms-arrow">▼</span>
+    <span class="fl">Stage Band</span>
+    <div class="ss-wrap" id="band-wrap">
+      <div class="ss-btn" id="band-btn" onclick="toggleBandDD(event)">
+        <span id="band-label">All Bands</span><span class="ms-arrow">▼</span>
       </div>
-      <div class="ms-dropdown" id="head-dropdown">
-        <div class="ms-ctrl">
-          <span class="ms-ctrl-lbl">Heads</span>
-          <div class="ms-actions">
-            <span class="ms-act" onclick="selectAllHeads()">All</span>
-            <span class="ms-act" onclick="deselectAllHeads()">None</span>
-          </div>
-        </div>
-        <div id="head-list"></div>
+      <div class="ss-dropdown" id="band-dropdown">
+        <div class="ss-item selected" data-band="all"  onclick="selectBand('all')">All Bands</div>
+        <div class="ss-item"          data-band="prospect" onclick="selectBand('prospect')">Prospecting</div>
+        <div class="ss-item"          data-band="engage"   onclick="selectBand('engage')">Engaging</div>
+        <div class="ss-item"          data-band="propose"  onclick="selectBand('propose')">Proposing</div>
+        <div class="ss-item"          data-band="nurture"  onclick="selectBand('nurture')">Nurture</div>
       </div>
     </div>
+
     <div class="vdiv"></div>
-    <!-- Owner filter -->
     <span class="fl">Owner</span>
     <div class="ms-wrap" id="owner-wrap">
       <div class="ms-btn" id="owner-btn" onclick="toggleOwnerDD(event)">
@@ -285,6 +304,20 @@ tbody td.num{text-align:right;font-weight:700}
           </div>
         </div>
         <div id="owner-list"></div>
+      </div>
+    </div>
+
+    <div class="vdiv"></div>
+    <span class="fl">Deal Age</span>
+    <div class="ss-wrap" id="age-wrap">
+      <div class="ss-btn" id="age-btn" onclick="toggleAgeDD(event)">
+        <span id="age-label">All Ages</span><span class="ms-arrow">▼</span>
+      </div>
+      <div class="ss-dropdown" id="age-dropdown">
+        <div class="ss-item selected" data-age="all"      onclick="selectAge('all')">All Ages</div>
+        <div class="ss-item"          data-age="fresh"    onclick="selectAge('fresh')">🟢 Fresh (0–30d)</div>
+        <div class="ss-item"          data-age="maturing" onclick="selectAge('maturing')">🟡 Maturing (31–90d)</div>
+        <div class="ss-item"          data-age="stale"    onclick="selectAge('stale')">🔴 Stale (90d+)</div>
       </div>
     </div>
   </div>
@@ -351,9 +384,40 @@ tbody td.num{text-align:right;font-weight:700}
     </div>
   </div>
 
-  <!-- By-Owner Table — hidden for now, render function kept intact for future re-enable -->
-  <div id="owner-section" style="display:none">
-  <div class="sec">Pipeline by Owner <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· active deals · sorted by value</span></div>
+  <!-- Stale Deal Alert -->
+  <div class="sec">Stale Deal Alert <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· active deals created 90+ days ago · sorted by age</span></div>
+  <div class="stale-wrap">
+    <div class="stale-hdr">
+      <div class="stale-title">
+        ⚠ Stale Deals
+        <span class="stale-badge" id="stale-count">—</span>
+      </div>
+      <div class="stale-meta" id="stale-meta">Days since deal was created</div>
+    </div>
+    <div id="stale-body">
+      <div class="twrap">
+        <table class="stale-table">
+          <thead class="stale-head">
+            <tr>
+              <th>Deal Name</th>
+              <th>Owner</th>
+              <th class="num">Days Since Created</th>
+              <th>Stage</th>
+              <th>Band</th>
+              <th class="num">Value</th>
+            </tr>
+          </thead>
+          <tbody id="stale-tbody">
+            <tr><td colspan="6" style="text-align:center;padding:30px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner Breakdown -->
+  <div id="owner-section">
+  <div class="sec">Pipeline by Owner <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· active deals · sorted by value · inactive owner deals grouped below</span></div>
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl">
@@ -366,11 +430,11 @@ tbody td.num{text-align:right;font-weight:700}
         <thead>
           <tr>
             <th>Owner</th>
-            <th>Head</th>
             <th class="num">Deals</th>
             <th class="num">Pipeline Value</th>
             <th class="num">Avg Deal Size</th>
             <th>Stage Mix</th>
+            <th class="num">Stale</th>
           </tr>
         </thead>
         <tbody id="owner-tbody">
@@ -386,20 +450,21 @@ tbody td.num{text-align:right;font-weight:700}
 
 <script>
 // ════════════════════════════════════════════════
-// PIPELINE SCOUT — MAVLERS
+// PIPELINE SCOUT v2 — MAVLERS
 // Standalone page. Completely independent from index.html and portfolio.html.
-// Data source: HubSpot NBD Pipeline 85124147 via /api proxy (same as index.html)
+// Data source: HubSpot NBD Pipeline 85124147 via /api proxy
+// Registry: 10 active NBD members only (separate from Revenue Pulse registry)
+// Filters: Stage Band (single-select), Owner (multi-select), Deal Age (single-select)
+// New: Owner Breakdown table re-enabled, Stale Deal Alert (90d+ createdate)
 // ════════════════════════════════════════════════
 
 const $=id=>document.getElementById(id);
 
 // ── Pipeline constants ──
-const NBD_PIPELINE   = "85124147";
-const PORTAL         = "2700725";
+const NBD_PIPELINE = "85124147";
+const STALE_DAYS   = 90;
 
 // ── Stage map: ID → { label, band } ──
-// Bands: prospect | engage | propose | nurture
-// Excluded from active funnel (tracked separately): won, lost, rejected, routed
 const STAGE_MAP = {
   "159144307": { label:"SQL Received",         band:"prospect" },
   "159154702": { label:"MQL/SQL Accepted",     band:"prospect" },
@@ -409,165 +474,85 @@ const STAGE_MAP = {
   "159144311": { label:"Negotiation/Proposal", band:"propose"  },
   "159144312": { label:"Proposal Sent",        band:"propose"  },
   "159154704": { label:"Hold / Nurture",       band:"nurture"  },
-  // Terminal stages — tracked for win rate, excluded from funnel
   "159154703": { label:"Closed Won",           band:"won"      },
   "159144313": { label:"Closed Lost",          band:"lost"     },
   "159154701": { label:"MQL/SQL Rejected",     band:"excluded" },
   "161372220": { label:"Move to Direct",       band:"excluded" }
 };
 
-const ACTIVE_BANDS   = ["prospect","engage","propose","nurture"];
+const ACTIVE_BANDS = ["prospect","engage","propose","nurture"];
 const BAND_CFG = {
-  prospect: { label:"Prospecting",  icon:"🔍", cls:"f-prospect", color:"#FFDA30", textColor:"#A07A00",  pillCls:"sp-prospect" },
-  engage:   { label:"Engaging",     icon:"🤝", cls:"f-engage",   color:"#3B3561", textColor:"#3B3561",  pillCls:"sp-engage"   },
-  propose:  { label:"Proposing",    icon:"📋", cls:"f-propose",  color:"#F07A00", textColor:"#D46000",  pillCls:"sp-propose"  },
-  nurture:  { label:"Nurture",      icon:"⏸️", cls:"f-nurture",  color:"#696969", textColor:"#696969",  pillCls:"sp-nurture"  }
+  prospect: { label:"Prospecting", icon:"🔍", cls:"f-prospect", color:"#FFDA30", pillCls:"sp-prospect" },
+  engage:   { label:"Engaging",    icon:"🤝", cls:"f-engage",   color:"#3B3561", pillCls:"sp-engage"   },
+  propose:  { label:"Proposing",   icon:"📋", cls:"f-propose",  color:"#F07A00", pillCls:"sp-propose"  },
+  nurture:  { label:"Nurture",     icon:"⏸️", cls:"f-nurture",  color:"#696969", pillCls:"sp-nurture"  }
 };
 
-// ── Head colours for badge dots ──
-const HEAD_COLORS = {
-  "Jaydeep Salla":    "#3B3561",
-  "Jiggyasa Agrawal": "#FFDA30",
-  "Tanuj Gupta":      "#006E5E",
-  "Nevilson Christan":"#EF2D56"
-};
-
-// ════ OWNER REGISTRY (mirrors index.html exactly) ════
-const OWNER_GROUPS = {
-  "Leaders / Heads":[
-    {id:"107178262",name:"Chintan Doshi"},   {id:"17739548",name:"Darshan Modi"},
-    {id:"17738843",name:"Jaydeep Salla"},    {id:"131779647",name:"Jiggyasa Agrawal"},
-    {id:"79217713",name:"Krunal Bakraniya"}, {id:"34140174",name:"Mrugesh Dabhi"},
-    {id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}
-  ],
-  "Digital — US":[
-    {id:"38568120",name:"Baspin Thomas"},    {id:"42663191",name:"Dhaval Damania"},
-    {id:"240935328",name:"Hammad Bhaldar"}, {id:"19799470",name:"Jebin Joy"},
-    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
-    {id:"557894666",name:"Sudarshan Damani"}
-  ],
-  "Digital — UK":[
-    {id:"46156316",name:"Flintoff Mehta"},  {id:"37344296",name:"Kalgi Shah"},
-    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
-  ],
-  "Digital — AU":[
-    {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
-    {id:"94746500",name:"Manvi Choumal"},   {id:"176516495",name:"Prachi Porwal"},
-    {id:"263464861",name:"Saquib Khan"}
-  ],
-  "Nevilson — Team":[
-    {id:"86813698",name:"Aman Acharya"},    {id:"255830830",name:"Devanshu Kumar"},
-    {id:"37762663",name:"Malav Modi"}
-  ],
-  "MarTech — US":[
-    {id:"46153051",name:"Ayush Rathi"},     {id:"93107638",name:"Ayush Dhupar"},
-    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
-    {id:"89530815",name:"Vinita Raidu"}
-  ],
-  "MarTech — UK":[
-    {id:"82911376",name:"Divya S"},         {id:"916030451",name:"Kamesh Biniwale"},
-    {id:"82030736",name:"Sakshi Bissa"},    {id:"107178262",name:"Chintan Doshi"}
-  ],
-  "MarTech — AU":[ {id:"467997340",name:"Karan Doshi"} ],
-  "Reactivation":[ {id:"41490632",name:"Mukund Basita"} ],
-  "Unclassified":[ {id:"82663745",name:"Prativa Dubey"} ]
-};
-
-const OWNER_NAME = {};
-Object.values(OWNER_GROUPS).flat().forEach(o=>{ if(o.id && !OWNER_NAME[o.id]) OWNER_NAME[o.id]=o.name; });
-const REGISTRY_IDS = (()=>{ const s=new Set(); Object.values(OWNER_GROUPS).flat().forEach(o=>{if(o.id)s.add(o.id);}); return[...s]; })();
-
-// BU map
-const OWNER_BU_MAP = (()=>{
-  const m={};
-  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
-    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
-    owners.forEach(o=>{m[o.id]=bu;});
-  });
-  m["107178262"]="MarTech"; m["34140174"]="MarTech"; m["17738843"]="MarTech";
-  m["17739173"]="Digital";  m["86940863"]="Digital"; m["17739548"]="Digital";
-  m["79217713"]="Digital";  m["82663745"]="Digital";
-  return m;
-})();
-
-// Head map (fixed per owner)
-const OWNER_HEAD_MAP = (()=>{
-  const m={};
-  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
-    owners.forEach(o=>{
-      if(g==="Leaders / Heads"||g==="Unclassified") return;
-      if(g.startsWith("MarTech")||g==="Reactivation"){ m[o.id]="Jaydeep Salla"; return; }
-      if(g==="Nevilson — Team"){ m[o.id]="Nevilson Christan"; return; }
-      if(g==="Digital — AU")   { m[o.id]="Jiggyasa Agrawal";  return; }
-      if(g==="Digital — UK")   { m[o.id]="Tanuj Gupta";        return; }
-      if(g==="Digital — US")   { m[o.id]="Tanuj Gupta";        return; }
-    });
-  });
-  return m;
-})();
-
-// Head → owner IDs (for clone scoping + filter cascade)
-const HEAD_OWNERS = {
-  "Jaydeep Salla"    :["17738843","46153051","93107638","86147905","85767516","89530815","82911376","916030451","82030736","107178262","467997340","41490632","34140174"],
-  "Jiggyasa Agrawal" :["131779647","78831011","94746500","176516495","263464861"],
-  "Tanuj Gupta"      :["17739173","46156316","37344296","24817892","31730801","38568120","42663191","240935328","19799470","34558123","284770744","557894666","79217713","17739548"],
-  "Nevilson Christan":["86940863","86813698","255830830","37762663"]
-};
-
-const ALL_HEADS_S = ["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta","Nevilson Christan"];
-
-// Flat ordered owner list for filter UI (management sequence)
-const ORDERED_OWNERS_S = [
-  {id:"107178262",name:"Chintan Doshi"},    {id:"17738843",name:"Jaydeep Salla"},
-  {id:"34140174",name:"Mrugesh Dabhi"},     {id:"467997340",name:"Karan Doshi"},
-  {id:"82911376",name:"Divya S"},           {id:"82030736",name:"Sakshi Bissa"},
-  {id:"93107638",name:"Ayush Dhupar"},      {id:"46153051",name:"Ayush Rathi"},
-  {id:"86147905",name:"Preeti Thapliyal"},  {id:"85767516",name:"Rupali Sindhu"},
-  {id:"89530815",name:"Vinita Raidu"},      {id:"916030451",name:"Kamesh Biniwale"},
-  {id:"41490632",name:"Mukund Basita"},
-  {id:"17739548",name:"Darshan Modi"},      {id:"79217713",name:"Krunal Bakraniya"},
-  {id:"17739173",name:"Tanuj Gupta"},
-  {id:"131779647",name:"Jiggyasa Agrawal"}, {id:"78831011",name:"Kunal Gohil"},
-  {id:"94746500",name:"Manvi Choumal"},     {id:"176516495",name:"Prachi Porwal"},
-  {id:"263464861",name:"Saquib Khan"},
-  {id:"46156316",name:"Flintoff Mehta"},    {id:"37344296",name:"Kalgi Shah"},
-  {id:"24817892",name:"Sheldon Fernandes"}, {id:"31730801",name:"Vikram Sahi"},
-  {id:"38568120",name:"Baspin Thomas"},     {id:"42663191",name:"Dhaval Damania"},
-  {id:"240935328",name:"Hammad Bhaldar"},   {id:"19799470",name:"Jebin Joy"},
-  {id:"34558123",name:"Kaustubh Agrawal"},  {id:"284770744",name:"Sourya Ghosh"},
-  {id:"557894666",name:"Sudarshan Damani"},
-  {id:"86813698",name:"Aman Acharya"},      {id:"255830830",name:"Devanshu Kumar"},
-  {id:"37762663",name:"Malav Modi"},
-  {id:"82663745",name:"Prativa Dubey"}
+// ════ NBD OWNER REGISTRY (Pipeline Scout only — separate from Revenue Pulse) ════
+// 10 active NBD members, management-confirmed order by deal volume
+const NBD_REGISTRY = [
+  { id:"37762663",  name:"Malav Modi"         },
+  { id:"467997340", name:"Karan Doshi"        },
+  { id:"41593885",  name:"Pankaj Suryavanshi" },
+  { id:"619945870", name:"Aejaz Zerdi"        },
+  { id:"916030451", name:"Kamesh Biniwale"    },
+  { id:"86813698",  name:"Aman Acharya"       },
+  { id:"31730801",  name:"Vikram Sahi"        },
+  { id:"255830830", name:"Devanshu Kumar"     },
+  { id:"91416849",  name:"Kaustubh Nag"       },
+  { id:"45776165",  name:"Hitaishi Bhogayata" }
 ];
 
-// ════ STATE ════
-let allDeals       = []; // all fetched pipeline deals (stamped)
-let cloneHead      = null;
-let isSyncing      = false;
-let activeHeads    = new Set(ALL_HEADS_S);
-let activeOwners   = new Set(ORDERED_OWNERS_S.map(o=>o.id));
-let ownerFilterActive = false;
+// Quick lookup: owner_id → name (for registered owners only)
+const NBD_NAME = {};
+NBD_REGISTRY.forEach(o=>{ NBD_NAME[o.id]=o.name; });
+const NBD_IDS = new Set(NBD_REGISTRY.map(o=>o.id));
 
-// ════ ATTRIBUTION ════
-// Mirrors index.html attributeDeals() — stamps .head on every deal
-function attributeDeals(deals){
-  deals.forEach(d=>{
-    const oid = String(d.owner_id||"");
-    d.bu   = OWNER_BU_MAP[oid]   || "Digital";
-    d.head = OWNER_HEAD_MAP[oid] || null;
-    // Leader fallback: if no fixed head, derive from BU (leaders manage their own BU)
-    if(!d.head){
-      d.head = (d.bu==="MarTech") ? "Jaydeep Salla" : null;
-    }
-  });
+// ════ STATE ════
+let allDeals      = [];
+let isSyncing     = false;
+let activeBand    = "all";   // Stage Band filter
+let activeOwners  = new Set(NBD_REGISTRY.map(o=>o.id)); // Owner filter
+let activeAge     = "all";   // Deal Age filter
+
+// ════ AGE HELPERS ════
+function dealAgeDays(d){
+  if(!d.createdate) return 0;
+  const ms = Date.now() - new Date(d.createdate).getTime();
+  return Math.floor(ms / 86400000);
+}
+function ageGroup(days){
+  if(days <= 30)  return "fresh";
+  if(days <= 90)  return "maturing";
+  return "stale";
+}
+function agePillHtml(days){
+  const g=ageGroup(days);
+  const cls=g==="fresh"?"age-fresh":g==="maturing"?"age-maturing":"age-stale";
+  const lbl=g==="fresh"?"Fresh":g==="maturing"?"Maturing":"Stale";
+  return `<span class="age-pill ${cls}">${lbl} · ${days}d</span>`;
 }
 
 // ════ FILTER ════
 function filteredDeals(){
   return allDeals.filter(d=>{
-    if(activeHeads.size < ALL_HEADS_S.length && d.head && !activeHeads.has(d.head)) return false;
-    if(ownerFilterActive && !activeOwners.has(String(d.owner_id))) return false;
+    // Stage Band filter (active funnel deals only for band filter; won/lost always pass through)
+    if(activeBand !== "all"){
+      const s = STAGE_MAP[d.dealstage];
+      if(!s || s.band !== activeBand) return false;
+    }
+    // Owner filter — only scopes to registered NBD owners
+    if(activeOwners.size < NBD_IDS.size){
+      // If owner is not in registry at all, they pass through (unassigned row handles them)
+      if(NBD_IDS.has(String(d.owner_id)) && !activeOwners.has(String(d.owner_id))) return false;
+    }
+    // Deal Age filter (applies to active funnel deals only)
+    if(activeAge !== "all"){
+      const s = STAGE_MAP[d.dealstage];
+      if(s && ACTIVE_BANDS.includes(s.band)){
+        if(ageGroup(dealAgeDays(d)) !== activeAge) return false;
+      }
+    }
     return true;
   });
 }
@@ -581,6 +566,7 @@ function activeFunnelDeals(deals){
 
 // ════ HELPERS ════
 function fmt$(n){
+  if(!n) return "—";
   if(n>=1000000) return `$${(n/1000000).toFixed(2)}M`;
   if(n>=1000)    return `$${Math.round(n/1000)}K`;
   return `$${Math.round(n).toLocaleString()}`;
@@ -592,177 +578,102 @@ function fmtDate(d){
   return`${m[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
-// ════ LOGIN ════
-function getAuthKey(head){ return head ? `nexus_auth_${head}` : "nexus_auth"; }
+// ════ FILTER UI ════
 
-async function doLogin(){
-  const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
-  if(!pw){ err.textContent="Please enter the access password."; return; }
-  btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
-  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
-  try{
-    const res=await fetch("/pipeline-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
-    const data=await res.json();
-    if(data.success){
-      localStorage.setItem(getAuthKey(head),"1");
-      $("login-overlay").style.display="none";
-    } else if(res.status===500||data.error){
-      err.textContent="Server config error. Contact Mayur.";
-    } else {
-      err.textContent="Incorrect password. Please try again.";
-      $("pw-input").value=""; $("pw-input").focus();
-    }
-  }catch(e){
-    err.textContent="Connection error. Check your network.";
-  }finally{ btn.disabled=false; btn.textContent="Access Dashboard"; }
-}
-
-function checkSSO(){
-  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
-  if(localStorage.getItem("nexus_auth")==="1" ||
-     (head && localStorage.getItem(getAuthKey(head))==="1")){
-    $("login-overlay").style.display="none";
-    return true;
-  }
-  return false;
-}
-
-// ════ CLONE MODE ════
-// Same pattern as portfolio.html: locks Head filter, cascades owners, updates branding
-const HEADS_CONFIG_S = [
-  {id:"jiggyasa", name:"Jiggyasa Agrawal", bu:"Digital"},
-  {id:"jaydeep",  name:"Jaydeep Salla",    bu:"MarTech"},
-  {id:"tanuj",    name:"Tanuj Gupta",      bu:"Digital"},
-  {id:"nevilson", name:"Nevilson Christan",bu:"Digital"}
-];
-
-function bootCloneMode(){
-  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
-  if(!param) return;
-  const cfg=HEADS_CONFIG_S.find(h=>h.id===param);
-  if(!cfg){ console.warn(`[Scout] Unknown ?head= param: "${param}"`); return; }
-  cloneHead=cfg.name;
-  const firstName=cfg.name.split(" ")[0];
-  document.title=`${firstName} · Pipeline Scout · Mavlers`;
-  $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Pipeline`;
-  $("login-title").textContent=`Project Nexus`;
-  $("login-footer").textContent=`The Live Pulse of Mavlers Revenue`;
-  $("nexus-link").href=`/?head=${param}`;
-  document.body.setAttribute("data-clone",param);
-
-  // Lock Head filter — pre-check only this head
-  ALL_HEADS_S.forEach(h=>{
-    const el=$(`head-${h.replace(/\s/g,"_")}`);
-    if(el) el.checked=(h===cfg.name);
+// Stage Band
+function toggleBandDD(e){ e.stopPropagation(); $("band-dropdown").classList.toggle("open"); }
+function selectBand(band){
+  activeBand = band;
+  const labels = { all:"All Bands", prospect:"Prospecting", engage:"Engaging", propose:"Proposing", nurture:"Nurture" };
+  $("band-label").textContent = labels[band] || "All Bands";
+  const btn = $("band-btn");
+  btn.classList.toggle("active-filter", band !== "all");
+  $("band-dropdown").querySelectorAll(".ss-item").forEach(el=>{
+    el.classList.toggle("selected", el.dataset.band === band);
   });
-  activeHeads=new Set([cfg.name]);
-  updateHeadLabel();
-  // Hide head UI
-  const hw=$("head-wrap"); if(hw)hw.style.display="none";
-  const hl=$("head-lbl");  if(hl)hl.style.display="none";
-  // Cascade owners
-  cascadeOwnersByHead();
-  console.log(`[Scout] Clone mode → ${cfg.name}`);
+  $("band-dropdown").classList.remove("open");
+  renderAll();
 }
 
-// ════ FILTER INIT ════
-function initHeadFilter(){
-  $("head-list").innerHTML=ALL_HEADS_S.map(h=>`
-    <div class="ms-item">
-      <input type="checkbox" id="head-${h.replace(/\s/g,"_")}" checked onchange="onHeadChange()">
-      <label for="head-${h.replace(/\s/g,"_")}">${h.split(" ")[0]}</label>
-    </div>`).join("");
-  activeHeads=new Set(ALL_HEADS_S);
+// Owner
+function toggleOwnerDD(e){ e.stopPropagation(); $("owner-dropdown").classList.toggle("open"); }
+function onOwnerChange(){
+  activeOwners = new Set(NBD_REGISTRY.filter(o=>{
+    const el=$(`sown-${o.id}`); return !el||el.checked;
+  }).map(o=>o.id));
+  updateOwnerLabel();
+  renderAll();
 }
-
+function updateOwnerLabel(){
+  const c=activeOwners.size, t=NBD_REGISTRY.length;
+  $("owner-label").textContent = c===t?"All Owners":c===0?"None":`${c} Selected`;
+  $("owner-btn").classList.toggle("active-filter", c < t);
+}
+function selectAllOwners(){
+  NBD_REGISTRY.forEach(o=>{ const el=$(`sown-${o.id}`); if(el)el.checked=true; });
+  activeOwners=new Set(NBD_REGISTRY.map(o=>o.id));
+  updateOwnerLabel(); renderAll();
+}
+function deselectAllOwners(){
+  NBD_REGISTRY.forEach(o=>{ const el=$(`sown-${o.id}`); if(el)el.checked=false; });
+  activeOwners=new Set();
+  updateOwnerLabel(); renderAll();
+}
 function initOwnerFilter(){
-  $("owner-list").innerHTML=ORDERED_OWNERS_S.map(o=>`
+  $("owner-list").innerHTML = NBD_REGISTRY.map(o=>`
     <div class="ms-item">
       <input type="checkbox" id="sown-${o.id}" checked onchange="onOwnerChange()">
       <label for="sown-${o.id}">${o.name}</label>
     </div>`).join("");
-  activeOwners=new Set(ORDERED_OWNERS_S.map(o=>o.id));
+  activeOwners = new Set(NBD_REGISTRY.map(o=>o.id));
 }
 
-function toggleHeadDD(e){ e.stopPropagation(); $("head-dropdown").classList.toggle("open"); }
-function toggleOwnerDD(e){ e.stopPropagation(); $("owner-dropdown").classList.toggle("open"); }
-
-function onHeadChange(){
-  activeHeads=new Set(ALL_HEADS_S.filter(h=>{const el=$(`head-${h.replace(/\s/g,"_")}`);return !el||el.checked;}));
-  updateHeadLabel();
-  cascadeOwnersByHead();
+// Deal Age
+function toggleAgeDD(e){ e.stopPropagation(); $("age-dropdown").classList.toggle("open"); }
+function selectAge(age){
+  activeAge = age;
+  const labels = { all:"All Ages", fresh:"🟢 Fresh (0–30d)", maturing:"🟡 Maturing (31–90d)", stale:"🔴 Stale (90d+)" };
+  $("age-label").textContent = labels[age] || "All Ages";
+  const btn = $("age-btn");
+  btn.classList.toggle("active-filter", age !== "all");
+  $("age-dropdown").querySelectorAll(".ss-item").forEach(el=>{
+    el.classList.toggle("selected", el.dataset.age === age);
+  });
+  $("age-dropdown").classList.remove("open");
   renderAll();
 }
-function onOwnerChange(){
-  activeOwners=new Set(ORDERED_OWNERS_S.filter(o=>{const el=$(`sown-${o.id}`);return !el||el.checked;}).map(o=>o.id));
-  ownerFilterActive=activeOwners.size<ORDERED_OWNERS_S.length;
-  updateOwnerLabel();
-  renderAll();
-}
 
-function updateHeadLabel(){
-  const sel=[...activeHeads];
-  $("head-label").textContent=sel.length===ALL_HEADS_S.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:`${sel.length} Heads`;
-}
-function updateOwnerLabel(){
-  const c=activeOwners.size,t=ORDERED_OWNERS_S.length;
-  $("owner-label").textContent=c===t?"All Owners":c===0?"None":`${c} Selected`;
-}
-
-function cascadeOwnersByHead(){
-  if(activeHeads.size===ALL_HEADS_S.length){
-    ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=true;});
-    activeOwners=new Set(ORDERED_OWNERS_S.map(o=>o.id));
-    ownerFilterActive=false;
-  } else {
-    const valid=new Set();
-    [...activeHeads].forEach(h=>(HEAD_OWNERS[h]||[]).forEach(id=>valid.add(id)));
-    ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=valid.has(o.id);});
-    activeOwners=valid;
-    ownerFilterActive=true;
-  }
-  updateOwnerLabel();
-}
-
-function selectAllHeads(){ ALL_HEADS_S.forEach(h=>{const el=$(`head-${h.replace(/\s/g,"_")}`);if(el)el.checked=true;}); activeHeads=new Set(ALL_HEADS_S); updateHeadLabel(); cascadeOwnersByHead(); renderAll(); }
-function deselectAllHeads(){ ALL_HEADS_S.forEach(h=>{const el=$(`head-${h.replace(/\s/g,"_")}`);if(el)el.checked=false;}); activeHeads=new Set(); updateHeadLabel(); renderAll(); }
-function selectAllOwners(){ ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=true;}); activeOwners=new Set(ORDERED_OWNERS_S.map(o=>o.id)); ownerFilterActive=false; updateOwnerLabel(); renderAll(); }
-function deselectAllOwners(){ ORDERED_OWNERS_S.forEach(o=>{const el=$(`sown-${o.id}`);if(el)el.checked=false;}); activeOwners=new Set(); ownerFilterActive=true; updateOwnerLabel(); renderAll(); }
-
-// Close dropdowns on outside click
-document.addEventListener("click",e=>{
-  [["head-wrap","head-dropdown"],["owner-wrap","owner-dropdown"]].forEach(([w,d])=>{
+// Close all dropdowns on outside click
+document.addEventListener("click", e=>{
+  [["band-wrap","band-dropdown"],["owner-wrap","owner-dropdown"],["age-wrap","age-dropdown"]].forEach(([w,d])=>{
     if(!$(w)?.contains(e.target)) $(d)?.classList.remove("open");
   });
 });
 
 // ════ DATA FETCH ════
-// Uses the existing /api Cloudflare Function proxy (same as index.html)
-// No line items needed — amount_in_home_currency is correct for open pipeline deals
 async function fetchPipelineDeals(){
   const fetched=[]; let after=null;
   do {
     const body={
       filterGroups:[{filters:[
-        {propertyName:"pipeline", operator:"EQ",  value:NBD_PIPELINE}
+        {propertyName:"pipeline", operator:"EQ", value:NBD_PIPELINE}
       ]}],
-      properties:["dealname","amount_in_home_currency","hubspot_owner_id","dealstage","createdate","closedate"],
+      properties:["dealname","amount_in_home_currency","hubspot_owner_id","dealstage","createdate"],
       limit:200
     };
-    // No sorts param — prevents silent pagination truncation (per architecture rules)
+    // No sorts param — prevents silent pagination truncation (architecture rule)
     if(after) body.after=after;
     const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
     if(!res.ok) throw new Error(`API ${res.status}`);
     const data=await res.json();
     (data.results||[]).forEach(r=>{
       fetched.push({
-        id          : String(r.id),
-        dealname    : (r.properties?.dealname||"").trim(),
-        amount      : parseFloat(r.properties?.amount_in_home_currency||0)||0,
-        owner_id    : String(r.properties?.hubspot_owner_id||""),
-        dealstage   : String(r.properties?.dealstage||""),
-        createdate  : (r.properties?.createdate||"").split("T")[0],
-        closedate   : (r.properties?.closedate||"").split("T")[0]
+        id        : String(r.id),
+        dealname  : (r.properties?.dealname||"").trim(),
+        amount    : parseFloat(r.properties?.amount_in_home_currency||0)||0,
+        owner_id  : String(r.properties?.hubspot_owner_id||""),
+        dealstage : String(r.properties?.dealstage||""),
+        createdate: (r.properties?.createdate||"").split("T")[0]
       });
     });
     after = data.paging?.next?.after || null;
@@ -779,13 +690,12 @@ async function doSync(force=false){
   $("lo").classList.add("show");
   $("rfbtn").disabled=true;
   $("err-bar").style.display="none";
-  ["k-value","k-deals","k-avg","k-winrate"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
+  ["k-value","k-deals","k-avg","k-winrate"].forEach(id=>{ const el=$(id); if(el)el.textContent="…"; });
 
   try{
-    const raw=await fetchPipelineDeals();
-    attributeDeals(raw);
-    allDeals=raw;
-    console.log(`[Scout] ${allDeals.length} pipeline deals loaded`);
+    const raw = await fetchPipelineDeals();
+    allDeals = raw;
+    console.log(`[Scout v2] ${allDeals.length} pipeline deals loaded`);
     renderAll();
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
@@ -806,29 +716,29 @@ async function doSync(force=false){
 // ════ RENDER ════
 function renderAll(){
   const fd  = filteredDeals();
-  const afd = activeFunnelDeals(fd); // open, actionable deals only
-
+  const afd = activeFunnelDeals(fd);
   renderKPIs(fd, afd);
   renderFunnel(afd);
   renderPipeBar(afd);
   renderWinRate(fd);
+  renderStaleAlert(afd);
   renderOwnerTable(afd);
 }
 
 // ── KPIs ──
 function renderKPIs(fd, afd){
-  const totalValue  = afd.reduce((s,d)=>s+d.amount, 0);
-  const totalDeals  = afd.length;
-  const avgDeal     = totalDeals ? totalValue/totalDeals : 0;
-  const wonDeals    = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="won");
-  const lostDeals   = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="lost");
-  const winDenom    = wonDeals.length + lostDeals.length;
-  const winRate     = winDenom ? Math.round((wonDeals.length/winDenom)*100) : 0;
+  const totalValue = afd.reduce((s,d)=>s+d.amount, 0);
+  const totalDeals = afd.length;
+  const avgDeal    = totalDeals ? totalValue/totalDeals : 0;
+  const wonDeals   = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="won");
+  const lostDeals  = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="lost");
+  const winDenom   = wonDeals.length + lostDeals.length;
+  const winRate    = winDenom ? Math.round((wonDeals.length/winDenom)*100) : 0;
 
   $("k-value").textContent   = fmt$(totalValue);
   $("k-deals").textContent   = fmtNum(totalDeals);
   $("k-avg").textContent     = totalDeals ? fmt$(avgDeal) : "—";
-  $("k-winrate").textContent = winDenom  ? `${winRate}%`  : "—";
+  $("k-winrate").textContent = winDenom ? `${winRate}%` : "—";
   $("k-winrate-sub").textContent = winDenom
     ? `${wonDeals.length} won · ${lostDeals.length} lost`
     : "No closed deals yet";
@@ -836,7 +746,6 @@ function renderKPIs(fd, afd){
 
 // ── Funnel Bands ──
 function renderFunnel(afd){
-  // Aggregate by band
   const bandStats = {};
   ACTIVE_BANDS.forEach(b=>{ bandStats[b]={count:0, value:0, stages:{}}; });
   afd.forEach(d=>{
@@ -876,16 +785,13 @@ function renderPipeBar(afd){
   const track=$("pipe-bar-track");
   const legend=$("pipe-bar-legend");
   if(!total){ track.innerHTML=""; legend.innerHTML=""; return; }
-
   const counts={};
   ACTIVE_BANDS.forEach(b=>counts[b]=0);
   afd.forEach(d=>{ const s=STAGE_MAP[d.dealstage]; if(s&&ACTIVE_BANDS.includes(s.band)) counts[s.band]++; });
-
   track.innerHTML=ACTIVE_BANDS.map(band=>{
     const pct=(counts[band]/total*100).toFixed(1);
     return`<div class="pipe-bar-seg" style="width:${pct}%;background:${BAND_CFG[band].color};min-width:${counts[band]?2:0}px" title="${BAND_CFG[band].label}: ${counts[band]} deals (${pct}%)"></div>`;
   }).join("");
-
   legend.innerHTML=ACTIVE_BANDS.map(band=>`
     <div class="pipe-leg-item">
       <div class="pipe-leg-dot" style="background:${BAND_CFG[band].color}"></div>
@@ -895,76 +801,190 @@ function renderPipeBar(afd){
 
 // ── Win Rate detail cards ──
 function renderWinRate(fd){
-  const won =fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="won");
-  const lost=fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="lost");
-  const total=won.length+lost.length;
-  const wonVal =won.reduce((s,d)=>s+d.amount,0);
-  const lostVal=lost.reduce((s,d)=>s+d.amount,0);
-  const wonPct =total?Math.round(won.length/total*100):0;
-  const lostPct=total?100-wonPct:0;
-
-  $("wr-won").textContent  = `${wonPct}%`;
-  $("wr-won-val").textContent = `${won.length} deals${wonVal?` · ${fmt$(wonVal)}`:""}`;
-  $("wr-won-bar").style.width = `${wonPct}%`;
-  $("wr-lost").textContent = `${lostPct}%`;
-  $("wr-lost-val").textContent= `${lost.length} deals${lostVal?` · ${fmt$(lostVal)}`:""}`;
-  $("wr-lost-bar").style.width= `${lostPct}%`;
+  const won  = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="won");
+  const lost = fd.filter(d=>STAGE_MAP[d.dealstage]?.band==="lost");
+  const total = won.length + lost.length;
+  const wonVal  = won.reduce((s,d)=>s+d.amount,0);
+  const lostVal = lost.reduce((s,d)=>s+d.amount,0);
+  const wonPct  = total ? Math.round(won.length/total*100) : 0;
+  const lostPct = total ? 100-wonPct : 0;
+  $("wr-won").textContent   = `${wonPct}%`;
+  $("wr-won-val").textContent  = `${won.length} deals${wonVal?` · ${fmt$(wonVal)}`:""}`;
+  $("wr-won-bar").style.width  = `${wonPct}%`;
+  $("wr-lost").textContent  = `${lostPct}%`;
+  $("wr-lost-val").textContent = `${lost.length} deals${lostVal?` · ${fmt$(lostVal)}`:""}`;
+  $("wr-lost-bar").style.width = `${lostPct}%`;
 }
 
-// ── By-Owner Table ──
+// ── Stale Deal Alert ──
+// Shows active funnel deals created 90+ days ago, sorted by age descending
+function renderStaleAlert(afd){
+  const staleDeals = afd
+    .map(d=>({ ...d, ageDays: dealAgeDays(d) }))
+    .filter(d => d.ageDays >= STALE_DAYS)
+    .sort((a,b) => b.ageDays - a.ageDays);
+
+  $("stale-count").textContent = staleDeals.length || "0";
+
+  if(!staleDeals.length){
+    $("stale-tbody").innerHTML=`<tr><td colspan="6" class="stale-empty">✓ No stale deals — pipeline is healthy under current filters.</td></tr>`;
+    return;
+  }
+
+  $("stale-meta").textContent = `${staleDeals.length} active deal${staleDeals.length!==1?"s":""} · oldest ${staleDeals[0].ageDays}d · threshold: ${STALE_DAYS}d since created`;
+
+  $("stale-tbody").innerHTML = staleDeals.map(d=>{
+    const ownerName = NBD_NAME[d.owner_id] || `Unknown (${d.owner_id})`;
+    const stage     = STAGE_MAP[d.dealstage];
+    const bandLabel = stage ? BAND_CFG[stage.band]?.label || stage.band : "—";
+    const stageLabel= stage ? stage.label : "—";
+    const pillCls   = stage ? BAND_CFG[stage.band]?.pillCls || "" : "";
+    return`<tr>
+      <td style="font-weight:600;max-width:280px;overflow:hidden;text-overflow:ellipsis">${d.dealname||"—"}</td>
+      <td style="font-weight:700">${ownerName}</td>
+      <td class="num">${agePillHtml(d.ageDays)}</td>
+      <td style="color:#696969;font-size:10px">${stageLabel}</td>
+      <td><span class="stage-pill ${pillCls}">${bandLabel}</span></td>
+      <td class="num">${d.amount ? fmt$(d.amount) : "—"}</td>
+    </tr>`;
+  }).join("");
+}
+
+// ── Owner Breakdown Table ──
+// Registered NBD owners shown individually; all other owner_ids grouped as Stale / Unassigned
 function renderOwnerTable(afd){
-  // Aggregate by owner_id
-  const ownerStats={};
+  // Aggregate registered owners
+  const ownerStats = {};
+  NBD_REGISTRY.forEach(o=>{ ownerStats[o.id]={ name:o.name, count:0, value:0, bands:{}, staleCount:0 }; });
+
+  let unassignedCount=0, unassignedValue=0, unassignedStale=0;
+
   afd.forEach(d=>{
-    const oid=d.owner_id;
-    if(!ownerStats[oid]) ownerStats[oid]={count:0,value:0,bands:{}};
-    ownerStats[oid].count++;
-    ownerStats[oid].value+=d.amount;
-    const band=STAGE_MAP[d.dealstage]?.band;
-    if(band){ ownerStats[oid].bands[band]=(ownerStats[oid].bands[band]||0)+1; }
+    const oid   = String(d.owner_id);
+    const days  = dealAgeDays(d);
+    const band  = STAGE_MAP[d.dealstage]?.band;
+    if(NBD_IDS.has(oid)){
+      const st = ownerStats[oid];
+      st.count++;
+      st.value += d.amount;
+      if(band) st.bands[band] = (st.bands[band]||0) + 1;
+      if(days >= STALE_DAYS) st.staleCount++;
+    } else {
+      unassignedCount++;
+      unassignedValue += d.amount;
+      if(days >= STALE_DAYS) unassignedStale++;
+    }
   });
 
-  const rows=Object.entries(ownerStats)
-    .sort(([,a],[,b])=>b.value-a.value)
-    .map(([oid,st])=>{
-      const name=OWNER_NAME[oid]||oid;
-      const head=OWNER_HEAD_MAP[oid]||"—";
-      const hcolor=HEAD_COLORS[head]||"#9A9A9A";
-      const avg=st.count?fmt$(st.value/st.count):"—";
-      const pills=ACTIVE_BANDS.filter(b=>st.bands[b]).map(b=>
-        `<span class="stage-pill ${BAND_CFG[b].pillCls}">${BAND_CFG[b].label.slice(0,4)} ${st.bands[b]}</span>`
+  // Sort registered owners by value desc, exclude zero-deal owners if owner filter active
+  const rows = NBD_REGISTRY
+    .map(o=>({ ...ownerStats[o.id], id:o.id }))
+    .filter(o=> o.count > 0 || activeOwners.has(o.id))
+    .sort((a,b)=>b.value-a.value)
+    .map(o=>{
+      const avg = o.count ? fmt$(o.value/o.count) : "—";
+      const pills = ACTIVE_BANDS.filter(b=>o.bands[b]).map(b=>
+        `<span class="stage-pill ${BAND_CFG[b].pillCls}">${BAND_CFG[b].label.slice(0,4)} ${o.bands[b]}</span>`
       ).join(" ");
+      const staleCell = o.staleCount
+        ? `<span style="color:#C0143C;font-weight:800">${o.staleCount}</span>`
+        : `<span style="color:#C0C0C0">0</span>`;
       return`<tr>
-        <td style="font-weight:700">${name}</td>
-        <td><div class="head-badge"><div class="head-dot" style="background:${hcolor}"></div>${head.split(" ")[0]}</div></td>
-        <td class="num">${st.count}</td>
-        <td class="num">${st.value?fmt$(st.value):"—"}</td>
+        <td style="font-weight:700">${o.name}</td>
+        <td class="num">${o.count}</td>
+        <td class="num">${o.value ? fmt$(o.value) : "—"}</td>
         <td class="num">${avg}</td>
         <td>${pills||"—"}</td>
+        <td class="num">${staleCell}</td>
       </tr>`;
     });
 
-  // Totals row
-  const totalCount=afd.length;
-  const totalValue=afd.reduce((s,d)=>s+d.amount,0);
+  // Unassigned / inactive row
+  const unassignedRow = unassignedCount > 0 ? `
+    <tr class="unassigned-row">
+      <td>Stale / Unassigned</td>
+      <td class="num">${unassignedCount}</td>
+      <td class="num">${unassignedValue ? fmt$(unassignedValue) : "—"}</td>
+      <td class="num">—</td>
+      <td><span style="font-size:9px;color:#C0C0C0">Inactive or unregistered owners</span></td>
+      <td class="num">${unassignedStale > 0 ? `<span style="color:#C0143C;font-weight:800">${unassignedStale}</span>` : `<span style="color:#C0C0C0">0</span>`}</td>
+    </tr>` : "";
 
-  $("owner-tbody").innerHTML=rows.length
-    ? rows.join("")+`<tr class="total-row">
-        <td colspan="2">Total</td>
+  // Totals row
+  const totalCount = afd.length;
+  const totalValue = afd.reduce((s,d)=>s+d.amount,0);
+  const totalStale = afd.filter(d=>dealAgeDays(d)>=STALE_DAYS).length;
+
+  $("owner-tbody").innerHTML = (rows.length || unassignedCount)
+    ? rows.join("") + unassignedRow + `<tr class="total-row">
+        <td>Total</td>
         <td class="num">${totalCount}</td>
         <td class="num">${fmt$(totalValue)}</td>
-        <td class="num">${totalCount?fmt$(totalValue/totalCount):"—"}</td>
+        <td class="num">${totalCount ? fmt$(totalValue/totalCount) : "—"}</td>
         <td></td>
+        <td class="num">${totalStale > 0 ? `<span style="color:#C0143C;font-weight:800">${totalStale}</span>` : "0"}</td>
       </tr>`
     : `<tr><td colspan="6" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No deals match current filters.</td></tr>`;
 
-  $("table-meta").textContent=`${totalCount} active deals · ${fmt$(totalValue)} pipeline value`;
+  $("table-meta").textContent = `${totalCount} active deals · ${fmt$(totalValue)} pipeline value`;
+}
+
+// ════ LOGIN ════
+function getAuthKey(head){ return head ? `nexus_auth_${head}` : "nexus_auth"; }
+
+async function doLogin(){
+  const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
+  if(!pw){ err.textContent="Please enter the access password."; return; }
+  btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  try{
+    const res=await fetch("/pipeline-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem(getAuthKey(head),"1");
+      $("login-overlay").style.display="none";
+    } else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
+    } else {
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value=""; $("pw-input").focus();
+    }
+  }catch(e){
+    err.textContent="Connection error. Check your network.";
+  }finally{ btn.disabled=false; btn.textContent="Access Dashboard"; }
+}
+
+function checkSSO(){
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(localStorage.getItem("nexus_auth")==="1" ||
+     (head && localStorage.getItem(getAuthKey(head))==="1")){
+    $("login-overlay").style.display="none";
+    return true;
+  }
+  return false;
+}
+
+// ════ CLONE MODE ════
+// ?head= param → update branding only (no filter lock needed — Pipeline Scout has no head-scoped registry)
+const CLONE_NAMES = {
+  jiggyasa: "Jiggyasa", jaydeep: "Jaydeep", tanuj: "Tanuj", nevilson: "Nevilson"
+};
+
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param) return;
+  const firstName = CLONE_NAMES[param];
+  if(!firstName){ console.warn(`[Scout v2] Unknown ?head= param: "${param}"`); return; }
+  document.title=`${firstName} · Pipeline Scout · Mavlers`;
+  $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Pipeline`;
+  $("nexus-link").href=`/?head=${param}`;
+  document.body.setAttribute("data-clone",param);
+  console.log(`[Scout v2] Clone mode → ${firstName}`);
 }
 
 // ════ INIT ════
-window.addEventListener("DOMContentLoaded",function(){
+window.addEventListener("DOMContentLoaded", function(){
   checkSSO();
-  initHeadFilter();
   initOwnerFilter();
   bootCloneMode();
   doSync(true);
