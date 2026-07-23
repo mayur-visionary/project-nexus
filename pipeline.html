@@ -135,21 +135,16 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Funnel ── */
 .funnel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
-.funnel-band{background:#fff;border-radius:14px;border:1px solid #E2E2E2;padding:22px 20px 18px;position:relative;overflow:hidden;transition:all .22s}
-.funnel-band:hover{box-shadow:0 6px 24px rgba(67,67,67,.12);transform:translateY(-3px)}
-.funnel-band::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.funnel-band{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:20px 20px 16px;position:relative;overflow:hidden;transition:all .22s}
+.funnel-band:hover{box-shadow:0 4px 18px rgba(67,67,67,.1);transform:translateY(-2px)}
+.funnel-band::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
 .funnel-band.f-prospect::before{background:#FFDA30}
 .funnel-band.f-engage::before{background:#3B3561}
 .funnel-band.f-propose::before{background:#F07A00}
-.funnel-band.f-nurture::before{background:#696969}
-.funnel-icon{font-size:22px;margin-bottom:10px}
+.funnel-band.f-nurture::before{background:#9A9A9A}
 .funnel-label{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:6px}
-.funnel-count{font-size:36px;font-weight:800;line-height:1;margin-bottom:4px}
-.funnel-band.f-prospect .funnel-count{color:#A07A00}
-.funnel-band.f-engage   .funnel-count{color:#3B3561}
-.funnel-band.f-propose  .funnel-count{color:#F07A00}
-.funnel-band.f-nurture  .funnel-count{color:#696969}
-.funnel-value{font-size:13px;font-weight:700;color:#696969;margin-bottom:10px}
+.funnel-count{font-size:34px;font-weight:800;line-height:1;margin-bottom:4px;color:#434343}
+.funnel-value{font-size:12px;font-weight:600;color:#9A9A9A;margin-bottom:10px}
 .funnel-stages{display:flex;flex-direction:column;gap:4px}
 .funnel-stage-row{display:flex;justify-content:space-between;align-items:center;font-size:9.5px;padding:3px 0;border-bottom:1px solid #F5F5F5}
 .funnel-stage-row:last-child{border-bottom:none}
@@ -208,11 +203,11 @@ tbody td.num{text-align:right;font-weight:700}
 .sp-nurture{background:#F2F2F2;color:#696969}
 
 /* ── Stale Deal Alert ── */
-.stale-wrap{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-left:4px solid #EF2D56;overflow:hidden;margin-bottom:24px}
-.stale-hdr{padding:14px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;user-select:none;transition:background .15s}
-.stale-hdr:hover{background:#FFFAF8}
-.stale-title{font-size:11px;font-weight:800;color:#C0143C;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
-.stale-badge{background:#EF2D56;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:.04em}
+.stale-wrap{background:#fff;border-radius:12px;border:1px solid #E2E2E2;border-left:3px solid #C0143C;overflow:hidden;margin-bottom:24px}
+.stale-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;user-select:none;transition:background .15s}
+.stale-hdr:hover{background:#FAFAFA}
+.stale-title{font-size:10px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:7px}
+.stale-badge{background:#F2F2F2;color:#C0143C;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:.04em}
 .stale-meta{font-size:10px;color:#9A9A9A;font-weight:500;display:flex;align-items:center;gap:10px}
 .stale-chevron{font-size:10px;color:#9A9A9A;transition:transform .25s;display:inline-block}
 .stale-chevron.open{transform:rotate(180deg)}
@@ -220,11 +215,11 @@ tbody td.num{text-align:right;font-weight:700}
 .stale-body-wrap.collapsed{max-height:0;opacity:0}
 .stale-empty{padding:24px 18px;font-size:11px;color:#006E5E;font-weight:700;display:flex;align-items:center;gap:7px}
 table.stale-table{min-width:560px}
-thead.stale-head th{background:#FFF5F5}
+thead.stale-head th{background:#F7F7F7}
 .age-pill{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.04em}
-.age-fresh{background:#E8F5E9;color:#2E7D32}
-.age-maturing{background:#FFF8E1;color:#F57F17}
-.age-stale{background:#FFEBEE;color:#C0143C}
+.age-fresh{background:#F2F2F2;color:#434343}
+.age-maturing{background:#FFF8E1;color:#896300}
+.age-stale{background:#F2F2F2;color:#C0143C}
 
 /* ── Win Rate card ── */
 .winrate-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
@@ -232,8 +227,8 @@ thead.stale-head th{background:#FFF5F5}
 .wr-label{font-size:9px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
 .wr-val{font-size:32px;font-weight:800;line-height:1;margin-bottom:4px}
 .wr-sub{font-size:10px;color:#9A9A9A;font-weight:500}
-.wr-bar-track{height:8px;border-radius:4px;background:#F2F2F2;margin-top:12px;overflow:hidden}
-.wr-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.wr-bar-track{height:6px;border-radius:3px;background:#F2F2F2;margin-top:12px;overflow:hidden}
+.wr-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
 @media(max-width:600px){.winrate-grid{grid-template-columns:1fr}}
 
 /* ── Owner health bar in table ── */
@@ -352,9 +347,9 @@ thead.stale-head th{background:#FFF5F5}
       </div>
       <div class="ss-dropdown" id="age-dropdown">
         <div class="ss-item selected" data-age="all"      onclick="selectAge('all')">All Ages</div>
-        <div class="ss-item" data-age="fresh"             onclick="selectAge('fresh')">🟢 Fresh (0–30d)</div>
-        <div class="ss-item" data-age="maturing"          onclick="selectAge('maturing')">🟡 Maturing (31–90d)</div>
-        <div class="ss-item" data-age="stale"             onclick="selectAge('stale')">🔴 Stale (90d+)</div>
+        <div class="ss-item" data-age="fresh"             onclick="selectAge('fresh')">Fresh (0–30d)</div>
+        <div class="ss-item" data-age="maturing"          onclick="selectAge('maturing')">Maturing (31–90d)</div>
+        <div class="ss-item" data-age="stale"             onclick="selectAge('stale')">Stale (90d+)</div>
       </div>
     </div>
   </div>
@@ -391,12 +386,9 @@ thead.stale-head th{background:#FFF5F5}
   </div>
 
   <!-- Pipeline Freshness Notice — rendered by JS, shown only when all active deals are stale -->
-  <div id="freshness-notice" style="display:none;background:#FFF5F5;border:1px solid #EF2D56;border-left:4px solid #EF2D56;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
-    <span style="font-size:16px">⚠️</span>
-    <div>
-      <div style="font-size:10px;font-weight:800;color:#C0143C;text-transform:uppercase;letter-spacing:.06em">Pipeline Freshness Alert</div>
-      <div id="freshness-msg" style="font-size:10px;color:#696969;font-weight:500;margin-top:2px"></div>
-    </div>
+  <div id="freshness-notice" style="display:none;background:#fff;border:1px solid #E2E2E2;border-left:3px solid #C0143C;border-radius:8px;padding:12px 16px;margin-bottom:20px">
+    <div style="font-size:9px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">Pipeline Freshness Notice</div>
+    <div id="freshness-msg" style="font-size:10px;color:#696969;font-weight:500"></div>
   </div>
 
   <!-- Funnel Bands -->
@@ -435,7 +427,7 @@ thead.stale-head th{background:#FFF5F5}
   <div class="stale-wrap">
     <div class="stale-hdr" id="stale-hdr" onclick="toggleStale()">
       <div class="stale-title">
-        ⚠ Stale Deal Alert
+        Stale Deal Alert
         <span class="stale-badge" id="stale-count">—</span>
       </div>
       <div class="stale-meta">
@@ -472,15 +464,15 @@ thead.stale-head th{background:#FFF5F5}
   <div class="winrate-grid">
     <div class="wr-card">
       <div class="wr-label">Closed Won</div>
-      <div class="wr-val" id="wr-won" style="color:#006E5E">—</div>
+      <div class="wr-val" id="wr-won">—</div>
       <div class="wr-sub" id="wr-won-val">— deals</div>
       <div class="wr-bar-track"><div class="wr-bar-fill" id="wr-won-bar" style="background:#006E5E;width:0%"></div></div>
     </div>
     <div class="wr-card">
       <div class="wr-label">Closed Lost</div>
-      <div class="wr-val" id="wr-lost" style="color:#C0143C">—</div>
+      <div class="wr-val" id="wr-lost">—</div>
       <div class="wr-sub" id="wr-lost-val">— deals</div>
-      <div class="wr-bar-track"><div class="wr-bar-fill" id="wr-lost-bar" style="background:#EF2D56;width:0%"></div></div>
+      <div class="wr-bar-track"><div class="wr-bar-fill" id="wr-lost-bar" style="background:#9A9A9A;width:0%"></div></div>
     </div>
   </div>
 
@@ -555,37 +547,37 @@ const STAGE_MAP = {
 
 const ACTIVE_BANDS = ["prospect","engage","propose","nurture"];
 const BAND_CFG = {
-  prospect: { label:"Prospecting", icon:"🔍", cls:"f-prospect", color:"#FFDA30", pillCls:"sp-prospect" },
-  engage:   { label:"Engaging",    icon:"🤝", cls:"f-engage",   color:"#3B3561", pillCls:"sp-engage"   },
-  propose:  { label:"Proposing",   icon:"📋", cls:"f-propose",  color:"#F07A00", pillCls:"sp-propose"  },
-  nurture:  { label:"Nurture",     icon:"⏸️", cls:"f-nurture",  color:"#696969", pillCls:"sp-nurture"  }
+  prospect: { label:"Prospecting", cls:"f-prospect", color:"#FFDA30", pillCls:"sp-prospect" },
+  engage:   { label:"Engaging",    cls:"f-engage",   color:"#3B3561", pillCls:"sp-engage"   },
+  propose:  { label:"Proposing",   cls:"f-propose",  color:"#F07A00", pillCls:"sp-propose"  },
+  nurture:  { label:"Nurture",     cls:"f-nurture",  color:"#9A9A9A", pillCls:"sp-nurture"  }
 };
 
 // ════ FULL PIPELINE REGISTRY ════
 // All owners observed in Agency Champion — active + inactive, all named
 const ALL_OWNERS = [
-  // Active owners
-  { id:"37762663",  name:"Malav Modi",         active:true  },
-  { id:"467997340", name:"Karan Doshi",        active:true  },
-  { id:"41593885",  name:"Pankaj Suryavanshi", active:true  },
+  // Active owners — A → Z
   { id:"619945870", name:"Aejaz Zerdi",        active:true  },
-  { id:"916030451", name:"Kamesh Biniwale",    active:true  },
   { id:"86813698",  name:"Aman Acharya",       active:true  },
-  { id:"31730801",  name:"Vikram Sahi",        active:true  },
   { id:"255830830", name:"Devanshu Kumar",     active:true  },
-  { id:"91416849",  name:"Kaustubh Nag",       active:true  },
+  { id:"46156316",  name:"Flintoff Mehta",     active:true  },
   { id:"45776165",  name:"Hitaishi Bhogayata", active:true  },
   { id:"17738843",  name:"Jaydeep Soni",       active:true  },
-  { id:"46156316",  name:"Flintoff Mehta",     active:true  },
+  { id:"916030451", name:"Kamesh Biniwale",    active:true  },
+  { id:"467997340", name:"Karan Doshi",        active:true  },
+  { id:"91416849",  name:"Kaustubh Nag",       active:true  },
+  { id:"37762663",  name:"Malav Modi",         active:true  },
+  { id:"41593885",  name:"Pankaj Suryavanshi", active:true  },
   { id:"421799593", name:"Rahul Kaushal",      active:true  },
-  // Inactive owners
+  { id:"31730801",  name:"Vikram Sahi",        active:true  },
+  // Inactive owners — A → Z
   { id:"326427939", name:"Ashish Kurian",      active:false },
-  { id:"184438439", name:"Simran Kapoor",      active:false },
-  { id:"763348613", name:"Meera Shingala",     active:false },
-  { id:"159082899", name:"Veedisha Purohit",   active:false },
-  { id:"49150728",  name:"Marketing Leads",    active:false },
   { id:"274685721", name:"Hiral Panchal",      active:false },
-  { id:"222116118", name:"Sales Ops",          active:false }
+  { id:"49150728",  name:"Marketing Leads",    active:false },
+  { id:"763348613", name:"Meera Shingala",     active:false },
+  { id:"222116118", name:"Sales Ops",          active:false },
+  { id:"184438439", name:"Simran Kapoor",      active:false },
+  { id:"159082899", name:"Veedisha Purohit",   active:false }
 ];
 
 const OWNER_MAP = {};
@@ -715,7 +707,7 @@ function initOwnerFilter(){
 function toggleAgeDD(e){ e.stopPropagation(); $("age-dropdown").classList.toggle("open"); }
 function selectAge(age){
   activeAge=age;
-  const labels={all:"All Ages",fresh:"🟢 Fresh (0–30d)",maturing:"🟡 Maturing (31–90d)",stale:"🔴 Stale (90d+)"};
+  const labels={all:"All Ages",fresh:"Fresh (0–30d)",maturing:"Maturing (31–90d)",stale:"Stale (90d+)"};
   $("age-label").textContent=labels[age]||"All Ages";
   $("age-btn").classList.toggle("active-filter",age!=="all");
   $("age-dropdown").querySelectorAll(".ss-item").forEach(el=>el.classList.toggle("selected",el.dataset.age===age));
@@ -854,7 +846,6 @@ function renderFunnel(afd){
         <span class="funnel-stage-amt">${s.value?fmt$(s.value):""}</span>
       </div>`).join("");
     return`<div class="funnel-band ${cfg.cls}">
-      <div class="funnel-icon">${cfg.icon}</div>
       <div class="funnel-label">${cfg.label}</div>
       <div class="funnel-count">${st.count}</div>
       <div class="funnel-value">${st.value?fmt$(st.value):"No value set"}</div>
@@ -928,9 +919,9 @@ function renderAgeDonut(afd){
   const counts={fresh:0,maturing:0,stale:0};
   afd.forEach(d=>{ counts[ageGroup(dealAgeDays(d))]++; });
   buildDonut("age-donut","age-legend",[
-    {label:"Fresh (0–30d)",   value:counts.fresh,    color:"#2E7D32"},
-    {label:"Maturing (31–90d)",value:counts.maturing, color:"#F57F17"},
-    {label:"Stale (90d+)",    value:counts.stale,    color:"#EF2D56"}
+    {label:"Fresh (0–30d)",    value:counts.fresh,    color:"#006E5E"},
+    {label:"Maturing (31–90d)",value:counts.maturing, color:"#FFDA30"},
+    {label:"Stale (90d+)",     value:counts.stale,    color:"#9A9A9A"}
   ]);
 }
 
@@ -943,8 +934,8 @@ function renderOwnershipDonut(afd){
     else inactiveCount++;
   });
   buildDonut("own-donut","own-legend",[
-    {label:"Active owners",   value:activeCount,   color:"#006E5E"},
-    {label:"Inactive owners", value:inactiveCount, color:"#EF2D56"}
+    {label:"Active owners",   value:activeCount,   color:"#3B3561"},
+    {label:"Inactive owners", value:inactiveCount, color:"#D0D0D0"}
   ]);
 }
 
@@ -1037,10 +1028,10 @@ function renderOwnerTable(afd){
       `<span class="stage-pill ${BAND_CFG[b].pillCls}">${BAND_CFG[b].label.slice(0,4)} ${o.bands[b]}</span>`
     ).join(" ");
     const staleCell=o.staleCount
-      ?`<span style="color:#C0143C;font-weight:800">${o.staleCount}</span>`
+      ?`<span style="color:#696969;font-weight:800">${o.staleCount}</span>`
       :`<span style="color:#C0C0C0">0</span>`;
     const healthPct=maxVal?Math.round(o.value/maxVal*100):0;
-    const healthColor=isInactive?"#D0D0D0":o.staleCount>2?"#EF2D56":o.count>10?"#006E5E":"#3B3561";
+    const healthColor=isInactive?"#D0D0D0":"#3B3561";
     const statusBadge=isInactive
       ?`<span style="color:#9A9A9A;font-size:9px;font-weight:700">Inactive</span>`
       :`<span style="color:#006E5E;font-size:9px;font-weight:700">Active</span>`;
@@ -1071,7 +1062,7 @@ function renderOwnerTable(afd){
       <td class="num">${fmt$(totalValue)}</td>
       <td class="num">${totalCount?fmt$(totalValue/totalCount):"—"}</td>
       <td></td>
-      <td class="num">${totalStale?`<span style="color:#C0143C;font-weight:800">${totalStale}</span>`:"0"}</td>
+      <td class="num">${totalStale?`<span style="font-weight:800">${totalStale}</span>`:"0"}</td>
       <td></td>
     </tr>`
   ];
