@@ -21,7 +21,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
-.login-input::placeholder{color:#030303;font-weight:500;letter-spacing:.02em}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
 .login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
 .login-btn:hover{background:#FFE870}
 .login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
@@ -361,7 +361,7 @@ thead.stale-head th{background:#F7F7F7}
   <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
 
   <!-- KPI Strip -->
-  <div class="sec first">Pipeline at a Glance <span style="font-weight:500;color:#030303;font-size:8px;letter-spacing:.04em;text-transform:none">· open deals only · excludes rejected &amp; lost</span></div>
+  <div class="sec first">Pipeline at a Glance <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· open deals only · excludes rejected &amp; lost</span></div>
   <div class="kpi-strip">
     <div class="kpi k-value">
       <div class="kpi-lbl">Pipeline Value</div>
@@ -392,7 +392,7 @@ thead.stale-head th{background:#F7F7F7}
   </div>
 
   <!-- Funnel Bands -->
-  <div class="sec">Funnel Breakdown <span style="font-weight:500;color:#030303;font-size:8px;letter-spacing:.04em;text-transform:none">· deals by stage group</span></div>
+  <div class="sec">Funnel Breakdown <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· deals by stage group</span></div>
   <div class="funnel-grid" id="funnel-grid">
     <div class="funnel-band f-prospect"><div class="funnel-label">Loading...</div></div>
   </div>
@@ -460,7 +460,7 @@ thead.stale-head th{background:#F7F7F7}
   </div>
 
   <!-- Conversion Snapshot -->
-  <div class="sec">Conversion Snapshot <span style="font-weight:500;color:#030303;font-size:8px;letter-spacing:.04em;text-transform:none">· all-time closed deals in this pipeline</span></div>
+  <div class="sec">Conversion Snapshot <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· all-time closed deals in this pipeline</span></div>
   <div class="winrate-grid">
     <div class="wr-card">
       <div class="wr-label">Closed Won</div>
@@ -479,7 +479,7 @@ thead.stale-head th{background:#F7F7F7}
   <!-- Owner Breakdown -->
   <div class="sec-hdr" onclick="toggleSection('owner-sec-body','owner-sec-chevron')">
     Pipeline by Owner
-    <span style="font-weight:500;color:#030303;font-size:8px;letter-spacing:.04em;text-transform:none;margin-left:6px">· active deals · sorted by value</span>
+    <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none;margin-left:6px">· active deals · sorted by value</span>
     <span class="sec-chevron open" id="owner-sec-chevron">▼</span>
   </div>
   <div class="sec-body" id="owner-sec-body">
@@ -849,7 +849,7 @@ function renderFunnel(afd){
       <div class="funnel-label">${cfg.label}</div>
       <div class="funnel-count">${st.count}</div>
       <div class="funnel-value">${st.value?fmt$(st.value):"No value set"}</div>
-      <div class="funnel-stages">${rows||'<div style="font-size:9px;color:#030303;padding:4px 0">No deals</div>'}</div>
+      <div class="funnel-stages">${rows||'<div style="font-size:9px;color:#C0C0C0;padding:4px 0">No deals</div>'}</div>
     </div>`;
   }).join("");
 }
@@ -1029,7 +1029,7 @@ function renderOwnerTable(afd){
     ).join(" ");
     const staleCell=o.staleCount
       ?`<span style="color:#696969;font-weight:800">${o.staleCount}</span>`
-      :`<span style="color:#030303">0</span>`;
+      :`<span style="color:#C0C0C0">0</span>`;
     const healthPct=maxVal?Math.round(o.value/maxVal*100):0;
     const healthColor=isInactive?"#D0D0D0":"#3B3561";
     const statusBadge=isInactive
