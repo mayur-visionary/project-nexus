@@ -412,6 +412,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
       <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
+      <a class="nav-tab nav-tab-ext" id="pipeline-link" href="/pipeline" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Pipeline Scout ↗</a>
     </div>
   </div>
   <div class="fbar" id="fbar">
@@ -1506,15 +1507,16 @@ function view(src,liMap){
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
       if(!_selOwners.includes(String(d.owner_id)))return null;
     }
-    // Engagement Model sidebar filter — uses resolvedEngGroup() as single source of truth
+    // Engagement Model sidebar filter — uses line-item majority (mirrors Pie Chart attribution)
+    // engGroupFromLi(): majority by line-item amount → falls back to deal eng_model if no line items
     if(_itype){
       const _itypeGroup=_itype==="One Time"?"P2P":_itype; // map dropdown value to engGroup label
-      if(resolvedEngGroup(d)!==_itypeGroup)return null;
+      if(engGroupFromLi(d)!==_itypeGroup)return null;
     }
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
-    if(drill.eng_model){const eg=resolvedEngGroup(d);if(!eg||eg!==drill.eng_model)return null;} // resolvedEngGroup — canonical source of truth
+    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;} // line-item majority — matches Pie Chart attribution
     if(_svcFiltered){
       const dSvc=liMap[d.id]||[];
       if(!dSvc.length)return null;
@@ -1798,14 +1800,6 @@ function engGroupFromLi(d){
   if(!entries.length)return engGroup(d.eng_model);
   return entries.sort((a,b)=>b[1]-a[1])[0][0]; // largest amount wins
 }
-// Canonical engagement resolver — single source of truth for ALL display and filtering.
-// Rule 1: ON-prefix deals (online orders) are always P2P — management-confirmed, Jul 2026.
-// Rule 2: All INV deals resolve purely from line-item majority via engGroupFromLi().
-// d.eng_model is never used for display or filtering.
-function resolvedEngGroup(d){
-  if((d.dealname||"").startsWith("ON"))return"P2P";
-  return engGroupFromLi(d);
-}
 
 // ═══ LINE-ITEM BASED STATS ═══
 // BU stats from line items — each line item has li.bu
@@ -1845,11 +1839,11 @@ function engTypesLi(v){
       // Try line-item name classification first
       let classified=false;
       _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){m[eg]=(m[eg]||0)+li.amount;classified=true;}});
-      // If line items passed filter but none matched a known name prefix, use resolvedEngGroup()
-      if(!classified){const eg=resolvedEngGroup(d);if(eg)m[eg]=(m[eg]||0)+d.amount;}
+      // If line items passed filter but none matched a known name prefix, fall back to deal eng_model
+      if(!classified){const eg=engGroup(d.eng_model);if(eg)m[eg]=(m[eg]||0)+d.amount;}
     } else {
-      // No line items (or all filtered out) — use resolvedEngGroup() with deal amount
-      const eg=resolvedEngGroup(d);
+      // No line items (or all filtered out) — use deal-level eng_model with deal amount
+      const eg=engGroup(d.eng_model);
       if(eg)m[eg]=(m[eg]||0)+d.amount;
     }
   });
@@ -2014,7 +2008,7 @@ function renderTable(_v){
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
     const geo=d.region||"",gc=geo==="AU"?"geo-AU":"geo-"+geo;
     const resolvedHead=(d.head||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
-    const eng=resolvedEngGroup(d)||"";
+    const eng=engGroup(d.eng_model)||"";
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
@@ -2175,14 +2169,14 @@ function buildTrendData(months,src){
         if(eg==="Recurring"){bkt.recurring+=li.amount;classified=true;}
         else if(eg==="P2P"){bkt.p2p+=li.amount;classified=true;}
       });
-      // If line items exist but none classified by name, use resolvedEngGroup()
+      // If line items exist but none classified by name, fall back to deal eng_model
       if(!classified){
-        const eg=resolvedEngGroup(d);
+        const eg=engGroup(d.eng_model);
         if(eg==="Recurring")bkt.recurring+=d.amount;
         else if(eg==="P2P")bkt.p2p+=d.amount;
       }
     }else{
-      const eg=resolvedEngGroup(d);
+      const eg=engGroup(d.eng_model);
       if(eg==="Recurring")bkt.recurring+=d.amount;
       else if(eg==="P2P")bkt.p2p+=d.amount;
     }
@@ -2492,9 +2486,12 @@ function bootCloneMode(){
 
   // ════ BRANCH A: BU clone — ?head=digital ════
   // Portfolio Health link → master /portfolio (Jiggyasa + Tanuj have their own head-specific URLs)
+  // Pipeline Scout link → master /pipeline
   if(cfg.buClone){
     const portfolioLink=$("portfolio-link");
     if(portfolioLink)portfolioLink.href=`/portfolio`;
+    const pipelineLink=$("pipeline-link");
+    if(pipelineLink)pipelineLink.href=`/pipeline`;
     // Lock BU filter to Digital, hide BU dropdown from filter bar
     const buSel=$("bu-sel");
     if(buSel){
@@ -2515,9 +2512,12 @@ function bootCloneMode(){
   // ════ BRANCH B: Inter BU clone — ?head=interbu ════
   // Locks BU=Digital + Service=Campaign/Email/Design (Digital minus Search & Web = Inter BU definition)
   // Portfolio Health: hidden — no Inter BU portfolio view exists
+  // Pipeline Scout: hidden — no Inter BU pipeline view exists
   if(cfg.interbuClone){
     const portfolioLink=$("portfolio-link");
     if(portfolioLink)portfolioLink.style.display="none"; // No portfolio view for Inter BU
+    const pipelineLink=$("pipeline-link");
+    if(pipelineLink)pipelineLink.style.display="none"; // No pipeline view for Inter BU
     // ── Lock BU = Digital, hide BU dropdown ──
     const buSel=$("bu-sel");
     if(buSel){
@@ -2553,9 +2553,11 @@ function bootCloneMode(){
     return;
   }
 
-  // ── Portfolio Health link carries ?head= param for head clones ──
+  // ── Portfolio Health + Pipeline Scout links carry ?head= param for head clones ──
   const portfolioLink=$("portfolio-link");
   if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
+  const pipelineLink=$("pipeline-link");
+  if(pipelineLink)pipelineLink.href=`/pipeline?head=${param}`;
 
   // ════ BRANCH C: Head clone — jiggyasa / jaydeep / tanuj / nevilson ════
 
@@ -3347,7 +3349,7 @@ function renderWeeklyTable(v){
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${rh}</td>
       <td style="background:${bg}"><span class="geo-tag ${gc}">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
-      <td style="background:${bg}"><span class="inv-tag">${resolvedEngGroup(d)||''}</span></td>
+      <td style="background:${bg}"><span class="inv-tag">${engGroup(d.eng_model)||''}</span></td>
       <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(ed)}${dateNote}</td>
       <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" onclick="event.stopPropagation()">↗</a></td>
     </tr>`;
