@@ -352,9 +352,9 @@ thead.stale-head th{background:#FFF5F5}
       </div>
       <div class="ss-dropdown" id="age-dropdown">
         <div class="ss-item selected" data-age="all"      onclick="selectAge('all')">All Ages</div>
-        <div class="ss-item" data-age="fresh"             onclick="selectAge('fresh')">Fresh (0–30d)</div>
-        <div class="ss-item" data-age="maturing"          onclick="selectAge('maturing')">Maturing (31–90d)</div>
-        <div class="ss-item" data-age="stale"             onclick="selectAge('stale')">Stale (90d+)</div>
+        <div class="ss-item" data-age="fresh"             onclick="selectAge('fresh')">🟢 Fresh (0–30d)</div>
+        <div class="ss-item" data-age="maturing"          onclick="selectAge('maturing')">🟡 Maturing (31–90d)</div>
+        <div class="ss-item" data-age="stale"             onclick="selectAge('stale')">🔴 Stale (90d+)</div>
       </div>
     </div>
   </div>
@@ -387,6 +387,15 @@ thead.stale-head th{background:#FFF5F5}
       <div class="kpi-lbl">Win Rate</div>
       <div class="kpi-val" id="k-winrate">—</div>
       <div class="kpi-sub" id="k-winrate-sub">Closed won ÷ (won + lost)</div>
+    </div>
+  </div>
+
+  <!-- Pipeline Freshness Notice — rendered by JS, shown only when all active deals are stale -->
+  <div id="freshness-notice" style="display:none;background:#FFF5F5;border:1px solid #EF2D56;border-left:4px solid #EF2D56;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:16px">⚠️</span>
+    <div>
+      <div style="font-size:10px;font-weight:800;color:#C0143C;text-transform:uppercase;letter-spacing:.06em">Pipeline Freshness Alert</div>
+      <div id="freshness-msg" style="font-size:10px;color:#696969;font-weight:500;margin-top:2px"></div>
     </div>
   </div>
 
@@ -555,7 +564,7 @@ const BAND_CFG = {
 // ════ FULL PIPELINE REGISTRY ════
 // All owners observed in Agency Champion — active + inactive, all named
 const ALL_OWNERS = [
-  // Active NBD members
+  // Active owners
   { id:"37762663",  name:"Malav Modi",         active:true  },
   { id:"467997340", name:"Karan Doshi",        active:true  },
   { id:"41593885",  name:"Pankaj Suryavanshi", active:true  },
@@ -566,12 +575,17 @@ const ALL_OWNERS = [
   { id:"255830830", name:"Devanshu Kumar",     active:true  },
   { id:"91416849",  name:"Kaustubh Nag",       active:true  },
   { id:"45776165",  name:"Hitaishi Bhogayata", active:true  },
-  // Inactive owners — named, shown separately in table
+  { id:"17738843",  name:"Jaydeep Soni",       active:true  },
+  { id:"46156316",  name:"Flintoff Mehta",     active:true  },
+  { id:"421799593", name:"Rahul Kaushal",      active:true  },
+  // Inactive owners
   { id:"326427939", name:"Ashish Kurian",      active:false },
   { id:"184438439", name:"Simran Kapoor",      active:false },
   { id:"763348613", name:"Meera Shingala",     active:false },
   { id:"159082899", name:"Veedisha Purohit",   active:false },
-  { id:"49150728",  name:"Marketing Leads",    active:false }
+  { id:"49150728",  name:"Marketing Leads",    active:false },
+  { id:"274685721", name:"Hiral Panchal",      active:false },
+  { id:"222116118", name:"Sales Ops",          active:false }
 ];
 
 const OWNER_MAP = {};
@@ -778,6 +792,7 @@ function renderAll(){
   const fd=filteredDeals();
   const afd=activeFunnelDeals(fd);
   renderKPIs(fd,afd);
+  renderFreshnessNotice(afd);
   renderFunnel(afd);
   renderPipeBar(afd);
   renderAgeDonut(afd);
@@ -785,6 +800,24 @@ function renderAll(){
   renderStaleAlert(afd);
   renderWinRate(fd);
   renderOwnerTable(afd);
+}
+
+// ── Freshness Notice ──
+function renderFreshnessNotice(afd){
+  const notice=$("freshness-notice");
+  if(!afd.length){ notice.style.display="none"; return; }
+  const ages=afd.map(d=>dealAgeDays(d));
+  const fresh=ages.filter(d=>d<=30).length;
+  const maturing=ages.filter(d=>d>30&&d<=90).length;
+  const stale=ages.filter(d=>d>90).length;
+  const oldest=Math.max(...ages);
+  const newest=Math.min(...ages);
+  if(fresh===0&&maturing===0){
+    notice.style.display="flex";
+    $("freshness-msg").textContent=`All ${afd.length} active funnel deals are 90+ days old (oldest: ${oldest}d, newest: ${newest}d). No new deals have entered this pipeline recently. This reflects the current state of HubSpot data — not a display issue.`;
+  } else {
+    notice.style.display="none";
+  }
 }
 
 // ── KPIs ──
