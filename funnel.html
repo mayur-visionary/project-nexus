@@ -411,15 +411,20 @@ function resolveEng(deal){
   return entries.sort((a,b)=>b[1]-a[1])[0][0];
 }
 
-// ── BU from line items — Pure Digital = Search+Web, Inter BU = Campaign+Email+Design (MarTech LIs in Digital deal) ──
+// ── BU from line items ──
+// Pure Digital = Search + Web line items ONLY (Design excluded — it's its own bucket)
+// Inter BU = MarTech-classified line items (Campaign, Email, Design-Email) within a Digital deal
+// Design (Digital) = separate bucket — not counted in Pure Digital or Inter BU
+const PURE_DIGITAL_SVCS=new Set(["Search","Web"]);
 function liAmountsByBU(deal){
   const lis=dealServiceMap[deal.id]||[];
-  const result={digitalPure:0,interBU:0,martech:0};
+  const result={digitalPure:0,interBU:0,design:0};
   lis.forEach(li=>{
     const cls=classifyLineItem(li.name);
     if(!cls)return;
-    if(cls.bu==="Digital")result.digitalPure+=li.amount;
-    else if(cls.bu==="MarTech")result.interBU+=li.amount;
+    if(cls.bu==="Digital"&&PURE_DIGITAL_SVCS.has(cls.svc)) result.digitalPure+=li.amount;
+    else if(cls.bu==="Digital"&&cls.svc==="Design")        result.design+=li.amount;
+    else if(cls.bu==="MarTech")                            result.interBU+=li.amount;
   });
   return result;
 }
