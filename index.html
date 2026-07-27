@@ -1552,11 +1552,39 @@ function view(src,liMap){
     if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
       if(!_selOwners.includes(String(d.owner_id)))return null;
     }
-    // Engagement Model sidebar filter — uses line-item majority (mirrors Pie Chart attribution)
-    // engGroupFromLi(): majority by line-item amount → falls back to deal eng_model if no line items
+    // ── Engagement Model sidebar filter ──
+    // Exact replica of engTypesLi() logic — Pie chart and sidebar now share identical classification.
+    // Step 1: get line items, apply active service filter (same as Pie).
+    // Step 2: classify each li by engGroupFromLiName(li.name), accumulate amounts per group.
+    // Step 3: if no li classified by name → fall back to engGroup(d.eng_model) with d.amount.
+    // Step 4: if no line items at all → fall back to engGroup(d.eng_model) with d.amount.
+    // Step 5: return deal with amount = portion matching _itypeGroup only.
     if(_itype){
-      const _itypeGroup=_itype==="One Time"?"P2P":_itype; // map dropdown value to engGroup label
-      if(engGroupFromLi(d)!==_itypeGroup)return null;
+      const _itypeGroup=_itype==="One Time"?"P2P":_itype;
+      const _rawLis=liMap[d.id]||[];
+      const _lis=_rawLis.filter(li=>{
+        if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
+        if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+        return true;
+      });
+      let portion=0;
+      if(_lis.length){
+        let classified=false;
+        _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg&&eg===_itypeGroup){portion+=li.amount;classified=true;}});
+        if(!classified){
+          // No li classified by name — fall back to deal eng_model with full deal amount
+          if(engGroup(d.eng_model)!==_itypeGroup)return null;
+          // passes — use full d.amount (fall through, no amount override)
+        } else if(portion===0){
+          return null;
+        } else {
+          // Return deal with amount = matching line-item portion only
+          return Object.assign({},d,{amount:portion});
+        }
+      } else {
+        // No line items — fall back to deal eng_model
+        if(engGroup(d.eng_model)!==_itypeGroup)return null;
+      }
     }
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
@@ -1681,8 +1709,16 @@ async function doFYSync(force=false){
           Object.entries(items).forEach(([did,lis])=>{
             dealServiceMap[did]=(lis||[]).map(li=>{
               const cls=classifyLineItem(li.name);
-              return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
-            }).filter(Boolean);
+              // Store ALL line items — classified ones get svc/bu, unclassified get null.
+              // Unclassified items are excluded from service/BU charts but still count
+              // for engagement classification (engGroupFromLiName reads li.name on all items).
+              return {
+                svc:cls?cls.svc:null,
+                bu:cls?cls.bu:null,
+                amount:li.amount||0,
+                name:li.name||""
+              };
+            }).filter(li=>li.amount!==0);
           });
         }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
       }
@@ -1825,7 +1861,15 @@ function engGroup(val){
   return null;
 }
 // Classify engagement from line item name prefix
-function engGroupFromLiName(name){
+function engGroupFromLiName(name, engModel){
+  // Primary: engagement_model_name field — canonical HubSpot source, same as dashboard
+  if(engModel && engModel !== "0" && engModel !== ""){
+    const em=engModel.toLowerCase().replace(/\s/g,"");
+    if(em==="recurring"||em==="recurringservices"||em==="dedicatedfte"||
+       em==="dedicatedpte"||em==="multiple")return"Recurring";
+    if(em==="p2p"||em==="timeandmaterial"||em==="t&m"||em==="time")return"P2P";
+  }
+  // Fallback: name prefix (for items where engModel is blank or "0")
   if(!name)return null;
   const n=name.toLowerCase();
   if(n.startsWith("dedicated fte"))return"Recurring";
