@@ -334,6 +334,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 /* ── Weekly Sprint ── */
 .weekly-layout{display:none;flex:1;min-width:0}
 .weekly-main{max-width:1440px;padding:18px 28px 48px}
+.funnel-layout{display:none;flex:1;min-width:0}
+.funnel-main{max-width:1440px;padding:18px 28px 48px}
 /* Tiles */
 .wk-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .wk-tile{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #E2E2E2;padding:13px 15px 14px;cursor:pointer;transition:box-shadow .2s,transform .15s}
@@ -410,9 +412,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="nav-in">
       <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue Pulse</button>
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
+      <button class="nav-tab" data-screen="funnel" onclick="setScreen('funnel')">Funnel Desk</button>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
       <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
-      <a class="nav-tab nav-tab-ext" id="pipeline-link" href="/pipeline" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Pipeline Scout ↗</a>
     </div>
   </div>
   <div class="fbar" id="fbar">
@@ -751,6 +753,47 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div>
 </div><!-- /weekly-layout -->
 
+<!-- ════ FUNNEL DESK — inside app-layout, shares the sidebar ════ -->
+<div class="funnel-layout" id="funnel-layout">
+  <div class="funnel-main">
+
+    <!-- KPI Strip -->
+    <div class="sec" id="funnel-sec-kpi">Forecast Summary</div>
+    <div class="kpi-grid" id="funnel-kpi-grid" style="margin-bottom:18px"></div>
+
+    <!-- Waterfall -->
+    <div class="sec">Revenue Waterfall</div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-ttl" id="funnel-wf-title">Recurring Revenue Waterfall</div>
+      <div class="card-sub" id="funnel-wf-sub">Opening → adjustments → Expected Closing</div>
+      <div id="funnel-wf-chart" style="height:210px;position:relative;margin-top:16px"></div>
+    </div>
+
+    <!-- Operational Table -->
+    <div class="sec">Sales Funnel · by Owner</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #F2F2F2">
+        <div>
+          <div class="card-ttl" style="margin-bottom:0">Funnel Desk</div>
+          <div class="card-sub" style="margin-bottom:0" id="funnel-tbl-sub">Green cells = manual inputs · Auto rows computed from HubSpot</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:9px;font-weight:700;color:#006E5E;letter-spacing:.04em;opacity:0;transition:opacity .3s" id="funnel-saved">Saved ✓</span>
+          <button onclick="saveFunnelInputs()" style="padding:5px 14px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#111;transition:background .2s" onmouseover="this.style.background='#FFE870'" onmouseout="this.style.background='#FFDA30'">Save Inputs</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table id="funnel-table" style="width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:700px">
+          <thead id="funnel-thead"></thead>
+          <tbody id="funnel-tbody"><tr><td colspan="3" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Waiting for data sync...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  </div>
+</div><!-- /funnel-layout -->
+
 <!-- ════ CLIENT CLUB — inside app-layout, shares the sidebar ════ -->
 <div class="clubs-layout" id="clubs-layout">
   <div class="clubs-main">
@@ -1078,7 +1121,9 @@ const drill={};
 let allDeals=[];
 let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
 // ── Client Clubs state ──
-let currentScreen='revenue';   // 'revenue' | 'weekly' | 'clubs'
+let currentScreen='revenue';   // 'revenue' | 'weekly' | 'funnel' | 'clubs'
+let funnelInputs={};
+const FUNNEL_LS_KEY='nexus_funnel_desk_inputs';
 let clubDataCache={};           // keyed by 'month|regions' — cleared on every sync
 let clubsTrendChart=null;
 let clubsTierFilter=['Premier','Select','Core','Base']; // all selected by default (multi-select)
@@ -2364,6 +2409,8 @@ function renderAll(){
   if(allDeals.length)renderTrends(getFY2026Months(),trendView());
   // Weekly Numbers — re-render if active (shares all filter state via trendView())
   if(currentScreen==='weekly'&&allDeals.length)renderWeekly();
+  // Funnel Desk — re-render if active
+  if(currentScreen==='funnel'&&allDeals.length)renderFunnel();
 }
 
 // ════ KPI ACTIONS ════
@@ -2603,6 +2650,7 @@ window.addEventListener("DOMContentLoaded",function(){
     initClubsPeriodSel();     // Client Clubs period selector
     initClubsPeriodOptions(); // Hide unavailable clubs period options
     initWeeklyPeriodSel();    // Weekly Numbers month selector
+    loadFunnelInputs();       // Funnel Desk — restore saved inputs from localStorage
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     // Single unified sync — fetches all FY months, one source of truth for everything
@@ -2623,33 +2671,36 @@ function setScreen(name){
   currentScreen=name;
   const isRevenue=name==='revenue';
   const isWeekly=name==='weekly';
+  const isFunnel=name==='funnel';
   const isClubs=name==='clubs';
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Swap Period inner — one per screen
+  // Swap Period inner — one per screen (Funnel inherits Revenue period selector)
   const rpi=$('rev-period-inner');
   const wpi=$('weekly-period-inner');
   const cpi=$('clubs-period-inner');
-  if(rpi)rpi.style.display=isRevenue?'flex':'none';
+  if(rpi)rpi.style.display=(isRevenue||isFunnel)?'flex':'none';
   if(wpi)wpi.style.display=isWeekly?'flex':'none';
   if(cpi)cpi.style.display=isClubs?'flex':'none';
   // Clear inactive custom ranges
-  if(!isRevenue)$('custom-range')?.classList.remove('show');
+  if(!isRevenue&&!isFunnel)$('custom-range')?.classList.remove('show');
   if(!isClubs){$('clubs-custom-range')?.classList.remove('show');}
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
   const db=$('drill-bar');if(db)db.style.display=isRevenue?'':'none';
-  // app-layout: always visible — sidebar is shared across all three tabs
-  // Each tab shows exactly one content div; the other two are hidden.
+  // app-layout: always visible — sidebar is shared across all tabs
+  // Each tab shows exactly one content div; the others are hidden.
   const al=$('app-layout');if(al)al.style.display='flex';
   const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
+  const fl=$('funnel-layout');if(fl)fl.style.display=isFunnel?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
   // Tier + Movement sections in shared sidebar — visible on Client Club only
   const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
+  if(isFunnel&&allDeals.length)renderFunnel();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
 }
 
@@ -3410,6 +3461,195 @@ function renderWeekly(){
 }
 
 // ════ END WEEKLY SPRINT ════
+
+// ════ FUNNEL DESK ════
+// Shares allDeals + dealServiceMap + view() with Revenue Pulse.
+// Engagement: resolvedEngGroup(d) — ON-prefix→P2P, LI majority→Recurring/P2P, NO fallback.
+// Opening = Recurring deals in period where closedate day 1–15.
+// Post Paid = Recurring deals in period where closedate day 16+.
+// Manual inputs: Target, Predicted Loss, Pipeline Closure, Opp Closure — persisted per owner per month.
+
+function loadFunnelInputs(){
+  try{const r=localStorage.getItem(FUNNEL_LS_KEY);funnelInputs=r?JSON.parse(r):{};} catch(e){funnelInputs={};}
+}
+function saveFunnelInputs(){
+  document.querySelectorAll('.fd-input').forEach(el=>{
+    if(el.dataset.key)funnelInputs[el.dataset.key]=parseFloat(el.value)||0;
+  });
+  try{
+    localStorage.setItem(FUNNEL_LS_KEY,JSON.stringify(funnelInputs));
+    const s=$('funnel-saved');if(s){s.style.opacity='1';setTimeout(()=>s.style.opacity='0',2000);}
+  }catch(e){console.error('Funnel save failed:',e);}
+  renderFunnel();
+}
+function getFunnelInput(month,ownerId,field){
+  return funnelInputs[`${month}|${ownerId}|${field}`]||0;
+}
+
+function renderFunnel(){
+  if(!allDeals.length)return;
+
+  // Use same period months as Revenue Pulse (inherits global Period selector)
+  const periodMonths=getMonths();
+  if(!periodMonths.length)return;
+  // For single-month operations (Opening/PostPaid day split), use last month in period
+  const primaryMonth=periodMonths[periodMonths.length-1];
+
+  // Get filtered deals (respects all global filters: BU, Head, Region, Owner, Engagement)
+  const filtered=view(allDeals.filter(d=>periodMonths.includes(d.month)),dealServiceMap);
+
+  // Per-owner data
+  const ownerMap={};
+  filtered.forEach(d=>{
+    const oid=String(d.owner_id);
+    if(!ownerMap[oid])ownerMap[oid]={id:oid,name:ownerName(oid),opening:0,postPaid:0};
+    const eg=resolvedEngGroup(d);
+    if(eg!=='Recurring')return;
+    const day=parseInt((d.closedate||'').split('-')[2]||'0',10);
+    const amt=d.amount;
+    if(day>=1&&day<=15)ownerMap[oid].opening+=amt;
+    else if(day>=16) ownerMap[oid].postPaid+=amt;
+  });
+
+  // Flat list — only owners with activity, sorted by opening desc
+  const ownerData=Object.values(ownerMap)
+    .filter(o=>o.opening>0||o.postPaid>0)
+    .sort((a,b)=>b.opening-a.opening);
+
+  if(!ownerData.length){
+    $('funnel-kpi-grid').innerHTML=`<div style="grid-column:1/-1;padding:32px;text-align:center;color:#9A9A9A;font-weight:600">No recurring revenue data for current filters.</div>`;
+    $('funnel-thead').innerHTML='';
+    $('funnel-tbody').innerHTML=`<tr><td colspan="3" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No data for current filters.</td></tr>`;
+    $('funnel-wf-chart').innerHTML='';
+    return;
+  }
+
+  // Aggregate totals
+  const totalOpening=ownerData.reduce((s,o)=>s+o.opening,0);
+  const totalPostPaid=ownerData.reduce((s,o)=>s+o.postPaid,0);
+  const totalTarget=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'target'),0);
+  const totalPredLoss=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'pred_loss'),0);
+  const totalPipeline=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'closure_pipeline'),0);
+  const totalOpp=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'closure_opp'),0);
+  const totalExpected=totalOpening-totalPredLoss+totalPostPaid+totalPipeline+totalOpp;
+  const gap=totalTarget?(totalExpected-totalTarget):null;
+
+  // ── KPI strip (reuses existing .kpi-grid style) ──
+  const periodLbl=getPeriodLabel();
+  $('funnel-sec-kpi').textContent=`Forecast Summary · ${periodLbl}`;
+  const gapColor=gap===null?'#9A9A9A':gap>=0?'#006E5E':'#C0143C';
+  const gapVal=gap===null?'—':gap>=0?'+'+fmtShort(gap):fmtShort(gap);
+  $('funnel-kpi-grid').innerHTML=[
+    {lbl:'Opening',val:fmtShort(totalOpening),sub:'Recurring · closedate 1–15',color:'#3B3561'},
+    {lbl:'Target',val:totalTarget?fmtShort(totalTarget):'—',sub:'Manual input',color:'#FFDA30'},
+    {lbl:'Expected Closing',val:fmtShort(totalExpected),sub:'Opening ± adjustments',color:'#006E5E'},
+    {lbl:'Gap vs Target',val:gapVal,sub:gap===null?'Set target below':gap>=0?'Ahead of target':'Behind target',color:gapColor},
+  ].map(k=>`
+    <div class="kpi" style="border-top:3px solid ${k.color}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-val" style="color:${k.color==='#FFDA30'?'#434343':k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // ── Waterfall ──
+  $('funnel-wf-title').textContent=`Recurring Waterfall · ${periodLbl}`;
+  $('funnel-wf-sub').textContent=`Opening ${fmtShort(totalOpening)} → Expected ${fmtShort(totalExpected)}${totalTarget?' · Target '+fmtShort(totalTarget):''}`;
+  renderFunnelWaterfall(totalOpening,totalPredLoss,totalPostPaid,totalPipeline,totalOpp,totalExpected,totalTarget);
+
+  // ── Table ──
+  // Header
+  const thStyle='padding:8px 12px;background:#F7F7F7;text-align:right;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #E8E8E8;white-space:nowrap';
+  const thStyleL=thStyle.replace('text-align:right','text-align:left')+';min-width:180px';
+  $('funnel-thead').innerHTML=`<tr>
+    <th style="${thStyleL}">Row</th>
+    ${ownerData.map(o=>`<th style="${thStyle};min-width:80px">${o.name.split(' ')[0]}</th>`).join('')}
+    <th style="${thStyle};min-width:90px;border-left:2px solid #E2E2E2">Total</th>
+  </tr>`;
+
+  // Row definitions
+  const fmtAmt=n=>n===0?'—':fmtShort(n);
+  const tdAuto=(v,bold)=>`<td style="padding:7px 12px;text-align:right;font-weight:${bold?'800':'600'};color:#434343;border-bottom:1px solid #F5F5F5">${fmtAmt(v)}</td>`;
+  const tdTotal=(v,bold,dark)=>`<td style="padding:7px 12px;text-align:right;font-weight:800;border-left:2px solid #E2E2E2;border-bottom:1px solid #F5F5F5;${dark?'background:#473400;color:#fff;':'color:#434343;'}">${fmtAmt(v)}</td>`;
+  const tdInput=(month,oid,field)=>{
+    const key=`${month}|${oid}|${field}`;
+    const val=funnelInputs[key]||0;
+    return`<td style="padding:4px 8px;text-align:right;background:#FFFDF0;border-bottom:1px solid #F5F5F5"><input class="fd-input" data-key="${key}" type="number" min="0" value="${val||''}" placeholder="—" style="background:transparent;border:none;width:100%;text-align:right;font-size:11px;font-weight:700;font-family:'Montserrat',sans-serif;color:#006E5E;outline:none;min-width:60px" /></td>`;
+  };
+  const rowLblTd=(lbl,hint,dark)=>`<td style="padding:8px 12px;font-weight:600;font-size:10.5px;color:${dark?'#fff':'#434343'};border-bottom:1px solid ${dark?'rgba(255,255,255,.1)':'#F5F5F5'};${dark?'background:#473400;':''}">${lbl}${hint?`<div style="font-size:8px;color:${dark?'rgba(255,255,255,.6)':'#9A9A9A'};font-weight:500;margin-top:1px">${hint}</div>`:''}${!dark?'':''}</td>`;
+
+  const rows=[
+    // Row 1: Target (green input)
+    {lbl:'Target',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'target')),total:tdTotal(totalTarget,true)},
+    // Row 2: Opening (auto)
+    {lbl:'Opening',hint:'HubSpot · Recurring · closedate 1–15',cells:ownerData.map(o=>tdAuto(o.opening)),total:tdTotal(totalOpening,true),auto:true},
+    // Row 3: Predicted Loss (green input)
+    {lbl:'Predicted Loss',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'pred_loss')),total:tdTotal(totalPredLoss,true)},
+    // Row 4: Post Paid (auto)
+    {lbl:'Post Paid',hint:'HubSpot · Recurring · closedate 16+',cells:ownerData.map(o=>tdAuto(o.postPaid)),total:tdTotal(totalPostPaid,true),auto:true},
+    // Row 5: Pipeline Closure (green input)
+    {lbl:'Existing Pipeline at Month Start',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'closure_pipeline')),total:tdTotal(totalPipeline,true)},
+    // Row 6: Opportunity Closure (green input)
+    {lbl:'Existing Opportunity at Month Start',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'closure_opp')),total:tdTotal(totalOpp,true)},
+    // Row 7: Expected Closing (computed total row — dark)
+    {lbl:'Expected Closing of Recurring',hint:'Opening − Loss + Post Paid + Pipeline + Opp',cells:ownerData.map(o=>{
+      const exp=o.opening-getFunnelInput(primaryMonth,o.id,'pred_loss')+o.postPaid+getFunnelInput(primaryMonth,o.id,'closure_pipeline')+getFunnelInput(primaryMonth,o.id,'closure_opp');
+      return`<td style="padding:7px 12px;text-align:right;font-weight:800;color:#fff;background:#473400;border-bottom:1px solid rgba(255,255,255,.1)">${fmtAmt(exp)}</td>`;
+    }),total:tdTotal(totalExpected,true,true),dark:true},
+  ];
+
+  $('funnel-tbody').innerHTML=rows.map(r=>`<tr>
+    ${rowLblTd(r.lbl,r.hint,r.dark)}
+    ${r.cells.join('')}
+    ${r.total}
+  </tr>`).join('');
+
+  $('funnel-tbl-sub').textContent=`${ownerData.length} owners · ${periodLbl} · Green cells = manual inputs`;
+}
+
+function renderFunnelWaterfall(opening,predLoss,postPaid,pipeline,opp,expected,target){
+  const H=170;
+  const steps=[
+    {label:'Opening',      val:opening,   kind:'base', hint:'Recurring\n1–15'},
+    {label:'−Loss',        val:-predLoss, kind:'sub',  hint:'Predicted\nLoss'},
+    {label:'Post Paid',    val:postPaid,  kind:'add',  hint:'Recurring\n16+'},
+    {label:'Pipeline',     val:pipeline,  kind:'add',  hint:'Pipeline\nClosure'},
+    {label:'Opp.',         val:opp,       kind:'add',  hint:'Opp.\nClosure'},
+    {label:'Expected',     val:expected,  kind:'final',hint:'Expected\nClosing'},
+  ];
+  const maxVal=Math.max(...steps.map(s=>Math.abs(s.val)),target||0,1);
+  let running=0;
+  const bars=steps.map(s=>{
+    const anchored=s.kind==='base'||s.kind==='final';
+    const base=anchored?0:running;
+    const h=Math.max(Math.abs(s.val)/maxVal*H,s.val!==0?3:0);
+    if(!anchored)running+=s.val;
+    return{...s,base,h};
+  });
+  const clr={base:'#3B3561',add:'#006E5E',sub:'#C0143C',final:'#473400'};
+  const targetPx=target?(target/maxVal*H):null;
+  let html=`<div style="display:flex;align-items:flex-end;gap:8px;height:${H}px;border-bottom:1px solid #E2E2E2;margin-bottom:36px;position:relative">`;
+  bars.forEach(s=>{
+    const color=s.val===0?'#E2E2E2':clr[s.kind]||'#9A9A9A';
+    const basePx=(s.base/maxVal*H);
+    const amtColor=s.kind==='add'?'#006E5E':s.kind==='sub'?'#C0143C':'#434343';
+    const displaySign=s.kind==='sub'&&s.val!==0?'−':'';
+    const displayAmt=s.val===0?'$0':fmtShort(Math.abs(s.val));
+    html+=`<div style="flex:1;position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center">
+      <div style="font-size:9px;font-weight:800;color:${amtColor};text-align:center;margin-bottom:4px;white-space:nowrap">${displaySign}${displayAmt}</div>
+      <div style="width:72%;height:${s.h.toFixed(1)}px;background:${color};border-radius:${s.kind==='sub'?'0 0 4px 4px':'4px 4px 0 0'};margin-bottom:${basePx.toFixed(1)}px;min-height:${s.val!==0?3:0}px"></div>
+      <div style="position:absolute;bottom:-30px;left:0;right:0;text-align:center;font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;white-space:pre-line">${s.hint}</div>
+    </div>`;
+  });
+  if(targetPx!==null&&targetPx>0&&targetPx<=H){
+    html+=`<div style="position:absolute;left:0;right:0;bottom:${targetPx.toFixed(0)}px;height:2px;background:#FFDA30;opacity:.85;pointer-events:none">
+      <span style="position:absolute;right:4px;top:-11px;font-size:8px;font-weight:700;color:#473400;background:#FFDA30;padding:1px 4px;border-radius:2px">Target ${fmtShort(target)}</span>
+    </div>`;
+  }
+  html+=`</div>`;
+  $('funnel-wf-chart').innerHTML=html;
+}
+
+// ════ END FUNNEL DESK ════
 
 // ════ END CLIENT CLUBS ════
 </script>
