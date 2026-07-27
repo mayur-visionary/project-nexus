@@ -1834,6 +1834,8 @@ function engGroupFromLiName(name){
   if(n.startsWith("multiple"))return"Recurring";
   if(n.startsWith("p2p"))return"P2P";
   if(n.startsWith("time and material")||n.startsWith("t&m"))return"P2P";
+  // EMail Coding has no engagement prefix in HubSpot — hardcoded P2P (permanent fix, Session 14)
+  if(n.includes("email coding"))return"P2P";
   return null;
 }
 // Get engagement group for a deal from its line items (majority wins)
@@ -3498,15 +3500,33 @@ function renderFunnel(){
   // Get filtered deals (respects all global filters: BU, Head, Region, Owner, Engagement)
   const filtered=view(allDeals.filter(d=>periodMonths.includes(d.month)),dealServiceMap);
 
+  // BU filter — needed to compute BU-aware line-item amount
+  const activeBU=$('bu-sel')?.value||'';
+
+  // BU-aware amount for a deal:
+  // No BU filter → full deal amount
+  // BU = Digital → sum of Digital line items only
+  // BU = MarTech → sum of MarTech line items only
+  // This ensures that when a filter is applied, the Total column reflects
+  // only that BU's portion — not the full deal amount.
+  function funnelAmt(d){
+    const lis=dealServiceMap[d.id]||[];
+    if(!activeBU||!lis.length)return d.amount;
+    const buAmt=lis.filter(li=>li.bu===activeBU).reduce((s,li)=>s+li.amount,0);
+    // If no line items match the BU (unclassified deal), fall back to full amount
+    return buAmt||d.amount;
+  }
+
   // Per-owner data
   const ownerMap={};
   filtered.forEach(d=>{
     const oid=String(d.owner_id);
     if(!ownerMap[oid])ownerMap[oid]={id:oid,name:ownerName(oid),opening:0,postPaid:0};
-    const eg=resolvedEngGroup(d);
+    // Use canonical engagement resolver — line-item majority, same as Pie chart
+    const eg=engGroupFromLi(d);
     if(eg!=='Recurring')return;
     const day=parseInt((d.closedate||'').split('-')[2]||'0',10);
-    const amt=d.amount;
+    const amt=funnelAmt(d);
     if(day>=1&&day<=15)ownerMap[oid].opening+=amt;
     else if(day>=16) ownerMap[oid].postPaid+=amt;
   });
