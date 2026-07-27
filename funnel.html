@@ -61,27 +61,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:160px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
-.fsel.sm{max-width:120px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
-
-/* Owner multi-select (filter bar) */
-.ms-wrap{position:relative}
-.ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
-.ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
-.ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
-.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:210px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:360px;overflow-y:auto}
-.ms-dropdown.open{display:block}
-.ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
-.ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
-.ms-actions{display:flex;gap:8px}
-.ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
-.ms-act:hover{opacity:.7}
-.ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
-.ms-item:hover{background:rgba(255,255,255,.07)}
-.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
-.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
-.ms-grp-hdr{padding:6px 12px 2px;font-size:8px;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em}
 
 /* ── Spinner ── */
 .lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
@@ -89,7 +70,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Main layout ── */
+/* ── Main ── */
 .main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
 
 /* ── Error bar ── */
@@ -97,90 +78,88 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .err-bar strong{color:#FFDA30}
 
 /* ── Section label ── */
-.sec-lbl{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#696969;margin-bottom:14px}
-.sec-lbl::before{content:'';display:block;width:3px;height:14px;border-radius:2px;background:#FFDA30;flex-shrink:0}
+.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#696969;margin-bottom:14px;margin-top:32px}
+.sec::before{content:'';display:block;width:3px;height:14px;border-radius:2px;background:#FFDA30;flex-shrink:0}
+.sec.first{margin-top:0}
 
-/* ── KPI Strip ── */
-.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-@media(max-width:900px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
-.kpi-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;position:relative;overflow:hidden}
-.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
-.kpi-card.opening::after{background:#3B3561}
-.kpi-card.target::after{background:#FFDA30}
-.kpi-card.expected::after{background:#006E5E}
-.kpi-card.gap-pos::after{background:#006E5E}
-.kpi-card.gap-neg::after{background:#C0143C}
-.kpi-card.gap-zero::after{background:#9A9A9A}
-.kpi-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:8px}
-.kpi-value{font-size:26px;font-weight:800;color:#434343;letter-spacing:-.01em;line-height:1}
-.kpi-value.pos{color:#006E5E}
-.kpi-value.neg{color:#C0143C}
-.kpi-sub{font-size:9px;font-weight:600;color:#9A9A9A;margin-top:6px}
+/* ── Month selector pills ── */
+.month-pill-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.month-pill{padding:5px 14px;border-radius:20px;border:1px solid #E2E2E2;background:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;color:#696969;transition:all .15s;letter-spacing:.04em}
+.month-pill.active{background:#FFDA30;border-color:#FFDA30;color:#111}
+.month-pill:hover:not(.active){border-color:#FFDA30;color:#434343}
 
-/* ── Waterfall Card ── */
-.wf-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:20px 24px;margin-bottom:24px}
-.wf-title{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.wf-sub{font-size:9.5px;color:#9A9A9A;font-weight:500;margin-bottom:20px}
-.wf-chart{display:flex;align-items:flex-end;gap:0;height:200px;position:relative}
-.wf-col{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;position:relative}
-.wf-bar-wrap{width:100%;display:flex;justify-content:center;position:relative;flex:1;align-items:flex-end}
-.wf-spacer{background:transparent}
-.wf-bar{width:68%;border-radius:4px 4px 0 0;transition:height .35s ease;position:relative;min-height:2px;cursor:default}
-.wf-bar:hover{opacity:.85}
-.wf-bar.opening{background:#3B3561}
-.wf-bar.add{background:#006E5E}
-.wf-bar.sub{background:#C0143C;border-radius:0 0 4px 4px}
-.wf-bar.final{background:#473400}
-.wf-bar.zero{background:#E2E2E2}
-.wf-connector{position:absolute;height:1px;background:#E2E2E2;right:0;z-index:1;pointer-events:none}
-.wf-amt{font-size:9px;font-weight:800;color:#434343;text-align:center;margin-top:5px;white-space:nowrap;line-height:1.2}
-.wf-amt.pos{color:#006E5E}
-.wf-amt.neg{color:#C0143C}
-.wf-lbl{font-size:8px;font-weight:700;color:#9A9A9A;text-align:center;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;line-height:1.2;padding:0 2px}
-.wf-axis{height:1px;background:#E2E2E2;margin:8px 0 0}
-.wf-target-line{position:absolute;width:100%;height:2px;background:#FFDA30;opacity:.7;pointer-events:none;z-index:2}
-.wf-target-lbl{position:absolute;right:4px;font-size:8px;font-weight:700;color:#FFDA30;white-space:nowrap;background:#fff;padding:0 3px;border-radius:2px;z-index:3}
+/* ── Owner strip ── */
+.owner-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
+.own-pill{padding:5px 12px;border-radius:20px;border:1px solid #E2E2E2;background:#fff;font-size:9.5px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;color:#696969;transition:all .15s;letter-spacing:.02em}
+.own-pill.active{background:#3B3561;border-color:#3B3561;color:#FFDA30}
+.own-pill:hover:not(.active){border-color:#3B3561;color:#3B3561}
 
-/* ── Collapsible panels ── */
-.panel-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;margin-bottom:20px;overflow:hidden}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;user-select:none;transition:background .15s}
-.panel-hdr:hover{background:#FAFAFA}
-.panel-hdr-left{display:flex;align-items:center;gap:10px}
-.panel-title{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em}
-.panel-sub{font-size:9.5px;color:#9A9A9A;font-weight:500;margin-top:2px}
-.panel-toggle{font-size:16px;color:#9A9A9A;font-weight:300;transition:transform .2s;line-height:1}
-.panel-toggle.open{transform:rotate(90deg)}
-.panel-body{display:none;border-top:1px solid #F2F2F2}
-.panel-body.open{display:block}
-
-/* ── Owner bars ── */
-.owner-bars{padding:16px 20px}
-.ob-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.ob-name{font-size:10px;font-weight:700;color:#434343;width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ob-bar-wrap{flex:1;background:#F5F5F5;border-radius:4px;height:8px;overflow:hidden}
-.ob-bar{height:100%;border-radius:4px;background:#3B3561;transition:width .3s ease}
-.ob-val{font-size:10px;font-weight:700;color:#434343;width:72px;text-align:right;flex-shrink:0}
-.ob-legend{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap}
-.ob-leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#696969}
-.ob-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-/* ── Inputs panel ── */
-.inputs-grid{padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.input-group{display:flex;flex-direction:column;gap:6px}
-.input-group-hdr{font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em}
-.input-field-wrap{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#FFFDF0;border:1px solid #E8E8E2;border-radius:8px;transition:border-color .15s}
-.input-field-wrap:focus-within{border-color:#FFDA30;background:#FFFBEA}
-.input-field-lbl{font-size:9px;font-weight:600;color:#9A9A9A}
-.input-field{background:transparent;border:none;text-align:right;font-size:11px;font-weight:700;font-family:'Montserrat',sans-serif;color:#006E5E;outline:none;width:90px}
-.input-field::placeholder{color:#C0C0C0;font-weight:500}
-.save-row{padding:12px 20px;border-top:1px solid #F2F2F2;display:flex;align-items:center;justify-content:flex-end;gap:10px}
-.save-btn{padding:6px 16px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#111;transition:all .2s}
+/* ── Funnel table card ── */
+.ftable-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
+.ftable-hdr{padding:14px 20px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.ftable-hdr h3{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em}
+.ftable-hdr p{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
+.save-btn{padding:5px 14px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#111;transition:all .2s}
 .save-btn:hover{background:#FFE870}
-.save-indicator{font-size:9px;font-weight:700;color:#006E5E;letter-spacing:.04em;opacity:0;transition:opacity .3s}
+.save-indicator{font-size:9px;font-weight:600;color:#006E5E;letter-spacing:.04em;opacity:0;transition:opacity .3s}
 .save-indicator.show{opacity:1}
 
-/* ── No data state ── */
-.no-data{text-align:center;padding:48px 20px;color:#9A9A9A;font-weight:600;font-size:11px}
+/* ── Funnel table ── */
+.ftable-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.ftable{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:900px}
+table.ftable thead th{padding:9px 14px;background:#F7F7F7;text-align:right;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
+table.ftable thead th:first-child{text-align:left;min-width:220px}
+table.ftable tbody tr{border-bottom:1px solid #F5F5F5}
+table.ftable tbody tr:hover td{background:#FFFBEA}
+table.ftable tbody td{padding:9px 14px;white-space:nowrap}
+table.ftable tbody td:not(:first-child){text-align:right}
+
+/* Row types */
+.row-section td{background:#F7F7F7;font-size:8px;font-weight:800;color:#9A9A9A;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px}
+.row-group td:first-child{font-weight:700;color:#434343}
+.row-group td{color:#434343}
+.row-subtotal td{background:#FFFBEA;font-weight:800;color:#434343;border-top:1px solid #E2E2E2}
+.row-subtotal td:first-child{padding-left:14px}
+.row-total td{background:#473400;color:#fff;font-weight:800;font-size:12px}
+.row-total td:first-child{letter-spacing:.04em}
+.row-highlight td{background:#F2FEDC;font-weight:800;color:#006E5E}
+
+/* Manual input cell */
+.input-cell{background:transparent;border:none;width:100%;text-align:right;font-size:11px;font-weight:600;font-family:'Montserrat',sans-serif;color:#434343;outline:none;padding:0;min-width:70px}
+.input-cell:focus{color:#3B3561}
+.input-cell.green-input{color:#006E5E;font-weight:700}
+td.editable{background:#FFFDF0;position:relative}
+td.editable::after{content:'✎';position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:8px;color:#C0C0C0;pointer-events:none}
+td.editable:focus-within::after{display:none}
+td.editable:focus-within{background:#FFFBEA}
+
+/* Computed value cells */
+.computed{font-weight:700;color:#434343}
+.computed.pos{color:#006E5E}
+.computed.neg{color:#C0143C}
+.computed.zero{color:#9A9A9A}
+.conv-rate{font-size:9px;font-weight:600;color:#9A9A9A}
+
+/* ── Info banner ── */
+.info-banner{background:#fff;border:1px solid #E2E2E2;border-left:3px solid #FFDA30;border-radius:8px;padding:10px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
+.info-banner-text{font-size:10px;color:#696969;font-weight:500;line-height:1.5}
+.info-banner-text strong{color:#434343;font-weight:700}
+
+/* ── KPI Strip ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.kpi-card{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;overflow:hidden}
+.kpi-card .kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
+.kpi-card .kpi-val{font-size:clamp(14px,1.4vw,20px);font-weight:800;color:#434343;line-height:1.15}
+.kpi-card .kpi-val.pos{color:#006E5E}
+.kpi-card .kpi-val.neg{color:#C0143C}
+.kpi-card .kpi-sub{font-size:9px;color:#9A9A9A;margin-top:4px;font-weight:600}
+@media(max-width:900px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Waterfall chart ── */
+.wf-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;margin-bottom:24px;overflow:hidden}
+.wf-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.wf-title{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em}
+.wf-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
 
 /* ── Footer ── */
 .footer{text-align:center;padding:32px 0 16px;font-size:9px;font-weight:700;color:#9A9A9A;letter-spacing:.16em;text-transform:uppercase}
@@ -199,7 +178,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <path d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow">Mavlers · Sales Operations</div>
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales Operations</div>
     <div class="login-title">Project Nexus</div>
     <input class="login-input" id="pw-input" type="password" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
@@ -249,7 +228,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="fbar">
   <div class="fbar-in">
     <span class="fl">Month</span>
-    <select class="fsel" id="month-sel" onchange="onFilterChange()">
+    <select class="fsel" id="month-sel" onchange="onMonthChange()">
       <option value="july-2026">July 2026</option>
       <option value="june-2026" selected>June 2026</option>
       <option value="may-2026">May 2026</option>
@@ -257,52 +236,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </select>
     <div class="vdiv"></div>
     <span class="fl">BU</span>
-    <select class="fsel sm" id="bu-sel" onchange="onBUChange()">
-      <option value="">All BUs</option>
-      <option value="Digital">Digital</option>
+    <select class="fsel" id="bu-sel" onchange="onBUChange()">
+      <option value="Digital" selected>Digital</option>
       <option value="MarTech">MarTech</option>
-    </select>
-    <div class="vdiv"></div>
-    <span class="fl">Head</span>
-    <select class="fsel" id="head-sel" onchange="onHeadChange()">
-      <option value="">All Heads</option>
-      <option value="Jiggyasa Agrawal">Jiggyasa</option>
-      <option value="Jaydeep Salla">Jaydeep</option>
-      <option value="Nevilson Christan">Nevilson</option>
-      <option value="Tanuj Gupta">Tanuj</option>
-    </select>
-    <div class="vdiv"></div>
-    <span class="fl">Region</span>
-    <select class="fsel sm" id="region-sel" onchange="onFilterChange()">
-      <option value="">All Regions</option>
-      <option value="US">US</option>
-      <option value="UK">UK</option>
-      <option value="AU">AU</option>
-    </select>
-    <div class="vdiv"></div>
-    <span class="fl">Owner</span>
-    <div class="ms-wrap" id="owner-ms-wrap">
-      <div class="ms-btn" id="owner-ms-btn" onclick="toggleOwnerMS(event)">
-        <span id="owner-ms-label">All Owners</span>
-        <span class="ms-arrow">▼</span>
-      </div>
-      <div class="ms-dropdown" id="owner-ms-dropdown">
-        <div class="ms-ctrl">
-          <span class="ms-ctrl-lbl">Owners</span>
-          <div class="ms-actions">
-            <span class="ms-act" onclick="selectAllOwners()">All</span>
-            <span class="ms-act" onclick="deselectAllOwners()">None</span>
-          </div>
-        </div>
-        <div id="owner-ms-list"></div>
-      </div>
-    </div>
-    <div class="vdiv"></div>
-    <span class="fl">Engagement</span>
-    <select class="fsel" id="eng-sel" onchange="onFilterChange()">
-      <option value="">All</option>
-      <option value="Recurring" selected>Recurring</option>
-      <option value="P2P">P2P</option>
     </select>
   </div>
 </div>
@@ -311,62 +247,63 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="main">
   <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
 
-  <!-- Level 1: KPI Strip -->
-  <div class="sec-lbl" style="margin-top:0">Revenue Forecast
-    <span id="kpi-meta" style="font-weight:500;color:#9A9A9A;font-size:8px;letter-spacing:.04em;text-transform:none"></span>
+  <div class="info-banner">
+    <div class="info-banner-text">
+      <strong>How to use:</strong> White cells are fetched live from HubSpot. <span style="color:#006E5E;font-weight:700">Green cells</span> are manual inputs — click any green cell to edit, then hit <strong>Save Inputs</strong>. Inputs are saved per owner per month in your browser.
+    </div>
+  </div>
+
+  <!-- ── Level 1: KPI Strip ── -->
+  <div class="sec first">Forecast Summary
+    <span style="font-weight:500;color:#9A9A9A;font-size:8px;letter-spacing:.04em;text-transform:none" id="kpi-meta"></span>
   </div>
   <div class="kpi-strip" id="kpi-strip">
-    <div class="kpi-card opening"><div class="kpi-label">Opening</div><div class="kpi-value" id="kpi-opening">—</div><div class="kpi-sub">Recurring · closedate 1–15</div></div>
-    <div class="kpi-card target"><div class="kpi-label">Target</div><div class="kpi-value" id="kpi-target">—</div><div class="kpi-sub">Manual input</div></div>
-    <div class="kpi-card expected"><div class="kpi-label">Expected Closing</div><div class="kpi-value" id="kpi-expected">—</div><div class="kpi-sub">Opening ± adjustments</div></div>
-    <div class="kpi-card gap-zero" id="kpi-gap-card"><div class="kpi-label">Gap</div><div class="kpi-value" id="kpi-gap">—</div><div class="kpi-sub" id="kpi-gap-sub">vs Target</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Opening</div><div class="kpi-val" id="kpi-opening">—</div><div class="kpi-sub">Recurring · closedate 1–15</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Target</div><div class="kpi-val" id="kpi-target">—</div><div class="kpi-sub">Manual input</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Expected Closing</div><div class="kpi-val" id="kpi-expected">—</div><div class="kpi-sub">Opening ± adjustments</div></div>
+    <div class="kpi-card" id="kpi-gap-card"><div class="kpi-lbl">Gap vs Target</div><div class="kpi-val" id="kpi-gap">—</div><div class="kpi-sub" id="kpi-gap-sub">Set target below</div></div>
   </div>
 
-  <!-- Level 2: Waterfall -->
-  <div class="sec-lbl">Forecast Waterfall</div>
-  <div class="wf-card" id="wf-card">
-    <div class="wf-title" id="wf-title">Recurring Revenue Waterfall</div>
-    <div class="wf-sub" id="wf-sub">Loading...</div>
-    <div id="wf-chart-area"></div>
+  <!-- ── Level 2: Waterfall ── -->
+  <div class="wf-card">
+    <div class="wf-hdr">
+      <div>
+        <div class="wf-title" id="wf-title">Revenue Waterfall</div>
+        <div class="wf-sub" id="wf-sub">Loading...</div>
+      </div>
+    </div>
+    <div id="wf-chart" style="height:200px;position:relative"></div>
   </div>
 
-  <!-- Level 3: Owner Contribution (collapsible) -->
-  <div class="panel-card" id="owners-panel">
-    <div class="panel-hdr" onclick="togglePanel('owners-panel')">
-      <div class="panel-hdr-left">
-        <div>
-          <div class="panel-title">Owner Contribution</div>
-          <div class="panel-sub" id="owners-panel-sub">Sorted by Opening (high → low)</div>
-        </div>
-      </div>
-      <div class="panel-toggle" id="owners-panel-toggle">›</div>
-    </div>
-    <div class="panel-body" id="owners-panel-body">
-      <div class="owner-bars" id="owner-bars-wrap">
-        <div class="no-data">Loading...</div>
-      </div>
-    </div>
+  <!-- ── Level 3: Operational Table ── -->
+  <div class="sec">Sales Funnel
+    <span style="font-weight:500;color:#9A9A9A;font-size:8px;letter-spacing:.04em;text-transform:none" id="funnel-meta"></span>
   </div>
 
-  <!-- Level 4: Manual Inputs (collapsible, Sales Ops) -->
-  <div class="panel-card" id="inputs-panel">
-    <div class="panel-hdr" onclick="togglePanel('inputs-panel')">
-      <div class="panel-hdr-left">
-        <div>
-          <div class="panel-title">Manual Inputs · Sales Ops</div>
-          <div class="panel-sub">Target · Predicted Loss · Pipeline / Opportunity closures</div>
-        </div>
+  <!-- Funnel Table -->
+  <div class="ftable-card">
+    <div class="ftable-hdr">
+      <div>
+        <h3 id="ftable-title">Recurring — Digital BU</h3>
+        <p id="ftable-sub">Loading data from HubSpot...</p>
       </div>
-      <div class="panel-toggle" id="inputs-panel-toggle">›</div>
-    </div>
-    <div class="panel-body" id="inputs-panel-body">
-      <div class="inputs-grid" id="inputs-grid">
-        <div class="no-data">Select a month and filters above</div>
-      </div>
-      <div class="save-row">
+      <div style="display:flex;align-items:center;gap:10px">
         <span class="save-indicator" id="save-indicator">Saved</span>
         <button class="save-btn" onclick="saveInputs()">Save Inputs</button>
       </div>
+    </div>
+    <div class="ftable-wrap">
+      <table class="ftable" id="ftable">
+        <thead>
+          <tr id="ftable-head">
+            <th style="text-align:left">Row</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="ftable-body">
+          <tr><td colspan="10" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -374,114 +311,104 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
-// NEXUS SALES FUNNEL — v2
-// Aggregate-first design: KPI strip → Waterfall → Owner bars → Inputs
-// Data: Invoice App pipeline 115832232, stage 205348626
-// Engagement: Two-tier (ON-prefix→P2P, LI majority→Recurring/P2P, NO fallback)
-// BU: Pure Digital = Search + Web ONLY; Design = own bucket; Inter BU = MarTech LIs in Digital deal
-// Opening: Recurring deals, closedate 1–15 of selected month
-// Post Paid: Recurring deals, closedate 16–30 of selected month
-// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+// NEXUS SALES FUNNEL — v1 (Recurring block, Digital BU)
+// Data: Invoice App pipeline (115832232), stage 205348626
+// Engagement: Two-tier only (ON-prefix → P2P, LI majority → Recurring/P2P)
+// BU split: via classifyLineItem (same as Revenue Pulse)
+// ════════════════════════════════════════════════
 
 const $=id=>document.getElementById(id);
 const PIPELINE="115832232", STAGE="205348626";
 const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-// ── Owner registry (identical to Revenue Pulse) ──
-const OWNER_BU_MAP={
-  "107178262":"MarTech","17738843":"MarTech","34140174":"MarTech",
-  "467997340":"MarTech",
-  "82911376":"MarTech","82030736":"MarTech","916030451":"MarTech",
-  "93107638":"MarTech","46153051":"MarTech","86147905":"MarTech","85767516":"MarTech","89530815":"MarTech",
-  "41490632":"MarTech",
-  "17739548":"Digital","79217713":"Digital","17739173":"Digital",
-  "86940863":"Digital",
-  "131779647":"Digital","78831011":"Digital","94746500":"Digital","176516495":"Digital","263464861":"Digital",
-  "46156316":"Digital","37344296":"Digital","24817892":"Digital","31730801":"Digital",
-  "38568120":"Digital","42663191":"Digital","240935328":"Digital","19799470":"Digital",
-  "34558123":"Digital","284770744":"Digital","557894666":"Digital",
-  "86813698":"Digital","255830830":"Digital","37762663":"Digital",
-  "82663745":"Digital"
-};
-const OWNER_GEO={
-  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","19799470":"US","557894666":"US",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
-  "86813698":"AU","255830830":"UK","37762663":"US",
-  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
-  "82030736":"UK","82911376":"UK","916030451":"US",
-  "467997340":"AU"
-};
-const OWNER_HEAD_MAP={
-  "131779647":"Jiggyasa Agrawal","78831011":"Jiggyasa Agrawal","94746500":"Jiggyasa Agrawal",
-  "176516495":"Jiggyasa Agrawal","263464861":"Jiggyasa Agrawal",
-  "107178262":"Jaydeep Salla","17738843":"Jaydeep Salla","34140174":"Jaydeep Salla",
-  "467997340":"Jaydeep Salla","82911376":"Jaydeep Salla","82030736":"Jaydeep Salla",
-  "916030451":"Jaydeep Salla","93107638":"Jaydeep Salla","46153051":"Jaydeep Salla",
-  "86147905":"Jaydeep Salla","85767516":"Jaydeep Salla","89530815":"Jaydeep Salla",
-  "41490632":"Jaydeep Salla",
-  "86813698":"Nevilson Christan","255830830":"Nevilson Christan","37762663":"Nevilson Christan",
-  "38568120":"Tanuj Gupta","42663191":"Tanuj Gupta","240935328":"Tanuj Gupta","19799470":"Tanuj Gupta",
-  "34558123":"Tanuj Gupta","284770744":"Tanuj Gupta","557894666":"Tanuj Gupta",
-  "46156316":"Tanuj Gupta","37344296":"Tanuj Gupta","24817892":"Tanuj Gupta","31730801":"Tanuj Gupta"
-};
-const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
-
-// Ordered owner list for UI
-const ORDERED_OWNERS=[
-  {id:"107178262",name:"Chintan Doshi",group:"MarTech Leaders"},
-  {id:"17738843", name:"Jaydeep Salla",group:"MarTech Leaders"},
-  {id:"34140174", name:"Mrugesh Dabhi",group:"MarTech Leaders"},
-  {id:"467997340",name:"Karan Doshi",  group:"MarTech AU"},
-  {id:"82911376", name:"Divya S",      group:"MarTech UK"},
-  {id:"82030736", name:"Sakshi Bissa", group:"MarTech UK"},
-  {id:"93107638", name:"Ayush Dhupar", group:"MarTech US"},
-  {id:"46153051", name:"Ayush Rathi",  group:"MarTech US"},
-  {id:"86147905", name:"Preeti Thapliyal",group:"MarTech US"},
-  {id:"85767516", name:"Rupali Sindhu",group:"MarTech US"},
-  {id:"89530815", name:"Vinita Raidu", group:"MarTech US"},
-  {id:"916030451",name:"Kamesh Biniwale",group:"MarTech NBD"},
-  {id:"41490632", name:"Mukund Basita",group:"Reactivation"},
-  {id:"17739548", name:"Darshan Modi", group:"Digital Leaders"},
-  {id:"79217713", name:"Krunal Bakraniya",group:"Digital Leaders"},
-  {id:"17739173", name:"Tanuj Gupta",  group:"Digital Leaders"},
-  {id:"131779647",name:"Jiggyasa Agrawal",group:"Digital AU"},
-  {id:"78831011", name:"Kunal Gohil",  group:"Digital AU"},
-  {id:"94746500", name:"Manvi Choumal",group:"Digital AU"},
-  {id:"176516495",name:"Prachi Porwal",group:"Digital AU"},
-  {id:"263464861",name:"Saquib Khan",  group:"Digital AU"},
-  {id:"46156316", name:"Flintoff Mehta",group:"Digital UK"},
-  {id:"37344296", name:"Kalgi Shah",   group:"Digital UK"},
-  {id:"24817892", name:"Sheldon Fernandes",group:"Digital UK"},
-  {id:"31730801", name:"Vikram Sahi",  group:"Digital UK"},
-  {id:"38568120", name:"Baspin Thomas",group:"Digital US"},
-  {id:"42663191", name:"Dhaval Damania",group:"Digital US"},
-  {id:"240935328",name:"Hammad Bhaldar",group:"Digital US"},
-  {id:"19799470", name:"Jebin Joy",    group:"Digital US"},
-  {id:"34558123", name:"Kaustubh Agrawal",group:"Digital US"},
-  {id:"284770744",name:"Sourya Ghosh", group:"Digital US"},
-  {id:"557894666",name:"Sudarshan Damani",group:"Digital US"},
-  {id:"86813698", name:"Aman Acharya", group:"Nevilson Team"},
-  {id:"255830830",name:"Devanshu Kumar",group:"Nevilson Team"},
-  {id:"37762663", name:"Malav Modi",   group:"Nevilson Team"},
-  {id:"82663745", name:"Prativa Dubey",group:"Unclassified"}
+// ── Owner registry (Digital BU, same as Revenue Pulse) ──
+const DIGITAL_OWNERS=[
+  {id:"17739548",name:"Darshan Modi",      group:"Digital Leaders"},
+  {id:"79217713",name:"Krunal Bakraniya",  group:"Digital Leaders"},
+  {id:"17739173",name:"Tanuj Gupta",       group:"Digital Leaders"},
+  {id:"131779647",name:"Jiggyasa Agrawal", group:"Digital AU"},
+  {id:"78831011",name:"Kunal Gohil",       group:"Digital AU"},
+  {id:"94746500",name:"Manvi Choumal",     group:"Digital AU"},
+  {id:"176516495",name:"Prachi Porwal",    group:"Digital AU"},
+  {id:"263464861",name:"Saquib Khan",      group:"Digital AU"},
+  {id:"46156316",name:"Flintoff Mehta",    group:"Digital UK"},
+  {id:"37344296",name:"Kalgi Shah",        group:"Digital UK"},
+  {id:"24817892",name:"Sheldon Fernandes", group:"Digital UK"},
+  {id:"31730801",name:"Vikram Sahi",       group:"Digital UK"},
+  {id:"38568120",name:"Baspin Thomas",     group:"Digital US"},
+  {id:"42663191",name:"Dhaval Damania",    group:"Digital US"},
+  {id:"240935328",name:"Hammad Bhaldar",   group:"Digital US"},
+  {id:"19799470",name:"Jebin Joy",         group:"Digital US"},
+  {id:"34558123",name:"Kaustubh Agrawal",  group:"Digital US"},
+  {id:"284770744",name:"Sourya Ghosh",     group:"Digital US"},
+  {id:"557894666",name:"Sudarshan Damani", group:"Digital US"},
+  {id:"86813698",name:"Aman Acharya",      group:"Nevilson Team"},
+  {id:"255830830",name:"Devanshu Kumar",   group:"Nevilson Team"},
+  {id:"37762663",name:"Malav Modi",        group:"Nevilson Team"},
+  {id:"82663745",name:"Prativa Dubey",     group:"Unclassified"},
 ];
-const ALL_OWNERS=(()=>{const seen=new Set();return ORDERED_OWNERS.filter(o=>{if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
-const OWN=Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
+const MARTECH_OWNERS=[
+  {id:"107178262",name:"Chintan Doshi",    group:"MarTech Leaders"},
+  {id:"17738843",name:"Jaydeep Salla",     group:"MarTech Leaders"},
+  {id:"34140174",name:"Mrugesh Dabhi",     group:"MarTech Leaders"},
+  {id:"467997340",name:"Karan Doshi",      group:"MarTech AU"},
+  {id:"82911376",name:"Divya S",           group:"MarTech UK"},
+  {id:"82030736",name:"Sakshi Bissa",      group:"MarTech UK"},
+  {id:"916030451",name:"Kamesh Biniwale",  group:"MarTech UK"},
+  {id:"93107638",name:"Ayush Dhupar",      group:"MarTech US"},
+  {id:"46153051",name:"Ayush Rathi",       group:"MarTech US"},
+  {id:"86147905",name:"Preeti Thapliyal",  group:"MarTech US"},
+  {id:"85767516",name:"Rupali Sindhu",     group:"MarTech US"},
+  {id:"89530815",name:"Vinita Raidu",      group:"MarTech US"},
+  {id:"41490632",name:"Mukund Basita",     group:"Reactivation"},
+];
 
-// Head → owner IDs for cascade
-const HEAD_OWNER_IDS={
-  "Jiggyasa Agrawal":["131779647","78831011","94746500","176516495","263464861"],
-  "Jaydeep Salla":["107178262","17738843","34140174","467997340","82911376","82030736","916030451","93107638","46153051","86147905","85767516","89530815","41490632"],
-  "Nevilson Christan":["86813698","255830830","37762663"],
-  "Tanuj Gupta":["38568120","42663191","240935328","19799470","34558123","284770744","557894666","46156316","37344296","24817892","31730801"]
-};
-const HEAD_BU={"Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech","Nevilson Christan":"Digital","Tanuj Gupta":"Digital"};
+// ── State ──
+let allDeals=[], dealServiceMap={}, isSyncing=false;
+let selectedMonth="june-2026", selectedBU="Digital";
+let manualInputs={};  // keyed: `${month}|${ownerId}|${field}`
+const LS_KEY="nexus_funnel_inputs_v1";
+
+// ── Auth ──
+function getAuthKey(){return"nexus_auth";}
+async function doLogin(){
+  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
+  if(!pw){err.textContent="Please enter the access password.";return;}
+  btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
+  try{
+    const res=await fetch("/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:""})});
+    const data=await res.json();
+    if(data.success){localStorage.setItem(getAuthKey(),"1");$("login-overlay").style.display="none";doSync();}
+    else if(res.status===500||data.error)err.textContent="Server config error. Contact Mayur.";
+    else{err.textContent="Incorrect password.";$("pw-input").value="";$("pw-input").focus();}
+  }catch(e){err.textContent="Connection error.";}
+  finally{btn.disabled=false;btn.textContent="Access Dashboard";}
+}
+function checkSSO(){
+  if(localStorage.getItem(getAuthKey())==="1"){$("login-overlay").style.display="none";return true;}
+  return false;
+}
+
+// ── Formatters ──
+function fmt$(n){
+  if(n===null||n===undefined||isNaN(n))return"—";
+  if(n===0)return"$0";
+  const a=Math.abs(n);
+  const s=n<0?"−$":"$";
+  if(a>=1000000)return s+(a/1000000).toFixed(2)+"M";
+  if(a>=1000)return s+Math.round(a/1000).toLocaleString()+"K";
+  return s+Math.round(a).toLocaleString();
+}
+function fmtPct(n){if(!n||isNaN(n))return"—";return Math.round(n)+"%";}
+function monthLabel(m){
+  const [mn,yr]=m.split("-");
+  const idx=MFULL.indexOf(mn);
+  return idx>=0?`${MSHRT[idx]} ${yr}`:m;
+}
 
 // ── Line item classifier (exact copy from Revenue Pulse) ──
-const PURE_DIGITAL_SVCS=new Set(["Search","Web"]);
 function classifyLineItem(name){
   if(!name)return null;
   const n=name.toLowerCase();
@@ -505,14 +432,14 @@ function classifyLineItem(name){
   return null;
 }
 
-// ── Two-tier engagement resolver (strict, no fallback to eng_model) ──
+// ── Two-tier engagement resolver (strict — no fallback) ──
 function resolveEng(deal){
   if((deal.dealname||"").startsWith("ON"))return"P2P";
   const lis=dealServiceMap[deal.id]||[];
   if(!lis.length)return null;
   const m={};
   lis.forEach(li=>{
-    const n=(li.name||"").toLowerCase();
+    const n=li.name.toLowerCase();
     let g=null;
     if(n.startsWith("dedicated fte")||n.startsWith("dedicated pte")||n.startsWith("recurring")||n.startsWith("multiple"))g="Recurring";
     else if(n.startsWith("p2p")||n.startsWith("time and material")||n.startsWith("t&m"))g="P2P";
@@ -523,10 +450,14 @@ function resolveEng(deal){
   return entries.sort((a,b)=>b[1]-a[1])[0][0];
 }
 
-// ── BU amounts from line items ──
+// ── BU from line items ──
+// Pure Digital = Search + Web line items ONLY (Design excluded — it's its own bucket)
+// Inter BU = MarTech-classified line items (Campaign, Email, Design-Email) within a Digital deal
+// Design (Digital) = separate bucket — not counted in Pure Digital or Inter BU
+const PURE_DIGITAL_SVCS=new Set(["Search","Web"]);
 function liAmountsByBU(deal){
   const lis=dealServiceMap[deal.id]||[];
-  const result={digitalPure:0,interBU:0,design:0,marTech:0};
+  const result={digitalPure:0,interBU:0,design:0};
   lis.forEach(li=>{
     const cls=classifyLineItem(li.name);
     if(!cls)return;
@@ -534,139 +465,34 @@ function liAmountsByBU(deal){
     else if(cls.bu==="Digital"&&cls.svc==="Design")        result.design+=li.amount;
     else if(cls.bu==="MarTech")                            result.interBU+=li.amount;
   });
-  result.marTech=lis.filter(li=>classifyLineItem(li.name)?.bu==="MarTech").reduce((s,li)=>s+li.amount,0);
   return result;
 }
 
-// ── Attribution (mirrors Revenue Pulse) ──
-function attributeDeal(d){
-  const oid=String(d.owner_id||"");
-  d.bu    =OWNER_BU_MAP[oid]||"Digital";
-  d.region=OWNER_GEO[oid]||(GEO_MAP[d.geo||""]||null);
-  d.head  =OWNER_HEAD_MAP[oid]||(d.bu==="MarTech"?"Jaydeep Salla":d.region==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta");
+// ── Local storage helpers ──
+function loadInputs(){
+  try{const raw=localStorage.getItem(LS_KEY);manualInputs=raw?JSON.parse(raw):{};} catch(e){manualInputs={};}
 }
-
-// ── State ──
-let allDeals=[], dealServiceMap={}, isSyncing=false;
-let manualInputs={};
-const LS_KEY="nexus_funnel_v2_inputs";
-let ownerManuallyFiltered=false;
-
-// ── Formatters ──
-function fmt$(n,compact=true){
-  if(n===null||n===undefined||isNaN(n))return"—";
-  if(n===0)return"$0";
-  const a=Math.abs(n);const s=n<0?"−$":"$";
-  if(compact){
-    if(a>=1000000)return s+(a/1000000).toFixed(2)+"M";
-    if(a>=1000)return s+(a/1000).toFixed(0)+"K";
-  }
-  return s+Math.round(a).toLocaleString();
-}
-function monthLabel(m){
-  if(!m)return"";
-  const[mn,yr]=m.split("-");
-  const idx=MFULL.indexOf(mn);
-  return idx>=0?`${MSHRT[idx]} ${yr}`:m;
-}
-
-// ── Local storage ──
-function loadInputs(){try{const r=localStorage.getItem(LS_KEY);manualInputs=r?JSON.parse(r):{};} catch(e){manualInputs={};}}
 function saveInputs(){
-  document.querySelectorAll(".inp-field").forEach(el=>{
-    manualInputs[el.dataset.key]=parseFloat(el.value)||0;
+  // Read all input fields
+  document.querySelectorAll(".input-cell").forEach(inp=>{
+    const key=inp.dataset.key;
+    if(key){
+      const val=parseFloat(inp.value.replace(/[$,]/g,""))||0;
+      manualInputs[key]=val;
+    }
   });
   try{
     localStorage.setItem(LS_KEY,JSON.stringify(manualInputs));
-    $("save-indicator").classList.add("show");
-    setTimeout(()=>$("save-indicator").classList.remove("show"),2000);
+    const ind=$("save-indicator");
+    ind.classList.add("show");
+    setTimeout(()=>ind.classList.remove("show"),2000);
   }catch(e){console.error("Save failed:",e);}
-  render(); // re-render waterfall with new inputs
 }
-function getInput(key){return manualInputs[key]||0;}
+function getInput(month,ownerId,field){
+  const key=`${month}|${ownerId}|${field}`;
+  return manualInputs[key]||0;
+}
 function inputKey(month,ownerId,field){return`${month}|${ownerId}|${field}`;}
-// Aggregate input across filtered owners
-// Reads aggregate inputs stored at agg|month|bu|head|region|field key
-// Must be called with the same filterKey used by renderInputs
-function aggInput(field, filterKey){
-  return getInput(`agg|${filterKey}|${field}`);
-}
-
-// ── Auth ──
-function checkSSO(){
-  if(localStorage.getItem("nexus_auth")==="1"){$("login-overlay").style.display="none";return true;}
-  return false;
-}
-async function doLogin(){
-  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
-  if(!pw){err.textContent="Please enter the access password.";return;}
-  btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
-  try{
-    const res=await fetch("/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:""})});
-    const data=await res.json();
-    if(data.success){localStorage.setItem("nexus_auth","1");$("login-overlay").style.display="none";doSync();}
-    else if(res.status===500||data.error)err.textContent="Server config error. Contact Mayur.";
-    else{err.textContent="Incorrect password.";$("pw-input").value="";$("pw-input").focus();}
-  }catch(e){err.textContent="Connection error.";}
-  finally{btn.disabled=false;btn.textContent="Access Dashboard";}
-}
-
-// ── Owner multi-select (filter bar) ──
-function initOwnerMS(){
-  const groups={};
-  ALL_OWNERS.forEach(o=>{if(!groups[o.group])groups[o.group]=[];groups[o.group].push(o);});
-  let html="";
-  Object.entries(groups).forEach(([grp,owners])=>{
-    html+=`<div class="ms-grp-hdr">${grp}</div>`;
-    owners.forEach(o=>{
-      html+=`<div class="ms-item"><input type="checkbox" id="fow-${o.id}" checked onchange="onOwnerMSChange()"><label for="fow-${o.id}">${o.name}</label></div>`;
-    });
-  });
-  $("owner-ms-list").innerHTML=html;
-}
-function toggleOwnerMS(e){e.stopPropagation();$("owner-ms-dropdown").classList.toggle("open");}
-function getSelectedOwnerIds(){return ALL_OWNERS.filter(o=>{const el=$("fow-"+o.id);return !el||el.checked;}).map(o=>o.id);}
-function updateOwnerMSLabel(){
-  const sel=getSelectedOwnerIds();
-  $("owner-ms-label").textContent=sel.length===ALL_OWNERS.length?"All Owners":sel.length===0?"None":sel.length===1?(OWN[sel[0]]||sel[0]):`${sel.length} Owners`;
-}
-function selectAllOwners(){ALL_OWNERS.forEach(o=>{const el=$("fow-"+o.id);if(el)el.checked=true;});ownerManuallyFiltered=false;updateOwnerMSLabel();render();}
-function deselectAllOwners(){ALL_OWNERS.forEach(o=>{const el=$("fow-"+o.id);if(el)el.checked=false;});ownerManuallyFiltered=true;updateOwnerMSLabel();}
-function onOwnerMSChange(){ownerManuallyFiltered=true;updateOwnerMSLabel();render();}
-document.addEventListener("click",e=>{if(!$("owner-ms-wrap")?.contains(e.target))$("owner-ms-dropdown")?.classList.remove("open");});
-
-// ── Head cascade: selecting a head pre-sets BU + restricts owner list ──
-function onHeadChange(){
-  const head=$("head-sel").value;
-  const buSel=$("bu-sel");
-  if(head&&HEAD_BU[head]){
-    buSel.value=HEAD_BU[head];
-  } else if(!head){
-    // leave BU as is
-  }
-  // Cascade owner list
-  if(head){
-    const validIds=new Set(HEAD_OWNER_IDS[head]||[]);
-    ALL_OWNERS.forEach(o=>{const el=$("fow-"+o.id);if(el)el.checked=validIds.has(o.id);});
-    ownerManuallyFiltered=false;
-  } else {
-    // Reset owners to all
-    ALL_OWNERS.forEach(o=>{const el=$("fow-"+o.id);if(el)el.checked=true;});
-    ownerManuallyFiltered=false;
-  }
-  updateOwnerMSLabel();
-  render();
-}
-function onBUChange(){render();}
-function onFilterChange(){render();}
-
-// ── Collapsible panels ──
-function togglePanel(id){
-  const body=$(`${id}-body`);
-  const toggle=$(`${id}-toggle`);
-  body.classList.toggle("open");
-  toggle.classList.toggle("open");
-}
 
 // ── Data fetch ──
 async function fetchDeals(month){
@@ -680,7 +506,7 @@ async function fetchDeals(month){
         {propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},
         {propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}
       ]}],
-      properties:["dealname","amount_in_home_currency","hubspot_owner_id","closedate","invoice_booking_month__invoice_app_","geo__invoice_app_","engagement_model__invoice_app_"],
+      properties:["dealname","amount_in_home_currency","hubspot_owner_id","closedate","invoice_booking_month__invoice_app_","engagement_model__invoice_app_"],
       limit:200
     };
     if(after)body.after=after;
@@ -694,7 +520,7 @@ async function fetchDeals(month){
         amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
         owner_id:String(r.properties?.hubspot_owner_id||""),
         closedate:(r.properties?.closedate||"").split("T")[0],
-        geo:(r.properties?.geo__invoice_app_||"").trim(),
+        eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),
         month:(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase()||month,
       });
     });
@@ -711,13 +537,18 @@ async function fetchLineItems(deals){
       const res=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
       if(res.ok){
         const data=await res.json();
-        Object.entries(data.items||{}).forEach(([did,lis])=>{
+        const items=data.items||{};
+        Object.entries(items).forEach(([did,lis])=>{
           dealServiceMap[did]=(lis||[]).map(li=>({name:li.name||"",amount:li.amount||0}));
         });
       }
     }catch(e){console.error("Line items error:",e);}
   }
 }
+
+// ── Filter change handlers ──
+function onMonthChange(){selectedMonth=$("month-sel").value;renderFunnel();}
+function onBUChange(){selectedBU=$("bu-sel").value;renderFunnel();}
 
 // ── Main sync ──
 async function doSync(initial=false){
@@ -729,27 +560,26 @@ async function doSync(initial=false){
   $("stxt").textContent="SYNCING";
 
   try{
+    // Fetch deals for the last 4 months (covers all months in the selector)
     const months=["april-2026","may-2026","june-2026","july-2026"];
     const allFetched=[];
     for(const m of months){
       const deals=await fetchDeals(m);
       allFetched.push(...deals);
     }
-    // Dedup: dealname + amount + month
+    // Dedup
     const seen=new Set();
     allDeals=allFetched.filter(d=>{
-      const key=`${d.dealname}|${d.amount}|${d.month}`;
+      const key=d.dealname+"|"+d.amount+"|"+d.owner_id;
       if(seen.has(key))return false;
       seen.add(key);return true;
     });
     await fetchLineItems(allDeals);
-    // Attribution pass
-    allDeals.forEach(attributeDeal);
-
     $("sdot").style.background="#0CCE6B";
     $("stxt").textContent="LIVE";
     $("last-sync").textContent=`Synced ${new Date().toLocaleTimeString()}`;
-    render();
+    $("ftable-sub").textContent=`${allDeals.length} deals loaded · line items classified`;
+    renderFunnel();
   }catch(e){
     console.error(e);
     $("err-msg").textContent=e.message;
@@ -763,315 +593,260 @@ async function doSync(initial=false){
   }
 }
 
-// ── Filter helpers ──
-function getFilters(){
-  return{
-    month:$("month-sel").value,
-    bu:$("bu-sel").value,
-    head:$("head-sel").value,
-    region:$("region-sel").value,
-    eng:$("eng-sel").value,
-    ownerIds:getSelectedOwnerIds()
-  };
-}
-function passesFilters(d,f){
-  if(d.month!==f.month)return false;
-  if(f.bu&&d.bu!==f.bu)return false;
-  if(f.head&&d.head!==f.head)return false;
-  if(f.region&&d.region!==f.region)return false;
-  if(ownerManuallyFiltered&&f.ownerIds.length<ALL_OWNERS.length){
-    if(!f.ownerIds.includes(String(d.owner_id)))return false;
-  }
-  return true;
-}
-
-// ── Compute deal's recurring amount for a given BU context ──
-function recurringAmtForBU(d, bu){
-  const buAmt=liAmountsByBU(d);
-  if(bu==="Digital")  return buAmt.digitalPure; // pure Search+Web only
-  if(bu==="MarTech")  return buAmt.marTech;     // all MarTech LIs
-  // All BUs: pure digital + martech (no double-count; design excluded from pure)
-  return buAmt.digitalPure + buAmt.marTech;
-}
-
-// ── Core compute ──
-function computeFunnel(f){
+// ── Funnel data engine ──
+function computeOwnerRecurring(ownerId, month){
+  const ownerDeals=allDeals.filter(d=>d.owner_id===ownerId && d.owner_id && month_of(d)===month);
   const closedateDay=d=>parseInt((d.closedate||"").split("-")[2]||"0",10);
 
   let opening=0, postPaid=0;
-  const ownerOpening={};
-  const ownerPostPaid={};
 
-  allDeals.forEach(d=>{
-    if(!passesFilters(d,f))return;
+  ownerDeals.forEach(d=>{
     const eng=resolveEng(d);
-    if(!eng)return;
-
-    // Engagement filter: only include deals matching selected eng type
-    if(f.eng&&eng!==f.eng)return;
-
-    // Amount based on BU context
-    const amt=recurringAmtForBU(d, f.bu);
-    if(!amt)return;
-
+    if(eng!=="Recurring")return;
+    const bu=liAmountsByBU(d);
+    // Pure Digital = Search + Web line items
+    const pureAmt = selectedBU==="Digital" ? bu.digitalPure : (d.amount - bu.digitalPure - bu.interBU);
     const day=closedateDay(d);
-    const oid=String(d.owner_id);
-    if(!ownerOpening[oid])ownerOpening[oid]=0;
-    if(!ownerPostPaid[oid])ownerPostPaid[oid]=0;
-
-    if(eng==="Recurring"||!f.eng){
-      // For "Recurring" filter or "All" (but we count Recurring for opening/postPaid)
-      const isRec=eng==="Recurring";
-      if(isRec){
-        if(day>=1&&day<=15){opening+=amt;ownerOpening[oid]+=amt;}
-        else if(day>=16)   {postPaid+=amt;ownerPostPaid[oid]+=amt;}
-      }
-    } else if(f.eng==="P2P"){
-      // P2P mode: opening = all P2P deals day 1-15, postPaid = 16+
-      if(day>=1&&day<=15){opening+=amt;ownerOpening[oid]+=amt;}
-      else if(day>=16)   {postPaid+=amt;ownerPostPaid[oid]+=amt;}
-    }
+    if(day>=1&&day<=15) opening+=pureAmt;
+    else if(day>=16)    postPaid+=pureAmt;
   });
 
-  return{opening, postPaid, ownerOpening, ownerPostPaid};
+  return{opening,postPaid};
 }
+
+function month_of(d){return(d.month||"").toLowerCase();}
 
 // ── Render ──
-function render(){
+function renderFunnel(){
   if(!allDeals.length)return;
-  const f=getFilters();
 
-  // Aggregate inputs use a filter-state key so they persist per month+BU+head+region
-  const visibleOwnerIds=ownerManuallyFiltered?f.ownerIds:ALL_OWNERS.map(o=>o.id);
-  const filterKey=`${f.month}|${f.bu||"all"}|${f.head||"all"}|${f.region||"all"}`;
-  const target      = aggInput("target",          filterKey);
-  const predLoss    = aggInput("pred_loss",        filterKey);
-  const closePipeline=aggInput("closure_pipeline", filterKey);
-  const closeOpp    = aggInput("closure_opp",      filterKey);
+  const owners=selectedBU==="Digital"?DIGITAL_OWNERS:MARTECH_OWNERS;
+  // Only show owners with data in this month
+  const activeOwners=owners.filter(o=>{
+    const deals=allDeals.filter(d=>d.owner_id===o.id);
+    return deals.length>0;
+  });
+  const displayOwners=activeOwners.length>0?activeOwners:owners.slice(0,5);
 
-  const {opening, postPaid, ownerOpening, ownerPostPaid} = computeFunnel(f);
+  $("ftable-title").textContent=`Recurring — ${selectedBU} BU · ${monthLabel(selectedMonth)}`;
+  $("funnel-meta").textContent=`· ${allDeals.filter(d=>month_of(d)===selectedMonth).length} deals this month`;
 
-  const expected = opening - predLoss + postPaid + closePipeline + closeOpp;
-  const gap = target ? expected - target : null;
+  // Build header
+  const headRow=$("ftable-head");
+  headRow.innerHTML=`<th style="text-align:left">Row</th>`+
+    displayOwners.map(o=>`<th>${o.name.split(" ")[0]}</th>`).join("")+
+    `<th>Total</th>`;
 
-  // ── KPI Strip ──
-  const engLabel = f.eng||"All";
-  const buLabel  = f.bu ||"All BUs";
-  $("kpi-meta").textContent=`· ${monthLabel(f.month)} · ${buLabel} · ${engLabel}`;
+  // Compute data per owner
+  const ownerData=displayOwners.map(o=>{
+    const hubs=computeOwnerRecurring(o.id, selectedMonth);
+    const target=getInput(selectedMonth,o.id,"target");
+    const forecast=getInput(selectedMonth,o.id,"forecast");
+    const predLoss=getInput(selectedMonth,o.id,"pred_loss");
+    const expPostPaid=getInput(selectedMonth,o.id,"exp_postpaid");
+    const closureFromPipeline=getInput(selectedMonth,o.id,"closure_pipeline");
+    const closureFromOpp=getInput(selectedMonth,o.id,"closure_opp");
+    const expClosingRecurring=hubs.opening - predLoss + hubs.postPaid + closureFromPipeline + closureFromOpp;
+    return{
+      ...o,
+      target, forecast, predLoss,
+      opening:hubs.opening,
+      postPaid:hubs.postPaid,
+      expPostPaid,
+      closureFromPipeline,
+      closureFromOpp,
+      expClosingRecurring,
+    };
+  });
 
-  $("kpi-opening").textContent = fmt$(opening);
-  $("kpi-target").textContent  = target?fmt$(target):"—";
-  $("kpi-expected").textContent= fmt$(expected);
+  // Column totals
+  const tot=f=>ownerData.reduce((s,o)=>s+(o[f]||0),0);
+  // Manual input column totals (reads from manualInputs by field key)
+  const tot2=field=>displayOwners.reduce((s,o)=>s+getInput(selectedMonth,o.id,field),0);
 
-  const gapCard=$("kpi-gap-card");
-  gapCard.className="kpi-card";
-  const gapEl=$("kpi-gap");
-  const gapSub=$("kpi-gap-sub");
-  if(gap===null){
-    gapEl.textContent="—";gapEl.className="kpi-value";
-    gapCard.className+=" gap-zero";gapSub.textContent="Set target in inputs";
-  } else if(gap>0){
-    gapEl.textContent="+"+fmt$(gap);gapEl.className="kpi-value pos";
-    gapCard.className+=" gap-pos";gapSub.textContent="Ahead of target";
-  } else if(gap<0){
-    gapEl.textContent=fmt$(gap);gapEl.className="kpi-value neg";
-    gapCard.className+=" gap-neg";gapSub.textContent="Behind target";
-  } else {
-    gapEl.textContent="On target";gapEl.className="kpi-value";
-    gapCard.className+=" gap-zero";gapSub.textContent="Exactly on target";
+  function mkInput(month,ownerId,field,val){
+    const key=inputKey(month,ownerId,field);
+    return`<input class="input-cell green-input" data-key="${key}" value="${val?Math.round(val):''}" placeholder="0" type="number" min="0">`;
   }
+  function mkCell(val,cls=""){
+    const v=val||0;
+    const sign=v<0?"neg":v>0?"pos":"zero";
+    return`<span class="computed ${sign} ${cls}">${fmt$(v)}</span>`;
+  }
+
+  const rows=[
+    // Section: Recurring
+    {type:"section", label:"RECURRING"},
+    {
+      type:"row",label:"Target",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"target",o.target)),
+      total:mkCell(tot("target")),
+      editable:true
+    },
+    {
+      type:"row",label:"Forecast (Sureshot + Chase)",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"forecast",o.forecast)),
+      total:mkCell(tot("forecast")),
+      editable:true
+    },
+    {type:"spacer"},
+    {
+      type:"row",label:"Opening (Without Post Paid)",
+      cells:ownerData.map(o=>mkCell(o.opening)),
+      total:mkCell(tot("opening")),
+      editable:false,
+      hint:"HubSpot · Recurring · closedate 1–15"
+    },
+    {
+      type:"row",label:"Predicted Loss This Month",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"pred_loss",o.predLoss)),
+      total:mkCell(tot("predLoss")),
+      editable:true
+    },
+    {
+      type:"row",label:"Expected Post Paid Invoices",
+      cells:ownerData.map(o=>mkCell(o.postPaid)),
+      total:mkCell(tot("postPaid")),
+      editable:false,
+      hint:"HubSpot · Recurring · closedate 16–30"
+    },
+    {type:"spacer"},
+    {
+      type:"row",label:"Existing Pipeline at Month Start",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"closure_pipeline",o.closureFromPipeline)),
+      total:mkCell(tot("closureFromPipeline")),
+      editable:true,
+      hint:"Open pipelines last 3 months + current month"
+    },
+    {
+      type:"row",label:"Closure Expected from Pipeline",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"closure_exp_pipeline",getInput(selectedMonth,o.id,"closure_exp_pipeline"))),
+      total:mkCell(tot2("closure_exp_pipeline")),
+      editable:true,
+      hint:"Manual · expected closure amount"
+    },
+    {
+      type:"row",label:"Pipeline Won This Month",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"pipeline_won",getInput(selectedMonth,o.id,"pipeline_won"))),
+      total:mkCell(tot2("pipeline_won")),
+      editable:true,
+      hint:"Manual · pipeline deals won"
+    },
+    {type:"spacer"},
+    {
+      type:"row",label:"Existing Opportunity at Month Start",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"closure_opp",o.closureFromOpp)),
+      total:mkCell(tot("closureFromOpp")),
+      editable:true,
+      hint:"Open opportunities last 3 months + current month"
+    },
+    {
+      type:"row",label:"Closure Expected from Opportunities",
+      cells:ownerData.map(o=>mkInput(selectedMonth,o.id,"closure_exp_opp",getInput(selectedMonth,o.id,"closure_exp_opp"))),
+      total:mkCell(tot2("closure_exp_opp")),
+      editable:true,
+      hint:"Manual · expected closure amount"
+    },
+    {type:"spacer"},
+    // Subtotal
+    {
+      type:"subtotal",label:"Expected Closing of Recurring",
+      cells:ownerData.map(o=>mkCell(o.expClosingRecurring,"bold")),
+      total:mkCell(tot("expClosingRecurring")),
+    },
+  ];
+
+  const tbody=$("ftable-body");
+  tbody.innerHTML=rows.map(row=>{
+    if(row.type==="section")
+      return`<tr class="row-section"><td colspan="${displayOwners.length+2}">${row.label}</td></tr>`;
+    if(row.type==="spacer")
+      return`<tr><td colspan="${displayOwners.length+2}" style="height:4px;background:#FAFAFA"></td></tr>`;
+    const edCls=row.editable?"editable":"";
+    const labelCell=`<td style="font-weight:${row.editable?'600':'500'};color:${row.editable?'#434343':'#696969'}">
+      ${row.label}
+      ${row.hint?`<div style="font-size:8px;color:#9A9A9A;font-weight:500;margin-top:1px">${row.hint}</div>`:''}
+      ${row.note?`<div style="font-size:8px;color:#C0C0C0;font-weight:500;margin-top:1px">${row.note}</div>`:''}
+    </td>`;
+    const dataCells=(row.cells||[]).map(c=>`<td class="${edCls}">${c}</td>`).join("");
+    const totalCell=`<td style="font-weight:700;border-left:1px solid #E2E2E2">${row.total||""}</td>`;
+    const rowCls=row.type==="subtotal"?"row-subtotal":row.type==="total"?"row-total":"row-group";
+    return`<tr class="${rowCls}">${labelCell}${dataCells}${totalCell}</tr>`;
+  }).join("");
+
+  // Restore saved input values
+  document.querySelectorAll(".input-cell").forEach(inp=>{
+    const key=inp.dataset.key;
+    if(key&&manualInputs[key]!==undefined){inp.value=manualInputs[key]||"";}
+  });
+
+  // ── KPI strip ──
+  $("kpi-meta").textContent=`· ${monthLabel(selectedMonth)} · ${selectedBU} BU`;
+  $("kpi-opening").textContent=fmt$(tot("opening"));
+  $("kpi-target").textContent=tot("target")?fmt$(tot("target")):"—";
+  $("kpi-expected").textContent=fmt$(tot("expClosingRecurring"));
+  const gap=tot("target")?(tot("expClosingRecurring")-tot("target")):null;
+  const gapEl=$("kpi-gap"),gapCard=$("kpi-gap-card"),gapSub=$("kpi-gap-sub");
+  if(gap===null){gapEl.textContent="—";gapEl.className="kpi-val";gapCard.style.borderTopColor="#E2E2E2";gapSub.textContent="Set target in table below";}
+  else if(gap>0){gapEl.textContent="+"+fmt$(gap);gapEl.className="kpi-val pos";gapCard.style.borderTopColor="#006E5E";gapSub.textContent="Ahead of target";}
+  else if(gap<0){gapEl.textContent=fmt$(gap);gapEl.className="kpi-val neg";gapCard.style.borderTopColor="#C0143C";gapSub.textContent="Behind target";}
+  else{gapEl.textContent="On Target";gapEl.className="kpi-val pos";gapCard.style.borderTopColor="#FFDA30";gapSub.textContent="Exactly on target";}
 
   // ── Waterfall ──
-  $("wf-title").textContent=`${engLabel} Revenue Waterfall · ${monthLabel(f.month)}`;
-  $("wf-sub").textContent=`${buLabel}${f.head?" · "+f.head.split(" ")[0]:""}${f.region?" · "+f.region:""}`;
+  $("wf-title").textContent=`Recurring · ${selectedBU} · ${monthLabel(selectedMonth)}`;
+  $("wf-sub").textContent=`Opening ${fmt$(tot("opening"))} → Expected ${fmt$(tot("expClosingRecurring"))}${tot("target")?" · Target "+fmt$(tot("target")):""}`;
+  renderWaterfall(tot("opening"),tot("predLoss"),tot("postPaid"),tot("closureFromPipeline"),tot("closureFromOpp"),tot("expClosingRecurring"),tot("target"));
+}
 
+function renderWaterfall(opening,predLoss,postPaid,pipeline,opp,expected,target){
+  const H=170;
   const steps=[
-    {key:"opening",   label:"Opening",     val:opening,       kind:"opening",  hint:"Recurring closedate 1–15"},
-    {key:"pred_loss", label:"Predicted\nLoss",val:-predLoss,  kind:"sub",      hint:"Manual input"},
-    {key:"post_paid", label:"Post Paid",   val:postPaid,      kind:"add",      hint:"Recurring closedate 16+"},
-    {key:"pipeline",  label:"Pipeline\nClosure",val:closePipeline,kind:"add",  hint:"Manual input"},
-    {key:"opp",       label:"Opp.\nClosure",val:closeOpp,     kind:"add",      hint:"Manual input"},
-    {key:"expected",  label:"Expected\nClosing",val:expected, kind:"final",    hint:""},
+    {label:"Opening",      val:opening,    kind:"base"},
+    {label:"−Predicted\nLoss",val:-predLoss,kind:"sub"},
+    {label:"Post Paid",    val:postPaid,   kind:"add"},
+    {label:"Pipeline\nClosure",val:pipeline,kind:"add"},
+    {label:"Opp.\nClosure",val:opp,        kind:"add"},
+    {label:"Expected\nClosing",val:expected,kind:"final"},
   ];
-
-  renderWaterfall(steps, target);
-
-  // ── Owner bars ──
-  renderOwnerBars(ownerOpening, ownerPostPaid, f);
-
-  // ── Inputs panel ──
-  renderInputs(f, visibleOwnerIds, filterKey);
-}
-
-function renderWaterfall(steps, target){
-  const area=$("wf-chart-area");
-  const maxAbs=Math.max(...steps.map(s=>Math.abs(s.val)),target||0,1);
-  const H=190; // chart height px
-
-  // Build running-base for floating bars
-  let base=0;
+  const maxVal=Math.max(...steps.map(s=>Math.abs(s.val)),target||0,1);
+  let running=0;
   const bars=steps.map(s=>{
-    const isAnchored=s.key==="opening"||s.key==="expected";
-    const barBase=isAnchored?0:base;
-    const barH=Math.max(Math.abs(s.val)/maxAbs*H,s.val!==0?2:0);
-    const result={...s,barBase,barH,isAnchored};
-    if(!isAnchored)base+=s.val;
-    return result;
+    const anchored=s.kind==="base"||s.kind==="final";
+    const base=anchored?0:running;
+    const h=Math.max(Math.abs(s.val)/maxVal*H,s.val!==0?3:0);
+    if(!anchored)running+=s.val;
+    return{...s,base,h};
   });
 
-  // Target line position
-  const targetY=target?H-(target/maxAbs*H):null;
+  const clr={base:"#3B3561",add:"#006E5E",sub:"#C0143C",final:"#473400"};
+  const targetPx=target?(target/maxVal*H):null;
 
-  let html=`<div style="position:relative;height:${H+40}px;display:flex;align-items:flex-end;gap:0;border-bottom:1px solid #E2E2E2">`;
-
-  bars.forEach((s,i)=>{
-    const pct=Math.abs(s.val)/maxAbs*100;
-    const baseOffPct=(s.barBase/maxAbs)*100;
-    const colorMap={opening:"#3B3561",add:"#006E5E",sub:"#E84040",final:"#473400",zero:"#E2E2E2"};
-    const col=s.val===0?"zero":s.kind;
-    const color=colorMap[col]||"#9A9A9A";
-    const bottom=s.kind==="sub"?baseOffPct:baseOffPct;
-    const showSign=s.kind==="add"&&s.val>0?"+":s.kind==="sub"&&s.val<0?"−":"";
-    const amtLabel=s.val===0?"$0":fmt$(Math.abs(s.val));
+  let html='<div style="display:flex;align-items:flex-end;gap:8px;height:'+H+'px;border-bottom:1px solid #E2E2E2;margin-bottom:34px;position:relative">';
+  bars.forEach(s=>{
+    const color=s.val===0?"#E2E2E2":clr[s.kind]||"#9A9A9A";
+    const basePx=(s.base/maxVal*H);
     const amtColor=s.kind==="add"?"#006E5E":s.kind==="sub"?"#C0143C":"#434343";
-
-    // Connector line to next bar (except last)
-    const nextBase=i<bars.length-1?bars[i+1].barBase:null;
-
-    html+=`
-    <div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative;height:100%">
-      <div style="position:absolute;bottom:0;left:0;right:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end">
-        <div style="position:relative;width:72%;margin:0 auto">
-          <div style="height:${s.barH.toFixed(1)}px;background:${color};border-radius:${s.kind==="sub"?"0 0 4px 4px":"4px 4px 0 0"};margin-bottom:${bottom.toFixed(1)}%;min-height:${s.val!==0?2:0}px;transition:height .3s"></div>
-        </div>
-      </div>
-      <div style="position:absolute;bottom:${(Math.max(s.barH+bottom*H/100,0)+4).toFixed(0)}px;text-align:center;width:100%">
-        <div style="font-size:9.5px;font-weight:800;color:${amtColor}">${showSign}${amtLabel}</div>
-      </div>
-      <div style="position:absolute;bottom:-32px;text-align:center;width:100%;padding:0 2px">
-        <div style="font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;white-space:pre-line">${s.label}</div>
-      </div>
-    </div>`;
+    const sign=s.kind==="add"&&s.val>0?"+":s.kind==="sub"?"":"";
+    const displayAmt=s.val===0?"$0":fmt$(Math.abs(s.val));
+    const displaySign=s.kind==="sub"&&s.val!==0?"−":"";
+    html+=
+      '<div style="flex:1;position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center">'+
+        '<div style="font-size:9px;font-weight:800;color:'+amtColor+';text-align:center;margin-bottom:4px;white-space:nowrap">'+sign+displaySign+displayAmt+'</div>'+
+        '<div style="width:72%;height:'+s.h.toFixed(1)+'px;background:'+color+';border-radius:'+(s.kind==="sub"?"0 0 4px 4px":"4px 4px 0 0")+';margin-bottom:'+basePx.toFixed(1)+'px;min-height:'+(s.val!==0?3:0)+'px"></div>'+
+        '<div style="position:absolute;bottom:-30px;left:0;right:0;text-align:center;font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;white-space:pre-line">'+s.label+'</div>'+
+      '</div>';
   });
-
-  // Target line overlay
-  if(targetY!==null&&targetY>=0&&targetY<=H){
-    const fromBottom=H-targetY;
-    html+=`<div style="position:absolute;left:0;right:0;bottom:${fromBottom.toFixed(0)}px;height:2px;background:#FFDA30;opacity:.8;pointer-events:none;z-index:2">
-      <span style="position:absolute;right:4px;top:-10px;font-size:8px;font-weight:700;color:#473400;background:#FFDA30;padding:1px 4px;border-radius:2px">Target ${fmt$(target)}</span>
-    </div>`;
+  if(targetPx!==null&&targetPx>0&&targetPx<=H){
+    html+='<div style="position:absolute;left:0;right:0;bottom:'+targetPx.toFixed(0)+'px;height:2px;background:#FFDA30;opacity:.85;pointer-events:none">'+
+      '<span style="position:absolute;right:4px;top:-11px;font-size:8px;font-weight:700;color:#473400;background:#FFDA30;padding:1px 4px;border-radius:2px">Target '+fmt$(target)+'</span>'+
+    '</div>';
   }
+  html+='</div>';
+  $("wf-chart").innerHTML=html;
 
-  html+=`</div>`;
-  area.innerHTML=html;
-}
-
-function renderOwnerBars(ownerOpening, ownerPostPaid, f){
-  const wrap=$("owner-bars-wrap");
-  // Collect all owners with data
-  const ownerList=Object.entries(ownerOpening)
-    .map(([id,op])=>({id,name:OWN[id]||("Mbr-"+id.slice(-4)),opening:op,postPaid:ownerPostPaid[id]||0}))
-    .filter(o=>o.opening>0||o.postPaid>0)
-    .sort((a,b)=>b.opening-a.opening);
-
-  if(!ownerList.length){
-    wrap.innerHTML=`<div class="no-data">No data for current filters</div>`;
-    $("owners-panel-sub").textContent="No data";
-    return;
-  }
-  $("owners-panel-sub").textContent=`${ownerList.length} owners · sorted by Opening`;
-
-  const maxOpening=Math.max(...ownerList.map(o=>o.opening),1);
-
-  let html=`<div class="ob-legend">
-    <div class="ob-leg-item"><div class="ob-leg-dot" style="background:#3B3561"></div>Opening (1–15)</div>
-    <div class="ob-leg-item"><div class="ob-leg-dot" style="background:#9A9A9A"></div>Post Paid (16+)</div>
-  </div>`;
-
-  ownerList.forEach(o=>{
-    const opPct=(o.opening/maxOpening*100).toFixed(1);
-    const ppPct=(o.postPaid/maxOpening*100).toFixed(1);
-    html+=`
-    <div class="ob-row">
-      <div class="ob-name" title="${o.name}">${o.name.split(" ")[0]}</div>
-      <div style="flex:1">
-        <div class="ob-bar-wrap" style="margin-bottom:3px">
-          <div class="ob-bar" style="width:${opPct}%;background:#3B3561"></div>
-        </div>
-        ${o.postPaid>0?`<div class="ob-bar-wrap"><div class="ob-bar" style="width:${ppPct}%;background:#9A9A9A;opacity:.6"></div></div>`:""}
-      </div>
-      <div class="ob-val">
-        <div style="font-size:10px;font-weight:700;color:#3B3561">${fmt$(o.opening)}</div>
-        ${o.postPaid>0?`<div style="font-size:9px;font-weight:600;color:#9A9A9A">${fmt$(o.postPaid)}</div>`:""}
-      </div>
-    </div>`;
-  });
-
-  wrap.innerHTML=html;
-}
-
-function renderInputs(f, ownerIds, filterKey){
-  const grid=$("inputs-grid");
-  const month=f.month;
-
-  const fields=[
-    {key:"target",      label:"Monthly Target",       hint:"Overall recurring revenue target"},
-    {key:"pred_loss",   label:"Predicted Loss",        hint:"Expected attrition this month"},
-    {key:"closure_pipeline",label:"Pipeline Closures", hint:"Expected closures from existing pipeline"},
-    {key:"closure_opp", label:"Opp. Closures",         hint:"Expected closures from opportunities"},
-  ];
-
-  let html=`<div style="grid-column:1/-1;font-size:9px;color:#9A9A9A;font-weight:600;margin-bottom:4px">
-    Inputs for: <strong style="color:#434343">${monthLabel(month)} · ${f.bu||"All BUs"}${f.head?" · "+f.head.split(" ")[0]:""}${f.region?" · "+f.region:""}</strong>
-  </div>`;
-
-  fields.forEach(fld=>{
-    const key=`agg|${filterKey}|${fld.key}`;
-    const val=getInput(key);
-    html+=`
-    <div class="input-group">
-      <div class="input-group-hdr">${fld.label}</div>
-      <div class="input-field-wrap">
-        <div class="input-field-lbl" style="font-size:9px;color:#9A9A9A">${fld.hint}</div>
-        <input class="input-field inp-field" data-key="${key}" type="number" min="0" step="100" value="${val||""}" placeholder="$0">
-      </div>
-    </div>`;
-  });
-
-  // Per-owner target breakdown (sub-section)
-  const ownersWithData=ALL_OWNERS.filter(o=>{
-    if(ownerManuallyFiltered&&!ownerIds.includes(o.id))return false;
-    const headMatch=!f.head||(OWNER_HEAD_MAP[o.id]===f.head);
-    const buMatch=!f.bu||(OWNER_BU_MAP[o.id]===f.bu);
-    const regionMatch=!f.region||(OWNER_GEO[o.id]===f.region);
-    return headMatch&&buMatch&&regionMatch;
-  });
-
-  if(ownersWithData.length>1&&ownersWithData.length<=15){
-    html+=`<div style="grid-column:1/-1;border-top:1px solid #F0F0F0;padding-top:14px;margin-top:4px">
-      <div style="font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px">Per-Owner Targets</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">`;
-    ownersWithData.forEach(o=>{
-      const key=inputKey(month,o.id,"owner_target");
-      const val=getInput(key);
-      html+=`
-      <div class="input-field-wrap" style="flex-direction:column;align-items:flex-start;gap:3px">
-        <div style="font-size:9px;font-weight:700;color:#434343">${o.name.split(" ")[0]}</div>
-        <input class="input-field inp-field" data-key="${key}" type="number" min="0" step="100" value="${val||""}" placeholder="$0" style="text-align:left;color:#696969;font-weight:600">
-      </div>`;
-    });
-    html+=`</div></div>`;
-  }
-
-  grid.innerHTML=html;
-}
-
-// ── INIT ──
+// ════ INIT ════
 window.addEventListener("DOMContentLoaded",()=>{
   loadInputs();
-  initOwnerMS();
-  // Default: Recurring selected
-  $("eng-sel").value="Recurring";
   if(checkSSO()){doSync(true);}
 });
 </script>
