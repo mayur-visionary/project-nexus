@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funnel Desk · Nexus · Mavlers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-logo{margin-bottom:22px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+.hdr{background:#473400}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-brand svg{transition:opacity .2s}
+.hdr-brand:hover svg{opacity:.85}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
+.reset-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.reset-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#fff}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.refresh-btn:disabled,.reset-btn:disabled{opacity:.35;cursor:not-allowed}
+.fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
+.fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:155px}
+.fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
+.fsel option{background:#333;color:#fff}
+.fsel.sm{max-width:120px}
+.custom-range{display:none;align-items:center;gap:5px}
+.custom-range.show{display:flex}
+.range-sep{font-size:9px;color:rgba(255,255,255,.35);font-weight:600}
+.vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
+.ms-wrap{position:relative}
+.ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
+.ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:230px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:360px;overflow-y:auto}
+.ms-dropdown.open{display:block}
+.ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
+.ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
+.ms-actions{display:flex;gap:8px}
+.ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
+.ms-act:hover{opacity:.7}
+.ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
+.ms-item:hover{background:rgba(255,255,255,.07)}
+.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
+.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+.err-wrap{max-width:1440px;margin:0 auto;padding:8px 28px 0}
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500}
+.err-bar strong{color:#FFDA30}
+.app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
+.sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
+.sb-section{margin-bottom:0}
+.sb-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:5px}
+.sb-sel{width:100%;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:none}
+.sb-sel:hover,.sb-sel:focus{border-color:#FFDA30;background:#FFFBEA}
+.sb-sel option{background:#fff;color:#434343}
+.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
+.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
+.nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
+.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
+.nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
+.main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
+.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;min-width:0}
+.kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:default;overflow:hidden;min-width:0}
+.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
+.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
+.kpi-val{font-size:clamp(11px,1.15vw,16px);font-weight:800;color:#434343;line-height:1.15;word-break:break-all;overflow-wrap:anywhere}
+.kpi-sub{font-size:10px;color:#696969;margin-top:4px;font-weight:600}
+.card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:15px 17px}
+.card-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.card-sub{font-size:10px;color:#696969;margin-bottom:12px;font-weight:600}
+.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
+.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+.lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
+.lo.show{display:flex}
+.spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;gap:0}
+.nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
+.nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
+.funnel-layout{flex:1;min-width:0}
+.funnel-main{max-width:1440px;padding:18px 28px 48px}
+.pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
+.pg:hover{background:#FFFBEA;border-color:#FFDA30}
+.pg.on{background:#FFDA30;color:#111;border-color:#FFDA30}
+.sidebar .ms-dropdown{min-width:100%}
+@media(max-width:900px){
+  .hdr-in{padding:14px 18px 0}.fbar{padding:10px 18px}.funnel-main{padding:16px 18px 40px}
+  .app-layout{flex-direction:column}.sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static}
+  .sb-section{flex:1;min-width:120px}.sb-divider{display:none}
+}
+@media(max-width:600px){.hdr-top{flex-direction:column}.hdr-right{justify-content:flex-start}.hdr-title{font-size:17px}.fbar-in{gap:6px}.fsel{max-width:130px;font-size:9px}.login-box{padding:28px 24px;margin:16px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+        <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title">Funnel Desk</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Funnel Desk</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">The Live Pulse of Mavlers Revenue</div>
+  </div>
+</div>
+
+<div class="lo" id="lo"><div class="spin"></div></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" href="/index.html" title="Back to Revenue Pulse" role="button">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+          <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+          <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+          <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+          <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+          <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+          <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title">Project Nexus</div>
+          <div class="hdr-sub">Funnel Desk</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="last-sync" id="last-sync"></div>
+        </div>
+        <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
+        <button class="refresh-btn" id="rfbtn" onclick="doFYSync(true)">⟳ Refresh</button>
+      </div>
+    </div>
+  </div>
+  <!-- NAV: Funnel Desk only + back link to Revenue Pulse -->
+  <div class="nav-tabs-bar">
+    <div class="nav-in">
+      <a class="nav-tab nav-tab-ext" href="/index.html" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">← Revenue Pulse</a>
+      <button class="nav-tab active" style="cursor:default">Funnel Desk</button>
+    </div>
+  </div>
+  <!-- FILTER BAR -->
+  <div class="fbar" id="fbar">
+    <div class="fbar-in">
+      <span class="fl">Period</span>
+      <select class="fsel" id="period-sel" onchange="onPeriodChange()">
+        <option value="this-month" selected>This Month</option>
+        <option value="last-month" id="opt-last-month">Last Month</option>
+        <option value="this-quarter">This Quarter (FY)</option>
+        <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
+        <option value="this-fy">This FY (Apr 2026)</option>
+        <option value="custom">Custom ▾</option>
+      </select>
+      <div class="custom-range" id="custom-range">
+        <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
+        <span class="range-sep">→</span>
+        <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
+      </div>
+      <div class="vdiv"></div>
+      <span class="fl">Business Unit</span>
+      <select class="fsel sm" id="bu-sel" onchange="onBUChange()">
+        <option value="">All BUs</option>
+        <option value="Digital">Digital</option>
+        <option value="MarTech">MarTech</option>
+      </select>
+      <div class="vdiv"></div>
+      <span class="fl">Region</span>
+      <div class="ms-wrap" id="geo-ms-wrap">
+        <div class="ms-btn" id="geo-ms-btn" onclick="toggleGeoMS(event)">
+          <span id="geo-ms-label">All Regions</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="geo-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Regions</span><div class="ms-actions"><span class="ms-act" onclick="selectAllGeo()">All</span><span class="ms-act" onclick="deselectAllGeo()">None</span></div></div>
+          <div id="geo-ms-list"></div>
+        </div>
+      </div>
+      <div class="vdiv"></div>
+      <span class="fl">Head</span>
+      <div class="ms-wrap" id="head-ms-wrap">
+        <div class="ms-btn" id="head-ms-btn" onclick="toggleHeadMS(event)">
+          <span id="head-ms-label">All Heads</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="head-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Heads</span><div class="ms-actions"><span class="ms-act" onclick="selectAllHeads()">All</span><span class="ms-act" onclick="deselectAllHeads()">None</span></div></div>
+          <div id="head-ms-list"></div>
+        </div>
+      </div>
+      <div class="vdiv"></div>
+      <span class="fl">Service</span>
+      <div class="ms-wrap" id="svc-ms-wrap">
+        <div class="ms-btn" id="svc-ms-btn" onclick="toggleSvcMS(event)">
+          <span id="svc-ms-label">All Services</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="svc-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Services</span><div class="ms-actions"><span class="ms-act" onclick="selectAllSvc()">All</span><span class="ms-act" onclick="deselectAllSvc()">None</span></div></div>
+          <div id="svc-ms-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="yellow-rule"></div>
+</div>
+
+<div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div></div>
+
+<!-- LAYOUT: Sidebar + Funnel Desk -->
+<div class="app-layout" id="app-layout">
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <div class="ms-wrap" id="ms-wrap" style="width:100%">
+        <div class="ms-btn sb-ms-btn" id="ms-btn" onclick="toggleMS(event)">
+          <span id="ms-label">All Owners</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Deal Owners</span><div class="ms-actions"><span class="ms-act" onclick="selectAll()">All</span><span class="ms-act" onclick="deselectAll()">None</span></div></div>
+          <div id="ms-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Quick Filter</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="nbd-toggle" id="existing-toggle" onclick="toggleExisting()" style="flex:1;min-width:60px">Existing</button>
+        <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()" style="flex:1;min-width:45px">NBD</button>
+        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1;min-width:50px">React.</button>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Engagement Model</div>
+      <select class="fsel sb-sel" id="itype-sel" onchange="onFilterChange()">
+        <option value="">All Types</option>
+        <option value="One Time">P2P</option>
+        <option value="Recurring">Recurring</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- FUNNEL DESK MAIN -->
+  <div class="funnel-layout" id="funnel-layout">
+    <div class="funnel-main">
+
+      <!-- Mode Toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="sec" style="margin-bottom:0" id="funnel-sec-kpi">Forecast Summary</div>
+        <div style="display:flex;gap:6px">
+          <button id="funnel-toggle-rec" onclick="setFunnelMode('recurring')"
+            style="padding:5px 16px;border-radius:6px;border:1.5px solid #3B3561;background:#3B3561;color:#fff;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s">
+            Recurring
+          </button>
+          <button id="funnel-toggle-p2p" onclick="setFunnelMode('p2p')"
+            style="padding:5px 16px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .2s">
+            P2P
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Strip -->
+      <div class="kpi-grid" id="funnel-kpi-grid" style="margin-bottom:18px"></div>
+
+      <!-- Waterfall -->
+      <div class="sec" id="funnel-wf-sec">Revenue Waterfall</div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="card-ttl" id="funnel-wf-title">Recurring Revenue Waterfall</div>
+        <div class="card-sub" id="funnel-wf-sub">Opening → adjustments → Expected Closing</div>
+        <div id="funnel-wf-chart" style="height:210px;position:relative;margin-top:16px"></div>
+      </div>
+
+      <!-- Operational Table -->
+      <div class="sec" id="funnel-tbl-sec">Sales Funnel · by Owner</div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #F2F2F2">
+          <div>
+            <div class="card-ttl" style="margin-bottom:0" id="funnel-tbl-ttl">Funnel Desk</div>
+            <div class="card-sub" style="margin-bottom:0" id="funnel-tbl-sub">Green cells = manual inputs · Auto rows computed from HubSpot</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:9px;font-weight:700;color:#006E5E;letter-spacing:.04em;opacity:0;transition:opacity .3s" id="funnel-saved">Saved ✓</span>
+            <button onclick="saveFunnelInputs()" style="padding:5px 14px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#111;transition:background .2s" onmouseover="this.style.background='#FFE870'" onmouseout="this.style.background='#FFDA30'">Save Inputs</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:700px">
+            <thead id="funnel-thead"></thead>
+            <tbody id="funnel-tbody"><tr><td colspan="3" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Waiting for data sync...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; FUNNEL DESK &nbsp;•&nbsp; BY MAYUR DADLANI</div>
+    </div>
+  </div>
+</div><!-- /app-layout -->
+
+<script>
+
+// ════ OWNER REGISTRY ════
+// Two-tier attribution: registry values primary, deal property fallback for any blank.
+// BU: always from registry (CSV always has BU).
+// Region: OWNER_GEO[oid] primary → GEO_MAP[d.geo] fallback.
+// Head: OWNER_HEAD_MAP[oid] primary → derived from resolved region fallback.
+const OWNER_GROUPS={
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},
+    {id:"17739548",name:"Darshan Modi"},
+    {id:"17738843",name:"Jaydeep Salla"},
+    {id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713",name:"Krunal Bakraniya"},
+    {id:"34140174",name:"Mrugesh Dabhi"},
+    {id:"86940863",name:"Nevilson Christan"},
+    {id:"17739173",name:"Tanuj Gupta"}
+  ],
+  "Digital — US":[
+    {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
+  ],
+  "Digital — UK":[
+    {id:"46156316",name:"Flintoff Mehta"},
+    {id:"37344296",name:"Kalgi Shah"},{id:"24817892",name:"Sheldon Fernandes"},
+    {id:"31730801",name:"Vikram Sahi"}
+  ],
+  "Digital — AU":[
+    {id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"78831011",name:"Kunal Gohil"},{id:"94746500",name:"Manvi Choumal"},
+    {id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"}
+  ],
+  "Nevilson — Team":[
+    {id:"86813698",name:"Aman Acharya"},
+    {id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663",name:"Malav Modi"}
+  ],
+  "MarTech — US":[
+    {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
+    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815",name:"Vinita Raidu"}
+  ],
+  "MarTech — UK":[
+    {id:"82911376",name:"Divya S"},{id:"916030451",name:"Kamesh Biniwale"},
+    {id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
+  ],
+  "MarTech — AU":[
+    {id:"467997340",name:"Karan Doshi"}
+  ],
+  "Reactivation":[
+    {id:"41490632",name:"Mukund Basita"}
+  ],
+  "Unclassified":[
+    {id:"82663745",name:"Prativa Dubey"} // BU/Head/Region from deal properties
+  ]
+};
+// BU geo-head mapping
+const BU_HEADS={
+  Digital:["Tanuj Gupta","Jiggyasa Agrawal","Nevilson Christan"],
+  MarTech:["Jaydeep Salla"]
+};
+const ALL_HEADS=["Jiggyasa Agrawal","Jaydeep Salla","Nevilson Christan","Tanuj Gupta"];
+const HEAD_BU_MAP={
+  "Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech",
+  "Nevilson Christan":"Digital","Tanuj Gupta":"Digital"
+};
+const HEAD_REGIONS={
+  "Jiggyasa Agrawal":["AU"],
+  "Tanuj Gupta":["US","UK"],
+  "Nevilson Christan":["AU","UK","US"],
+  "Jaydeep Salla":["AU","UK","US"]
+};
+const HEAD_OWNER_GROUPS={
+  "Jiggyasa Agrawal":["Digital — AU"],
+  "Tanuj Gupta":["Digital — US","Digital — UK"],
+  "Nevilson Christan":["Nevilson — Team"],
+  "Jaydeep Salla":["MarTech — US","MarTech — UK","MarTech — AU","Reactivation"]
+};
+const HEADS_CONFIG=[
+  {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
+  {id:"jaydeep",name:"Jaydeep Salla",bu:"MarTech"},
+  {id:"nevilson",name:"Nevilson Christan",bu:"Digital"},
+  {id:"tanuj",name:"Tanuj Gupta",bu:"Digital"},
+  // BU-level clones — not head-locked, BU-locked instead
+  {id:"digital",name:"Digital BU",bu:"Digital",buClone:true},
+  // Senior audience clone — no filter locks, Inter BU KPI highlighted
+  {id:"interbu",name:"Inter BU",bu:null,interbuClone:true}
+];
+// Region registry — CSV-confirmed fixed geo per owner.
+// Owners NOT listed here get region from GEO_MAP[d.geo__invoice_app_] per deal.
+// This includes: all Leaders, Mukund Basita (Reactivation), Prativa Dubey (Unclassified).
+const OWNER_GEO={
+  // Digital — US
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
+  "19799470":"US","557894666":"US", // Sudarshan Damani
+  // Digital — UK
+  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  // Digital — AU
+  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
+  // Nevilson — Team
+  "86813698":"AU",  // Aman Acharya
+  "255830830":"UK", // Devanshu Kumar
+  "37762663":"US",  // Malav Modi
+  // MarTech — US
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  // MarTech — UK
+  "82030736":"UK","82911376":"UK",
+  "916030451":"US", // Kamesh Biniwale — corrected UK→US per CSV
+  // MarTech — AU
+  "467997340":"AU"
+  // Mukund Basita (41490632) — blank in CSV, falls through to GEO_MAP[d.geo]
+};
+const REACTIVATION_IDS=["41490632"];
+// Owner→BU map — CSV is always populated for BU, so this is fully static.
+const OWNER_BU_MAP=(()=>{
+  const m={};
+  // Leaders default to Digital first
+  OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
+  // Real team groups overwrite
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    if(g==="Leaders / Heads")return;
+    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  // MarTech Leaders — only in Leaders group, explicit override needed
+  m["107178262"]="MarTech"; // Chintan Doshi
+  m["34140174"]="MarTech";  // Mrugesh Dabhi
+  m["17738843"]="MarTech";  // Jaydeep Salla (HubSpot name: Jaydeep Soni, jay@mavlers.com — confirmed same person)
+  // Digital Leaders explicit
+  m["17739173"]="Digital";  // Tanuj Gupta
+  m["86940863"]="Digital";  // Nevilson Christan
+  m["17739548"]="Digital";  // Darshan Modi
+  m["79217713"]="Digital";  // Krunal Bakraniya
+  // Unclassified — Prativa Dubey is Digital per active status
+  m["82663745"]="Digital";
+  return m;
+})();
+// Geo mapping: geo__invoice_app_ value → normalized region
+const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+// Extended OWNER_GEO (all registered owners already included, just alias for compatibility)
+const OWNER_GEO_EXT=OWNER_GEO;
+function geoFromDeal(d){
+  // Primary: geo__invoice_app_ property with mapping
+  const g=d.geo||"";
+  if(g&&GEO_MAP[g]!==undefined){
+    if(GEO_MAP[g])return GEO_MAP[g];
+    // "Other" → fallback to owner's team geo
+  }
+  // Fallback: owner's team geo (registered + extended)
+  const id=String(d.owner_id||"");
+  if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
+  return null;
+}
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#006E5E","Digital — AU":"#473400","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#006E5E","MarTech — AU":"#473400","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
+const GEO_COLORS={US:"#FFDA30",UK:"#006E5E",AU:"#473400"};
+// ── Flat ordered owner list for UI display — exact sequence confirmed by management.
+// Attribution logic uses OWNER_GROUPS; this list is UI-only.
+const ORDERED_OWNERS=[
+  // MarTech Leaders
+  {id:"107178262",name:"Chintan Doshi"},
+  {id:"17738843", name:"Jaydeep Salla"},  // Confirmed: Jaydeep Soni in HubSpot = Jaydeep Salla (jay@mavlers.com)
+  {id:"34140174", name:"Mrugesh Dabhi"},
+  // MarTech AU
+  {id:"467997340",name:"Karan Doshi"},
+  // MarTech UK
+  {id:"82911376", name:"Divya S"},
+  {id:"82030736", name:"Sakshi Bissa"},
+  // MarTech US
+  {id:"93107638", name:"Ayush Dhupar"},
+  {id:"46153051", name:"Ayush Rathi"},
+  {id:"86147905", name:"Preeti Thapliyal"},
+  {id:"85767516", name:"Rupali Sindhu"},
+  {id:"89530815", name:"Vinita Raidu"},
+  // MarTech NBD
+  {id:"916030451",name:"Kamesh Biniwale"},
+  // Reactivation
+  {id:"41490632", name:"Mukund Basita"},
+  // Digital Leaders
+  {id:"17739548", name:"Darshan Modi"},
+  {id:"79217713", name:"Krunal Bakraniya"},
+  {id:"17739173", name:"Tanuj Gupta"},
+  // Digital AU
+  {id:"131779647",name:"Jiggyasa Agrawal"},
+  {id:"78831011", name:"Kunal Gohil"},
+  {id:"94746500", name:"Manvi Choumal"},
+  {id:"176516495",name:"Prachi Porwal"},
+  {id:"263464861",name:"Saquib Khan"},
+  // Digital UK
+  {id:"46156316", name:"Flintoff Mehta"},
+  {id:"37344296", name:"Kalgi Shah"},
+  {id:"24817892", name:"Sheldon Fernandes"},
+  {id:"31730801", name:"Vikram Sahi"},
+  // Digital US
+  {id:"38568120", name:"Baspin Thomas"},
+  {id:"42663191", name:"Dhaval Damania"},
+  {id:"240935328",name:"Hammad Bhaldar"},
+  {id:"19799470", name:"Jebin Joy"},
+  {id:"34558123", name:"Kaustubh Agrawal"},
+  {id:"284770744",name:"Sourya Ghosh"},
+  {id:"557894666",name:"Sudarshan Damani"},
+  // Nevilson Team
+  {id:"86813698", name:"Aman Acharya"},
+  {id:"255830830",name:"Devanshu Kumar"},
+  {id:"37762663", name:"Malav Modi"},
+  // Unclassified
+  {id:"82663745", name:"Prativa Dubey"}
+];
+// Deduplicate by id — all entries now have confirmed IDs.
+const ALL_OWNERS=(()=>{const seen=new Set();return ORDERED_OWNERS.filter(o=>{if(!o.id)return false;if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
+const OWN=Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o.name]));
+const ALL_IDS=ALL_OWNERS.map(o=>o.id);
+function getOwnerGeo(id){return OWNER_GEO[String(id)]||null;}
+// BU from deal — OWNER-BASED: owner's team determines BU
+function buFromDeal(d){
+  const oid=String(d.owner_id||"");
+  if(OWNER_BU_MAP[oid])return OWNER_BU_MAP[oid];
+  // Unregistered owner fallback: use geo_head to infer BU
+  const gh=d.geo_head||"";
+  if(HEAD_BU_MAP[gh])return HEAD_BU_MAP[gh];
+  return"Digital"; // last resort
+}
+// Head from deal — geo_head__invoice_app_ primary, owner-team fallback
+function headFromDeal(d){
+  const gh=d.geo_head||"";
+  if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Nevilson Christan"||gh==="Jaydeep Salla")return gh;
+  // Mrugesh → MarTech director → Jaydeep
+  if(gh&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
+  // Sheldon Fernandes → legacy → Digital
+  if(gh==="Sheldon Fernandes"){const geo=geoFromDeal(d);return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";}
+  // Blank/dash/unknown → fallback by owner's team
+  const oid=String(d.owner_id||"");
+  for(const[grp,owners]of Object.entries(OWNER_GROUPS)){
+    if(owners.some(o=>o.id===oid)){
+      if(grp.startsWith("MarTech")||grp==="Reactivation")return"Jaydeep Salla";
+      if(grp.includes("AU"))return"Jiggyasa Agrawal";
+      return"Tanuj Gupta";
+    }
+  }
+  // Last resort — use geo
+  const geo=geoFromDeal(d);
+  if(geo==="AU")return"Jiggyasa Agrawal";
+  return"Tanuj Gupta";
+}
+
+const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
+// Invoice App pre-win stage IDs (verified Jul 2026)
+const OPP_STAGE="205470641";   // Opportunity — OPP prefix
+const RFQ_STAGE="205348623";   // RFQ Submitted
+const QUT_STAGE="205348624";   // Quote (Krishna calls this "Pipeline")
+const PIL_STAGE="205348625";   // Pipeline stage (also counts as Pipeline)
+const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
+const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+// ════ STATE ════
+let deals=[],netRevTotal=0,sk="amount",sd="desc",pg=1;
+const PER=10;
+let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
+let ownerManuallyFiltered=false;
+const drill={};
+// ── Single source of truth: all FY deals. Replaces separate deals[] + trendDeals[]. ──
+// deals[] and netRevTotal are derived in renderAll() by filtering allDeals to the active period.
+let allDeals=[];
+let trcRevChart=null,trcBUChart=null,trcEngChart=null,trcAvgChart=null;
+// ── Funnel Desk — OPP/RFQ/QUT/Pipeline stage deals (separate from allDeals) ──
+let allOppDeals=[];          // raw deal objects from doOppSync()
+let oppServiceMap={};        // line-item map for opp deals (same structure as dealServiceMap)
+// ── Client Clubs state ──
+let currentScreen='funnel';    // Funnel Desk standalone — always funnel
+let funnelInputs={};
+let funnelMode='recurring';    // 'recurring' | 'p2p' — Funnel Desk toggle
+const FUNNEL_LS_KEY='nexus_funnel_desk_inputs';
+let clubDataCache={};           // keyed by 'month|regions' — cleared on every sync
+let clubsTrendChart=null;
+let clubsTierFilter=['Premier','Select','Core','Base']; // all selected by default (multi-select)
+let clubsMovementFilter=['New','Retained','Upgraded','At-risk']; // all on by default
+let _lastClubsArgs=null;                                   // {data,clubsMonths,prevMonths,allFiltered}
+
+// ════ HELPERS ════
+const $=id=>document.getElementById(id);
+const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2}).format(n);
+const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).toFixed(1)+"M":a>=1000?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
+const fmtDate=d=>{if(!d)return"";try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;}};
+const dealURL=id=>`https://app.hubspot.com/contacts/${PORTAL}/record/0-3/${id}`;
+const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
+const selOwners=()=>ALL_IDS.filter(id=>{const e=$("ow-"+id);return !e||e.checked;});
+
+// ════ MONTH HELPERS ════
+// FY start: April (month index 3). FY 2026 = Apr 2026 → Mar 2027.
+// Hard floor: no period may include any month before April 2026.
+const FY_START_MONTH=3;          // April (0-indexed)
+const FY_FLOOR=new Date(2026,3,1); // Apr 1 2026 — absolute minimum
+
+function monthVal(d){return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;}
+function monthLbl(d){return`${MSHRT[d.getMonth()]} ${d.getFullYear()}`;}
+
+// Returns the FY quarter start month index (0-based) for a given month index
+// FY quarters: Q1=Apr(3), Q2=Jul(6), Q3=Oct(9), Q4=Jan(0)
+function fyQtrStart(cm){
+  if(cm>=3&&cm<=5)return 3;  // Q1 Apr–Jun
+  if(cm>=6&&cm<=8)return 6;  // Q2 Jul–Sep
+  if(cm>=9&&cm<=11)return 9; // Q3 Oct–Dec
+  return 0;                   // Q4 Jan–Mar (next cal year within FY)
+}
+
+// Clamp a Date to FY_FLOOR — returns FY_FLOOR if date is before it
+function clampToFloor(d){return d<FY_FLOOR?new Date(FY_FLOOR):d;}
+
+// Build month array clamped to FY_FLOOR — filters out any month before Apr 2026
+function clampedMonths(months){
+  return months.filter(m=>{
+    const[mn,yr]=m.split("-");
+    const d=new Date(+yr,MFULL.indexOf(mn),1);
+    return d>=FY_FLOOR;
+  });
+}
+
+function getMonths(){
+  const p=$("period-sel").value,now=new Date(),cm=now.getMonth(),cy=now.getFullYear();
+  switch(p){
+    case"this-month":
+      return clampedMonths([monthVal(now)]);
+
+    case"last-month":{
+      const lm=new Date(cy,cm-1,1);
+      return clampedMonths([monthVal(lm)]);
+    }
+
+    case"this-quarter":{
+      // FY quarter containing current month
+      const qs=fyQtrStart(cm);
+      // Q4 (Jan–Mar) belongs to new cal year but same FY — handle year correctly
+      const qy=(qs===0&&cm<=2)?cy:cy; // same year for all since we're in FY2026+
+      return clampedMonths([0,1,2].map(i=>monthVal(new Date(qy,qs+i,1))));
+    }
+
+    case"last-quarter":{
+      // Previous FY quarter
+      const qs=fyQtrStart(cm);
+      let pqs,pqy;
+      if(qs===3){pqs=0;pqy=cy;}        // prev of Q1(Apr) = Q4(Jan) same cal year
+      else if(qs===6){pqs=3;pqy=cy;}   // prev of Q2(Jul) = Q1(Apr)
+      else if(qs===9){pqs=6;pqy=cy;}   // prev of Q3(Oct) = Q2(Jul)
+      else{pqs=9;pqy=cy-1;}            // prev of Q4(Jan) = Q3(Oct) prev year
+      return clampedMonths([0,1,2].map(i=>monthVal(new Date(pqy,pqs+i,1))));
+    }
+
+    case"this-fy":{
+      // This FY = Apr 2026 → current month (FY 2026 only for now)
+      // When FY 2027 begins (Apr 2027), this will naturally extend
+      const fyYear=cm>=FY_START_MONTH?cy:cy-1; // FY year = year April falls in
+      const ms=[];
+      for(let m=FY_START_MONTH;m<FY_START_MONTH+12;m++){
+        const d=new Date(fyYear,m,1);
+        if(d>now)break; // don't include future months
+        ms.push(monthVal(d));
+      }
+      return clampedMonths(ms);
+    }
+
+    case"custom":{
+      const fv=$("from-sel").value,tv=$("to-sel").value;
+      if(!fv||!tv)return clampedMonths([monthVal(new Date(cy,cm-1,1))]);
+      const[fm,fy]=fv.split("-"),[tm,ty]=tv.split("-");
+      const from=clampToFloor(new Date(+fy,MFULL.indexOf(fm),1));
+      const to=new Date(+ty,MFULL.indexOf(tm),1);
+      const ms=[];const c=new Date(from);
+      while(c<=to&&ms.length<24){ms.push(monthVal(c));c.setMonth(c.getMonth()+1);}
+      return ms;
+    }
+
+    default:return clampedMonths([monthVal(new Date(cy,cm-1,1))]);
+  }
+}
+
+function getPeriodLabel(){
+  const m=getMonths(),p=$("period-sel").value;
+  const labels={
+    "this-month":"This Month","last-month":"Last Month",
+    "this-quarter":"This Quarter","last-quarter":"Last Quarter",
+    "this-fy":"This FY","custom":"Custom"
+  };
+  if(p==="custom"&&m.length){
+    const f=m[0].split("-"),t=m[m.length-1].split("-");
+    const fl=`${MSHRT[MFULL.indexOf(f[0])]} ${f[1]}`,tl=`${MSHRT[MFULL.indexOf(t[0])]} ${t[1]}`;
+    return fl===tl?fl:`${fl}–${tl}`;
+  }
+  return labels[p]||"";
+}
+
+// ════ MONTH SELECTS ════
+// Custom range: only Apr 2026 → current month. No option before FY floor.
+function initMonthSelects(){
+  const now=new Date();
+  [$("from-sel"),$("to-sel")].forEach((sel,idx)=>{
+    // Build months from Apr 2026 → now
+    const months=[];
+    const c=new Date(FY_FLOOR);
+    while(c<=now){months.push(new Date(c));c.setMonth(c.getMonth()+1);}
+    // Render newest first
+    months.reverse().forEach(d=>{
+      const opt=document.createElement("option");
+      opt.value=monthVal(d);opt.textContent=monthLbl(d);
+      sel.appendChild(opt);
+    });
+    // Default: from-sel = last month, to-sel = this month
+    if(idx===0&&sel.options.length>1)sel.options[1].selected=true;
+    if(idx===1&&sel.options.length>0)sel.options[0].selected=true;
+  });
+}
+
+// Hide period options that would fall entirely before FY_FLOOR
+function initPeriodOptions(){
+  const now=new Date(),cm=now.getMonth(),cy=now.getFullYear();
+  // Last Month
+  const lm=new Date(cy,cm-1,1);
+  const lmOpt=$("opt-last-month");
+  if(lmOpt)lmOpt.style.display=lm<FY_FLOOR?"none":"";
+  // Last Quarter (FY)
+  const qs=fyQtrStart(cm);
+  let pqs,pqy;
+  if(qs===3){pqs=0;pqy=cy;}
+  else if(qs===6){pqs=3;pqy=cy;}
+  else if(qs===9){pqs=6;pqy=cy;}
+  else{pqs=9;pqy=cy-1;}
+  const lqStart=new Date(pqy,pqs,1);
+  const lqEnd=new Date(pqy,pqs+2,1); // end of last quarter
+  const lqOpt=$("opt-last-quarter");
+  if(lqOpt)lqOpt.style.display=lqEnd<FY_FLOOR?"none":"";
+}
+
+// ════ HEAD MULTI-SELECT ════
+function initHeadFilter(){
+  $("head-ms-list").innerHTML=ALL_HEADS.map(h=>`
+    <div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h.split(" ")[0]}</label></div>`).join("");
+}
+function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");}
+function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
+function updateHeadLabel(){
+  const sel=getSelectedHeads();
+  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:sel.length+" Heads";
+}
+function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();onFilterChange();}
+function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
+function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();},100);}
+
+// ════ REGION MULTI-SELECT ════
+const ALL_REGIONS=["US","UK","AU"];
+function initRegionFilter(){
+  $("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>`
+    <div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="onGeoMSChange()"><label for="geo-${r}">${r}</label></div>`).join("");
+}
+function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");}
+function getSelectedRegions(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
+function updateGeoLabel(){
+  const sel=getSelectedRegions();
+  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
+}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onGeoChange();}
+function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
+function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();},100);}
+
+// ════ SERVICE MULTI-SELECT ════
+const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
+const SVC_COLORS={"Campaign":"#FFDA30","Email":"#006E5E","Design":"#3B3561","Search":"#0CCE6B","Web":"#473400"};
+
+// ════ SERVICE CLASSIFIER ════
+// BU-aware: classifyLineItem returns {svc, bu} based on line item name
+// MarTech services: Campaign, Design (only Design - Email), Email (Development - Email)
+// Digital services: Design (all Design - * except Design - Email), Search, Web
+function classifyLineItem(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+
+  // ── MarTech: Campaign (any Campaign - sub-service) ──
+  if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
+    return{svc:"Campaign",bu:"MarTech"};
+
+  // ── MarTech: Design (ONLY Design - Email) ──
+  if(n.includes("design - email"))
+    return{svc:"Design",bu:"MarTech"};
+
+  // ── MarTech: Email (Development - Email, EMail Coding) ──
+  if(n.includes("development - email")||n.includes("email coding"))
+    return{svc:"Email",bu:"MarTech"};
+
+  // ── Digital: Web (must check before Design to catch Design - Asset) ──
+  if(n.includes("design - asset")||n.includes("development - web")||n.includes("development - lp/hub")||
+     n.includes("development - mobile app")||n.includes("ai & automation - web")||
+     n.includes("dot-net development")||n.includes("operational service - data entry")||
+     n.includes("landing page coding and design")||n.includes("landing page coding")||
+     n.includes("landing page only coding"))
+    return{svc:"Web",bu:"Digital"};
+
+  // ── Digital: Design (all remaining Design - * patterns) ──
+  if(n.includes("design - banner")||n.includes("design - copywriting")||
+     n.includes("design - lp")||n.includes("design - web"))
+    return{svc:"Design",bu:"Digital"};
+
+  // ── Digital: Search (all Search - * + Consultancy Fees) ──
+  if(n.includes("search -")||n.includes("consultancy fees"))
+    return{svc:"Search",bu:"Digital"};
+
+  return null;
+}
+
+// Line-item service data: dealId → [{svc, bu, amount, name}]
+let dealServiceMap={};
+function initServiceFilter(){
+  $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`
+    <div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="onSvcChange()"><label for="svc-${s}">${s}</label></div>`).join("");
+}
+function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");}
+function getSelectedServices(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s);return !e||e.checked;});}
+function updateSvcLabel(){
+  const sel=getSelectedServices();
+  $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Services";
+}
+function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onGeoChange();}
+function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
+function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();},100);}
+
+// ════ SMART FILTERS ════
+function updateSmartFilters(){
+  const sel=getSelectedHeads();
+  const buSel=$("bu-sel");
+  const allSelected=sel.length===0||sel.length===ALL_HEADS.length;
+
+  // ── BU cascade ──
+  if(buSel){
+    if(allSelected){
+      Array.from(buSel.options).forEach(o=>o.style.display="");
+    } else {
+      const validBUs=new Set(sel.map(h=>HEAD_BU_MAP[h]).filter(Boolean));
+      Array.from(buSel.options).forEach(opt=>{
+        if(!opt.value){opt.style.display="";return;}
+        opt.style.display=validBUs.has(opt.value)?"":"none";
+      });
+      if(buSel.value&&!validBUs.has(buSel.value))buSel.value="";
+      if(validBUs.size===1&&!buSel.value)[...validBUs].forEach(v=>buSel.value=v);
+    }
+  }
+
+  // ── Region cascade (multiselect) ──
+  if(!allSelected){
+    const validRegions=new Set();
+    sel.forEach(h=>(HEAD_REGIONS[h]||[]).forEach(r=>validRegions.add(r)));
+    // Uncheck regions not valid for selected heads, but do NOT auto-check valid ones
+    ALL_REGIONS.forEach(r=>{
+      const e=$("geo-"+r);
+      if(e&&!validRegions.has(r))e.checked=false;
+    });
+    updateGeoLabel();
+  }
+  // Do NOT auto-select region — user decides; cascade only restricts options
+
+  // ── Owner cascade — flat list, no groups ──
+  ownerManuallyFiltered=false;
+  if(allSelected){
+    ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
+  } else {
+    // Build set of valid owner IDs from selected heads via group membership
+    const validGroups=new Set();
+    sel.forEach(h=>(HEAD_OWNER_GROUPS[h]||[]).forEach(g=>validGroups.add(g)));
+    const validOwnerIds=new Set();
+    Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
+      if(validGroups.has(grp))owners.forEach(o=>{if(o.id)validOwnerIds.add(o.id);});
+    });
+    ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=validOwnerIds.has(id);});
+  }
+  updateOwnerLabel();
+}
+
+// ════ OWNER MULTI-SELECT ════
+function initOwners(){
+  $("ms-list").innerHTML=ALL_OWNERS.map(o=>
+    `<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`
+  ).join("");
+}
+function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");}
+function selectAll(){ownerManuallyFiltered=false;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});updateOwnerLabel();onGeoChange();}
+function deselectAll(){ownerManuallyFiltered=true;ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=false;});updateOwnerLabel();}
+function onOwnerChange(){ownerManuallyFiltered=true;updateOwnerLabel();clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();},100);}
+function updateOwnerLabel(){const sel=selOwners();$("ms-label").textContent=sel.length===ALL_IDS.length?"All Owners":sel.length===0?"None":sel.length===1?ownerName(sel[0]):`${sel.length} Selected`;}
+document.addEventListener("click",e=>{if(!$("ms-wrap").contains(e.target))$("ms-dropdown").classList.remove("open");if(!$("head-ms-wrap")?.contains(e.target))$("head-ms-dropdown")?.classList.remove("open");if(!$("svc-ms-wrap")?.contains(e.target))$("svc-ms-dropdown")?.classList.remove("open");if(!$("geo-ms-wrap")?.contains(e.target))$("geo-ms-dropdown")?.classList.remove("open");if(!$("clubs-geo-wrap")?.contains(e.target))$("clubs-geo-dropdown")?.classList.remove("open");});
+
+function onPeriodChange(){$("custom-range").classList.toggle("show",$("period-sel").value==="custom");onFilterChange();}
+// Region no longer auto-selects owners — fully independent
+function onBUChange(){
+  clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();},100);
+}
+function toggleBUFilter(bu){
+  const sel=$("bu-sel");
+  if(sel.value===bu){sel.value="";}else{sel.value=bu;}
+  renderAll();
+}
+function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();},100);}
+
+// ════ QUICK FILTERS ════
+const NBD_OWNERS=["37762663","255830830","86813698","916030451"]; // Malav, Devanshu, Aman, Kamesh
+const REACTIVATION_OWNERS=["41490632"]; // Mukund Basita
+// Existing = everyone except NBD and Reactivation owners (Net - NBD)
+const EXISTING_EXCLUDE=[...NBD_OWNERS,...REACTIVATION_OWNERS];
+let nbdActive=false,reactivationActive=false,existingActive=false;
+function _clearQuickFilters(){
+  nbdActive=false;reactivationActive=false;existingActive=false;
+  $("nbd-toggle").classList.remove("active");
+  $("react-toggle").classList.remove("active");
+  $("existing-toggle").classList.remove("active");
+}
+function toggleExisting(){
+  const wasActive=existingActive;_clearQuickFilters();
+  if(!wasActive){existingActive=true;$("existing-toggle").classList.add("active");}
+  renderAll();
+}
+function toggleNBD(){
+  const wasActive=nbdActive;_clearQuickFilters();
+  if(!wasActive){nbdActive=true;$("nbd-toggle").classList.add("active");}
+  renderAll();
+}
+function toggleReactivation(){
+  const wasActive=reactivationActive;_clearQuickFilters();
+  if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}
+  renderAll();
+}
+function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
+
+// ════ ATTRIBUTION PRE-PASS ════
+// Two-tier model — registry primary, deal property fallback for any null:
+//   .bu     = OWNER_BU_MAP[oid]          (always populated — CSV always has BU)
+//   .region = OWNER_GEO[oid]             || GEO_MAP[d.geo]
+//   .head   = OWNER_HEAD_MAP[oid]        || headFromRegion(resolved region)
+// headFromRegion: UK→Tanuj UK, AU→Jiggyasa, US/other→Tanuj US (for Digital)
+//                 MarTech fallback always → Jaydeep Salla
+function headFromRegion(region,bu){
+  if(bu==="MarTech")return"Jaydeep Salla";
+  if(region==="UK")return"Tanuj Gupta (UK)";
+  if(region==="AU")return"Jiggyasa Agrawal";
+  return"Tanuj Gupta (US)";
+}
+function attributeDeals(arr){
+  arr.forEach(d=>{
+    const oid=String(d.owner_id||"");
+    // Tier 1: registry
+    d.bu    =OWNER_BU_MAP[oid]||"Digital";
+    d.region=OWNER_GEO[oid]||null;
+    d.head  =OWNER_HEAD_MAP[oid]||null;
+    // Tier 2: deal property fallback for any null
+    if(!d.region)d.region=GEO_MAP[d.geo||""]||null;
+    if(!d.head)  d.head=headFromRegion(d.region,d.bu);
+  });
+  // Attribution summary — logged to console for verification
+  const byHead={};
+  arr.forEach(d=>{if(d.head)byHead[d.head]=(byHead[d.head]||0)+d.amount;});
+  console.log("[Nexus] Attribution:",Object.entries(byHead)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([h,v])=>`${h.replace(" Agrawal","").replace(" Salla","").replace(" Christan","").replace(" Gupta","")}:$${Math.round(v/1000)}k`)
+    .join(" | "));
+}
+
+// ════ DRILL-DOWN ════
+function view(src,liMap){
+  src=src||deals;liMap=liMap||dealServiceMap;
+  const _bu=$("bu-sel")?.value||"";
+  const _effectiveBU=_bu;
+  const _selGeo=getSelectedRegions();
+  const _geoFiltered=_selGeo.length>0&&_selGeo.length<ALL_REGIONS.length;
+  const _vh=getSelectedHeads();
+  const _headFiltered=_vh.length>0&&_vh.length<ALL_HEADS.length;
+  const _itype=$("itype-sel")?.value||"";
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
+  const _ownerFiltered=ownerManuallyFiltered;
+  const _selOwners=_ownerFiltered?selOwners():[];
+  const _effectiveSvc=drill.service||null;
+
+  return src.map(d=>{
+    // ── Standard deal-level filters — read stamped attribution fields ──
+    if(drill.region&&d.region!==drill.region)return null;
+    if(_geoFiltered){if(!d.region||!_selGeo.includes(d.region))return null;}
+    if(drill.owner&&d.owner_id!==drill.owner)return null;
+    if(drill.client&&d.client!==drill.client)return null;
+    if(drill.inv_type&&d.inv_type!==drill.inv_type)return null;
+    if(drill.amount_sign==="negative"&&d.amount>=0)return null;
+    if(drill.geo_head){
+      // d.head is the full key e.g. "Tanuj Gupta (UK)"; strip suffix for base match
+      const baseHead=(d.head||"").replace(" (UK)","").replace(" (US)","");
+      if(baseHead!==drill.geo_head)return null;
+    }
+    // Head dropdown filter
+    if(_headFiltered){
+      const baseHead=(d.head||"").replace(" (UK)","").replace(" (US)","");
+      if(!_vh.includes(baseHead))return null;
+    }
+    // BU filter — reads stamped d.bu (owner-based)
+    if(_effectiveBU){if(d.bu!==_effectiveBU)return null;}
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return null;
+    if(_ownerFiltered&&_selOwners.length>0&&_selOwners.length<ALL_IDS.length){
+      if(!_selOwners.includes(String(d.owner_id)))return null;
+    }
+    // Engagement Model sidebar filter — uses line-item portion (mirrors Pie Chart attribution)
+    // For deals with mixed engagement line items (e.g. $800 Recurring + $131 P2P),
+    // include the deal but adjust amount to only the matching portion.
+    if(_itype){
+      const _itypeGroup=_itype==="One Time"?"P2P":_itype;
+      const lis=dealServiceMap[d.id]||[];
+      if(!lis.length){
+        // No line items — fall back to deal eng_model
+        if(engGroup(d.eng_model)!==_itypeGroup)return null;
+      } else {
+        // Sum only the line items belonging to the requested engagement group
+        const portion=lis.reduce((s,li)=>{const eg=engGroupFromLiName(li.name);return eg===_itypeGroup?s+li.amount:s;},0);
+        if(portion===0){
+          // No line items matched — fall back to deal-level eng_model
+          const fallback=engGroup(d.eng_model);
+          if(fallback!==_itypeGroup)return null;
+        } else {
+          // Return deal with adjusted amount = matching portion only
+          return Object.assign({},d,{amount:portion});
+        }
+      }
+    }
+    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
+    if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
+    if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
+    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;} // line-item majority — matches Pie Chart attribution
+    if(_svcFiltered){
+      const dSvc=liMap[d.id]||[];
+      if(!dSvc.length)return null;
+      if(!dSvc.some(li=>_selSvc.includes(li.svc)))return null;
+    }
+    if(drill.service){
+      const dSvc=liMap[d.id]||[];
+      if(!dSvc.some(li=>li.svc===drill.service))return null;
+    }
+
+    // ── Line-item amount adjustment ──
+    // When Service filter is active, adjust deal amount to matching line items only
+    const needsLiAdjust=_effectiveSvc||_svcFiltered;
+    if(needsLiAdjust){
+      const lis=liMap[d.id]||[];
+      if(!lis.length)return null;
+      const filtered=lis.filter(li=>{
+        if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
+        if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+        return true;
+      });
+      const adjAmount=filtered.reduce((s,li)=>s+li.amount,0);
+      if(adjAmount===0)return null;
+      return Object.assign({},d,{amount:adjAmount});
+    }
+
+    return d;
+  }).filter(Boolean);
+}
+// ── trendView: applies all dashboard filters to allDeals for filter-responsive Trends ──
+// Period filter intentionally excluded — Trends always shows full FY sweep regardless.
+function trendView(){return view(allDeals,dealServiceMap);}
+function setDrill(key,val){if(drill[key]===val){delete drill[key];}else{drill[key]=val;}updateChips();renderAll();}
+function clearDrill(key){delete drill[key];updateChips();renderAll();}
+function clearAllDrills(){Object.keys(drill).forEach(k=>delete drill[k]);updateChips();renderAll();}
+function updateChips(){
+  const chips=$("drill-chips"),entries=Object.entries(drill);
+  if(!entries.length){chips.classList.remove("show");chips.innerHTML="";return;}
+  const labels={region:"Region",owner:"Owner",client:"Client",inv_type:"Type",amount_sign:"Amount",geo_head:"Head",eng_model:"Engagement",bu:"Business Unit",service:"Service"};
+  const dv=(k,v)=>k==="owner"?ownerName(v):k==="amount_sign"?v==="negative"?"Credits Only":"Positive Only":v;
+  chips.innerHTML=entries.map(([k,v])=>`<div class="dchip"><span class="dchip-lbl">${labels[k]||k}:</span><span>${dv(k,v)}</span><span class="dchip-x" onclick="clearDrill('${k}')">✕</span></div>`).join("")+
+    `<button class="drill-clear" onclick="clearAllDrills()">Clear All</button>`;
+  chips.classList.add("show");
+}
+
+// ════ UNIFIED SYNC ════
+// Single source of truth — always fetches all FY months in one pass.
+// Main dashboard and Trends both read from allDeals[]; no separate Trends fetch.
+// Period filter, BU, Head and all other filter changes are client-side only — zero API calls.
+async function doFYSync(force=false){
+  if(isSyncing&&!force)return;
+  isSyncing=true;
+  const errBar=$("err-bar");
+  errBar.style.display="none";
+  $("sdot").style.background="#006E5E";$("stxt").textContent="SYNCING...";$("trend-status").textContent="Syncing...";
+  $("lo").classList.add("show");$("rfbtn").disabled=true;$("resetbtn").disabled=true;
+  try{
+    const fyMonths=getFY2026Months();
+    const filters=[
+      {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
+      {propertyName:"dealstage",operator:"EQ",value:STAGE},
+      {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyMonths}
+    ];
+    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+    filters.push({propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
+    const fGroups=[{filters}];
+
+    const fetched=[];let after=null;
+    do{
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      if(after)body.after=after;
+      const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok)throw new Error("API "+res.status);
+      const data=await res.json();
+      (data.results||[]).forEach(r=>{
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
+          billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"",
+          client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
+          month:(()=>{
+            // Normalise to lowercase — HubSpot API filter is case-insensitive but our JS includes() is not.
+            // Some deals have "June-2026" (capital) which fails "june-2026" period matching.
+            const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
+            if(bm)return bm;
+            // Fallback: derive month from closedate when booking month is null in HubSpot API response
+            // HubSpot matched this deal to a FY month via the filter — closedate confirms which one
+            const cd=(r.properties?.closedate||"").split("T")[0];
+            if(!cd)return"";
+            try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
+            catch(e){return"";}
+          })(),
+          inv_type:r.properties?.invoice_type__invoice_app_||"",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"",order_type:r.properties?.order_type||"",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:(r.properties?.geo__invoice_app_||"").trim(),geo_head:(r.properties?.geo_head__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
+      });
+      after=data.paging?.next?.after||null;
+    }while(after);
+
+    // ── Single dedup pass across all FY deals ──
+    const seen={};const dupes=[];
+    fetched.forEach(d=>{
+      const key=d.dealname+"|"+d.amount+"|"+(d.month||"");
+      if(seen[key]){dupes.push(d.id);return;}
+      seen[key]=d.id;
+    });
+    if(dupes.length)console.log("Duplicates excluded:",dupes.length,dupes);
+    allDeals=dupes.length?fetched.filter(d=>!dupes.includes(d.id)):fetched;
+    clubDataCache={}; // invalidate clubs cache — source data refreshed
+
+    // ── Single line-item fetch covering all FY deals ──
+    dealServiceMap={};
+    try{
+      for(let i=0;i<allDeals.length;i+=500){
+        const chunk=allDeals.slice(i,i+500).map(d=>d.id);
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          if(liData._debug)console.log("Line items debug:",liData._debug);
+          const items=liData.items||{};
+          Object.entries(items).forEach(([did,lis])=>{
+            dealServiceMap[did]=(lis||[]).map(li=>{
+              const cls=classifyLineItem(li.name);
+              return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||""}:null;
+            }).filter(Boolean);
+          });
+        }else{const errText=await liRes.text();console.warn("Line items fetch returned",liRes.status,errText);}
+      }
+      console.log("Service map: deals with services =",Object.keys(dealServiceMap).length);
+    }catch(e){console.error("Line items fetch error:",e);}
+
+    // ── Single attribution pass across all FY deals ──
+    attributeDeals(allDeals);
+
+    // ── Reset UI state ──
+    sk="amount";sd="desc";pg=1;
+    Object.keys(drill).forEach(k=>delete drill[k]);updateChips();
+
+    // ── Fetch OPP/RFQ/QUT/Pipeline stage deals for Funnel Desk (non-blocking) ──
+    doOppSync().catch(e=>console.warn('[Nexus] OPP sync failed (non-fatal):',e));
+
+    renderAll();        // derives deals + netRevTotal from allDeals for current period
+
+    $("sdot").style.background="#FFDA30";
+    $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
+    const endLbl=MSHRT[new Date().getMonth()];
+    $("trend-status").textContent=`${allDeals.length} deals · Apr–${endLbl} 2026`;
+  }catch(e){
+    console.error(e);$("err-msg").textContent=e.message;errBar.style.display="block";
+    $("sdot").style.background="#696969";$("stxt").textContent="SYNC FAILED";
+  }finally{
+    $("lo").classList.remove("show");$("rfbtn").disabled=false;$("resetbtn").disabled=false;isSyncing=false;
+  }
+}
+
+// ════ OPP SYNC ════
+// Fetches pre-win stage deals (OPP + RFQ + QUT + Pipeline) for Funnel Desk.
+// Runs non-blocking after doFYSync(). Stores into allOppDeals + oppServiceMap.
+// Properties fetched: engagement, amount, owner, opportunity/quote created dates, dealname.
+async function doOppSync(){
+  const fetched=[];
+  const stageValues=[OPP_STAGE,RFQ_STAGE,QUT_STAGE,PIL_STAGE];
+  // Fetch in one call using IN operator on dealstage
+  let after=null;
+  do{
+    const body={
+      filterGroups:[{filters:[
+        {propertyName:'pipeline',operator:'EQ',value:PIPELINE},
+        {propertyName:'dealstage',operator:'IN',values:stageValues},
+        {propertyName:'engagement_model__invoice_app_',operator:'NOT_IN',values:['Wallet','Special Engagement']},
+        {propertyName:'company_name__invoice_app_',operator:'NOT_IN',values:['InboxArmy','Uplers','Solomax']}
+      ]}],
+      properties:[
+        'dealname','amount_in_home_currency','hubspot_owner_id','dealstage',
+        'engagement_model__invoice_app_','company_name__invoice_app_',
+        'opportunity__created__date__invoice_app_',
+        'quote_created_submit_date__invoice_app_',
+        'createdate'
+      ],
+      limit:200
+    };
+    if(after)body.after=after;
+    const res=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error('OPP API '+res.status);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      const p=r.properties||{};
+      // Opportunity date: use custom Invoice App date (IST) if available, else createdate
+      // Parse dd/mm/yyyy hh:mm:ss format from Invoice App
+      const parseIADate=s=>{
+        if(!s)return null;
+        const m=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+        if(m)return new Date(+m[3],+m[2]-1,+m[1]);
+        return null;
+      };
+      const oppDateRaw=p.opportunity__created__date__invoice_app_||'';
+      const qutDateRaw=p.quote_created_submit_date__invoice_app_||'';
+      const oppDate=parseIADate(oppDateRaw)||(p.createdate?new Date(p.createdate):null);
+      const qutDate=parseIADate(qutDateRaw)||null;
+      fetched.push({
+        id:String(r.id),
+        dealname:p.dealname||'',
+        amount:parseFloat(p.amount_in_home_currency||0)||0,
+        owner_id:String(p.hubspot_owner_id||''),
+        dealstage:p.dealstage||'',
+        eng_model:(p.engagement_model__invoice_app_||'').trim(),
+        company_name:(p.company_name__invoice_app_||'').trim(),
+        opp_date:oppDate,   // Date object — used for 60-day Dead rule
+        qut_date:qutDate,   // Date object — used for Pipeline date window
+        createdate:p.createdate?new Date(p.createdate):null
+      });
+    });
+    after=data.paging?.next?.after||null;
+  }while(after);
+
+  allOppDeals=fetched;
+  console.log(`[Nexus] OPP sync: ${allOppDeals.length} pre-win deals`);
+
+  // Fetch line items for opp deals (needed for vertical classification)
+  oppServiceMap={};
+  try{
+    for(let i=0;i<allOppDeals.length;i+=500){
+      const chunk=allOppDeals.slice(i,i+500).map(d=>d.id);
+      const liRes=await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dealIds:chunk})});
+      if(liRes.ok){
+        const liData=await liRes.json();
+        const items=liData.items||{};
+        Object.entries(items).forEach(([did,lis])=>{
+          oppServiceMap[did]=(lis||[]).map(li=>{
+            const cls=classifyLineItem(li.name);
+            return cls?{svc:cls.svc,bu:cls.bu,amount:li.amount||0,name:li.name||''}:null;
+          }).filter(Boolean);
+        });
+      }
+    }
+    console.log('[Nexus] OPP line items: deals with services =',Object.keys(oppServiceMap).length);
+  }catch(e){console.error('OPP line items fetch error:',e);}
+
+  // If Funnel Desk is currently active, re-render with fresh opp data
+  if(currentScreen==='funnel')renderFunnel();
+}
+
+// ── Opp deal helpers ──
+// isDead: OPP stage → age > 60 days. RFQ stage → never dead (always active).
+// QUT/PIL stage → never dead (actively quoted).
+function oppIsDead(d){
+  if(d.dealstage!==OPP_STAGE)return false; // RFQ/QUT/PIL — never dead by age
+  if(!d.opp_date)return false;
+  const today=new Date();
+  const ageDays=Math.floor((today-d.opp_date)/(1000*60*60*24));
+  return ageDays>60;
+}
+
+// oppEngGroup: same derivation as engGroupFromLi — LI majority by amount, fallback to eng_model
+function oppEngGroup(d){
+  const lis=oppServiceMap[d.id]||[];
+  if(!lis.length)return engGroup(d.eng_model);
+  const m={};
+  lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg)m[eg]=(m[eg]||0)+li.amount;});
+  const entries=Object.entries(m);
+  if(!entries.length)return engGroup(d.eng_model);
+  // All LI amounts are 0 at OPP/RFQ — fall back to deal eng_model
+  const totalLiAmt=entries.reduce((s,[,v])=>s+v,0);
+  if(totalLiAmt===0)return engGroup(d.eng_model);
+  return entries.sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+// oppVertical: classify deal by LI name into SW (Search/Web) or CED (Campaign/Email/Design)
+// Returns 'SW', 'CED', or null if unclassified
+function oppVertical(d){
+  const lis=oppServiceMap[d.id]||[];
+  if(!lis.length)return null;
+  // Use first LI name (OPP/RFQ deals have exactly one LI)
+  const name=(lis[0].name||'').toLowerCase();
+  const hasSW=name.includes('search')||name.includes('web')||name.includes('development');
+  const hasCED=name.includes('campaign')||name.includes('email')||name.includes('design');
+  if(hasSW&&hasCED)return'both'; // mixed — counts in both buckets
+  if(hasSW)return'SW';
+  if(hasCED)return'CED';
+  return null;
+}
+
+// ── Date window helpers for OPP sync ──
+// Returns true if the deal's relevant date falls within the active period window (last 4 months)
+// OPP/RFQ: use opp_date. QUT/PIL: use qut_date.
+function oppInWindow(d){
+  const today=new Date();
+  // Window = last 3 months + current month (same as Krishna's formula: Apr–Jul for July context)
+  // We derive it as: from = first day of (today minus 3 months), to = end of today's month
+  const from=new Date(today.getFullYear(),today.getMonth()-3,1);
+  const to=new Date(today.getFullYear(),today.getMonth()+1,0); // last day of current month
+  const dateToCheck=(d.dealstage===QUT_STAGE||d.dealstage===PIL_STAGE)?d.qut_date:d.opp_date;
+  if(!dateToCheck)return false;
+  return dateToCheck>=from&&dateToCheck<=to;
+}
+
+// ════ METRICS ════
+function mets(v){
+  if(!v)v=view();
+  const pos=v.filter(d=>d.amount>0),neg=v.filter(d=>d.amount<0);
+  const gross=pos.reduce((s,d)=>s+d.amount,0);
+  // Unique clients — distinct contact_name across ALL deals (matches HubSpot distinct count logic)
+  // HubSpot counts all deal records regardless of amount sign — no pos-only restriction
+  const clients=new Set(v.filter(d=>d.billing_id).map(d=>d.billing_id));
+  const geos=new Set(v.filter(d=>d.region).map(d=>d.region));
+  // Revenue concentration — aggregate by billing_id, display client name
+  const cmap={};v.filter(d=>d.billing_id&&d.amount>0).forEach(d=>{cmap[d.billing_id]=(cmap[d.billing_id]||0)+d.amount;});
+  const top3=Object.values(cmap).filter(v=>v>0).sort((a,b)=>b-a).slice(0,3).reduce((s,v)=>s+v,0);
+  const netTotal=v.reduce((s,d)=>s+d.amount,0);
+  const conc=netTotal>0?Math.round(top3/netTotal*100):0;
+  return{net:netTotal,gross,credits:neg.reduce((s,d)=>s+d.amount,0),avg:clients.size?netTotal/clients.size:0,count:v.length,credCnt:neg.length,clients:clients.size,geos:geos.size,conc,activeGeos:[...geos].join(" · ")||""};
+}
+function ostats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
+  const ids=[...new Set(v.map(d=>d.owner_id))];
+  return ids.map(id=>{
+    const od=v.filter(d=>d.owner_id===id);
+    const net=od.reduce((s,d)=>s+d.amount,0);
+    return{id,name:ownerName(id),posRev:net,count:od.length,share:g>0?net/g*100:0};
+  }).filter(o=>o.posRev>0).sort((a,b)=>b.posRev-a.posRev);
+}
+function geostats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
+  return["AU","UK","US"].map(geo=>{
+    const od=v.filter(d=>d.region===geo);
+    const rev=od.reduce((s,d)=>s+d.amount,0);
+    return{geo,posRev:rev,count:od.length,share:g>0?rev/g*100:0};
+  }).filter(g=>g.posRev!==0).sort((a,b)=>b.posRev-a.posRev);
+}
+function geoheadstats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
+  const hmap={};v.forEach(d=>{const h=headFromDeal(d);if(!hmap[h])hmap[h]={rev:0,count:0};hmap[h].rev+=d.amount;hmap[h].count++;});
+  return Object.entries(hmap).map(([head,s])=>({head,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0})).sort((a,b)=>b.rev-a.rev);
+}
+function bustats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
+  const bmap={};
+  v.forEach(d=>{
+    const bu=d.bu||"Digital";
+    if(!bmap[bu])bmap[bu]={rev:0,count:0};
+    bmap[bu].rev+=d.amount;bmap[bu].count++;
+  });
+  return["Digital","MarTech"].map(bu=>{
+    const s=bmap[bu]||{rev:0,count:0};
+    return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};
+  }).filter(b=>b.rev>0);
+}
+// Head registry — CSV-confirmed fixed head per owner.
+// Owners NOT listed here get head derived from resolved region (fallback path in attributeDeals).
+// This includes: all Leaders, Mukund Basita, Prativa Dubey.
+const OWNER_HEAD_MAP=(()=>{
+  const m={};
+  Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
+    if(grp==="Leaders / Heads"||grp==="Unclassified")return; // handled by fallback
+    owners.forEach(o=>{
+      if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
+      if(grp==="Nevilson — Team"){m[o.id]="Nevilson Christan";return;}
+      if(grp==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}
+      if(grp==="Digital — UK"){m[o.id]="Tanuj Gupta (UK)";return;}
+      if(grp==="Digital — US"){m[o.id]="Tanuj Gupta (US)";return;}
+    });
+  });
+  return m;
+})();
+function headstats(v){
+  if(!v)v=view();
+  const g=v.reduce((s,d)=>s+d.amount,0);
+  const hmap={};
+  v.forEach(d=>{
+    const h=d.head||null;
+    if(!h)return; // unregistered owners have null .head — excluded from head chart
+    if(!hmap[h])hmap[h]={rev:0,count:0};
+    hmap[h].rev+=d.amount;hmap[h].count++;
+  });
+  const BASE_HEAD={"Tanuj Gupta (UK)":"Tanuj Gupta","Tanuj Gupta (US)":"Tanuj Gupta"};
+  const DISPLAY={"Tanuj Gupta (UK)":"Tanuj UK","Tanuj Gupta (US)":"Tanuj US","Jiggyasa Agrawal":"Jiggyasa","Jaydeep Salla":"Jaydeep","Nevilson Christan":"Nevilson"};
+  return Object.entries(hmap).map(([head,s])=>({
+    head,firstName:DISPLAY[head]||head.split(" ")[0],
+    rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0,
+    base:BASE_HEAD[head]||head
+  })).filter(h=>h.rev!==0).sort((a,b)=>b.rev-a.rev);
+}
+function topClients(v){
+  if(!v)v=view();
+  // Aggregate by contact_name (dedup key), carry display name from first seen deal
+  const map={};const nameMap={};
+  v.filter(d=>d.billing_id&&d.amount>0).forEach(d=>{
+    map[d.billing_id]=(map[d.billing_id]||0)+d.amount;
+    if(!nameMap[d.billing_id])nameMap[d.billing_id]=d.client||d.billing_id;
+  });
+  return Object.entries(map).map(([bid,rev])=>({name:nameMap[bid]||bid,rev}))
+    .filter(c=>c.rev>0).sort((a,b)=>b.rev-a.rev).slice(0,10);
+}
+function tline(v){
+  if(!v)v=view();
+  const m={};v.forEach(d=>{const dt=(d.closedate||"").split("T")[0];if(dt)m[dt]=(m[dt]||0)+d.amount;});
+  return Object.entries(m).sort(([a],[b])=>a.localeCompare(b)).map(([dt,v])=>({label:fmtDate(dt),value:parseFloat(v.toFixed(2))}));
+}
+function engGroup(val){
+  if(!val)return null;
+  if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
+  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
+  return null;
+}
+// Classify engagement from line item name prefix
+function engGroupFromLiName(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+  if(n.startsWith("dedicated fte"))return"Recurring";
+  if(n.startsWith("dedicated pte"))return"Recurring";
+  if(n.startsWith("recurring"))return"Recurring";
+  if(n.startsWith("multiple"))return"Recurring";
+  if(n.startsWith("p2p"))return"P2P";
+  if(n.startsWith("time and material")||n.startsWith("t&m"))return"P2P";
+  // EMail Coding has no engagement prefix in HubSpot — hardcoded P2P (permanent fix, Session 14)
+  if(n.includes("email coding"))return"P2P";
+  return null;
+}
+// Get engagement group for a deal from its line items (majority wins)
+function engGroupFromLi(d){
+  const lis=dealServiceMap[d.id]||[];
+  if(!lis.length)return engGroup(d.eng_model); // fallback to deal property
+  const m={};lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg)m[eg]=(m[eg]||0)+li.amount;});
+  const entries=Object.entries(m);
+  if(!entries.length)return engGroup(d.eng_model);
+  return entries.sort((a,b)=>b[1]-a[1])[0][0]; // largest amount wins
+}
+
+// ═══ LINE-ITEM BASED STATS ═══
+// BU stats from line items — each line item has li.bu
+function bustatsLi(v){
+  if(!v)v=view();
+  const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
+  const bmap={Digital:{rev:0,deals:new Set()},MarTech:{rev:0,deals:new Set()}};
+  v.forEach(d=>{
+    (dealServiceMap[d.id]||[]).forEach(li=>{
+      if(!li.bu||!bmap[li.bu])return;
+      if(_svcDrill&&li.svc!==_svcDrill)return;
+      if(_svcFiltered&&!_selSvc.includes(li.svc))return;
+      bmap[li.bu].rev+=li.amount;bmap[li.bu].deals.add(d.id);
+    });
+  });
+  const total=bmap.Digital.rev+bmap.MarTech.rev;
+  return["Digital","MarTech"].map(bu=>({
+    bu,rev:bmap[bu].rev,count:bmap[bu].deals.size,share:total>0?bmap[bu].rev/total*100:0
+  })).filter(b=>b.rev>0);
+}
+
+function engTypesLi(v){
+  if(!v)v=view();
+  const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
+  const m={};
+  v.forEach(d=>{
+    const _lis=(dealServiceMap[d.id]||[]).filter(li=>{
+      if(_svcDrill&&li.svc!==_svcDrill)return false;
+      if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
+      return true;
+    });
+    if(_lis.length){
+      // Try line-item name classification first
+      let classified=false;
+      _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){m[eg]=(m[eg]||0)+li.amount;classified=true;}});
+      // If line items passed filter but none matched a known name prefix, fall back to deal eng_model
+      if(!classified){const eg=engGroup(d.eng_model);if(eg)m[eg]=(m[eg]||0)+d.amount;}
+    } else {
+      // No line items (or all filtered out) — use deal-level eng_model with deal amount
+      const eg=engGroup(d.eng_model);
+      if(eg)m[eg]=(m[eg]||0)+d.amount;
+    }
+  });
+  const ordered={};
+  ["Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
+  return ordered;
+}
+
+function engTypes(v){
+  if(!v)v=view();
+  const m={};
+  v.filter(d=>d.eng_model).forEach(d=>{
+    const g=engGroup(d.eng_model);
+    if(g)m[g]=(m[g]||0)+d.amount;
+  });
+  const ordered={};
+  ["Recurring","P2P"].forEach(k=>{if(m[k])ordered[k]=m[k];});
+  return ordered;
+}
+
+function invTypes(v){
+  if(!v)v=view();
+  const m={};v.forEach(d=>{const t=d.inv_type||"Other";m[t]=(m[t]||0)+d.amount;});return m;
+}
+
+// ════ EMPTY STATE ════
+function emptyHTML(){
+  const geoArr=getSelectedRegions(),geoLbl=geoArr.length<ALL_REGIONS.length?geoArr.join(", "):"",period=getPeriodLabel();
+  return`<div class="empty-state"><div class="es-icon">📭</div><div class="es-title">No bookings recorded</div><div class="es-sub">No activity found${geoLbl?" for "+geoLbl:""} in ${period}.</div><div class="es-hint">Try expanding the period, selecting a different region, or adjusting the owner selection.</div></div>`;
+}
+
+// ════ RENDER KPIs ════
+function renderKPIs(_v){
+  const v=_v||view();
+  if(!v.length){$("kpi-grid").innerHTML=`<div style="grid-column:1/-1">${emptyHTML()}</div>`;return;}
+  const m=mets(v),os=ostats(v),top=os.find(o=>o.posRev>0)||null;
+  const cards=[
+    {lbl:"Net Revenue",val:(()=>{
+  const _hasDrill=Object.keys(drill).length>0;
+  const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
+  const _hasItype=$("itype-sel")?.value||"";
+  const _hasBU=$("bu-sel")?.value||"";
+  const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
+  const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
+  const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive||existingActive;
+  return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
+})(),sub:(()=>{
+  const _hasDrill=Object.keys(drill).length>0;
+  const _hasGeo=getSelectedRegions().length<ALL_REGIONS.length;
+  const _hasItype=$("itype-sel")?.value||"";
+  const _hasBU=$("bu-sel")?.value||"";
+  const _notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length;
+  const _hasSvc=getSelectedServices().length<ALL_SERVICES.length;
+  const _hasHead=getSelectedHeads().length<ALL_HEADS.length;
+  const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive||existingActive;
+  return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
+})(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
+    {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:`${m.clients} unique clients`,tip:"Net revenue ÷ unique clients"},
+    {lbl:"Top Performer",val:top?top.name.split(" ")[0]:"n/a",sub:top?fmtUSD(top.posRev):"",tip:"Drill into top performer",action:top?"setDrill('owner','"+top.id+"')":null},
+    {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
+    {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"n/a",sub:"top 3 clients' share",tip:"Revenue concentration"}
+  ];
+  // ── Inter BU KPI — filter-responsive ──
+  // Formula: Digital BU Net Revenue − Search line items − Web line items
+  // Computed from the current filtered view (v) — responds to all active filters.
+  let digitalNetRev=0,searchWebRev=0;
+  const selectedSvcs=new Set(getSelectedServices());
+  v.forEach(d=>{
+    if(d.bu==="Digital"){
+      digitalNetRev+=d.amount;
+      (dealServiceMap[d.id]||[]).forEach(li=>{
+        if((li.svc==="Search"||li.svc==="Web")&&selectedSvcs.has(li.svc))searchWebRev+=li.amount;
+      });
+    }
+  });
+  const interBUConst=digitalNetRev-searchWebRev;
+  const isInterBUClone=document.body.getAttribute("data-clone")==="interbu";
+  cards.splice(1,0,{lbl:"Inter BU",val:interBUConst>0?fmtUSD(interBUConst):"n/a",sub:"Digital excl. Search & Web",tip:"Digital Net Revenue − Search − Web · responds to all filters",interbu:true});
+  $("kpi-grid").innerHTML=cards.map(c=>{
+    const click=c.action?` onclick="${c.action}" style="cursor:pointer;user-select:none"`:"";
+    const extraClass=(c.interbu&&isInterBUClone)?" kpi-interbu":"";
+    return`<div class="kpi${extraClass}"${click} title="${c.tip||""}"><div class="kpi-lbl">${c.lbl}</div><div class="kpi-val">${c.val}</div><div class="kpi-sub">${c.sub}</div></div>`;
+  }).join("");
+}
+
+// ════ RENDER CHARTS ════
+function renderOwnerBars(_v){
+  const v=_v||view();
+  const os=ostats(v);
+  if(!v.length){$("ob-bars").innerHTML=emptyHTML();return;}
+  if(!os.length){$("ob-bars").innerHTML=`<div class="empty-state"><div class="es-icon">📊</div><div class="es-title">No owner data</div></div>`;return;}
+  const mx=Math.max(...os.map(o=>o.posRev),1);
+  $("ob-bars").innerHTML=os.slice(0,8).map(o=>`
+    <div class="orow${drill.owner===o.id?" drill-active":""}" onclick="setDrill('owner','${o.id}')" title="${o.name}">
+      <div class="orow-hd">
+        <div class="ometa"><div class="oav">${o.name.split(" ").map(w=>w[0]).join("").substring(0,2)}</div><div><div class="oname">${o.name}</div><div class="ocnt">${o.count} deal${o.count!==1?"s":""}</div></div></div>
+        <div style="text-align:right"><div class="orev">${fmtUSD(o.posRev)}</div><div class="opct">${o.share.toFixed(1)}%</div></div>
+      </div>
+      <div class="btrack"><div class="bfill" style="width:${(o.posRev/mx*100).toFixed(1)}%"></div></div>
+    </div>`).join("");
+}
+
+function renderGeoBars(_v){
+  const v=_v||view();
+  const gs=geostats(v);
+  if(!v.length){$("geo-bars").innerHTML=emptyHTML();return;}
+  if(!gs.length){$("geo-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🌍</div><div class="es-title">No region data</div></div>`;return;}
+  const mx=Math.max(...gs.map(g=>g.posRev),1);
+  $("geo-bars").innerHTML=gs.map(g=>`
+    <div class="gbar-row${drill.region===g.geo?" drill-active":""}" onclick="setDrill('region','${g.geo}')" title="${g.geo}">
+      <div class="gbar-badge" style="background:${GEO_COLORS[g.geo]||"#9A9A9A"};color:${g.geo==="AU"?"#FFDA30":"#fff"}">${g.geo}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${GEO_COLORS[g.geo]};width:${(g.posRev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(g.posRev)}</div><div class="gbar-cnt">${g.count} deals · ${g.share.toFixed(1)}%</div></div>
+    </div>`).join("");
+}
+
+function renderClientBars(_v){
+  const v=_v||view();
+  const clients=topClients(v);
+  if(!v.length){$("cl-bars").innerHTML=emptyHTML();return;}
+  if(!clients.length){$("cl-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No client data</div></div>`;return;}
+  const mx=Math.max(...clients.map(c=>c.rev),1);
+  $("cl-bars").innerHTML=clients.map(c=>`
+    <div class="cbar-row${drill.client===c.name?" drill-active":""}" onclick="setDrill('client','${c.name.replace(/'/g,"\\'")}')" title="${c.name}">
+      <div class="cbar-name" title="${c.name}">${c.name}</div>
+      <div class="cbar-track"><div class="cbar-fill" style="width:${(c.rev/mx*100).toFixed(1)}%"></div></div>
+      <div class="cbar-val">${fmtShort(c.rev)}</div>
+    </div>`).join("");
+}
+
+function renderTimeline(){
+  const ctx=$("tlc").getContext("2d");
+  if(tlcChart){tlcChart.destroy();tlcChart=null;}
+  const data=tline();if(!data.length)return;
+  tlcChart=new Chart(ctx,{type:"line",data:{labels:data.map(d=>d.label),datasets:[{label:"Revenue",data:data.map(d=>d.value),borderColor:"#FFDA30",backgroundColor:"rgba(255,218,48,0.07)",borderWidth:2,pointRadius:2.5,pointBackgroundColor:"#FFDA30",fill:true,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtUSD(c.parsed.y)},bodyFont:{family:"Montserrat",size:11},titleFont:{family:"Montserrat",size:11}}},scales:{x:{ticks:{font:{family:"Montserrat",size:8},color:"#9A9A9A",maxRotation:45,autoSkip:true},grid:{color:"rgba(0,0,0,0.03)"}},y:{ticks:{font:{family:"Montserrat",size:8},color:"#9A9A9A",callback:v=>fmtShort(v)},grid:{color:"rgba(0,0,0,0.03)"}}}}});
+}
+
+function renderInvChart(_v){
+  const ctx=$("itc").getContext("2d");
+  if(itcChart){itcChart.destroy();itcChart=null;}
+  const types=engTypesLi(_v||view()),labels=Object.keys(types),vals=Object.values(types);
+  if(!labels.length){return;}
+  const palette={"Recurring":"#FFDA30","P2P":"#EF2D56"};
+  const bgColors=labels.map(l=>palette[l]||"#C0C0C0");
+  itcChart=new Chart(ctx,{type:"doughnut",data:{labels,datasets:[{data:vals,backgroundColor:bgColors,borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,onClick:(evt,el)=>{if(el.length)setDrill("eng_model",itcChart.data.labels[el[0].index]);},plugins:{legend:{position:"right",labels:{font:{family:"Montserrat",size:9},color:"#434343",boxWidth:10,padding:8}},tooltip:{callbacks:{label:c=>`${c.label}: ${fmtUSD(c.parsed)}`},bodyFont:{family:"Montserrat",size:11}}}}});
+}
+
+// ════ RENDER TABLE ════
+function renderTable(_v){
+  const v=_v||view();
+  const srt=[...v].sort((a,b)=>{const m=sd==="asc"?1:-1;if(sk==="amount")return m*(a.amount-b.amount);if(sk==="closedate")return m*(a.closedate||"").localeCompare(b.closedate||"");if(sk==="client")return m*(a.client||"").localeCompare(b.client||"");if(sk==="geo")return m*(a.geo||"").localeCompare(b.geo||"");return m*(a.dealname||"").localeCompare(b.dealname||"");});
+  const tot=Math.max(1,Math.ceil(srt.length/PER));
+  if(pg>tot)pg=tot;
+  const paged=srt.slice((pg-1)*PER,pg*PER);
+  $("tmeta").textContent=`${v.length} deal${v.length!==1?"s":""} · Page ${pg} of ${tot}`;
+  const ar=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
+  $("dth").innerHTML=`<tr><th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th><th onclick="sortBy('client')">Client${ar("client")}</th><th>Owner</th><th>Head</th><th onclick="sortBy('geo')">Region${ar("geo")}</th><th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th><th>Engagement</th><th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th><th style="text-align:center">↗</th></tr>`;
+  if(!paged.length){$("dtb").innerHTML=`<tr><td colspan="9">${emptyHTML()}</td></tr>`;$("pgs").innerHTML="";return;}
+  $("dtb").innerHTML=paged.map((d,i)=>{
+    const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
+    const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
+    const geo=d.region||"",gc=geo==="AU"?"geo-AU":"geo-"+geo;
+    const resolvedHead=(d.head||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
+    const eng=engGroup(d.eng_model)||"";
+    return`<tr${neg?' class="cred"':""}>
+      <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${nm}</td>
+      <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${resolvedHead}')">${resolvedHead.split(" ")[0]}</td>
+      <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${geo}')">${geo}</span></td>
+      <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
+      <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('eng_model','${eng}')">${eng}</span></td>
+      <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(d.closedate)}</td>
+      <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" onclick="event.stopPropagation()">↗</a></td>
+    </tr>`;
+  }).join("");
+  // Navigation pagination
+  const prev=pg>1?`<button class="pg pg-nav" onclick="goPg(${pg-1})">‹</button>`:`<button class="pg pg-nav" disabled>‹</button>`;
+  const next=pg<tot?`<button class="pg pg-nav" onclick="goPg(${pg+1})">›</button>`:`<button class="pg pg-nav" disabled>›</button>`;
+  const pages=[];pages.push(1);const win=2,start=Math.max(2,pg-win),end=Math.min(tot-1,pg+win);
+  if(start>2)pages.push("...");for(let i=start;i<=end;i++)pages.push(i);if(end<tot-1)pages.push("...");if(tot>1)pages.push(tot);
+  const btns=pages.map(p=>p==="..."?`<span class="pg-ellipsis">…</span>`:`<button class="pg${pg===p?" on":""}" onclick="goPg(${p})">${p}</button>`).join("");
+  $("pgs").innerHTML=prev+btns+next;
+}
+
+function renderBUBars(_v){
+  const v=_v||view();
+  const bs=bustats(v);
+  if(!v.length){$("bu-bars").innerHTML=emptyHTML();return;}
+  if(!bs.length){
+    $("bu-bars").innerHTML=`<div class="empty-state"><div class="es-icon">🏢</div><div class="es-title">No BU data</div></div>`;
+    return;
+  }
+  const mx=Math.max(...bs.map(b=>b.rev),1);
+  const buColors={"Digital":"#FFDA30","MarTech":"#473400"};
+  $("bu-bars").innerHTML=bs.map(b=>`
+    <div class="gbar-row${($("bu-sel")?.value||"")=== b.bu?" drill-active":""}" onclick="toggleBUFilter('${b.bu}')" title="${b.bu}">
+      <div class="gbar-badge" style="background:${buColors[b.bu]||"#9A9A9A"};color:${b.bu==="MarTech"?"#FFDA30":"#111"}">${b.bu}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${buColors[b.bu]||"#9A9A9A"};width:${(b.rev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(b.rev)}</div><div class="gbar-cnt">${b.count} deals · ${b.share.toFixed(1)}%</div></div>
+    </div>`).join("");
+}
+
+function renderHeadBars(_v){
+  const v=_v||view();
+  const hs=headstats(v);
+  if(!v.length){$("head-bars").innerHTML=emptyHTML();return;}
+  if(!hs.length){$("head-bars").innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><div class="es-title">No head data</div></div>`;return;}
+  const mx=Math.max(...hs.map(h=>Math.abs(h.rev)),1);
+  const headColors={
+    "Jiggyasa Agrawal":"#FFDA30","Tanuj Gupta (UK)":"#006E5E","Tanuj Gupta (US)":"#FFDA30",
+    "Nevilson Christan":"#473400","Jaydeep Salla":"#3B3561"
+  };
+  const headTextColors={
+    "Jiggyasa Agrawal":"#111","Tanuj Gupta (UK)":"#fff","Tanuj Gupta (US)":"#111",
+    "Nevilson Christan":"#FFDA30","Jaydeep Salla":"#fff"
+  };
+  $("head-bars").innerHTML=hs.map(h=>`
+    <div class="gbar-row${drill.geo_head===h.base?" drill-active":""}" onclick="setDrill('geo_head','${h.base}')" title="${h.head}">
+      <div class="gbar-badge" style="background:${headColors[h.head]||"#9A9A9A"};color:${headTextColors[h.head]||"#fff"};font-size:9px">${h.firstName}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${headColors[h.head]||"#9A9A9A"};width:${(Math.abs(h.rev)/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(h.rev)}</div><div class="gbar-cnt">${h.count} deals · ${h.share.toFixed(1)}%</div></div>
+    </div>`).join("");
+}
+
+function renderSvcBars(_v){
+  const v=_v||view();
+  if(!v.length){$("svc-bars").innerHTML=emptyHTML();return;}
+  const _svcDrill=drill.service||null;
+  const _selSvc=getSelectedServices();
+  const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
+  const m={};
+  v.forEach(d=>{
+    (dealServiceMap[d.id]||[]).forEach(li=>{
+      if(!li.svc)return;
+      if(_svcDrill&&li.svc!==_svcDrill)return;
+      m[li.svc]=(m[li.svc]||0)+li.amount;
+    });
+  });
+  const entries=(_svcFiltered?_selSvc:ALL_SERVICES).map(s=>({svc:s,rev:m[s]||0})).filter(e=>e.rev>0);
+  if(!entries.length){
+    const hasAnyServiceData=Object.keys(dealServiceMap).length>0;
+    if(!hasAnyServiceData&&deals.length>0){
+      $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon"><div class="spin" style="width:18px;height:18px;border-width:2px;margin:0 auto"></div></div><div class="es-sub" style="margin-top:8px">Loading service data...</div></div>`;
+    }else{
+      $("svc-bars").innerHTML=`<div class="empty-state" style="padding:20px 16px"><div class="es-icon">📊</div><div class="es-title">No service data</div><div class="es-sub">No classified line items found for this period.</div></div>`;
+    }
+    return;
+  }
+  const total=entries.reduce((s,e)=>s+e.rev,0);
+  const mx=Math.max(...entries.map(e=>e.rev),1);
+  $("svc-bars").innerHTML=entries.map(e=>`
+    <div class="gbar-row${drill.service===e.svc?" drill-active":""}" onclick="setDrill('service','${e.svc}')" title="${e.svc}">
+      <div class="gbar-badge" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};color:${e.svc==="Campaign"?"#111":"#fff"}">${e.svc}</div>
+      <div class="gbar-track"><div class="gbar-fill" style="background:${SVC_COLORS[e.svc]||"#9A9A9A"};width:${(e.rev/mx*100).toFixed(1)}%"></div></div>
+      <div class="gbar-info"><div class="gbar-rev">${fmtShort(e.rev)}</div><div class="gbar-cnt">${total>0?(e.rev/total*100).toFixed(1):0}%</div></div>
+    </div>`).join("");
+}
+
+// ════ TRENDS ENGINE ════
+// FY 2026 = Apr 2026 → current month. Filter-responsive via trendView().
+// Data sourced from allDeals[] — same unified dataset as main dashboard.
+
+function getFY2026Months(){
+  const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
+  const months=[];
+  // FY 2026 = Apr 2026 → current month (BU structure formed Apr 1, 2026)
+  for(let m=3;m<12;m++){ // m=3 = April (0-indexed)
+    if(cy>2026||(cy===2026&&m<=cm))months.push(`${MFULL[m]}-2026`);
+  }
+  return months;
+}
+
+// Build month-keyed aggregates from the filtered FY dataset
+function buildTrendData(months,src){
+  src=src||allDeals;
+  // Service filter state — captured once for engagement line-item filtering
+  const _trendSelSvc=getSelectedServices();
+  const _trendSvcFiltered=_trendSelSvc.length>0&&_trendSelSvc.length<ALL_SERVICES.length;
+  // Initialise per-month buckets
+  const byMonth={};
+  months.forEach(m=>{
+    byMonth[m]={
+      net:0,clients:new Set(),
+      digital:0,martech:0,
+      digitalNetRev:0,searchWebRev:0, // for Inter BU
+      recurring:0,p2p:0
+    };
+  });
+
+  src.forEach(d=>{
+    const m=d.month;
+    if(!byMonth[m])return;
+    const bkt=byMonth[m];
+
+    bkt.net+=d.amount;
+    if(d.billing_id)bkt.clients.add(d.billing_id);
+
+    // BU
+    if(d.bu==="Digital"){
+      bkt.digital+=d.amount;
+      bkt.digitalNetRev+=d.amount;
+      // Inter BU: Digital Net Rev minus Search & Web line items
+      // MUST respect the active service filter — if Search/Web are filtered out,
+      // those line items do not count toward searchWebRev (d.amount already excludes them)
+      (dealServiceMap[d.id]||[]).forEach(li=>{
+        if(li.svc!=="Search"&&li.svc!=="Web")return;
+        if(_trendSvcFiltered&&!_trendSelSvc.includes(li.svc))return; // honour service filter
+        bkt.searchWebRev+=li.amount;
+      });
+    } else if(d.bu==="MarTech"){
+      bkt.martech+=d.amount;
+    }
+
+    // Engagement — line-item based, respects service filter
+    const _lis=dealServiceMap[d.id]||[];
+    if(_lis.length){
+      let classified=false;
+      _lis.forEach(li=>{
+        if(_trendSvcFiltered&&!_trendSelSvc.includes(li.svc))return;
+        const eg=engGroupFromLiName(li.name);
+        if(eg==="Recurring"){bkt.recurring+=li.amount;classified=true;}
+        else if(eg==="P2P"){bkt.p2p+=li.amount;classified=true;}
+      });
+      // If line items exist but none classified by name, fall back to deal eng_model
+      if(!classified){
+        const eg=engGroup(d.eng_model);
+        if(eg==="Recurring")bkt.recurring+=d.amount;
+        else if(eg==="P2P")bkt.p2p+=d.amount;
+      }
+    }else{
+      const eg=engGroup(d.eng_model);
+      if(eg==="Recurring")bkt.recurring+=d.amount;
+      else if(eg==="P2P")bkt.p2p+=d.amount;
+    }
+  });
+
+  // Derive Inter BU, Digital Pure, and Avg per month
+  months.forEach(m=>{
+    const bkt=byMonth[m];
+    bkt.interBU=bkt.digitalNetRev-bkt.searchWebRev;
+    // Digital Pure = Digital Net Rev minus Inter BU (Search + Web only)
+    // All three bars are now additive: MarTech + Inter BU + Digital Pure = Total Revenue
+    bkt.digitalPure=Math.max(0,bkt.digital-bkt.interBU);
+    bkt.clientCount=bkt.clients.size;
+    bkt.avg=bkt.clientCount>0?bkt.net/bkt.clientCount:0;
+  });
+
+  return byMonth;
+}
+
+// Shared Chart.js defaults for Trends
+const TREND_FONT={family:"Montserrat",size:9};
+const TREND_TICK={font:TREND_FONT,color:"#9A9A9A"};
+const TREND_GRID={color:"rgba(0,0,0,0.04)"};
+function trendTooltip(extra={}){
+  return{callbacks:{label:c=>`${c.dataset.label}: ${fmtUSD(c.parsed.y)}`,...(extra.callbacks||{})},bodyFont:{family:"Montserrat",size:10},titleFont:{family:"Montserrat",size:10},...extra};
+}
+function destroyTrendCharts(){
+  [trcRevChart,trcBUChart,trcEngChart,trcAvgChart].forEach(c=>{if(c)c.destroy();});
+  trcRevChart=trcBUChart=trcEngChart=trcAvgChart=null;
+}
+
+function renderTrends(months,src){
+  destroyTrendCharts();
+  const byMonth=buildTrendData(months,src);
+  // Month display labels e.g. "Jan", "Feb"
+  const labels=months.map(m=>{const[mn,yr]=m.split("-");return MSHRT[MFULL.indexOf(mn)];});
+  const net       =months.map(m=>byMonth[m].net);
+  const clients   =months.map(m=>byMonth[m].clientCount);
+  const digital   =months.map(m=>byMonth[m].digital);
+  const digitalPure=months.map(m=>byMonth[m].digitalPure);
+  const martech   =months.map(m=>byMonth[m].martech);
+  const interBU   =months.map(m=>byMonth[m].interBU);
+  const recurring=months.map(m=>byMonth[m].recurring);
+  const p2p    =months.map(m=>byMonth[m].p2p);
+  const avg    =months.map(m=>byMonth[m].avg);
+
+  // ── Chart 1: Revenue & Unique Clients ──────────────────────────
+  trcRevChart=new Chart($("trc-rev").getContext("2d"),{
+    data:{
+      labels,
+      datasets:[
+        {type:"bar",label:"Net Revenue",data:net,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,yAxisID:"yRev",order:2},
+        {type:"line",label:"Unique Clients",data:clients,borderColor:"#E84040",backgroundColor:"transparent",borderWidth:2,pointRadius:3,pointBackgroundColor:"#E84040",yAxisID:"yClients",tension:0.3,order:1}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
+        tooltip:trendTooltip({callbacks:{label:c=>c.dataset.yAxisID==="yClients"?`${c.dataset.label}: ${c.parsed.y}`:`${c.dataset.label}: ${fmtUSD(c.parsed.y)}`}})
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        yRev:{position:"left",ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID,title:{display:true,text:"Net Revenue",font:TREND_FONT,color:"#9A9A9A"}},
+        yClients:{position:"right",ticks:TREND_TICK,grid:{display:false},title:{display:true,text:"Unique Clients",font:TREND_FONT,color:"#9A9A9A"}}
+      }
+    }
+  });
+
+  // ── Chart 2: BU Trend — Digital Pure + Inter BU + MarTech bars ──
+  // Three bars are fully additive: Digital Pure + Inter BU + MarTech = Total Revenue.
+  // Digital Pure = Digital Net Rev − Inter BU (Search + Web only, no cross-BU services).
+  // Inter BU = Digital Net Rev − Search − Web (MarTech-type work by Digital owners).
+  trcBUChart=new Chart($("trc-bu").getContext("2d"),{
+    data:{
+      labels,
+      datasets:[
+        {type:"bar",label:"Digital (Pure)",data:digitalPure,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3,order:3},
+        {type:"bar",label:"Inter BU",data:interBU,backgroundColor:"rgba(59,53,97,0.85)",borderRadius:3,order:2},
+        {type:"bar",label:"MarTech",data:martech,backgroundColor:"rgba(67,67,67,0.80)",borderRadius:3,order:1}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
+        tooltip:{
+          bodyFont:{family:"Montserrat",size:10},titleFont:{family:"Montserrat",size:10},
+          callbacks:{label:c=>{
+            const total=c.chart.data.datasets.reduce((s,ds)=>
+              s+(!ds.hidden&&typeof ds.data[c.dataIndex]==='number'?ds.data[c.dataIndex]:0),0);
+            const pct=total>0?Math.round(c.parsed.y/total*100):0;
+            return`${c.dataset.label}: ${fmtShort(c.parsed.y)} (${pct}%)`;
+          }}
+        }
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        y:{ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID}
+      }
+    }
+  });
+
+  // ── Chart 3: Engagement Model Trend ────────────────────────────
+  trcEngChart=new Chart($("trc-eng").getContext("2d"),{
+    data:{
+      labels,
+      datasets:[
+        {type:"bar",label:"Recurring",data:recurring,backgroundColor:"rgba(255,218,48,0.85)",borderRadius:3},
+        {type:"bar",label:"P2P",data:p2p,backgroundColor:"rgba(239,45,86,0.80)",borderRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{labels:{font:TREND_FONT,color:"#434343",boxWidth:10,padding:10}},
+        tooltip:{
+          bodyFont:{family:"Montserrat",size:10},titleFont:{family:"Montserrat",size:10},
+          callbacks:{label:c=>{
+            const total=c.chart.data.datasets.reduce((s,ds)=>
+              s+(!ds.hidden&&typeof ds.data[c.dataIndex]==='number'?ds.data[c.dataIndex]:0),0);
+            const pct=total>0?Math.round(c.parsed.y/total*100):0;
+            return`${c.dataset.label}: ${fmtShort(c.parsed.y)} (${pct}%)`;
+          }}
+        }
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        y:{ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID}
+      }
+    }
+  });
+
+  // ── Chart 4: Avg Revenue per Unique Client ──────────────────────
+  trcAvgChart=new Chart($("trc-avg").getContext("2d"),{
+    type:"line",
+    data:{
+      labels,
+      datasets:[{
+        label:"Avg Rev / Client",data:avg,
+        borderColor:"#006E5E",backgroundColor:"rgba(0,110,94,0.07)",
+        borderWidth:2.5,pointRadius:4,pointBackgroundColor:"#006E5E",
+        fill:true,tension:0.35
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:trendTooltip()
+      },
+      scales:{
+        x:{ticks:TREND_TICK,grid:TREND_GRID},
+        y:{ticks:{...TREND_TICK,callback:v=>fmtShort(v)},grid:TREND_GRID}
+      }
+    }
+  });
+}
+
+function renderAll(){
+  // Funnel Desk standalone — only renders Funnel
+  const periodMonths=getMonths();
+  deals=allDeals.filter(d=>periodMonths.includes(d.month));
+  netRevTotal=deals.reduce((s,d)=>s+d.amount,0);
+  const lbl=getPeriodLabel();
+  if($("sdot").style.background!=="rgb(105, 105, 105)")
+    $("stxt").textContent=`LIVE · ${deals.length} DEALS · ${lbl.toUpperCase()}`;
+  renderFunnel();
+}
+
+// ════ KPI ACTIONS ════
+function sortTable(){sk="amount";sd="desc";pg=1;renderTable();document.querySelector(".tcard")?.scrollIntoView({behavior:"smooth",block:"start"});}
+function scrollToClients(){document.getElementById("cl-bars")?.closest(".card")?.scrollIntoView({behavior:"smooth",block:"center"});}
+
+function sortBy(k){if(sk===k)sd=sd==="asc"?"desc":"asc";else{sk=k;sd="desc";}pg=1;renderTable();}
+function goPg(p){pg=p;renderTable();}
+
+// ════ RESET ALL ════
+function getExpectedOwnerCount(){
+  // Compare selected owners against cascade-expected count to detect manual filtering
+  const bu=$("bu-sel")?.value||"";
+  const selH=getSelectedHeads();
+  const allHeadsSelected=selH.length===ALL_HEADS.length||selH.length===0;
+  if(allHeadsSelected&&!bu)return ALL_IDS.length;
+  let effectiveHeads;
+  if(bu&&BU_HEADS[bu]){
+    // Intersect BU heads with selected heads for precision
+    const intersection=BU_HEADS[bu].filter(h=>selH.includes(h));
+    effectiveHeads=intersection.length>0?intersection:BU_HEADS[bu];
+  } else {
+    effectiveHeads=selH;
+  }
+  const expectedGroups=new Set();
+  effectiveHeads.forEach(h=>(HEAD_OWNER_GROUPS[h]||[]).forEach(g=>expectedGroups.add(g)));
+  return Object.entries(OWNER_GROUPS)
+    .filter(([g])=>expectedGroups.has(g))
+    .flatMap(([,owners])=>owners).length;
+}
+
+function updateDynamicOptions(){
+  // Engagement Model — only show types present in current deals
+  const invTypes=new Set(deals.filter(d=>d.inv_type).map(d=>d.inv_type));
+  const iSel=$("itype-sel");
+  if(iSel){
+    Array.from(iSel.options).forEach(opt=>{
+      if(!opt.value){opt.style.display="";return;}
+      opt.style.display=invTypes.has(opt.value)?"":"none";
+    });
+    if(iSel.value&&!invTypes.has(iSel.value)){iSel.value="";}
+  }
+  // Region — uncheck geos not present in current deals (unless head constrains it)
+  const geos=new Set(deals.map(d=>d.region).filter(Boolean));
+  const _headSel=getSelectedHeads();
+  const _headConstrained=_headSel.length>0&&_headSel.length<ALL_HEADS.length;
+  if(!_headConstrained){
+    ALL_REGIONS.forEach(r=>{
+      const e=$("geo-"+r);
+      if(e&&!geos.has(r))e.checked=false;
+    });
+    updateGeoLabel();
+  }
+}
+
+function resetAll(){
+  const ps=$("period-sel");if(ps)ps.value="this-month";
+  const cr=$("custom-range");if(cr)cr.classList.remove("show");
+  const bs=$("bu-sel");if(bs)bs.value="";ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
+  const gh=$("geohead-sel");if(gh)gh.value="";
+  const it=$("itype-sel");if(it)it.value="";
+  const nb=$("nbd-toggle");if(nb){nbdActive=false;nb.classList.remove("active");}
+  const rt=$("react-toggle");if(rt){reactivationActive=false;rt.classList.remove("active");}
+  const ex=$("existing-toggle");if(ex){existingActive=false;ex.classList.remove("active");}
+  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
+  ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});
+  ownerManuallyFiltered=false;
+  updateOwnerLabel();
+  Object.keys(drill).forEach(k=>delete drill[k]);
+  updateChips();
+  doFYSync(true);
+}
+
+// ════ LOGIN ════
+async function doLogin(){
+  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
+  if(!pw){err.textContent="Please enter the access password.";return;}
+  btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
+  try{
+    const _cloneHead=new URLSearchParams(location.search).get("head")||"";
+    const res=await fetch("/funnel-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:_cloneHead})});
+    const data=await res.json();
+    if(data.success){
+      document.getElementById("login-overlay").style.display="none";
+      localStorage.setItem(_cloneHead?`nexus_auth_${_cloneHead}`:"nexus_auth","1");
+    } else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
+      console.error("Auth error:",data.error||"unknown");
+    } else {
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value="";$("pw-input").focus();
+    }
+  }catch(e){
+    err.textContent="Connection error. Check your network.";
+    console.error(e);
+  }
+  finally{btn.disabled=false;btn.textContent="Access Dashboard";}
+}
+// ════ CLONE MODE ════
+// Reads ?head= URL param and pre-locks the dashboard to that head's view.
+// No param → master dashboard, no changes applied.
+//
+// Clone types:
+//   Head clone  (jiggyasa/jaydeep/tanuj/nevilson) — locks Head filter, hides Head dropdown
+//   BU clone    (digital)                          — locks BU=Digital, hides BU dropdown
+//   Inter BU    (interbu)                          — no filter locks, highlights Inter BU KPI
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param)return; // Master dashboard — nothing to do
+
+  // Find the matching head config
+  const cfg=HEADS_CONFIG.find(h=>h.id===param);
+  if(!cfg){
+    console.warn(`[Nexus] Unknown ?head= param: "${param}" — loading master view`);
+    return;
+  }
+
+  // ── Mark body for CSS hooks (all clone types) ──
+  document.body.setAttribute("data-clone",param);
+
+  // ════ BRANCH A: BU clone — ?head=digital ════
+  // Portfolio Health link → master /portfolio (Jiggyasa + Tanuj have their own head-specific URLs)
+  // Pipeline Scout link → master /pipeline
+  if(cfg.buClone){
+    const portfolioLink=$("portfolio-link");
+    if(portfolioLink)portfolioLink.href=`/portfolio`;
+    const pipelineLink=$("pipeline-link");
+    if(pipelineLink)pipelineLink.href=`/pipeline`;
+    // Lock BU filter to Digital, hide BU dropdown from filter bar
+    const buSel=$("bu-sel");
+    if(buSel){
+      buSel.value="Digital";
+      buSel.style.display="none";
+      let prev=buSel.previousElementSibling;
+      if(prev&&prev.classList.contains("fl"))prev.style.display="none";
+      let next=buSel.nextElementSibling;
+      if(next&&next.classList.contains("vdiv"))next.style.display="none";
+    }
+    document.title=`Digital BU · Nexus · Mavlers`;
+    const eyebrow=document.querySelector(".login-eyebrow");
+    if(eyebrow)eyebrow.textContent=`Mavlers · Digital BU Dashboard`;
+    console.log(`[Nexus] Clone mode: Digital BU (digital)`);
+    return;
+  }
+
+  // ════ BRANCH B: Inter BU clone — ?head=interbu ════
+  // Locks BU=Digital + Service=Campaign/Email/Design (Digital minus Search & Web = Inter BU definition)
+  // Portfolio Health: hidden — no Inter BU portfolio view exists
+  // Pipeline Scout: hidden — no Inter BU pipeline view exists
+  if(cfg.interbuClone){
+    const portfolioLink=$("portfolio-link");
+    if(portfolioLink)portfolioLink.style.display="none"; // No portfolio view for Inter BU
+    const pipelineLink=$("pipeline-link");
+    if(pipelineLink)pipelineLink.style.display="none"; // No pipeline view for Inter BU
+    // ── Lock BU = Digital, hide BU dropdown ──
+    const buSel=$("bu-sel");
+    if(buSel){
+      buSel.value="Digital";
+      buSel.style.display="none";
+      const buLabel=buSel.previousElementSibling;
+      if(buLabel&&buLabel.classList.contains("fl"))buLabel.style.display="none";
+      const buDivider=buSel.nextElementSibling;
+      if(buDivider&&buDivider.classList.contains("vdiv"))buDivider.style.display="none";
+    }
+    // ── Lock Service = Campaign, Email, Design (exclude Search & Web) ──
+    const INTERBU_SVCS=["Campaign","Email","Design"];
+    ALL_SERVICES.forEach(s=>{
+      const el=$("svc-"+s);
+      if(el)el.checked=INTERBU_SVCS.includes(s);
+    });
+    updateSvcLabel();
+    const svcWrap=$("svc-ms-wrap");
+    if(svcWrap){
+      svcWrap.style.display="none";
+      const vdivs=document.querySelectorAll(".vdiv");
+      vdivs.forEach(d=>{
+        if(d.nextElementSibling===svcWrap||d.previousElementSibling===svcWrap)
+          d.style.display="none";
+      });
+      const svcLabel=svcWrap.previousElementSibling;
+      if(svcLabel&&svcLabel.classList.contains("fl"))svcLabel.style.display="none";
+    }
+    document.title=`Inter BU · Nexus · Mavlers`;
+    const eyebrow=document.querySelector(".login-eyebrow");
+    if(eyebrow)eyebrow.textContent=`Mavlers · Inter BU Dashboard`;
+    console.log(`[Nexus] Clone mode: Inter BU (interbu) — BU=Digital, Svc=Campaign/Email/Design`);
+    return;
+  }
+
+  // ── Portfolio Health + Pipeline Scout links carry ?head= param for head clones ──
+  const portfolioLink=$("portfolio-link");
+  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
+  const pipelineLink=$("pipeline-link");
+  if(pipelineLink)pipelineLink.href=`/pipeline?head=${param}`;
+
+  // ════ BRANCH C: Head clone — jiggyasa / jaydeep / tanuj / nevilson ════
+
+  // ── 1. Pre-set Head filter: uncheck all, check only this head ──
+  ALL_HEADS.forEach(h=>{
+    const el=$("head-"+h.replace(/\s/g,"_"));
+    if(el)el.checked=(h===cfg.name);
+  });
+  updateHeadLabel();
+  updateSmartFilters(); // cascades BU + Region + Owner
+
+  // ── 2. Lock Head filter: hide it from the top bar ──
+  const headWrap=$("head-ms-wrap");
+  if(headWrap){
+    headWrap.style.display="none";
+    // Also hide the divider immediately before it
+    const vdivs=document.querySelectorAll(".vdiv");
+    vdivs.forEach(d=>{
+      if(d.nextElementSibling===headWrap||d.previousElementSibling===headWrap)
+        d.style.display="none";
+    });
+  }
+  // Hide the "Head" label span (the <span class="fl"> just before the head wrap)
+  const headLabel=headWrap?.previousElementSibling;
+  if(headLabel&&headLabel.classList.contains("fl"))headLabel.style.display="none";
+
+  // ── 3. Update page title + eyebrow ──
+  const firstName=cfg.name.split(" ")[0]; // "Jiggyasa", "Jaydeep", "Tanuj"
+  document.title=`${firstName}'s Nexus · Mavlers`;
+  const eyebrow=document.querySelector(".login-eyebrow");
+  if(eyebrow)eyebrow.textContent=`Mavlers · ${firstName}'s Dashboard`;
+  console.log(`[Nexus] Clone mode: ${cfg.name} (${param})`);
+}
+// ════ BOOT ════
+window.addEventListener("DOMContentLoaded",function(){
+  try{
+    initMonthSelects();
+    initPeriodOptions();
+    initOwners();
+    initHeadFilter();
+    initRegionFilter();
+    initServiceFilter();
+    loadFunnelInputs();       // Funnel Desk — restore saved inputs from localStorage
+    const ps=$("period-sel");if(ps)ps.value="this-month";
+    const cr=$("custom-range");if(cr)cr.classList.remove("show");
+    bootCloneMode(); // ← must run before doFYSync so filters are pre-set
+    doFYSync(true);
+  }catch(e){
+    console.error("Nexus Funnel boot error:",e);
+    const st=$("stxt");if(st)st.textContent="BOOT ERROR · CHECK CONSOLE";
+    const sd=$("sdot");if(sd)sd.style.background="#696969";
+  }
+});
+// ════════════════════════════════════════════════
+
+// ════ FUNNEL DESK ════
+// Shares allDeals + dealServiceMap + view() with Revenue Pulse.
+// P2P block uses allOppDeals (from doOppSync) for auto rows.
+
+// Toggle between Recurring and P2P modes
+function setFunnelMode(mode){
+  funnelMode=mode;
+  const recBtn=$('funnel-toggle-rec');
+  const p2pBtn=$('funnel-toggle-p2p');
+  if(recBtn){
+    recBtn.style.background=mode==='recurring'?'#3B3561':'#F7F7F7';
+    recBtn.style.color=mode==='recurring'?'#fff':'#9A9A9A';
+    recBtn.style.borderColor=mode==='recurring'?'#3B3561':'#E2E2E2';
+  }
+  if(p2pBtn){
+    p2pBtn.style.background=mode==='p2p'?'#EF2D56':'#F7F7F7';
+    p2pBtn.style.color=mode==='p2p'?'#fff':'#9A9A9A';
+    p2pBtn.style.borderColor=mode==='p2p'?'#EF2D56':'#E2E2E2';
+  }
+  renderFunnel();
+}
+
+function loadFunnelInputs(){
+  try{const r=localStorage.getItem(FUNNEL_LS_KEY);funnelInputs=r?JSON.parse(r):{};} catch(e){funnelInputs={};}
+}
+function saveFunnelInputs(){
+  document.querySelectorAll('.fd-input').forEach(el=>{
+    if(el.dataset.key)funnelInputs[el.dataset.key]=parseFloat(el.value)||0;
+  });
+  try{
+    localStorage.setItem(FUNNEL_LS_KEY,JSON.stringify(funnelInputs));
+    const s=$('funnel-saved');if(s){s.style.opacity='1';setTimeout(()=>s.style.opacity='0',2000);}
+  }catch(e){console.error('Funnel save failed:',e);}
+  renderFunnel();
+}
+function getFunnelInput(month,ownerId,field){
+  return funnelInputs[`${month}|${ownerId}|${field}`]||0;
+}
+
+function renderFunnel(){
+  if(!allDeals.length)return;
+  if(funnelMode==='p2p'){renderFunnelP2P();return;}
+  renderFunnelRecurring();
+}
+
+function renderFunnelRecurring(){
+  if(!allDeals.length)return;
+
+  // Use same period months as Revenue Pulse (inherits global Period selector)
+  const periodMonths=getMonths();
+  if(!periodMonths.length)return;
+  // For single-month operations (Opening/PostPaid day split), use last month in period
+  const primaryMonth=periodMonths[periodMonths.length-1];
+
+  // Get filtered deals (respects all global filters: BU, Head, Region, Owner, Engagement)
+  const filtered=view(allDeals.filter(d=>periodMonths.includes(d.month)),dealServiceMap);
+
+  // BU filter — needed to compute BU-aware line-item amount
+  const activeBU=$('bu-sel')?.value||'';
+
+  // BU-aware amount for a deal:
+  // No BU filter → full deal amount
+  // BU = Digital → sum of Digital line items only
+  // BU = MarTech → sum of MarTech line items only
+  // This ensures that when a filter is applied, the Total column reflects
+  // only that BU's portion — not the full deal amount.
+  function funnelAmt(d){
+    const lis=dealServiceMap[d.id]||[];
+    if(!activeBU||!lis.length)return d.amount;
+    const buAmt=lis.filter(li=>li.bu===activeBU).reduce((s,li)=>s+li.amount,0);
+    // If no line items match the BU (unclassified deal), fall back to full amount
+    return buAmt||d.amount;
+  }
+
+  // Per-owner data
+  const ownerMap={};
+  filtered.forEach(d=>{
+    const oid=String(d.owner_id);
+    if(!ownerMap[oid])ownerMap[oid]={id:oid,name:ownerName(oid),opening:0,postPaid:0};
+    // Use canonical engagement resolver — line-item majority, same as Pie chart
+    const eg=engGroupFromLi(d);
+    if(eg!=='Recurring')return;
+    const day=parseInt((d.closedate||'').split('-')[2]||'0',10);
+    const amt=funnelAmt(d);
+    if(day>=1&&day<=15)ownerMap[oid].opening+=amt;
+    else if(day>=16) ownerMap[oid].postPaid+=amt;
+  });
+
+  // Flat list — only owners with activity, sorted by opening desc
+  const ownerData=Object.values(ownerMap)
+    .filter(o=>o.opening>0||o.postPaid>0)
+    .sort((a,b)=>b.opening-a.opening);
+
+  if(!ownerData.length){
+    $('funnel-kpi-grid').innerHTML=`<div style="grid-column:1/-1;padding:32px;text-align:center;color:#9A9A9A;font-weight:600">No recurring revenue data for current filters.</div>`;
+    $('funnel-thead').innerHTML='';
+    $('funnel-tbody').innerHTML=`<tr><td colspan="3" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No data for current filters.</td></tr>`;
+    $('funnel-wf-chart').innerHTML='';
+    return;
+  }
+
+  // Aggregate totals
+  const totalOpening=ownerData.reduce((s,o)=>s+o.opening,0);
+  const totalPostPaid=ownerData.reduce((s,o)=>s+o.postPaid,0);
+  const totalTarget=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'target'),0);
+  const totalPredLoss=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'pred_loss'),0);
+  const totalPipeline=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'closure_pipeline'),0);
+  const totalOpp=ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'closure_opp'),0);
+  const totalExpected=totalOpening-totalPredLoss+totalPostPaid+totalPipeline+totalOpp;
+  const gap=totalTarget?(totalExpected-totalTarget):null;
+
+  // ── KPI strip (reuses existing .kpi-grid style) ──
+  const periodLbl=getPeriodLabel();
+  $('funnel-sec-kpi').textContent=`Recurring Forecast · ${periodLbl}`;
+  const gapColor=gap===null?'#9A9A9A':gap>=0?'#006E5E':'#C0143C';
+  const gapVal=gap===null?'—':gap>=0?'+'+fmtShort(gap):fmtShort(gap);
+  $('funnel-kpi-grid').innerHTML=[
+    {lbl:'Opening',val:fmtShort(totalOpening),sub:'Recurring · closedate 1–15',color:'#3B3561'},
+    {lbl:'Target',val:totalTarget?fmtShort(totalTarget):'—',sub:'Manual input',color:'#FFDA30'},
+    {lbl:'Expected Closing',val:fmtShort(totalExpected),sub:'Opening ± adjustments',color:'#006E5E'},
+    {lbl:'Gap vs Target',val:gapVal,sub:gap===null?'Set target below':gap>=0?'Ahead of target':'Behind target',color:gapColor},
+  ].map(k=>`
+    <div class="kpi" style="border-top:3px solid ${k.color}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-val" style="color:${k.color==='#FFDA30'?'#434343':k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // ── Waterfall ──
+  $('funnel-wf-title').textContent=`Recurring Waterfall · ${periodLbl}`;
+  $('funnel-wf-sub').textContent=`Opening ${fmtShort(totalOpening)} → Expected ${fmtShort(totalExpected)}${totalTarget?' · Target '+fmtShort(totalTarget):''}`;
+  renderFunnelWaterfall(totalOpening,totalPredLoss,totalPostPaid,totalPipeline,totalOpp,totalExpected,totalTarget);
+
+  // ── Table ──
+  // Header
+  const thStyle='padding:8px 12px;background:#F7F7F7;text-align:right;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #E8E8E8;white-space:nowrap';
+  const thStyleL=thStyle.replace('text-align:right','text-align:left')+';min-width:180px';
+  $('funnel-thead').innerHTML=`<tr>
+    <th style="${thStyleL}">Row</th>
+    ${ownerData.map(o=>`<th style="${thStyle};min-width:80px">${o.name.split(' ')[0]}</th>`).join('')}
+    <th style="${thStyle};min-width:90px;border-left:2px solid #E2E2E2">Total</th>
+  </tr>`;
+
+  // Row definitions
+  const fmtAmt=n=>n===0?'—':fmtShort(n);
+  const tdAuto=(v,bold)=>`<td style="padding:7px 12px;text-align:right;font-weight:${bold?'800':'600'};color:#434343;border-bottom:1px solid #F5F5F5">${fmtAmt(v)}</td>`;
+  const tdTotal=(v,bold,dark)=>`<td style="padding:7px 12px;text-align:right;font-weight:800;border-left:2px solid #E2E2E2;border-bottom:1px solid #F5F5F5;${dark?'background:#473400;color:#fff;':'color:#434343;'}">${fmtAmt(v)}</td>`;
+  const tdInput=(month,oid,field)=>{
+    const key=`${month}|${oid}|${field}`;
+    const val=funnelInputs[key]||0;
+    return`<td style="padding:4px 8px;text-align:right;background:#FFFDF0;border-bottom:1px solid #F5F5F5"><input class="fd-input" data-key="${key}" type="number" min="0" value="${val||''}" placeholder="—" style="background:transparent;border:none;width:100%;text-align:right;font-size:11px;font-weight:700;font-family:'Montserrat',sans-serif;color:#006E5E;outline:none;min-width:60px" /></td>`;
+  };
+  const rowLblTd=(lbl,hint,dark)=>`<td style="padding:8px 12px;font-weight:600;font-size:10.5px;color:${dark?'#fff':'#434343'};border-bottom:1px solid ${dark?'rgba(255,255,255,.1)':'#F5F5F5'};${dark?'background:#473400;':''}">${lbl}${hint?`<div style="font-size:8px;color:${dark?'rgba(255,255,255,.6)':'#9A9A9A'};font-weight:500;margin-top:1px">${hint}</div>`:''}${!dark?'':''}</td>`;
+
+  const rows=[
+    // Row 1: Target (green input)
+    {lbl:'Target',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'target')),total:tdTotal(totalTarget,true)},
+    // Row 2: Opening (auto)
+    {lbl:'Opening',hint:'HubSpot · Recurring · closedate 1–15',cells:ownerData.map(o=>tdAuto(o.opening)),total:tdTotal(totalOpening,true),auto:true},
+    // Row 3: Predicted Loss (green input)
+    {lbl:'Predicted Loss',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'pred_loss')),total:tdTotal(totalPredLoss,true)},
+    // Row 4: Post Paid (auto)
+    {lbl:'Post Paid',hint:'HubSpot · Recurring · closedate 16+',cells:ownerData.map(o=>tdAuto(o.postPaid)),total:tdTotal(totalPostPaid,true),auto:true},
+    // Row 5: Pipeline Closure (green input)
+    {lbl:'Existing Pipeline at Month Start',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'closure_pipeline')),total:tdTotal(totalPipeline,true)},
+    // Row 6: Opportunity Closure (green input)
+    {lbl:'Existing Opportunity at Month Start',hint:'Manual',cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'closure_opp')),total:tdTotal(totalOpp,true)},
+    // Row 7: Expected Closing (computed total row — dark)
+    {lbl:'Expected Closing of Recurring',hint:'Opening − Loss + Post Paid + Pipeline + Opp',cells:ownerData.map(o=>{
+      const exp=o.opening-getFunnelInput(primaryMonth,o.id,'pred_loss')+o.postPaid+getFunnelInput(primaryMonth,o.id,'closure_pipeline')+getFunnelInput(primaryMonth,o.id,'closure_opp');
+      return`<td style="padding:7px 12px;text-align:right;font-weight:800;color:#fff;background:#473400;border-bottom:1px solid rgba(255,255,255,.1)">${fmtAmt(exp)}</td>`;
+    }),total:tdTotal(totalExpected,true,true),dark:true},
+  ];
+
+  $('funnel-tbody').innerHTML=rows.map(r=>`<tr>
+    ${rowLblTd(r.lbl,r.hint,r.dark)}
+    ${r.cells.join('')}
+    ${r.total}
+  </tr>`).join('');
+
+  $('funnel-wf-sec').textContent='Recurring Waterfall';
+  $('funnel-tbl-sec').textContent='Recurring Funnel · by Owner';
+  $('funnel-tbl-ttl').textContent='Recurring Funnel Desk';
+  $('funnel-tbl-sub').textContent=`${ownerData.length} owners · ${periodLbl} · Green cells = manual inputs · Auto rows from HubSpot`;
+}
+
+// ════ P2P FUNNEL BLOCK ════
+function renderFunnelP2P(){
+  const periodMonths=getMonths();
+  if(!periodMonths.length)return;
+  const primaryMonth=periodMonths[periodMonths.length-1];
+  const periodLbl=getPeriodLabel();
+
+  // ── Update section labels ──
+  $('funnel-sec-kpi').textContent=`P2P Forecast · ${periodLbl}`;
+  $('funnel-wf-sec').textContent='P2P Waterfall';
+  $('funnel-tbl-sec').textContent='P2P Funnel · by Owner';
+  $('funnel-tbl-ttl').textContent='P2P Funnel Desk';
+
+  // ── P2P Current Booking — from allDeals (Booking stage, P2P eng, flat total) ──
+  const filtered=view(allDeals.filter(d=>periodMonths.includes(d.month)),dealServiceMap);
+  const activeBU=$('bu-sel')?.value||'';
+
+  function funnelAmt(d){
+    const lis=dealServiceMap[d.id]||[];
+    if(!activeBU||!lis.length)return d.amount;
+    const buAmt=lis.filter(li=>li.bu===activeBU).reduce((s,li)=>s+li.amount,0);
+    return buAmt||d.amount;
+  }
+
+  // Booking-stage P2P deals — flat total (no day split)
+  const bookingMap={};
+  filtered.forEach(d=>{
+    const eg=engGroupFromLi(d);
+    if(eg!=='P2P')return;
+    const oid=String(d.owner_id);
+    if(!bookingMap[oid])bookingMap[oid]={id:oid,name:ownerName(oid),booking:0};
+    bookingMap[oid].booking+=funnelAmt(d);
+  });
+
+  // ── P2P Pipeline (QUT/PIL stage) and Opportunity (OPP/RFQ stage) from allOppDeals ──
+  // Apply owner filter from sidebar (respects selected owners)
+  const _ownerFiltered=ownerManuallyFiltered;
+  const _selOwners=_ownerFiltered?selOwners():[];
+  const _selHeads=getSelectedHeads();
+  const _headFiltered=_selHeads.length>0&&_selHeads.length<ALL_HEADS.length;
+  const _bu=$('bu-sel')?.value||'';
+
+  // Filter opp deals by owner/head/BU
+  const oppFiltered=allOppDeals.filter(d=>{
+    if(oppIsDead(d))return false;
+    if(!oppInWindow(d))return false;
+    if(_ownerFiltered&&_selOwners.length>0&&!_selOwners.includes(String(d.owner_id)))return false;
+    if(_headFiltered){
+      // Use OWNER_HEAD_MAP for head filtering
+      const h=OWNER_HEAD_MAP[String(d.owner_id)]||null;
+      if(h){
+        const base=h.replace(' (UK)','').replace(' (US)','');
+        if(!_selHeads.includes(base))return false;
+      }
+    }
+    if(_bu){
+      const ownerBU=OWNER_BU_MAP[String(d.owner_id)]||'Digital';
+      if(ownerBU!==_bu)return false;
+    }
+    return true;
+  });
+
+  const pipelineMap={};  // QUT + PIL stage deals
+  const oppMap={};       // OPP + RFQ stage deals
+
+  oppFiltered.forEach(d=>{
+    const eg=oppEngGroup(d);
+    if(eg!=='P2P')return;
+    const oid=String(d.owner_id);
+    const isPipeline=(d.dealstage===QUT_STAGE||d.dealstage===PIL_STAGE);
+    const isOpp=(d.dealstage===OPP_STAGE||d.dealstage===RFQ_STAGE);
+    if(isPipeline){
+      if(!pipelineMap[oid])pipelineMap[oid]={id:oid,name:ownerName(oid),pipeline:0};
+      pipelineMap[oid].pipeline+=d.amount;
+    }
+    if(isOpp){
+      if(!oppMap[oid])oppMap[oid]={id:oid,name:ownerName(oid),opp:0};
+      oppMap[oid].opp+=d.amount;
+    }
+  });
+
+  // ── Merge all owners who have any P2P activity ──
+  const allOwnerIds=new Set([
+    ...Object.keys(bookingMap),
+    ...Object.keys(pipelineMap),
+    ...Object.keys(oppMap)
+  ]);
+  // Also include owners with manual inputs for this month
+  ALL_IDS.forEach(id=>{
+    const hasPrevInvoice=getFunnelInput(primaryMonth,id,'p2p_prev_invoice')>0;
+    const hasTarget=getFunnelInput(primaryMonth,id,'p2p_target')>0;
+    if(hasPrevInvoice||hasTarget)allOwnerIds.add(id);
+  });
+
+  const ownerData=[...allOwnerIds].map(oid=>({
+    id:oid,
+    name:ownerName(oid),
+    booking:   (bookingMap[oid]||{}).booking||0,
+    pipeline:  (pipelineMap[oid]||{}).pipeline||0,
+    opp:       (oppMap[oid]||{}).opp||0,
+  })).filter(o=>o.booking>0||o.pipeline>0||o.opp>0||
+    getFunnelInput(primaryMonth,o.id,'p2p_target')>0||
+    getFunnelInput(primaryMonth,o.id,'p2p_prev_invoice')>0
+  ).sort((a,b)=>b.booking-a.booking);
+
+  if(!ownerData.length){
+    $('funnel-kpi-grid').innerHTML=`<div style="grid-column:1/-1;padding:32px;text-align:center;color:#9A9A9A;font-weight:600">No P2P data for current filters.</div>`;
+    $('funnel-thead').innerHTML='';
+    $('funnel-tbody').innerHTML=`<tr><td colspan="3" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">No data for current filters.</td></tr>`;
+    $('funnel-wf-chart').innerHTML='';
+    $('funnel-tbl-sub').textContent='No P2P data for current filters.';
+    return;
+  }
+
+  // ── Aggregate totals ──
+  const totalBooking=   ownerData.reduce((s,o)=>s+o.booking,0);
+  const totalPrevInv=   ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'p2p_prev_invoice'),0);
+  const totalPipeline=  ownerData.reduce((s,o)=>s+o.pipeline,0);
+  const totalOpp=       ownerData.reduce((s,o)=>s+o.opp,0);
+  const totalTarget=    ownerData.reduce((s,o)=>s+getFunnelInput(primaryMonth,o.id,'p2p_target'),0);
+  const totalExpected=  totalBooking+totalPrevInv+totalPipeline+totalOpp;
+  const gap=totalTarget?(totalExpected-totalTarget):null;
+
+  // ── KPI strip ──
+  const gapColor=gap===null?'#9A9A9A':gap>=0?'#006E5E':'#C0143C';
+  const gapVal=gap===null?'—':gap>=0?'+'+fmtShort(gap):fmtShort(gap);
+  $('funnel-kpi-grid').innerHTML=[
+    {lbl:'Current Booking', val:fmtShort(totalBooking), sub:'P2P · Won this period',        color:'#EF2D56'},
+    {lbl:'Target',          val:totalTarget?fmtShort(totalTarget):'—', sub:'Manual input',  color:'#FFDA30'},
+    {lbl:'Expected Closing',val:fmtShort(totalExpected),sub:'Booking + Pipeline + Opp',     color:'#006E5E'},
+    {lbl:'Gap vs Target',   val:gapVal, sub:gap===null?'Set target below':gap>=0?'Ahead':'Behind', color:gapColor},
+  ].map(k=>`
+    <div class="kpi" style="border-top:3px solid ${k.color}">
+      <div class="kpi-lbl">${k.lbl}</div>
+      <div class="kpi-val" style="color:${k.color==='#FFDA30'?'#434343':k.color}">${k.val}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  // ── Waterfall ──
+  $('funnel-wf-title').textContent=`P2P Waterfall · ${periodLbl}`;
+  $('funnel-wf-sub').textContent=`Booking ${fmtShort(totalBooking)} → Expected ${fmtShort(totalExpected)}${totalTarget?' · Target '+fmtShort(totalTarget):''}`;
+  renderFunnelWaterfallP2P(totalBooking,totalPrevInv,totalPipeline,totalOpp,totalExpected,totalTarget);
+
+  // ── Table ──
+  const thStyle='padding:8px 12px;background:#F7F7F7;text-align:right;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #E8E8E8;white-space:nowrap';
+  const thStyleL=thStyle.replace('text-align:right','text-align:left')+';min-width:180px';
+  $('funnel-thead').innerHTML=`<tr>
+    <th style="${thStyleL}">Row</th>
+    ${ownerData.map(o=>`<th style="${thStyle};min-width:80px">${o.name.split(' ')[0]}</th>`).join('')}
+    <th style="${thStyle};min-width:90px;border-left:2px solid #E2E2E2">Total</th>
+  </tr>`;
+
+  const fmtAmt=n=>n===0?'—':fmtShort(n);
+  const tdAuto=(v)=>`<td style="padding:7px 12px;text-align:right;font-weight:600;color:#434343;border-bottom:1px solid #F5F5F5">${fmtAmt(v)}</td>`;
+  const tdAutoOpp=(v)=>`<td style="padding:7px 12px;text-align:right;font-weight:600;color:#3B3561;border-bottom:1px solid #F5F5F5">${fmtAmt(v)}</td>`;
+  const tdTotal=(v,dark)=>`<td style="padding:7px 12px;text-align:right;font-weight:800;border-left:2px solid #E2E2E2;border-bottom:1px solid #F5F5F5;${dark?'background:#473400;color:#fff;':'color:#434343;'}">${fmtAmt(v)}</td>`;
+  const tdInput=(month,oid,field)=>{
+    const key=`p2p|${month}|${oid}|${field}`;
+    const val=funnelInputs[key]||0;
+    return`<td style="padding:4px 8px;text-align:right;background:#FFFDF0;border-bottom:1px solid #F5F5F5"><input class="fd-input" data-key="${key}" type="number" min="0" value="${val||''}" placeholder="—" style="background:transparent;border:none;width:100%;text-align:right;font-size:11px;font-weight:700;font-family:'Montserrat',sans-serif;color:#006E5E;outline:none;min-width:60px" /></td>`;
+  };
+  const rowLblTd=(lbl,hint,dark)=>`<td style="padding:8px 12px;font-weight:600;font-size:10.5px;color:${dark?'#fff':'#434343'};border-bottom:1px solid ${dark?'rgba(255,255,255,.1)':'#F5F5F5'};${dark?'background:#473400;':''}">${lbl}${hint?`<div style="font-size:8px;color:${dark?'rgba(255,255,255,.6)':'#9A9A9A'};font-weight:500;margin-top:1px">${hint}</div>`:''}</td>`;
+
+  const getFunnelP2P=(month,oid,field)=>funnelInputs[`p2p|${month}|${oid}|${field}`]||0;
+
+  const rows=[
+    // Row 1: Target (manual)
+    {lbl:'Target',hint:'Manual',
+     cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'p2p_target')),
+     total:tdTotal(totalTarget)},
+    // Row 2: Current Booking (auto — P2P deals won this period)
+    {lbl:'Current Booking',hint:'HubSpot · P2P · Won this period',
+     cells:ownerData.map(o=>tdAuto(o.booking)),
+     total:tdTotal(totalBooking),auto:true},
+    // Row 3: Previous P2P Invoices (manual — 50%/25%/EOM drafts)
+    {lbl:'Previous P2P Invoices',hint:'Manual · 50% / 25% / EOM drafts',
+     cells:ownerData.map(o=>tdInput(primaryMonth,o.id,'p2p_prev_invoice')),
+     total:tdTotal(totalPrevInv)},
+    // Row 4: Existing P2P Pipeline (auto — QUT + PIL stage, in window, not dead)
+    {lbl:'Existing P2P Pipeline',hint:'HubSpot · QUT + Pipeline stage · Active',
+     cells:ownerData.map(o=>tdAutoOpp(o.pipeline)),
+     total:tdTotal(totalPipeline),auto:true},
+    // Row 5: Existing P2P Opportunity (auto — OPP + RFQ stage, in window, not dead)
+    {lbl:'Existing P2P Opportunity',hint:'HubSpot · OPP + RFQ stage · Active + Idle',
+     cells:ownerData.map(o=>tdAutoOpp(o.opp)),
+     total:tdTotal(totalOpp),auto:true},
+    // Row 6: Expected P2P Closures (computed)
+    {lbl:'Expected P2P Closures',hint:'Booking + Prev Invoices + Pipeline + Opp',
+     cells:ownerData.map(o=>{
+       const exp=o.booking+getFunnelP2P(primaryMonth,o.id,'p2p_prev_invoice')+o.pipeline+o.opp;
+       return`<td style="padding:7px 12px;text-align:right;font-weight:800;color:#fff;background:#473400;border-bottom:1px solid rgba(255,255,255,.1)">${fmtAmt(exp)}</td>`;
+     }),
+     total:tdTotal(totalExpected,true),dark:true},
+  ];
+
+  $('funnel-tbody').innerHTML=rows.map(r=>`<tr>
+    ${rowLblTd(r.lbl,r.hint,r.dark)}
+    ${r.cells.join('')}
+    ${r.total}
+  </tr>`).join('');
+
+  const oppNote=allOppDeals.length?''>' · OPP data loading...';
+  $('funnel-tbl-sub').textContent=`${ownerData.length} owners · ${periodLbl} · Green = manual · Indigo = HubSpot OPP${oppNote}`;
+}
+
+function renderFunnelWaterfallP2P(booking,prevInv,pipeline,opp,expected,target){
+  const H=170;
+  const steps=[
+    {label:'Booking',   val:booking,  kind:'base', hint:'P2P\nWon'},
+    {label:'Prev Inv',  val:prevInv,  kind:'add',  hint:'Previous\nInvoices'},
+    {label:'Pipeline',  val:pipeline, kind:'add',  hint:'QUT +\nPipeline'},
+    {label:'Opp.',      val:opp,      kind:'add',  hint:'OPP +\nRFQ'},
+    {label:'Expected',  val:expected, kind:'final',hint:'Expected\nClosing'},
+  ];
+  const maxVal=Math.max(...steps.map(s=>Math.abs(s.val)),target||0,1);
+  let running=0;
+  const bars=steps.map(s=>{
+    const anchored=s.kind==='base'||s.kind==='final';
+    const base=anchored?0:running;
+    const h=Math.max(Math.abs(s.val)/maxVal*H,s.val!==0?3:0);
+    if(!anchored)running+=s.val;
+    return{...s,base,h};
+  });
+  const clr={base:'#EF2D56',add:'#006E5E',sub:'#C0143C',final:'#473400'};
+  const targetPx=target?(target/maxVal*H):null;
+  let html=`<div style="display:flex;align-items:flex-end;gap:8px;height:${H}px;border-bottom:1px solid #E2E2E2;margin-bottom:36px;position:relative">`;
+  bars.forEach(s=>{
+    const color=s.val===0?'#E2E2E2':clr[s.kind]||'#9A9A9A';
+    const basePx=(s.base/maxVal*H);
+    const amtColor=s.kind==='add'?'#006E5E':s.kind==='sub'?'#C0143C':'#434343';
+    const displayAmt=s.val===0?'$0':fmtShort(Math.abs(s.val));
+    html+=`<div style="flex:1;position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center">
+      <div style="font-size:9px;font-weight:800;color:${amtColor};text-align:center;margin-bottom:4px;white-space:nowrap">${displayAmt}</div>
+      <div style="width:72%;height:${s.h.toFixed(1)}px;background:${color};border-radius:${s.kind==='sub'?'0 0 4px 4px':'4px 4px 0 0'};margin-bottom:${basePx.toFixed(1)}px;min-height:${s.val!==0?3:0}px"></div>
+      <div style="position:absolute;bottom:-30px;left:0;right:0;text-align:center;font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;white-space:pre-line">${s.hint}</div>
+    </div>`;
+  });
+  if(targetPx!==null&&targetPx>0&&targetPx<=H){
+    html+=`<div style="position:absolute;left:0;right:0;bottom:${targetPx.toFixed(0)}px;height:2px;background:#FFDA30;opacity:.85;pointer-events:none">
+      <span style="position:absolute;right:4px;top:-11px;font-size:8px;font-weight:700;color:#473400;background:#FFDA30;padding:1px 4px;border-radius:2px">Target ${fmtShort(target)}</span>
+    </div>`;
+  }
+  html+=`</div>`;
+  $('funnel-wf-chart').innerHTML=html;
+}
+
+function renderFunnelWaterfall(opening,predLoss,postPaid,pipeline,opp,expected,target){
+  const H=170;
+  const steps=[
+    {label:'Opening',      val:opening,   kind:'base', hint:'Recurring\n1–15'},
+    {label:'−Loss',        val:-predLoss, kind:'sub',  hint:'Predicted\nLoss'},
+    {label:'Post Paid',    val:postPaid,  kind:'add',  hint:'Recurring\n16+'},
+    {label:'Pipeline',     val:pipeline,  kind:'add',  hint:'Pipeline\nClosure'},
+    {label:'Opp.',         val:opp,       kind:'add',  hint:'Opp.\nClosure'},
+    {label:'Expected',     val:expected,  kind:'final',hint:'Expected\nClosing'},
+  ];
+  const maxVal=Math.max(...steps.map(s=>Math.abs(s.val)),target||0,1);
+  let running=0;
+  const bars=steps.map(s=>{
+    const anchored=s.kind==='base'||s.kind==='final';
+    const base=anchored?0:running;
+    const h=Math.max(Math.abs(s.val)/maxVal*H,s.val!==0?3:0);
+    if(!anchored)running+=s.val;
+    return{...s,base,h};
+  });
+  const clr={base:'#3B3561',add:'#006E5E',sub:'#C0143C',final:'#473400'};
+  const targetPx=target?(target/maxVal*H):null;
+  let html=`<div style="display:flex;align-items:flex-end;gap:8px;height:${H}px;border-bottom:1px solid #E2E2E2;margin-bottom:36px;position:relative">`;
+  bars.forEach(s=>{
+    const color=s.val===0?'#E2E2E2':clr[s.kind]||'#9A9A9A';
+    const basePx=(s.base/maxVal*H);
+    const amtColor=s.kind==='add'?'#006E5E':s.kind==='sub'?'#C0143C':'#434343';
+    const displaySign=s.kind==='sub'&&s.val!==0?'−':'';
+    const displayAmt=s.val===0?'$0':fmtShort(Math.abs(s.val));
+    html+=`<div style="flex:1;position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center">
+      <div style="font-size:9px;font-weight:800;color:${amtColor};text-align:center;margin-bottom:4px;white-space:nowrap">${displaySign}${displayAmt}</div>
+      <div style="width:72%;height:${s.h.toFixed(1)}px;background:${color};border-radius:${s.kind==='sub'?'0 0 4px 4px':'4px 4px 0 0'};margin-bottom:${basePx.toFixed(1)}px;min-height:${s.val!==0?3:0}px"></div>
+      <div style="position:absolute;bottom:-30px;left:0;right:0;text-align:center;font-size:7.5px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;white-space:pre-line">${s.hint}</div>
+    </div>`;
+  });
+  if(targetPx!==null&&targetPx>0&&targetPx<=H){
+    html+=`<div style="position:absolute;left:0;right:0;bottom:${targetPx.toFixed(0)}px;height:2px;background:#FFDA30;opacity:.85;pointer-events:none">
+      <span style="position:absolute;right:4px;top:-11px;font-size:8px;font-weight:700;color:#473400;background:#FFDA30;padding:1px 4px;border-radius:2px">Target ${fmtShort(target)}</span>
+    </div>`;
+  }
+  html+=`</div>`;
+  $('funnel-wf-chart').innerHTML=html;
+}
+
+// ════ END FUNNEL DESK ════
+
+</script>
+</body>
+</html>
