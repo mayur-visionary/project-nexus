@@ -2685,7 +2685,7 @@ function renderFunnelP2P(){
     ${r.total}
   </tr>`).join('');
 
-  const oppNote=allOppDeals.length?''>' · OPP data loading...';
+  const oppNote=allOppDeals.length?'':' · OPP data loading...';
   $('funnel-tbl-sub').textContent=`${ownerData.length} owners · ${periodLbl} · Green = manual · Indigo = HubSpot OPP${oppNote}`;
 }
 
