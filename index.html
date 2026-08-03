@@ -2499,17 +2499,6 @@ function updateDynamicOptions(){
     });
     if(iSel.value&&!invTypes.has(iSel.value)){iSel.value="";}
   }
-  // Region — uncheck geos not present in current deals (unless head constrains it)
-  const geos=new Set(deals.map(d=>d.region).filter(Boolean));
-  const _headSel=getSelectedHeads();
-  const _headConstrained=_headSel.length>0&&_headSel.length<ALL_HEADS.length;
-  if(!_headConstrained){
-    ALL_REGIONS.forEach(r=>{
-      const e=$("geo-"+r);
-      if(e&&!geos.has(r))e.checked=false;
-    });
-    updateGeoLabel();
-  }
 }
 
 function resetAll(){
