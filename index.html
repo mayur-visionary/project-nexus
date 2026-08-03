@@ -1338,6 +1338,10 @@ function classifyLineItem(name){
   if(n.includes("development - email")||n.includes("email coding"))
     return{svc:"Email",bu:"MarTech"};
 
+  // ── MarTech: EMail Design and Coding (ON-prefix P2P, MarTech Design) ──
+  if(n.includes("email design and coding"))
+    return{svc:"Design",bu:"MarTech"};
+
   // ── Digital: Web (must check before Design - Asset which is now under Design/MarTech) ──
   if(n.includes("design - asset")||n.includes("development - web")||n.includes("development - lp/hub")||
      n.includes("development - mobile app")||n.includes("ai & automation - web")||
