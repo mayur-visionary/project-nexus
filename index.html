@@ -1998,18 +1998,43 @@ function renderKPIs(_v){
     {lbl:"Unique Clients",val:String(m.clients),sub:m.conc?`top 3 = ${m.conc}% share`:"active this period",tip:"Jump to clients chart",action:"scrollToClients()"},
     {lbl:"Rev Concentration",val:m.conc?m.conc+"%":"n/a",sub:"top 3 clients' share",tip:"Revenue concentration"}
   ];
-  // ── Inter BU KPI — filter-responsive ──
+  // ── Inter BU KPI — service-filter-immune ──
   // Formula: Digital BU Net Revenue − Search line items − Web line items
-  // Computed from the current filtered view (v) — responds to all active filters.
+  // Must be computed from the raw period deals (service filter bypassed) so that
+  // Search & Web are always subtracted correctly regardless of active Service filter.
+  // All other filters (BU dropdown, Region, Head, Owner, NBD/Existing/React) are
+  // respected by re-running view() without any service constraint.
   let digitalNetRev=0,searchWebRev=0;
-  const selectedSvcs=new Set(getSelectedServices());
-  v.forEach(d=>{
-    if(d.bu==="Digital"){
-      digitalNetRev+=d.amount;
-      (dealServiceMap[d.id]||[]).forEach(li=>{
-        if((li.svc==="Search"||li.svc==="Web")&&selectedSvcs.has(li.svc))searchWebRev+=li.amount;
-      });
+  // Re-derive from deals directly, ignoring service filter, to get true Digital total
+  const _selGeoIBU=getSelectedRegions();
+  const _geoFilteredIBU=_selGeoIBU.length>0&&_selGeoIBU.length<ALL_REGIONS.length;
+  const _buSelIBU=$("bu-sel")?.value||"";
+  const _vhIBU=getSelectedHeads();
+  const _headFilteredIBU=_vhIBU.length>0&&_vhIBU.length<ALL_HEADS.length;
+  const _selOwnersIBU=ownerManuallyFiltered?selOwners():[];
+  deals.forEach(d=>{
+    if(d.bu!=="Digital")return;
+    // Respect BU dropdown — if user locked to MarTech, Inter BU = 0
+    if(_buSelIBU&&_buSelIBU!=="Digital")return;
+    // Respect Region filter
+    if(_geoFilteredIBU&&(!d.region||!_selGeoIBU.includes(d.region)))return;
+    // Respect Head filter
+    if(_headFilteredIBU){const bh=(d.head||"").replace(" (UK)","").replace(" (US)","");if(!_vhIBU.includes(bh))return;}
+    // Respect Owner filter
+    if(ownerManuallyFiltered&&_selOwnersIBU.length>0&&_selOwnersIBU.length<ALL_IDS.length){
+      if(!_selOwnersIBU.includes(String(d.owner_id)))return;
     }
+    // Respect NBD / Existing / Reactivation quick filters
+    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return;
+    if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return;
+    if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return;
+    // Exclude suppressed companies (same as view())
+    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return;
+    digitalNetRev+=d.amount;
+    // Subtract ALL Search & Web line items — unconditionally, service filter not applied
+    (dealServiceMap[d.id]||[]).forEach(li=>{
+      if(li.svc==="Search"||li.svc==="Web")searchWebRev+=li.amount;
+    });
   });
   const interBUConst=digitalNetRev-searchWebRev;
   const isInterBUClone=document.body.getAttribute("data-clone")==="interbu";
