@@ -1330,7 +1330,11 @@ function classifyLineItem(name){
   if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
     return{svc:"Campaign",bu:"MarTech"};
 
-  // ── MarTech: Design (ALL Design - * patterns, including banner/lp/web/copywriting) ──
+  // ── Digital: Web — Design - Asset (must precede broad design - catch) ──
+  if(n.includes("design - asset"))
+    return{svc:"Web",bu:"Digital"};
+
+  // ── MarTech: Design (ALL other Design - * patterns: banner/lp/web/copywriting/email) ──
   if(n.includes("design - "))
     return{svc:"Design",bu:"MarTech"};
 
@@ -1342,8 +1346,8 @@ function classifyLineItem(name){
   if(n.includes("email design and coding"))
     return{svc:"Design",bu:"MarTech"};
 
-  // ── Digital: Web (must check before Design - Asset which is now under Design/MarTech) ──
-  if(n.includes("design - asset")||n.includes("development - web")||n.includes("development - lp/hub")||
+  // ── Digital: Web ──
+  if(n.includes("development - web")||n.includes("development - lp/hub")||
      n.includes("development - mobile app")||n.includes("ai & automation - web")||
      n.includes("dot-net development")||n.includes("operational service - data entry")||
      n.includes("landing page coding and design")||n.includes("landing page coding")||
