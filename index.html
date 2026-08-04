@@ -1563,31 +1563,12 @@ function view(src,liMap){
     // Step 4: if no line items at all → fall back to engGroup(d.eng_model) with d.amount.
     // Step 5: return deal with amount = portion matching _itypeGroup only.
     if(_itype){
+      // Sidebar Engagement Model filter — uses same majority-by-amount logic as pie chart click
+      // (engGroupFromLi: largest line-item group wins; falls back to d.eng_model if no LIs)
+      // This ensures sidebar dropdown and pie chart produce identical numbers.
       const _itypeGroup=_itype==="One Time"?"P2P":_itype;
-      const _rawLis=liMap[d.id]||[];
-      const _lis=_rawLis.filter(li=>{
-        if(_effectiveSvc&&li.svc!==_effectiveSvc)return false;
-        if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
-        return true;
-      });
-      let portion=0;
-      if(_lis.length){
-        let classified=false;
-        _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg&&eg===_itypeGroup){portion+=li.amount;classified=true;}});
-        if(!classified){
-          // No li classified by name — fall back to deal eng_model with full deal amount
-          if(engGroup(d.eng_model)!==_itypeGroup)return null;
-          // passes — use full d.amount (fall through, no amount override)
-        } else if(portion===0){
-          return null;
-        } else {
-          // Return deal with amount = matching line-item portion only
-          return Object.assign({},d,{amount:portion});
-        }
-      } else {
-        // No line items — fall back to deal eng_model
-        if(engGroup(d.eng_model)!==_itypeGroup)return null;
-      }
+      const eg=engGroupFromLi(d);
+      if(!eg||eg!==_itypeGroup)return null;
     }
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
@@ -2095,14 +2076,14 @@ function renderTable(_v){
   const paged=srt.slice((pg-1)*PER,pg*PER);
   $("tmeta").textContent=`${v.length} deal${v.length!==1?"s":""} · Page ${pg} of ${tot}`;
   const ar=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
-  $("dth").innerHTML=`<tr><th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th><th onclick="sortBy('client')">Client${ar("client")}</th><th>Owner</th><th>Head</th><th onclick="sortBy('geo')">Region${ar("geo")}</th><th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th><th>Engagement</th><th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th><th style="text-align:center">↗</th></tr>`;
-  if(!paged.length){$("dtb").innerHTML=`<tr><td colspan="9">${emptyHTML()}</td></tr>`;$("pgs").innerHTML="";return;}
+  $("dth").innerHTML=`<tr><th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th><th onclick="sortBy('client')">Client${ar("client")}</th><th>Owner</th><th>Head</th><th onclick="sortBy('geo')">Region${ar("geo")}</th><th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th><th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th><th style="text-align:center">↗</th></tr>`;
+  if(!paged.length){$("dtb").innerHTML=`<tr><td colspan="8">${emptyHTML()}</td></tr>`;$("pgs").innerHTML="";return;}
   $("dtb").innerHTML=paged.map((d,i)=>{
     const nm=ownerName(d.owner_id),neg=d.amount<0,big=d.amount>=5000;
     const bg=i%2===0?"#fff":"#F9F9F9",ac=neg?"#9A9A9A":big?"#111":"#434343",fw=big?"800":"600";
     const geo=d.region||"",gc=geo==="AU"?"geo-AU":"geo-"+geo;
     const resolvedHead=(d.head||headFromDeal(d)).replace(" (UK)","").replace(" (US)","");
-    const eng=engGroup(d.eng_model)||"";
+
     return`<tr${neg?' class="cred"':""}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" title="${d.client}">${d.client}</td>
@@ -2110,7 +2091,6 @@ function renderTable(_v){
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343" onclick="event.stopPropagation();setDrill('geo_head','${resolvedHead}')">${resolvedHead.split(" ")[0]}</td>
       <td style="background:${bg}"><span class="geo-tag ${gc}" onclick="event.stopPropagation();setDrill('region','${geo}')">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
-      <td style="background:${bg}"><span class="inv-tag" onclick="event.stopPropagation();setDrill('eng_model','${eng}')">${eng}</span></td>
       <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(d.closedate)}</td>
       <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" onclick="event.stopPropagation()">↗</a></td>
     </tr>`;
@@ -2929,9 +2909,9 @@ function renderSparkline(values,color,w,h){
 function renderTierCards(data,trend,fyMonths){
   const TIERS=[
     {key:'Premier',range:'≥$20k',    color:'#3B3561'},
-  {key:'Select', range:'$15k–$20k',color:'#FFDA30'},
-  {key:'Core',   range:'$10k–$15k',color:'#5C5C5C'},
-  {key:'Base',   range:'$5k–$10k', color:'#9A9A9A'}
+  {key:'Select', range:'$15k–$19,999',color:'#FFDA30'},
+  {key:'Core',   range:'$10k–$14,999',color:'#5C5C5C'},
+  {key:'Base',   range:'$5k–$9,999',  color:'#9A9A9A'}
   ];
   $('tier-grid').innerHTML=TIERS.map(t=>{
     const clients=data.filter(c=>c.tier===t.key);
@@ -3416,12 +3396,11 @@ function renderWeeklyTable(v){
     <th onclick="sortWTable('client')">Client${ar('client')}</th>
     <th>Owner</th><th>Head</th><th>Region</th>
     <th onclick="sortWTable('amount')" style="text-align:right">Amount${ar('amount')}</th>
-    <th>Engagement</th>
     <th onclick="sortWTable('effdate')">Date${ar('effdate')}</th>
     <th style="text-align:center">↗</th>
   </tr>`;
   if(!paged.length){
-    $('wdtb').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A">No deals in this week</td></tr>`;
+    $('wdtb').innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:#9A9A9A">No deals in this week</td></tr>`;
     $('wpgs').innerHTML='';return;
   }
   $('wdtb').innerHTML=paged.map((d,i)=>{
@@ -3438,7 +3417,6 @@ function renderWeeklyTable(v){
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${rh}</td>
       <td style="background:${bg}"><span class="geo-tag ${gc}">${geo}</span></td>
       <td class="amt" style="color:${ac};font-weight:${fw};background:${bg}">${fmtUSD(d.amount)}</td>
-      <td style="background:${bg}"><span class="inv-tag">${engGroup(d.eng_model)||''}</span></td>
       <td style="color:#696969;background:${bg};font-size:10.5px;font-weight:500">${fmtDate(ed)}${dateNote}</td>
       <td style="text-align:center;background:${bg}"><a href="${dealURL(d.id)}" target="_blank" rel="noopener noreferrer" class="hs-a" onclick="event.stopPropagation()">↗</a></td>
     </tr>`;
