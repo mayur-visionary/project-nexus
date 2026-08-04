@@ -1331,7 +1331,7 @@ function classifyLineItem(name){
     return{svc:"Campaign",bu:"MarTech"};
 
   // ── Digital: Web — Design - Asset (must precede broad design - catch) ──
-  if(n.includes("design - asset"))
+  if(n.includes("design - asset")||n.includes("design - digital"))
     return{svc:"Web",bu:"Digital"};
 
   // ── MarTech: Design (ALL other Design - * patterns: banner/lp/web/copywriting/email) ──
