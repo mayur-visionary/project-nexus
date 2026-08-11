@@ -11,10 +11,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden}
-body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px}
 
-/* ── Spinner overlay ── */
-.lo{position:fixed;inset:0;background:rgba(242,254,220,.7);backdrop-filter:blur(2px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
+/* ── Spinner ── */
+.lo{position:fixed;inset:0;background:rgba(242,254,220,.75);backdrop-filter:blur(2px);z-index:500;display:none;align-items:center;justify-content:center}
 .lo.show{display:flex}
 .spin{width:32px;height:32px;border:3px solid rgba(255,218,48,.25);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -25,8 +25,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
-.hdr-brand svg{transition:opacity .2s}
-.hdr-brand:hover svg{opacity:.85}
 .hdr-eyebrow{margin-bottom:4px}
 .hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
 .hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
@@ -40,7 +38,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .refresh-btn:disabled{opacity:.35;cursor:not-allowed}
 
-/* ── Nav bar ── */
+/* ── Nav tabs ── */
 .nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
 .nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;gap:0;align-items:center}
 .nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
@@ -49,104 +47,109 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important;text-decoration:none;display:inline-flex;align-items:center;gap:5px;padding:9px 22px;font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;transition:all .2s;white-space:nowrap}
 .nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
 .nav-divider{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0;margin:0 4px}
-
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
-/* ── Error bar ── */
+/* ── Error ── */
 .err-wrap{max-width:1440px;margin:0 auto;padding:8px 28px 0}
-.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500}
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500;margin-bottom:8px}
 .err-bar strong{color:#FFDA30}
 
-/* ── Main content ── */
+/* ── Main ── */
 .main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
-
-/* ── Section labels ── */
-.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px;margin-top:24px}
-.sec:first-child{margin-top:0}
-.sec-divider{height:2px;background:linear-gradient(90deg,#FFDA30 0%,rgba(255,218,48,.1) 100%);border-radius:2px;margin:28px 0 20px}
-
-/* ── Head panel ── */
 .head-panel{display:none}
 .head-panel.active{display:block}
 
+/* ── Segment control (Digital / Inter BU / Both) ── */
+.seg-wrap{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.seg-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#696969}
+.seg{display:inline-flex;background:#fff;border:1px solid #E2E2E2;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.seg-btn{padding:6px 18px;background:transparent;border:none;font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;cursor:pointer;transition:all .18s;white-space:nowrap;border-right:1px solid #E2E2E2}
+.seg-btn:last-child{border-right:none}
+.seg-btn:hover{background:#FFFBEA;color:#473400}
+.seg-btn.active{background:#473400;color:#FFDA30}
+
 /* ── Month badge ── */
-.month-badge{display:inline-flex;align-items:center;gap:8px;background:#473400;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:20px}
+.month-badge{display:inline-flex;align-items:center;gap:8px;background:#473400;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:20px;margin-bottom:18px}
 
-/* ── KPI strip ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px}
-.kpi{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:default;overflow:hidden}
-.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
-.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;font-weight:700}
-.kpi-val{font-size:clamp(13px,1.2vw,18px);font-weight:800;color:#434343;line-height:1.15}
-.kpi-sub{font-size:9.5px;color:#696969;margin-top:4px;font-weight:600}
-.kpi.k-teal{border-top-color:#006E5E}.kpi.k-teal .kpi-val{color:#006E5E}
-.kpi.k-red{border-top-color:#EF2D56}.kpi.k-red .kpi-val{color:#EF2D56}
-.kpi.k-indigo{border-top-color:#3B3561}.kpi.k-indigo .kpi-val{color:#3B3561}
-.kpi.k-emerald{border-top-color:#0CCE6B}.kpi.k-emerald .kpi-val{color:#0CCE6B}
+/* ── BU badge ── */
+.bu-badge{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:12px;margin-bottom:14px}
+.bu-badge.digital{background:#FFFBEA;color:#473400;border:1px solid #FFDA30}
+.bu-badge.inter{background:#F0FAF8;color:#006E5E;border:1px solid #B8E8E0}
+.bu-badge.both{background:#F4F0FF;color:#3B3561;border:1px solid #C8C0F0}
 
-/* ── Waterfall chart ── */
-.card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:16px 18px;margin-bottom:18px}
-.card-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.card-sub{font-size:10px;color:#696969;margin-bottom:14px;font-weight:600}
-.wf-chart{height:220px;position:relative;margin-top:8px;overflow:hidden}
-.wf-bars{display:flex;align-items:flex-end;gap:0;height:180px;padding:0 8px;position:relative}
-.wf-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
-.wf-bar{width:72%;border-radius:4px 4px 0 0;position:relative;transition:height .6s cubic-bezier(.34,1.2,.64,1);min-height:3px}
-.wf-bar.positive{background:#FFDA30}
-.wf-bar.negative{background:#EF2D56}
-.wf-bar.neutral{background:#3B3561}
-.wf-bar.result{background:#006E5E}
-.wf-amt{font-size:8px;font-weight:800;color:#434343;text-align:center;white-space:nowrap;margin-bottom:2px}
-.wf-lbl{font-size:7.5px;font-weight:700;color:#9A9A9A;text-align:center;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;padding:0 4px;word-break:break-word}
-.wf-baseline{position:absolute;bottom:0;left:0;right:0;height:1px;background:#E2E2E2}
-
-/* ── Funnel table ── */
-.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:8px}
-.tcard-hdr{padding:12px 16px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center}
-.tcard-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
+/* ── Table card ── */
+.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
+.tcard-hdr{padding:12px 16px 10px;border-bottom:2px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tcard-ttl{font-size:12px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
 .tcard-sub{font-size:10px;color:#9A9A9A;font-weight:600;margin-top:2px}
 .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:600px}
-thead th{padding:8px 12px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
-thead th.num{text-align:right}
-thead th.total-col{background:#FFFBEA;color:#473400}
-tbody tr{border-bottom:1px solid #F5F5F5;transition:background .12s}
-tbody tr:hover{background:#FFFBEA}
-tbody tr.group-header td{background:#F7F7F7;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;padding:6px 12px;border-top:2px solid #E8E8E8}
-tbody tr.subtotal td{background:#FFFBEA;font-weight:800;color:#473400}
-tbody tr.subtotal td.num{color:#473400}
-tbody tr.p2p-header td{background:#F0FAF8;font-size:8.5px;font-weight:800;color:#006E5E;text-transform:uppercase;letter-spacing:.1em;padding:6px 12px;border-top:2px solid #B8E8E0}
-tbody tr.p2p-total td{background:#F0FAF8;font-weight:800;color:#006E5E}
-tbody td{padding:8px 12px;color:#434343;font-weight:600;font-size:10.5px}
-tbody td.num{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-tbody td.total-col{text-align:right;font-weight:800;background:#FFFDF0;font-variant-numeric:tabular-nums}
-tbody td.lbl{color:#696969;font-size:10px;font-weight:700;max-width:200px}
-tbody td.lbl span.hint{display:block;font-size:8.5px;font-weight:500;color:#B0B0B0;margin-top:1px;text-transform:none;letter-spacing:0}
-tbody td.neg{color:#EF2D56}
-tbody td.pos{color:#006E5E}
-.total-col{background:#FFFDF0}
 
-/* ── Loading/empty state ── */
+/* ── Table ── */
+table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:520px}
+
+/* Column widths */
+col.lbl-col{width:220px}
+col.num-col{width:100px}
+col.tot-col{width:110px}
+
+/* Head */
+thead th{padding:7px 10px;background:#F7F7F7;text-align:left;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
+thead th.num{text-align:right}
+thead th.tot{text-align:right;background:#FFFBEA;color:#473400}
+thead th.tot-inter{text-align:right;background:#F0FAF8;color:#006E5E}
+thead th.tot-both{text-align:right;background:#F4F0FF;color:#3B3561}
+
+/* Body base */
+tbody tr{border-bottom:1px solid #F5F5F5}
+tbody td{padding:7px 10px;color:#434343;font-weight:600;font-size:10.5px;vertical-align:middle}
+tbody td.lbl{color:#696969;font-size:10px;font-weight:700;max-width:220px}
+tbody td.num{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+tbody td.tot{text-align:right;font-weight:800;background:#FFFDF0;font-variant-numeric:tabular-nums}
+tbody td.tot-inter{text-align:right;font-weight:800;background:#F0FAF8;font-variant-numeric:tabular-nums}
+tbody td.tot-both{text-align:right;font-weight:800;background:#F4F0FF;font-variant-numeric:tabular-nums}
+tbody tr:hover td{background:#FFFBEA!important}
+
+/* Section headers inside table */
+tbody tr.sec-hdr td{
+  background:#F7F7F7;
+  font-size:8px;font-weight:800;color:#9A9A9A;
+  text-transform:uppercase;letter-spacing:.14em;
+  padding:5px 10px;
+  border-top:2px solid #E8E8E8;
+  border-bottom:1px solid #E8E8E8
+}
+
+/* Highlighted result rows */
+tbody tr.row-recurring-total td{background:#FFFBEA;font-weight:800;color:#473400}
+tbody tr.row-recurring-total td.tot{background:#FFF3C0;color:#473400}
+tbody tr.row-p2p-total td{background:#F0FAF8;font-weight:800;color:#006E5E}
+tbody tr.row-p2p-total td.tot,tbody tr.row-p2p-total td.tot-inter,tbody tr.row-p2p-total td.tot-both{background:#D0F0E8;color:#006E5E}
+tbody tr.row-grand-total td{background:#473400;font-weight:800;color:#FFDA30}
+tbody tr.row-grand-total td.tot,tbody tr.row-grand-total td.tot-inter,tbody tr.row-grand-total td.tot-both{background:#3A2900;color:#FFDA30}
+tbody tr.row-gap td{background:#FFF8F0;font-weight:700;color:#434343}
+tbody tr.row-gap-pct td{background:#FFF8F0;font-weight:700;color:#434343}
+tbody tr.row-daily td{background:#F7F7F7;font-weight:700;color:#696969}
+
+/* Hover override for special rows */
+tbody tr.row-grand-total:hover td{background:#5C4400!important}
+tbody tr.row-recurring-total:hover td{background:#FFF3C0!important}
+tbody tr.row-p2p-total:hover td{background:#D0F0E8!important}
+
+/* Sign colouring */
+.neg{color:#EF2D56!important}
+.pos{color:#0CCE6B!important}
+
+/* ── State messages ── */
 .state-msg{text-align:center;padding:60px 20px;color:#9A9A9A;font-weight:600;font-size:11px}
 .state-msg .icon{font-size:28px;margin-bottom:10px;display:block;opacity:.4}
 .state-msg .sub{font-size:10px;font-weight:500;margin-top:6px;color:#B0B0B0}
-
-/* ── Inter BU section ── */
-.interbu-badge{display:inline-flex;align-items:center;gap:6px;background:#F0FAF8;color:#006E5E;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:12px;border:1px solid #B8E8E0;margin-bottom:14px}
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#C0C0C0;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Responsive ── */
-@media(max-width:900px){
-  .hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:600px){
-  .hdr-top{flex-direction:column}.hdr-right{justify-content:flex-start}
-  .hdr-title{font-size:17px}.kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .nav-tab{padding:8px 12px;font-size:8.5px}
-}
+@media(max-width:900px){.hdr-in,.main{padding-left:18px;padding-right:18px}}
+@media(max-width:600px){.hdr-top{flex-direction:column}.hdr-title{font-size:17px}.nav-tab{padding:8px 12px;font-size:8.5px}}
 </style>
 </head>
 <body>
@@ -157,8 +160,8 @@ tbody td.pos{color:#006E5E}
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
-      <a class="hdr-brand" href="/index.html" title="Back to Revenue Pulse" role="button">
-        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+      <a class="hdr-brand" href="/index.html" title="Back to Revenue Pulse">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
           <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
@@ -184,14 +187,13 @@ tbody td.pos{color:#006E5E}
       </div>
     </div>
 
-    <!-- NAV TABS -->
     <div class="nav-tabs-bar">
       <div class="nav-in">
         <a class="nav-tab-ext" href="/index.html">← Revenue Pulse</a>
         <div class="nav-divider"></div>
-        <button class="nav-tab" id="tab-jiggyasa"  onclick="switchTab('jiggyasa')">Jiggyasa</button>
-        <button class="nav-tab" id="tab-tanuj_uk"  onclick="switchTab('tanuj_uk')">Tanuj UK</button>
-        <button class="nav-tab" id="tab-tanuj_us"  onclick="switchTab('tanuj_us')">Tanuj US</button>
+        <button class="nav-tab" id="tab-jiggyasa" onclick="switchTab('jiggyasa')">Jiggyasa AU</button>
+        <button class="nav-tab" id="tab-tanuj_uk" onclick="switchTab('tanuj_uk')">Tanuj UK</button>
+        <button class="nav-tab" id="tab-tanuj_us" onclick="switchTab('tanuj_us')">Tanuj US</button>
       </div>
     </div>
   </div>
@@ -203,80 +205,100 @@ tbody td.pos{color:#006E5E}
 <!-- ════ MAIN ════ -->
 <div class="main">
 
-  <!-- JIGGYASA -->
   <div class="head-panel" id="panel-jiggyasa">
-    <div id="content-jiggyasa"><div class="state-msg"><span class="icon">📊</span>Loading Jiggyasa's data...<div class="sub">Connecting to Google Sheets</div></div></div>
+    <div id="content-jiggyasa">
+      <div class="state-msg"><span class="icon">📊</span>Loading Jiggyasa AU...<div class="sub">Connecting to Google Sheets</div></div>
+    </div>
   </div>
 
-  <!-- TANUJ UK -->
   <div class="head-panel" id="panel-tanuj_uk">
-    <div id="content-tanuj_uk"><div class="state-msg"><span class="icon">📊</span>Loading Tanuj UK data...<div class="sub">Connecting to Google Sheets</div></div></div>
+    <div id="content-tanuj_uk">
+      <div class="state-msg"><span class="icon">📊</span>Loading Tanuj UK...<div class="sub">Connecting to Google Sheets</div></div>
+    </div>
   </div>
 
-  <!-- TANUJ US -->
   <div class="head-panel" id="panel-tanuj_us">
-    <div id="content-tanuj_us"><div class="state-msg"><span class="icon">📊</span>Loading Tanuj US data...<div class="sub">Connecting to Google Sheets</div></div></div>
+    <div id="content-tanuj_us">
+      <div class="state-msg"><span class="icon">📊</span>Loading Tanuj US...<div class="sub">Connecting to Google Sheets</div></div>
+    </div>
   </div>
 
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
 <script>
-// ════ CONFIG ════
+// ════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════
 const HEADS = ['jiggyasa', 'tanuj_uk', 'tanuj_us'];
-const HEAD_LABELS = { jiggyasa: 'Jiggyasa Agrawal · AU', tanuj_uk: 'Tanuj UK', tanuj_us: 'Tanuj US' };
+const HEAD_LABELS = {
+  jiggyasa : 'Jiggyasa Agrawal · AU',
+  tanuj_uk : 'Tanuj Gupta · UK',
+  tanuj_us : 'Tanuj Gupta · US'
+};
 
-// Cache per head — avoid re-fetching on tab switch
+// Per-head active segment selection: 'digital' | 'inter' | 'both'
+const segState = { jiggyasa: 'digital', tanuj_uk: 'digital', tanuj_us: 'digital' };
+
 const cache = {};
-
 let activeHead = null;
 
-// ════ HELPERS ════
-const $ = id => document.getElementById(id);
-const fmtK = n => {
-  if (n === 0) return '$0';
-  const a = Math.abs(n), s = n < 0 ? '-' : '';
-  if (a >= 1e6) return s + '$' + (a / 1e6).toFixed(2) + 'M';
-  if (a >= 1000) return s + '$' + (a / 1000).toFixed(1) + 'k';
-  return s + '$' + Math.round(a).toLocaleString();
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
+const $  = id => document.getElementById(id);
+const r  = n  => Math.round(n);                        // round to integer
+const fm = n  => {                                     // format currency, no decimals
+  if (n === 0 || n === null || n === undefined) return '$0';
+  const a = Math.abs(r(n)), s = n < 0 ? '-' : '';
+  if (a >= 1_000_000) return s + '$' + (a / 1_000_000).toFixed(2) + 'M';
+  if (a >= 1_000)     return s + '$' + a.toLocaleString('en-US');
+  return s + '$' + a;
 };
-const fmtFull = n => {
-  const s = n < 0 ? '-' : '';
-  return s + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-};
-const negCls = n => n < 0 ? ' neg' : (n > 0 ? ' pos' : '');
+const nc = n => n < 0 ? ' neg' : (n > 0 ? ' pos' : '');
+
 const setStatus = (dot, txt, sync) => {
   $('sdot').style.background = dot;
   $('stxt').textContent = txt;
   if (sync !== undefined) $('last-sync').textContent = sync;
 };
-const showErr = msg => { $('err-bar').style.display = msg ? 'block' : 'none'; if (msg) $('err-msg').textContent = msg; };
-const showLo = v => { const lo = $('lo'); lo.classList.toggle('show', v); };
+const showErr = msg => {
+  $('err-bar').style.display = msg ? 'block' : 'none';
+  if (msg) $('err-msg').textContent = msg;
+};
+const showLo = v => $('lo').classList.toggle('show', v);
 
-// ════ TAB SWITCHING ════
+// ════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════════════════════════
 function switchTab(head) {
   if (activeHead === head) return;
   activeHead = head;
-
-  // Update tab styles
   HEADS.forEach(h => {
     $('tab-' + h).classList.toggle('active', h === head);
-  });
-
-  // Show/hide panels
-  HEADS.forEach(h => {
     $('panel-' + h).classList.toggle('active', h === head);
   });
-
-  // Load if not cached
-  if (!cache[head]) {
-    loadHead(head);
-  } else {
-    setStatus('#006E5E', 'Sheet loaded', 'From cache · ' + cache[head].month);
-  }
+  if (!cache[head]) loadHead(head);
+  else setStatus('#006E5E', 'Sheet loaded', cache[head].month);
 }
 
-// ════ DATA FETCH ════
+// ════════════════════════════════════════════════════════════
+// SEGMENT CONTROL
+// ════════════════════════════════════════════════════════════
+function switchSeg(head, seg) {
+  segState[head] = seg;
+  // Update button states
+  ['digital','inter','both'].forEach(s => {
+    const btn = $(`seg-${head}-${s}`);
+    if (btn) btn.classList.toggle('active', s === seg);
+  });
+  // Re-render with new segment
+  if (cache[head]) renderTable(head, cache[head], seg);
+}
+
+// ════════════════════════════════════════════════════════════
+// DATA FETCH
+// ════════════════════════════════════════════════════════════
 async function loadHead(head) {
   showErr('');
   setStatus('#FFDA30', 'Fetching sheet...', '');
@@ -284,26 +306,21 @@ async function loadHead(head) {
   $('rfbtn').disabled = true;
 
   try {
-    const res = await fetch('/funnel-sheet', {
-      method: 'POST',
+    const res  = await fetch('/funnel-sheet', {
+      method : 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ head })
+      body   : JSON.stringify({ head })
     });
-
     const data = await res.json();
-
-    if (!res.ok || data.error) {
-      throw new Error(data.error || `HTTP ${res.status}`);
-    }
+    if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
 
     cache[head] = data;
-    renderHead(head, data);
+    renderPanel(head, data);
     setStatus('#006E5E', 'Sheet loaded', data.month);
-
   } catch (e) {
     showErr(e.message);
     setStatus('#EF2D56', 'Error', '');
-    $('content-' + head).innerHTML = `<div class="state-msg"><span class="icon">⚠️</span>${e.message}<div class="sub">Check that the Sheet tab name matches and the service account has Viewer access.</div></div>`;
+    $('content-' + head).innerHTML = `<div class="state-msg"><span class="icon">⚠️</span>${e.message}<div class="sub">Check tab name, service account Viewer access, and Cloudflare env vars.</div></div>`;
   } finally {
     showLo(false);
     $('rfbtn').disabled = false;
@@ -316,279 +333,236 @@ function refreshActive() {
   loadHead(activeHead);
 }
 
-// ════ RENDER ════
-function renderHead(head, data) {
-  const { month, owners, totals, interBU } = data;
+// ════════════════════════════════════════════════════════════
+// PANEL RENDER (shell + segment control)
+// ════════════════════════════════════════════════════════════
+function renderPanel(head, data) {
   const label = HEAD_LABELS[head] || head;
-  const t = totals;
+  const seg   = segState[head];
 
-  // Derived KPIs
-  const recExpected = t.recurring.opening
-    - t.recurring.predictedLoss
-    + t.recurring.postPaid
-    + t.recurring.closureFromPipeline
-    + t.recurring.closureFromOpp;
+  const shellHTML = `
+    <div class="month-badge">📅 ${data.month}</div>
 
-  const p2pExpected = t.p2p.prevP2PInvoices
-    + t.p2p.p2pClosurePipeline
-    + t.p2p.p2pClosureOpp;
-
-  // ── KPI strip ──
-  const kpiHTML = `
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="kpi-lbl">Target</div>
-        <div class="kpi-val">${fmtK(t.recurring.target)}</div>
-        <div class="kpi-sub">Recurring · ${month}</div>
+    <div class="seg-wrap">
+      <span class="seg-label">View</span>
+      <div class="seg">
+        <button class="seg-btn${seg==='digital'?' active':''}" id="seg-${head}-digital"
+          onclick="switchSeg('${head}','digital')">Digital BU</button>
+        <button class="seg-btn${seg==='inter'?' active':''}"   id="seg-${head}-inter"
+          onclick="switchSeg('${head}','inter')">Inter BU</button>
+        <button class="seg-btn${seg==='both'?' active':''}"    id="seg-${head}-both"
+          onclick="switchSeg('${head}','both')">Both</button>
       </div>
-      <div class="kpi k-indigo">
-        <div class="kpi-lbl">Opening</div>
-        <div class="kpi-val">${fmtK(t.recurring.opening)}</div>
-        <div class="kpi-sub">Without post paid</div>
-      </div>
-      <div class="kpi k-teal">
-        <div class="kpi-lbl">Expected Closing</div>
-        <div class="kpi-val">${fmtK(recExpected)}</div>
-        <div class="kpi-sub">Recurring total</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-lbl">P2P Prev Invoices</div>
-        <div class="kpi-val">${fmtK(t.p2p.prevP2PInvoices)}</div>
-        <div class="kpi-sub">50% / 25% / EOM</div>
-      </div>
-      <div class="kpi k-emerald">
-        <div class="kpi-lbl">P2P Expected</div>
-        <div class="kpi-val">${fmtK(p2pExpected)}</div>
-        <div class="kpi-sub">P2P total</div>
-      </div>
-    </div>`;
+      <span class="seg-label" id="seg-label-${head}" style="color:#9A9A9A;font-size:9px;font-weight:600">${label}</span>
+    </div>
 
-  // ── Waterfall (Recurring) ──
-  const waterfallHTML = renderWaterfall(t.recurring, month);
-
-  // ── Recurring table ──
-  const recTableHTML = renderTable(owners, t.recurring, 'recurring', month);
-
-  // ── P2P table ──
-  const p2pTableHTML = renderTable(owners, t.p2p, 'p2p', month);
-
-  // ── Inter BU section (if data present) ──
-  const hasInterBU = interBU && (interBU.recurring.target !== 0 || interBU.recurring.opening !== 0);
-  const interBUHTML = hasInterBU ? renderInterBU(interBU, month) : '';
-
-  $('content-' + head).innerHTML = `
-    <div class="month-badge">📅 ${month}</div>
-
-    <div class="sec">Forecast Summary · ${label}</div>
-    ${kpiHTML}
-
-    <div class="sec">Recurring · Revenue Waterfall</div>
-    ${waterfallHTML}
-
-    <div class="sec">Recurring Funnel · by Owner</div>
-    ${recTableHTML}
-
-    <div class="sec-divider"></div>
-
-    <div class="sec">P2P Funnel · by Owner</div>
-    ${p2pTableHTML}
-
-    ${hasInterBU ? '<div class="sec-divider"></div><div class="sec">Inter BU · Digital</div>' + interBUHTML : ''}
+    <div id="table-area-${head}"></div>
   `;
+
+  $('content-' + head).innerHTML = shellHTML;
+  renderTable(head, data, seg);
 }
 
-// ════ WATERFALL ════
-function renderWaterfall(rec, month) {
-  const bars = [
-    { lbl: 'Opening',      amt: rec.opening,            cls: 'neutral'  },
-    { lbl: 'Post Paid',    amt: rec.postPaid,            cls: 'positive' },
-    { lbl: '− Pred. Loss', amt: -rec.predictedLoss,      cls: 'negative' },
-    { lbl: '+ Pipeline',   amt: rec.closureFromPipeline,  cls: 'positive' },
-    { lbl: '+ Opp',        amt: rec.closureFromOpp,       cls: 'positive' },
-    { lbl: 'Expected',     amt: rec.opening - rec.predictedLoss + rec.postPaid + rec.closureFromPipeline + rec.closureFromOpp, cls: 'result' }
-  ];
+// ════════════════════════════════════════════════════════════
+// TABLE RENDER
+// ════════════════════════════════════════════════════════════
+function renderTable(head, data, seg) {
+  const { digital, inter } = data;
 
-  const maxAmt = Math.max(...bars.map(b => Math.abs(b.amt)), 1);
+  // ── Determine owners and totals based on segment ──
+  let owners, totals, buCls, buLabel;
 
-  const barsHTML = bars.map(b => {
-    const pct = Math.max((Math.abs(b.amt) / maxAmt) * 160, 3);
-    return `
-      <div class="wf-bar-wrap">
-        <div class="wf-amt">${fmtK(b.amt)}</div>
-        <div class="wf-bar ${b.cls}" style="height:${pct}px"></div>
-        <div class="wf-lbl">${b.lbl}</div>
-      </div>`;
-  }).join('');
-
-  return `
-    <div class="card">
-      <div class="card-ttl">Recurring Revenue Waterfall</div>
-      <div class="card-sub">Opening → adjustments → Expected Closing · ${month}</div>
-      <div class="wf-chart">
-        <div class="wf-bars">${barsHTML}</div>
-        <div class="wf-baseline"></div>
-      </div>
-    </div>`;
-}
-
-// ════ TABLE ════
-function renderTable(owners, totals, mode, month) {
-  const isP2P = mode === 'p2p';
-  const ownerCols = owners.map(o => `<th class="num">${o.name}</th>`).join('');
-  const totalLabel = isP2P ? 'P2P Funnel Desk' : 'Recurring Funnel Desk';
-  const totalSub   = isP2P ? `P2P · ${month}` : `Recurring · ${month}`;
-
-  let rows = [];
-
-  if (!isP2P) {
-    // ── Recurring rows ──
-    rows = [
-      { lbl: 'Target',                       hint: '',                          key: 'target',             group: false },
-      { lbl: 'Opening (Without Post Paid)',   hint: 'Start of month baseline',   key: 'opening',            group: false },
-      { lbl: 'Predicted Loss',               hint: 'Expected churn',            key: 'predictedLoss',      group: false, negate: true },
-      { lbl: 'Expected Post Paid Invoices',  hint: '',                          key: 'postPaid',           group: false },
-      { lbl: 'Existing Pipeline',            hint: 'At start of month',         key: 'existingPipeline',   group: true,  groupLbl: 'Pipeline' },
-      { lbl: 'Closure from Pipeline',        hint: '',                          key: 'closureFromPipeline', group: false },
-      { lbl: 'Pipeline Won',                 hint: 'Manual input',              key: 'pipelineWon',        group: false },
-      { lbl: 'Existing Opportunities',       hint: 'At start of month',         key: 'existingOpp',        group: true,  groupLbl: 'Opportunities' },
-      { lbl: 'Closure from Opportunities',   hint: '',                          key: 'closureFromOpp',     group: false },
-    ];
+  if (seg === 'digital') {
+    owners  = digital.owners;
+    totals  = digital.totals;
+    buCls   = 'digital';
+    buLabel = '◆ Digital BU';
+  } else if (seg === 'inter') {
+    owners  = inter.owners;
+    totals  = inter.totals;
+    buCls   = 'inter';
+    buLabel = '◆ Inter BU';
   } else {
-    // ── P2P rows ──
-    rows = [
-      { lbl: 'Previous P2P Invoices',        hint: '50% / 25% / EOM split',    key: 'prevP2PInvoices',    group: true,  groupLbl: 'P2P Carry-Over' },
-      { lbl: 'P2P Fresh Pipeline',           hint: '',                          key: 'p2pFreshPipeline',   group: true,  groupLbl: 'P2P Pipeline' },
-      { lbl: 'Closure from Pipeline',        hint: '',                          key: 'p2pClosurePipeline', group: false },
-      { lbl: 'Pipeline Won',                 hint: 'Manual input',              key: 'p2pPipelineWon',     group: false },
-      { lbl: 'P2P Opportunities',            hint: '',                          key: 'p2pOpportunities',   group: true,  groupLbl: 'P2P Opportunities' },
-      { lbl: 'Closure from Opportunities',   hint: '',                          key: 'p2pClosureOpp',      group: false },
-    ];
+    // Both — merge owners from digital (they share names) + sum totals
+    // For "Both": we sum Digital + Inter values for each owner position
+    // Owner names come from digital side (same people)
+    owners  = mergeBothOwners(digital.owners, inter.owners);
+    totals  = mergeBothTotals(digital.totals, inter.totals);
+    buCls   = 'both';
+    buLabel = '◆ Digital + Inter BU';
   }
 
-  let tbody = '';
-  let prevGroup = null;
+  const totCls = seg === 'digital' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
+  const thTotCls = seg === 'digital' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
 
-  rows.forEach(row => {
-    // Group header row
-    if (row.group && row.groupLbl && row.groupLbl !== prevGroup) {
-      prevGroup = row.groupLbl;
-      const headerCls = isP2P ? 'p2p-header' : 'group-header';
-      tbody += `<tr class="${headerCls}"><td colspan="${owners.length + 2}">${row.groupLbl}</td></tr>`;
-    }
+  // ── Build column headers ──
+  const ownerThs = owners.map(o => `<th class="num">${o.name}</th>`).join('');
+  const totalTh  = `<th class="${thTotCls}">Team Sum</th>`;
 
-    // Data row
-    const ownerCells = owners.map(o => {
-      const val = o[mode]?.[row.key] || 0;
-      const display = row.negate ? -val : val;
-      return `<td class="num${negCls(display)}">${fmtFull(display)}</td>`;
+  // ── Row builder helpers ──
+  // Plain numeric row
+  const row = (cls, label, key, negate) => {
+    const cells = owners.map(o => {
+      const v = negate ? -numVal(o[key]) : numVal(o[key]);
+      return `<td class="num${nc(v)}">${fm(v)}</td>`;
     }).join('');
+    const tv = negate ? -numVal(totals[key]) : numVal(totals[key]);
+    return `<tr class="${cls}"><td class="lbl">${label}</td>${cells}<td class="${totCls}${nc(tv)}">${fm(tv)}</td></tr>`;
+  };
 
-    const totalVal = totals[row.key] || 0;
-    const totalDisplay = row.negate ? -totalVal : totalVal;
-
-    tbody += `<tr>
-      <td class="lbl">${row.lbl}${row.hint ? `<span class="hint">${row.hint}</span>` : ''}</td>
-      ${ownerCells}
-      <td class="total-col${negCls(totalDisplay)}">${fmtFull(totalDisplay)}</td>
-    </tr>`;
-  });
-
-  // Summary subtotal row
-  let summaryVal = 0;
-  let summaryLbl = '';
-  if (!isP2P) {
-    summaryVal = totals.opening - totals.predictedLoss + totals.postPaid + totals.closureFromPipeline + totals.closureFromOpp;
-    summaryLbl = 'Expected Closing';
-    const ownerSummary = owners.map(o => {
-      const v = (o.recurring.opening || 0) - (o.recurring.predictedLoss || 0) + (o.recurring.postPaid || 0) + (o.recurring.closureFromPipeline || 0) + (o.recurring.closureFromOpp || 0);
-      return `<td class="num${negCls(v)}">${fmtFull(v)}</td>`;
+  // Percentage row (read from Sheet as string)
+  const rowPct = (label, key) => {
+    const cells = owners.map(o => {
+      const v = o[key] || '';
+      return `<td class="num" style="color:#696969;font-size:9.5px">${v || '—'}</td>`;
     }).join('');
-    tbody += `<tr class="subtotal">
-      <td class="lbl">${summaryLbl}</td>
-      ${ownerSummary}
-      <td class="total-col${negCls(summaryVal)}">${fmtFull(summaryVal)}</td>
-    </tr>`;
-  } else {
-    summaryVal = totals.prevP2PInvoices + totals.p2pClosurePipeline + totals.p2pClosureOpp;
-    summaryLbl = 'Expected P2P Closing';
-    const ownerSummary = owners.map(o => {
-      const v = (o.p2p.prevP2PInvoices || 0) + (o.p2p.p2pClosurePipeline || 0) + (o.p2p.p2pClosureOpp || 0);
-      return `<td class="num${negCls(v)}">${fmtFull(v)}</td>`;
-    }).join('');
-    tbody += `<tr class="p2p-total">
-      <td class="lbl">${summaryLbl}</td>
-      ${ownerSummary}
-      <td class="total-col${negCls(summaryVal)}">${fmtFull(summaryVal)}</td>
-    </tr>`;
-  }
+    // For % totals: show team total cell as blank (sheet formula, not summable)
+    return `<tr><td class="lbl" style="color:#B0B0B0;font-size:9.5px">${label}</td>${cells}<td class="${totCls}" style="color:#B0B0B0;font-size:9.5px">${totals[key] || '—'}</td></tr>`;
+  };
 
-  return `
+  // Section header row spanning all columns
+  const secHdr = label =>
+    `<tr class="sec-hdr"><td colspan="${owners.length + 2}">${label}</td></tr>`;
+
+  // ── Assemble table body ──
+  const tbody = [
+    // ── Target ──
+    row('', 'Target', 'target', false),
+
+    // ── Recurring block ──
+    secHdr('Recurring'),
+    row('', 'Pre-Paid Invoices',  'opening',      false),
+    row('', 'Predicted Loss',     'predictedLoss', true),
+    row('', 'Post-Paid Invoices', 'postPaid',      false),
+
+    secHdr('Open Pipeline'),
+    row('', 'Open Pipeline',       'existingPipeline',    false),
+    row('', 'Expected Closures',   'closureFromPipeline', false),
+    row('', 'Pipeline Won',        'pipelineWon',         false),
+    rowPct('Anticipated Conversion (%)', 'pipelineConversion'),
+
+    secHdr('Open Opportunities'),
+    row('', 'Open Opportunities',  'existingOpp',   false),
+    row('', 'Expected Closures',   'closureFromOpp', false),
+    rowPct('Anticipated Conversion (%)', 'oppConversion'),
+
+    row('row-recurring-total', 'Recurring Total', 'recurringTotal', false),
+
+    // ── P2P block ──
+    secHdr('P2P'),
+    row('', 'Current Booking',                          'currentBooking',   false),
+    row('', 'Previous P2P Invoices (50% or 25% or EOM P2P)', 'prevP2PInvoices', false),
+
+    secHdr('P2P Fresh Pipeline (apart from 50% & EOM)'),
+    row('', 'P2P Fresh Pipeline',  'p2pFreshPipeline',   false),
+    row('', 'Expected Closures',   'p2pClosurePipeline', false),
+    row('', 'Pipeline Won',        'p2pPipelineWon',     false),
+    rowPct('Anticipated Conversion (%)', 'p2pPipelineConv'),
+
+    secHdr('P2P Open Opportunities'),
+    row('', 'Open Opportunities',  'p2pOpportunities', false),
+    row('', 'Expected Closures',   'p2pClosureOpp',    false),
+    rowPct('Anticipated Conversion (%)', 'p2pOppConv'),
+
+    row('row-p2p-total',   'P2P Total',   'p2pTotal',   false),
+
+    // ── Summary ──
+    row('row-grand-total', 'Grand Total', 'grandTotal', false),
+    row('row-gap',         'GAP',         'gap',        false),
+    rowPct('GAP %', 'gapPct'),
+    row('row-daily',       'Daily Run-Rate', 'dailyRunRate', false),
+  ].join('');
+
+  const html = `
+    <div class="bu-badge ${buCls}">${buLabel} · ${data.month}</div>
     <div class="tcard">
       <div class="tcard-hdr">
         <div>
-          <div class="tcard-ttl">${totalLabel}</div>
-          <div class="tcard-sub">${owners.length} owners · Read-only from Google Sheets · ${totalSub}</div>
+          <div class="tcard-ttl">Funnel Desk · ${HEAD_LABELS[head] || head}</div>
+          <div class="tcard-sub">${owners.length} owners · Read from Google Sheets · ${data.month}</div>
         </div>
       </div>
       <div class="twrap">
         <table>
+          <colgroup>
+            <col class="lbl-col">
+            ${owners.map(() => '<col class="num-col">').join('')}
+            <col class="tot-col">
+          </colgroup>
           <thead>
             <tr>
-              <th>Row</th>
-              ${ownerCols}
-              <th class="num total-col">Total</th>
+              <th>Current Month</th>
+              ${ownerThs}
+              ${totalTh}
             </tr>
           </thead>
           <tbody>${tbody}</tbody>
         </table>
       </div>
     </div>`;
+
+  $('table-area-' + head).innerHTML = html;
 }
 
-// ════ INTER BU SECTION ════
-function renderInterBU(interBU, month) {
-  const recExpected = interBU.recurring.opening
-    - interBU.recurring.predictedLoss
-    + interBU.recurring.postPaid
-    + interBU.recurring.closureFromPipeline
-    + interBU.recurring.closureFromOpp;
+// ════════════════════════════════════════════════════════════
+// BOTH MERGE HELPERS
+// ════════════════════════════════════════════════════════════
+const NUMERIC_KEYS = [
+  'target','forecast','opening','predictedLoss','postPaid',
+  'existingPipeline','closureFromPipeline','pipelineWon',
+  'existingOpp','closureFromOpp','recurringTotal',
+  'currentBooking','prevP2PInvoices',
+  'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
+  'p2pOpportunities','p2pClosureOpp','p2pTotal',
+  'grandTotal','gap','dailyRunRate'
+];
+const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv','gapPct'];
 
-  return `
-    <div class="interbu-badge">◆ Inter BU · Digital · ${month}</div>
-    <div class="kpi-grid" style="margin-bottom:18px">
-      <div class="kpi k-teal">
-        <div class="kpi-lbl">IB Target</div>
-        <div class="kpi-val">${fmtK(interBU.recurring.target)}</div>
-        <div class="kpi-sub">Inter BU recurring</div>
-      </div>
-      <div class="kpi k-indigo">
-        <div class="kpi-lbl">IB Opening</div>
-        <div class="kpi-val">${fmtK(interBU.recurring.opening)}</div>
-        <div class="kpi-sub">Without post paid</div>
-      </div>
-      <div class="kpi k-teal">
-        <div class="kpi-lbl">IB Expected</div>
-        <div class="kpi-val">${fmtK(recExpected)}</div>
-        <div class="kpi-sub">Recurring closing</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-lbl">IB P2P Prev</div>
-        <div class="kpi-val">${fmtK(interBU.p2p.prevP2PInvoices)}</div>
-        <div class="kpi-sub">Previous invoices</div>
-      </div>
-      <div class="kpi k-emerald">
-        <div class="kpi-lbl">IB P2P Expected</div>
-        <div class="kpi-val">${fmtK(interBU.p2p.prevP2PInvoices + interBU.p2p.p2pClosurePipeline + interBU.p2p.p2pClosureOpp)}</div>
-        <div class="kpi-sub">P2P closing</div>
-      </div>
-    </div>`;
+function numVal(v) {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') {
+    const n = parseFloat(v.replace(/[$,%]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+  return 0;
 }
 
-// ════ INIT ════
-// Load first tab on page load
-window.addEventListener('DOMContentLoaded', () => {
-  switchTab('jiggyasa');
-});
+function mergeBothOwners(dOwners, iOwners) {
+  // Use the longer owner list as the base
+  // Match by index (same owner order confirmed)
+  const len = Math.max(dOwners.length, iOwners.length);
+  const merged = [];
+  for (let i = 0; i < len; i++) {
+    const d = dOwners[i] || {};
+    const iv = iOwners[i] || {};
+    const obj = { name: d.name || iv.name || `Owner ${i+1}` };
+    for (const k of NUMERIC_KEYS) {
+      obj[k] = numVal(d[k]) + numVal(iv[k]);
+    }
+    for (const k of PCT_KEYS) {
+      // Percentages can't be meaningfully summed — leave blank for Both view
+      obj[k] = '';
+    }
+    merged.push(obj);
+  }
+  return merged;
+}
+
+function mergeBothTotals(dt, it) {
+  const merged = {};
+  for (const k of NUMERIC_KEYS) {
+    merged[k] = numVal(dt[k]) + numVal(it[k]);
+  }
+  for (const k of PCT_KEYS) {
+    merged[k] = '';
+  }
+  return merged;
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => switchTab('jiggyasa'));
 </script>
 </body>
 </html>
