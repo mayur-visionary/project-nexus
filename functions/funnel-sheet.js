@@ -1,14 +1,13 @@
 // functions/funnel-sheet.js
 // Funnel Desk v2 — Google Sheets proxy
 // POST { head: "jiggyasa" | "tanuj_uk" | "tanuj_us" }
-// Returns structured JSON parsed from the head's Sheet tab.
-// Auth: Google Service Account JWT → OAuth2 token → Sheets API v4
+// Returns full structured JSON for both Digital BU and Inter BU blocks.
+// Auth: Google Service Account JWT → OAuth2 access token → Sheets API v4
 
 export async function onRequestPost(context) {
   try {
     const { head } = await context.request.json();
 
-    // ── Tab name map ──
     const TAB_MAP = {
       jiggyasa : "Funnel - Jiggyasa AU",
       tanuj_uk : "Funnel - Tanuj UK",
@@ -20,20 +19,19 @@ export async function onRequestPost(context) {
       return jsonResp({ error: `Unknown head: ${head}` }, 400);
     }
 
-    // ── Env vars ──
     const SHEET_ID   = context.env.FUNNEL_SHEET_ID;
     const SA_EMAIL   = context.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const SA_KEY_RAW = context.env.GOOGLE_PRIVATE_KEY;
 
     if (!SHEET_ID || !SA_EMAIL || !SA_KEY_RAW) {
-      return jsonResp({ error: "Missing env vars: FUNNEL_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY" }, 500);
+      return jsonResp({
+        error: "Missing env vars: FUNNEL_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY"
+      }, 500);
     }
 
-    // ── 1. Sign JWT ──
     const token = await getAccessToken(SA_EMAIL, SA_KEY_RAW);
 
-    // ── 2. Fetch sheet tab ──
-    const range    = encodeURIComponent(`${tabName}`);
+    const range     = encodeURIComponent(tabName);
     const sheetsURL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
     const sheetsRes = await fetch(sheetsURL, {
       headers: { Authorization: `Bearer ${token}` }
@@ -45,13 +43,12 @@ export async function onRequestPost(context) {
     }
 
     const sheetsData = await sheetsRes.json();
-    const rows = sheetsData.values || [];
+    const rows       = sheetsData.values || [];
 
     if (!rows.length) {
       return jsonResp({ error: `No data found in tab "${tabName}"` }, 404);
     }
 
-    // ── 3. Parse ──
     const parsed = parseSheet(rows, head, tabName);
     return jsonResp(parsed, 200);
 
@@ -60,166 +57,196 @@ export async function onRequestPost(context) {
   }
 }
 
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 // SHEET PARSER
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function parseSheet(rows, head, tabName) {
-  // Find topmost anchor row — col A matches "MonthName-YYYY"  e.g. "August-2026"
+
+  // ── Find topmost month anchor row ──
+  // Col A matches "MonthName-YYYY" e.g. "August-2026"
   const ANCHOR_RE = /^[A-Z][a-z]+-\d{4}$/;
   let anchorIdx = -1;
-
   for (let i = 0; i < rows.length; i++) {
-    const cell = (rows[i][0] || "").trim();
-    if (ANCHOR_RE.test(cell)) {
-      anchorIdx = i;
-      break;
-    }
+    if (ANCHOR_RE.test((rows[i][0] || "").trim())) { anchorIdx = i; break; }
   }
-
-  if (anchorIdx === -1) {
-    return { error: `No month anchor found in tab "${tabName}"` };
-  }
+  if (anchorIdx === -1) return { error: `No month anchor found in tab "${tabName}"` };
 
   const anchorRow = rows[anchorIdx];
-  const month     = (anchorRow[0] || "").trim();   // e.g. "August-2026"
+  const month     = anchorRow[0].trim();
 
-  // Owner names — cols 1–5 from anchor row (read dynamically)
-  const ownerNames = [1, 2, 3, 4, 5].map(c => (anchorRow[c] || "").trim()).filter(Boolean);
+  // ── Owner names — read dynamically from anchor row ──
+  // Digital BU: cols 1–5; Inter BU: cols 11–15
+  // Stop at first empty cell in each range
+  const digitalOwners = [];
+  for (let c = 1; c <= 5; c++) {
+    const n = (anchorRow[c] || "").trim();
+    if (n) digitalOwners.push(n); else break;
+  }
+  const interOwners = [];
+  for (let c = 11; c <= 15; c++) {
+    const n = (anchorRow[c] || "").trim();
+    if (n) interOwners.push(n); else break;
+  }
 
-  // ── Row offsets (verified across Apr–Aug 2026) ──
-  const OFFSETS = {
-    // Recurring
-    target            : 1,
-    opening           : 5,
-    predictedLoss     : 6,
-    postPaid          : 7,
-    existingPipeline  : 9,
-    closureFromPipeline: 10,
-    pipelineWon       : 11,
-    existingOpp       : 14,
-    closureFromOpp    : 15,
-    // P2P
-    prevP2PInvoices   : 21,
-    p2pFreshPipeline  : 23,
-    p2pClosurePipeline: 24,
-    p2pPipelineWon    : 25,
-    p2pOpportunities  : 28,
-    p2pClosureOpp     : 29
+  // ── Row offset map (verified Apr–Aug 2026) ──
+  // All offsets are from anchorIdx
+  const OFF = {
+    // ── Header/target ──
+    target              : 1,
+    forecast            : 2,   // Forecast (sureshot+chase) — may be blank
+
+    // ── Recurring ──
+    opening             : 5,   // Pre-Paid Invoices = Opening (Without post paid)
+    predictedLoss       : 6,   // Predicted Loss
+    postPaid            : 7,   // Post-Paid Invoices = Expected Post Paid Invoices
+
+    existingPipeline    : 9,   // Open Pipeline
+    closureFromPipeline : 10,  // Expected Closures (pipeline)
+    pipelineWon         : 11,  // Pipeline Won
+    pipelineConversion  : 12,  // Anticipated Conversion % (pipeline)
+
+    existingOpp         : 14,  // Open Opportunities
+    closureFromOpp      : 15,  // Expected Closures (opp)
+    oppConversion       : 16,  // Anticipated Conversion % (opp)
+
+    recurringTotal      : 18,  // Recurring Total (Expected Closing of Recurring — yellow)
+
+    // ── P2P ──
+    currentBooking      : 20,  // Current Booking
+    prevP2PInvoices     : 21,  // Previous P2P Invoices 50%/25%/EOM
+
+    p2pFreshPipeline    : 23,  // P2P Fresh Pipeline (apart from 50% & EOM)
+    p2pClosurePipeline  : 24,  // Expected Closures (P2P pipeline)
+    p2pPipelineWon      : 25,  // Pipeline Won (P2P)
+    p2pPipelineConv     : 26,  // Anticipated Conversion % (P2P pipeline)
+
+    p2pOpportunities    : 28,  // Open Opportunities (P2P)
+    p2pClosureOpp       : 29,  // Expected Closures (P2P opp)
+    p2pOppConv          : 30,  // Anticipated Conversion % (P2P opp)
+
+    p2pTotal            : 32,  // P2P Total (Expected P2P closures — yellow)
+
+    // ── Summary ──
+    grandTotal          : 34,  // Grand Total (Total Closure from this month Pipeline — blue)
+    gap                 : 35,  // GAP Remaining from this month Forecast
+    gapPct              : 36,  // Value Gap %
+    dailyRunRate        : 37   // Daily pipeline run rate
   };
 
-  // Helper — safely get numeric value from a row at a column index
-  function getNum(rowIdx, colIdx) {
+  // ── Helpers ──
+  // Parse numeric value — strip commas, currency symbols, handle blanks
+  function num(rowIdx, colIdx) {
     const row = rows[rowIdx];
     if (!row) return 0;
-    const raw = (row[colIdx] || "").toString().replace(/,/g, "").trim();
+    const raw = (row[colIdx] || "").toString().replace(/[$,]/g, "").trim();
+    if (raw === "" || raw === "#DIV/0!" || raw === "-") return 0;
     const n = parseFloat(raw);
     return isNaN(n) ? 0 : n;
   }
 
-  // Helper — extract values for all owners + total for a given offset
-  // Digital BU: cols 1–5 (owners), col 6 (total)
-  // Inter BU:   cols 11–15 (owners), col 16 (total)
-  function extractRow(offset) {
+  // Parse percentage string — return as string e.g. "53.33%" or "" for #DIV/0!
+  function pct(rowIdx, colIdx) {
+    const row = rows[rowIdx];
+    if (!row) return "";
+    const raw = (row[colIdx] || "").toString().trim();
+    if (raw === "#DIV/0!" || raw === "") return "";
+    // If already has %, return as-is; if decimal (e.g. 0.5333) convert
+    if (raw.includes("%")) return raw;
+    const n = parseFloat(raw);
+    if (isNaN(n)) return "";
+    return (n * 100).toFixed(2) + "%";
+  }
+
+  // Extract a full row of values for a given offset
+  // Digital BU: owners at cols 1..N, total at col 6
+  // Inter BU:   owners at cols 11..(11+N-1), total at col 16
+  // isPercent: use pct() instead of num()
+  function extractRow(offset, isPercent) {
     const rowIdx = anchorIdx + offset;
+    const extractor = isPercent ? pct : num;
+
     const digital = {
-      owners: ownerNames.map((_, i) => getNum(rowIdx, i + 1)),
-      total : getNum(rowIdx, 6)
+      owners: digitalOwners.map((_, i) => extractor(rowIdx, i + 1)),
+      total : isPercent ? pct(rowIdx, 6) : num(rowIdx, 6)
     };
-    const interBU = {
-      owners: ownerNames.map((_, i) => getNum(rowIdx, i + 11)),
-      total : getNum(rowIdx, 16)
+    const inter = {
+      owners: interOwners.map((_, i) => extractor(rowIdx, i + 11)),
+      total : isPercent ? pct(rowIdx, 16) : num(rowIdx, 16)
     };
-    return { digital, interBU };
+    return { digital, inter };
   }
 
-  // Build data object for each field
-  const data = {};
-  for (const [key, offset] of Object.entries(OFFSETS)) {
-    data[key] = extractRow(offset);
+  // Build complete data object
+  const D = {};
+  const PCT_FIELDS = new Set([
+    'pipelineConversion', 'oppConversion', 'p2pPipelineConv', 'p2pOppConv', 'gapPct'
+  ]);
+  for (const [key, offset] of Object.entries(OFF)) {
+    D[key] = extractRow(offset, PCT_FIELDS.has(key));
   }
 
-  // ── Per-owner structured output ──
-  const owners = ownerNames.map((name, i) => ({
-    name,
-    recurring: {
-      target            : data.target.digital.owners[i],
-      opening           : data.opening.digital.owners[i],
-      predictedLoss     : data.predictedLoss.digital.owners[i],
-      postPaid          : data.postPaid.digital.owners[i],
-      existingPipeline  : data.existingPipeline.digital.owners[i],
-      closureFromPipeline: data.closureFromPipeline.digital.owners[i],
-      pipelineWon       : data.pipelineWon.digital.owners[i],
-      existingOpp       : data.existingOpp.digital.owners[i],
-      closureFromOpp    : data.closureFromOpp.digital.owners[i]
-    },
-    p2p: {
-      prevP2PInvoices   : data.prevP2PInvoices.digital.owners[i],
-      p2pFreshPipeline  : data.p2pFreshPipeline.digital.owners[i],
-      p2pClosurePipeline: data.p2pClosurePipeline.digital.owners[i],
-      p2pPipelineWon    : data.p2pPipelineWon.digital.owners[i],
-      p2pOpportunities  : data.p2pOpportunities.digital.owners[i],
-      p2pClosureOpp     : data.p2pClosureOpp.digital.owners[i]
-    }
-  }));
+  // ── Per-owner output builder ──
+  function buildOwners(ownerNames, buKey) {
+    return ownerNames.map((name, i) => ({
+      name,
+      target             : D.target[buKey].owners[i],
+      forecast           : D.forecast[buKey].owners[i],
+      opening            : D.opening[buKey].owners[i],
+      predictedLoss      : D.predictedLoss[buKey].owners[i],
+      postPaid           : D.postPaid[buKey].owners[i],
+      existingPipeline   : D.existingPipeline[buKey].owners[i],
+      closureFromPipeline: D.closureFromPipeline[buKey].owners[i],
+      pipelineWon        : D.pipelineWon[buKey].owners[i],
+      pipelineConversion : D.pipelineConversion[buKey].owners[i],
+      existingOpp        : D.existingOpp[buKey].owners[i],
+      closureFromOpp     : D.closureFromOpp[buKey].owners[i],
+      oppConversion      : D.oppConversion[buKey].owners[i],
+      recurringTotal     : D.recurringTotal[buKey].owners[i],
+      currentBooking     : D.currentBooking[buKey].owners[i],
+      prevP2PInvoices    : D.prevP2PInvoices[buKey].owners[i],
+      p2pFreshPipeline   : D.p2pFreshPipeline[buKey].owners[i],
+      p2pClosurePipeline : D.p2pClosurePipeline[buKey].owners[i],
+      p2pPipelineWon     : D.p2pPipelineWon[buKey].owners[i],
+      p2pPipelineConv    : D.p2pPipelineConv[buKey].owners[i],
+      p2pOpportunities   : D.p2pOpportunities[buKey].owners[i],
+      p2pClosureOpp      : D.p2pClosureOpp[buKey].owners[i],
+      p2pOppConv         : D.p2pOppConv[buKey].owners[i],
+      p2pTotal           : D.p2pTotal[buKey].owners[i],
+      grandTotal         : D.grandTotal[buKey].owners[i],
+      gap                : D.gap[buKey].owners[i],
+      gapPct             : D.gapPct[buKey].owners[i],
+      dailyRunRate       : D.dailyRunRate[buKey].owners[i]
+    }));
+  }
 
-  // ── Totals (col 6 / col 16) ──
-  const totals = {
-    recurring: {
-      target            : data.target.digital.total,
-      opening           : data.opening.digital.total,
-      predictedLoss     : data.predictedLoss.digital.total,
-      postPaid          : data.postPaid.digital.total,
-      existingPipeline  : data.existingPipeline.digital.total,
-      closureFromPipeline: data.closureFromPipeline.digital.total,
-      pipelineWon       : data.pipelineWon.digital.total,
-      existingOpp       : data.existingOpp.digital.total,
-      closureFromOpp    : data.closureFromOpp.digital.total
-    },
-    p2p: {
-      prevP2PInvoices   : data.prevP2PInvoices.digital.total,
-      p2pFreshPipeline  : data.p2pFreshPipeline.digital.total,
-      p2pClosurePipeline: data.p2pClosurePipeline.digital.total,
-      p2pPipelineWon    : data.p2pPipelineWon.digital.total,
-      p2pOpportunities  : data.p2pOpportunities.digital.total,
-      p2pClosureOpp     : data.p2pClosureOpp.digital.total
+  function buildTotals(buKey) {
+    const t = {};
+    for (const key of Object.keys(OFF)) {
+      t[key] = D[key][buKey].total;
     }
-  };
+    return t;
+  }
 
-  // ── Inter BU totals ──
-  const interBU = {
-    recurring: {
-      target            : data.target.interBU.total,
-      opening           : data.opening.interBU.total,
-      predictedLoss     : data.predictedLoss.interBU.total,
-      postPaid          : data.postPaid.interBU.total,
-      existingPipeline  : data.existingPipeline.interBU.total,
-      closureFromPipeline: data.closureFromPipeline.interBU.total,
-      pipelineWon       : data.pipelineWon.interBU.total,
-      existingOpp       : data.existingOpp.interBU.total,
-      closureFromOpp    : data.closureFromOpp.interBU.total
+  return {
+    month,
+    head,
+    tabName,
+    digital: {
+      owners: buildOwners(digitalOwners, 'digital'),
+      totals: buildTotals('digital')
     },
-    p2p: {
-      prevP2PInvoices   : data.prevP2PInvoices.interBU.total,
-      p2pFreshPipeline  : data.p2pFreshPipeline.interBU.total,
-      p2pClosurePipeline: data.p2pClosurePipeline.interBU.total,
-      p2pPipelineWon    : data.p2pPipelineWon.interBU.total,
-      p2pOpportunities  : data.p2pOpportunities.interBU.total,
-      p2pClosureOpp     : data.p2pClosureOpp.interBU.total
+    inter: {
+      owners: buildOwners(interOwners, 'inter'),
+      totals: buildTotals('inter')
     }
   };
-
-  return { month, head, tabName, owners, totals, interBU };
 }
 
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 // GOOGLE SERVICE ACCOUNT JWT → OAUTH2 TOKEN
-// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 async function getAccessToken(email, rawKey) {
-  // Cloudflare Workers / Pages Functions use the Web Crypto API
-  // private_key in JSON has literal \n — convert to real newlines
   const pem = rawKey.replace(/\\n/g, "\n");
-
-  // Strip PEM headers and decode base64
   const b64 = pem
     .replace(/-----BEGIN RSA PRIVATE KEY-----/, "")
     .replace(/-----END RSA PRIVATE KEY-----/, "")
@@ -228,17 +255,13 @@ async function getAccessToken(email, rawKey) {
     .replace(/\s+/g, "");
 
   const binaryDer = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-
   const cryptoKey = await crypto.subtle.importKey(
-    "pkcs8",
-    binaryDer.buffer,
+    "pkcs8", binaryDer.buffer,
     { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false,
-    ["sign"]
+    false, ["sign"]
   );
 
-  // Build JWT
-  const now = Math.floor(Date.now() / 1000);
+  const now     = Math.floor(Date.now() / 1000);
   const header  = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const payload = b64url(JSON.stringify({
     iss  : email,
@@ -248,16 +271,13 @@ async function getAccessToken(email, rawKey) {
     exp  : now + 3600
   }));
 
-  const sigInput  = `${header}.${payload}`;
-  const sigBytes  = await crypto.subtle.sign(
-    "RSASSA-PKCS1-v1_5",
-    cryptoKey,
+  const sigInput = `${header}.${payload}`;
+  const sigBytes = await crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5", cryptoKey,
     new TextEncoder().encode(sigInput)
   );
-  const sig = b64urlRaw(sigBytes);
-  const jwt = `${sigInput}.${sig}`;
+  const jwt = `${sigInput}.${b64urlRaw(sigBytes)}`;
 
-  // Exchange JWT for access token
   const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
     method : "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -276,24 +296,17 @@ async function getAccessToken(email, rawKey) {
   return access_token;
 }
 
-// ── Base64url helpers ──
 function b64url(str) {
   return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 function b64urlRaw(buffer) {
-  const bytes = new Uint8Array(buffer);
   let bin = "";
-  for (const b of bytes) bin += String.fromCharCode(b);
+  for (const b of new Uint8Array(buffer)) bin += String.fromCharCode(b);
   return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
-
-// ── JSON response helper ──
 function jsonResp(data, status) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: {
-      "Content-Type" : "application/json",
-      "Access-Control-Allow-Origin": "*"
-    }
+    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
   });
 }
