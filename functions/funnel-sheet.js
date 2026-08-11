@@ -75,7 +75,7 @@ function parseSheet(rows, head, tabName) {
   const month     = anchorRow[0].trim();
 
   // ── Owner names — read dynamically from anchor row ──
-  // Digital BU: cols 1–5; Inter BU: cols 11–15
+  // Digital BU: cols 1–5; Inter BU: cols 12–16
   // Stop at first empty cell in each range
   const digitalOwners = [];
   for (let c = 1; c <= 5; c++) {
@@ -83,58 +83,60 @@ function parseSheet(rows, head, tabName) {
     if (n) digitalOwners.push(n); else break;
   }
   const interOwners = [];
-  for (let c = 11; c <= 15; c++) {
+  for (let c = 12; c <= 16; c++) {        // Bug 3 fix: was 11–15, col 11 is a label column
     const n = (anchorRow[c] || "").trim();
     if (n) interOwners.push(n); else break;
   }
 
   // ── Row offset map (verified Apr–Aug 2026) ──
-  // All offsets are from anchorIdx
+  // All offsets from anchorIdx — fixed rows only
   const OFF = {
-    // ── Header/target ──
     target              : 1,
-    forecast            : 2,   // Forecast (sureshot+chase) — may be blank
 
-    // ── Recurring ──
-    opening             : 5,   // Pre-Paid Invoices = Opening (Without post paid)
-    predictedLoss       : 6,   // Predicted Loss
-    postPaid            : 7,   // Post-Paid Invoices = Expected Post Paid Invoices
+    // Recurring
+    opening             : 5,
+    predictedLoss       : 6,
+    postPaid            : 7,
+    existingPipeline    : 9,
+    closureFromPipeline : 10,
+    pipelineWon         : 11,
+    pipelineConversion  : 12,
+    existingOpp         : 14,
+    closureFromOpp      : 15,
+    oppConversion       : 16,
 
-    existingPipeline    : 9,   // Open Pipeline
-    closureFromPipeline : 10,  // Expected Closures (pipeline)
-    pipelineWon         : 11,  // Pipeline Won
-    pipelineConversion  : 12,  // Anticipated Conversion % (pipeline)
-
-    existingOpp         : 14,  // Open Opportunities
-    closureFromOpp      : 15,  // Expected Closures (opp)
-    oppConversion       : 16,  // Anticipated Conversion % (opp)
-
-    recurringTotal      : 18,  // Recurring Total (Expected Closing of Recurring — yellow)
-
-    // ── P2P ──
-    currentBooking      : 20,  // Current Booking
-    prevP2PInvoices     : 21,  // Previous P2P Invoices 50%/25%/EOM
-
-    p2pFreshPipeline    : 23,  // P2P Fresh Pipeline (apart from 50% & EOM)
-    p2pClosurePipeline  : 24,  // Expected Closures (P2P pipeline)
-    p2pPipelineWon      : 25,  // Pipeline Won (P2P)
-    p2pPipelineConv     : 26,  // Anticipated Conversion % (P2P pipeline)
-
-    p2pOpportunities    : 28,  // Open Opportunities (P2P)
-    p2pClosureOpp       : 29,  // Expected Closures (P2P opp)
-    p2pOppConv          : 30,  // Anticipated Conversion % (P2P opp)
-
-    p2pTotal            : 32,  // P2P Total (Expected P2P closures — yellow)
-
-    // ── Summary ──
-    grandTotal          : 34,  // Grand Total (Total Closure from this month Pipeline — blue)
-    gap                 : 35,  // GAP Remaining from this month Forecast
-    gapPct              : 36,  // Value Gap %
-    dailyRunRate        : 37   // Daily pipeline run rate
+    // P2P
+    currentBooking      : 20,
+    prevP2PInvoices     : 21,
+    p2pFreshPipeline    : 23,
+    p2pClosurePipeline  : 24,
+    p2pPipelineWon      : 25,
+    p2pPipelineConv     : 26,
+    p2pOpportunities    : 28,
+    p2pClosureOpp       : 29,
+    p2pOppConv          : 30,
   };
 
+  // ── Bug 1 fix: scan for summary rows by label text ──
+  // These are formula rows whose position can vary — find by col A content
+  const LABEL_TARGETS = {
+    recurringTotal : ["expected closing of recurring", "recurring total"],
+    p2pTotal       : ["expected p2p closures", "p2p total"],
+    grandTotal     : ["total closure from this month", "grand total"],
+    gap            : ["gap remaining", "gap"]
+  };
+
+  const labelRowIdx = {};
+  for (let i = anchorIdx + 1; i < Math.min(anchorIdx + 45, rows.length); i++) {
+    const cellA = (rows[i][0] || "").toLowerCase().trim();
+    for (const [key, patterns] of Object.entries(LABEL_TARGETS)) {
+      if (!labelRowIdx[key] && patterns.some(p => cellA.includes(p))) {
+        labelRowIdx[key] = i;
+      }
+    }
+  }
+
   // ── Helpers ──
-  // Parse numeric value — strip commas, currency symbols, handle blanks
   function num(rowIdx, colIdx) {
     const row = rows[rowIdx];
     if (!row) return 0;
@@ -144,45 +146,49 @@ function parseSheet(rows, head, tabName) {
     return isNaN(n) ? 0 : n;
   }
 
-  // Parse percentage string — return as string e.g. "53.33%" or "" for #DIV/0!
   function pct(rowIdx, colIdx) {
     const row = rows[rowIdx];
     if (!row) return "";
     const raw = (row[colIdx] || "").toString().trim();
     if (raw === "#DIV/0!" || raw === "") return "";
-    // If already has %, return as-is; if decimal (e.g. 0.5333) convert
     if (raw.includes("%")) return raw;
     const n = parseFloat(raw);
     if (isNaN(n)) return "";
     return (n * 100).toFixed(2) + "%";
   }
 
-  // Extract a full row of values for a given offset
-  // Digital BU: owners at cols 1..N, total at col 6
-  // Inter BU:   owners at cols 11..(11+N-1), total at col 16
-  // isPercent: use pct() instead of num()
-  function extractRow(offset, isPercent) {
-    const rowIdx = anchorIdx + offset;
+  // Extract a row by absolute row index (for label-scanned rows)
+  function extractByIdx(rowIdx, isPercent) {
     const extractor = isPercent ? pct : num;
-
     const digital = {
       owners: digitalOwners.map((_, i) => extractor(rowIdx, i + 1)),
       total : isPercent ? pct(rowIdx, 6) : num(rowIdx, 6)
     };
     const inter = {
-      owners: interOwners.map((_, i) => extractor(rowIdx, i + 11)),
-      total : isPercent ? pct(rowIdx, 16) : num(rowIdx, 16)
+      owners: interOwners.map((_, i) => extractor(rowIdx, i + 12)),  // Bug 3 fix: col 12
+      total : isPercent ? pct(rowIdx, 17) : num(rowIdx, 17)           // total col shifts too
     };
     return { digital, inter };
   }
 
-  // Build complete data object
-  const D = {};
+  // Extract a row by offset from anchor
+  function extractRow(offset, isPercent) {
+    return extractByIdx(anchorIdx + offset, isPercent);
+  }
+
+  // ── Build D: offset-based fields ──
   const PCT_FIELDS = new Set([
-    'pipelineConversion', 'oppConversion', 'p2pPipelineConv', 'p2pOppConv', 'gapPct'
+    'pipelineConversion', 'oppConversion', 'p2pPipelineConv', 'p2pOppConv'
   ]);
+  const D = {};
   for (const [key, offset] of Object.entries(OFF)) {
     D[key] = extractRow(offset, PCT_FIELDS.has(key));
+  }
+
+  // ── Label-scanned summary rows ──
+  for (const key of ['recurringTotal', 'p2pTotal', 'grandTotal', 'gap']) {
+    const idx = labelRowIdx[key];
+    D[key] = idx !== undefined ? extractByIdx(idx, false) : { digital: { owners: [], total: 0 }, inter: { owners: [], total: 0 } };
   }
 
   // ── Per-owner output builder ──
@@ -190,7 +196,6 @@ function parseSheet(rows, head, tabName) {
     return ownerNames.map((name, i) => ({
       name,
       target             : D.target[buKey].owners[i],
-      forecast           : D.forecast[buKey].owners[i],
       opening            : D.opening[buKey].owners[i],
       predictedLoss      : D.predictedLoss[buKey].owners[i],
       postPaid           : D.postPaid[buKey].owners[i],
@@ -213,15 +218,21 @@ function parseSheet(rows, head, tabName) {
       p2pOppConv         : D.p2pOppConv[buKey].owners[i],
       p2pTotal           : D.p2pTotal[buKey].owners[i],
       grandTotal         : D.grandTotal[buKey].owners[i],
-      gap                : D.gap[buKey].owners[i],
-      gapPct             : D.gapPct[buKey].owners[i],
-      dailyRunRate       : D.dailyRunRate[buKey].owners[i]
+      gap                : D.gap[buKey].owners[i]
     }));
   }
 
   function buildTotals(buKey) {
     const t = {};
-    for (const key of Object.keys(OFF)) {
+    for (const key of [
+      'target','opening','predictedLoss','postPaid',
+      'existingPipeline','closureFromPipeline','pipelineWon','pipelineConversion',
+      'existingOpp','closureFromOpp','oppConversion','recurringTotal',
+      'currentBooking','prevP2PInvoices',
+      'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon','p2pPipelineConv',
+      'p2pOpportunities','p2pClosureOpp','p2pOppConv',
+      'p2pTotal','grandTotal','gap'
+    ]) {
       t[key] = D[key][buKey].total;
     }
     return t;
