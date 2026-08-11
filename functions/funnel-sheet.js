@@ -150,19 +150,14 @@ function parseSheet(rows, head, tabName) {
 
   const labelRowIdx = {};
   for (let i = anchorIdx + 1; i < Math.min(anchorIdx + 50, rows.length); i++) {
-    const cellA = (rows[i][0] || "").toLowerCase().trim();
+    // Scan ALL cells in the row — label may not be in col A (merged cells, wide labels)
+    const rowText = (rows[i] || [])
+      .map(c => (c || "").toString().toLowerCase().trim())
+      .join(" ");
     for (const [key, patterns] of Object.entries(LABEL_TARGETS)) {
       if (labelRowIdx[key] !== undefined) continue;
-      if (patterns.some(p => cellA.includes(p))) {
-        // For summary rows (not gap): verify there's actual data in the total col
-        if (key === 'gap') {
-          labelRowIdx[key] = i;
-        } else {
-          const totalCell = (rows[i][dTotalCol] || "").toString().replace(/[$,]/g, "").trim();
-          const hasValue  = totalCell !== "" && totalCell !== "0" && !isNaN(parseFloat(totalCell));
-          // Accept even if zero — just needs a numeric cell, not necessarily non-zero
-          labelRowIdx[key] = i;
-        }
+      if (patterns.some(p => rowText.includes(p))) {
+        labelRowIdx[key] = i;
       }
     }
   }
@@ -279,6 +274,21 @@ function parseSheet(rows, head, tabName) {
     inter: {
       owners: buildOwners(interOwners, 'inter'),
       totals: buildTotals('inter')
+    },
+    // ── Debug: remove after P2P Total row is confirmed ──
+    _debug: {
+      anchorIdx,
+      dTotalCol,
+      iTotalCol,
+      labelRowIdx,
+      digitalOwners,
+      interOwners,
+      // Raw rows from offset +28 to +38 — where p2pTotal and grandTotal should be
+      rawRows: rows.slice(anchorIdx + 28, anchorIdx + 42).map((r, i) => ({
+        offset: i + 28,
+        absIdx: anchorIdx + 28 + i,
+        cols: r.slice(0, 8)   // first 8 cols only
+      }))
     }
   };
 }
