@@ -394,26 +394,14 @@ function renderTable(head, data, seg) {
     buLabel   = '◆ Digital + Inter BU';
   }
 
-  // ── Compute all derived fields per owner ──
-  // This replaces ALL Sheet formula rows with our own calculations
+  // ── Compute derived fields per owner ──
+  // recurringTotal and p2pTotal come directly from the Sheet (their formulas are complex)
+  // grandTotal, gap, and all Team Sums are computed by us
   const owners = rawOwners.map(o => {
-    const recurringTotal =
-      numVal(o.opening)
-      - numVal(o.predictedLoss)
-      + numVal(o.postPaid)
-      + numVal(o.closureFromPipeline)
-      + numVal(o.closureFromOpp);
-
-    const p2pTotal =
-      numVal(o.currentBooking)
-      + numVal(o.prevP2PInvoices)
-      + numVal(o.p2pClosurePipeline)
-      + numVal(o.p2pPipelineWon)
-      + numVal(o.p2pClosureOpp);
-
-    const grandTotal = recurringTotal + p2pTotal;
-    const gap        = numVal(o.target) - grandTotal;
-
+    const recurringTotal = numVal(o.recurringTotal);  // from Sheet
+    const p2pTotal       = numVal(o.p2pTotal);        // from Sheet
+    const grandTotal     = recurringTotal + p2pTotal;
+    const gap            = numVal(o.target) - grandTotal;
     return { ...o, recurringTotal, p2pTotal, grandTotal, gap };
   });
 
@@ -421,11 +409,11 @@ function renderTable(head, data, seg) {
   const ALL_NUM = [
     'target','opening','predictedLoss','postPaid',
     'existingPipeline','closureFromPipeline','pipelineWon',
-    'existingOpp','closureFromOpp',
+    'existingOpp','closureFromOpp','recurringTotal',
     'currentBooking','prevP2PInvoices',
     'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
-    'p2pOpportunities','p2pClosureOpp',
-    'recurringTotal','p2pTotal','grandTotal','gap'
+    'p2pOpportunities','p2pClosureOpp','p2pTotal',
+    'grandTotal','gap'
   ];
   const teamSum = {};
   for (const k of ALL_NUM) {
@@ -553,10 +541,10 @@ function mergeOwners(dOwners, iOwners) {
   const RAW_KEYS = [
     'target','opening','predictedLoss','postPaid',
     'existingPipeline','closureFromPipeline','pipelineWon',
-    'existingOpp','closureFromOpp',
+    'existingOpp','closureFromOpp','recurringTotal',
     'currentBooking','prevP2PInvoices',
     'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
-    'p2pOpportunities','p2pClosureOpp'
+    'p2pOpportunities','p2pClosureOpp','p2pTotal'
   ];
   const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv'];
   const len = Math.max(dOwners.length, iOwners.length);
