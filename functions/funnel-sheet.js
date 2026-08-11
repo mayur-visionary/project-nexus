@@ -143,7 +143,7 @@ function parseSheet(rows, head, tabName) {
   // "gap" is an exception — it can legitimately be zero, so no value check.
   const LABEL_TARGETS = {
     recurringTotal : ["expected closing of recurring"],
-    p2pTotal       : ["expected p2p closures"],
+    p2pTotal       : ["expected p2p clos"],   // matches both "closures" and "closours" (Sheet typo)
     grandTotal     : ["total closure from this month"],
     gap            : ["gap remaining from this month"]
   };
@@ -274,21 +274,6 @@ function parseSheet(rows, head, tabName) {
     inter: {
       owners: buildOwners(interOwners, 'inter'),
       totals: buildTotals('inter')
-    },
-    // ── Debug: remove after P2P Total row is confirmed ──
-    _debug: {
-      anchorIdx,
-      dTotalCol,
-      iTotalCol,
-      labelRowIdx,
-      digitalOwners,
-      interOwners,
-      // Raw rows from offset +28 to +38 — where p2pTotal and grandTotal should be
-      rawRows: rows.slice(anchorIdx + 28, anchorIdx + 42).map((r, i) => ({
-        offset: i + 28,
-        absIdx: anchorIdx + 28 + i,
-        cols: r.slice(0, 8)   // first 8 cols only
-      }))
     }
   };
 }
