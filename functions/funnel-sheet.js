@@ -63,53 +63,25 @@ function parseSheet(rows, head, tabName) {
   const month     = anchorRow[0].trim();
 
   // ── Owner exclusions ──
-  const EXCLUDE    = { tanuj_uk: ["sheldon", "sheldon fernandes"] };
+  const EXCLUDE    = { tanuj_uk: ["sheldon", "sheldon fernandes", "total"] };
   const excluded   = new Set((EXCLUDE[head] || []).map(n => n.toLowerCase()));
   const isExcluded = n => excluded.has((n || "").toLowerCase().trim());
 
-  // ── Smart owner detection — scan full anchor row ──
-  // Ignore: empty cells, the month value itself, known non-name keywords
-  const SKIP_WORDS = new Set(["total", "inter bu", "digital bu", "month", "forecast", "target"]);
-  const isName = cell => {
-    const v = (cell || "").trim();
-    if (!v) return false;
-    if (ANCHOR_RE.test(v)) return false;                          // month pattern
-    if (SKIP_WORDS.has(v.toLowerCase())) return false;            // keyword
-    if (/^\d/.test(v)) return false;                              // starts with number
-    return true;
-  };
-
-  // Collect all owner columns across the full anchor row
-  const allOwnerCols = [];
-  for (let c = 1; c < (anchorRow.length || 20); c++) {
-    if (isName(anchorRow[c])) allOwnerCols.push(c);
-  }
-
-  // Split into two groups — Digital BU and Inter BU — by finding the largest gap
-  // between consecutive owner columns. Everything before the gap = Digital, after = Inter BU.
+  // ── Read owner names + col indices from anchor row ──
+  // Digital BU: cols 1–5; Inter BU: cols 12–16
+  // Skip excluded names AND skip any cell whose value is not a real person name
+  // (guard against "Total" label cell bleeding into owner list)
   const digitalOwners = [], digitalOwnerCols = [];
-  const interOwners   = [], interOwnerCols   = [];
-
-  if (allOwnerCols.length > 0) {
-    // Find the largest gap between consecutive owner columns
-    let maxGap = 0, splitAfter = allOwnerCols.length - 1;
-    for (let i = 0; i < allOwnerCols.length - 1; i++) {
-      const gap = allOwnerCols[i + 1] - allOwnerCols[i];
-      if (gap > maxGap) { maxGap = gap; splitAfter = i; }
-    }
-
-    // If no meaningful gap (all owners are one group), put all in Digital
-    const hasTwoGroups = maxGap > 3;
-
-    allOwnerCols.forEach((c, i) => {
-      const name = anchorRow[c].trim();
-      if (isExcluded(name)) return;
-      if (!hasTwoGroups || i <= splitAfter) {
-        digitalOwners.push(name); digitalOwnerCols.push(c);
-      } else {
-        interOwners.push(name); interOwnerCols.push(c);
-      }
-    });
+  for (let c = 1; c <= 5; c++) {
+    const n = (anchorRow[c] || "").trim();
+    if (!n) break;
+    if (!isExcluded(n)) { digitalOwners.push(n); digitalOwnerCols.push(c); }
+  }
+  const interOwners = [], interOwnerCols = [];
+  for (let c = 12; c <= 16; c++) {
+    const n = (anchorRow[c] || "").trim();
+    if (!n) break;
+    if (!isExcluded(n)) { interOwners.push(n); interOwnerCols.push(c); }
   }
 
   // ── Fixed row offsets from anchor (data rows only — no formula rows) ──
