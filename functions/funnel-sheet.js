@@ -97,6 +97,7 @@ function parseSheet(rows, head, tabName) {
     existingOpp        : 14,
     closureFromOpp     : 15,
     oppConversion      : 16,  // % — string
+    recurringTotal     : 18,  // Read directly from Sheet — yellow row
     currentBooking     : 20,
     prevP2PInvoices    : 21,
     p2pFreshPipeline   : 23,
@@ -106,6 +107,7 @@ function parseSheet(rows, head, tabName) {
     p2pOpportunities   : 28,
     p2pClosureOpp      : 29,
     p2pOppConv         : 30,  // % — string
+    p2pTotal           : 33,  // Read directly from Sheet — yellow row (offset verified from debug)
   };
 
   const PCT_FIELDS = new Set(['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv']);
