@@ -128,7 +128,6 @@ tbody tr.row-grand-total td{background:#3A2800;font-weight:800;color:#FFDA30}
 tbody tr.row-grand-total td.tot,tbody tr.row-grand-total td.tot-inter,tbody tr.row-grand-total td.tot-both{background:#2A1C00;color:#FFE870}
 tbody tr.row-gap td{background:#FFF4E8;font-weight:700;color:#2E2E2E}
 tbody tr.row-gap-pct td{background:#FFF4E8;font-weight:700;color:#2E2E2E}
-tbody tr.row-daily td{background:#EBEBEB;font-weight:700;color:#3A3A3A}
 
 /* Hover override for special rows */
 tbody tr.row-grand-total:hover td{background:#4D3800!important}
@@ -468,8 +467,17 @@ function renderTable(head, data, seg) {
     // ── Summary ──
     row('row-grand-total', 'Grand Total', 'grandTotal', false),
     row('row-gap',         'GAP',         'gap',        false),
-    rowPct('GAP %', 'gapPct'),
-    row('row-daily',       'Daily Run-Rate', 'dailyRunRate', false),
+    (() => {
+      // GAP % = GAP / Target — computed client-side per owner and total
+      const ownerCells = owners.map(o => {
+        const t = numVal(o.target), g = numVal(o.gap);
+        const v = t !== 0 ? ((g / t) * 100).toFixed(2) + '%' : '—';
+        return `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${v}</td>`;
+      }).join('');
+      const tt = numVal(totals.target), tg = numVal(totals.gap);
+      const tv = tt !== 0 ? ((tg / tt) * 100).toFixed(2) + '%' : '—';
+      return `<tr class="row-gap-pct"><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">GAP %</td>${ownerCells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">${tv}</td></tr>`;
+    })(),
   ].join('');
 
   const html = `
@@ -507,15 +515,15 @@ function renderTable(head, data, seg) {
 // BOTH MERGE HELPERS
 // ════════════════════════════════════════════════════════════
 const NUMERIC_KEYS = [
-  'target','forecast','opening','predictedLoss','postPaid',
+  'target','opening','predictedLoss','postPaid',
   'existingPipeline','closureFromPipeline','pipelineWon',
   'existingOpp','closureFromOpp','recurringTotal',
   'currentBooking','prevP2PInvoices',
   'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
   'p2pOpportunities','p2pClosureOpp','p2pTotal',
-  'grandTotal','gap','dailyRunRate'
+  'grandTotal','gap'
 ];
-const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv','gapPct'];
+const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv'];
 
 function numVal(v) {
   if (typeof v === 'number') return v;
