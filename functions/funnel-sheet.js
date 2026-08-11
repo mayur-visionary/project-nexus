@@ -1,7 +1,7 @@
 // functions/funnel-sheet.js
 // Funnel Desk v2 — Google Sheets proxy
 // POST { head: "jiggyasa" | "tanuj_uk" | "tanuj_us" }
-// Returns full structured JSON for both Digital BU and Inter BU blocks.
+// Returns RAW owner values only — all totals and derived rows computed client-side.
 // Auth: Google Service Account JWT → OAuth2 access token → Sheets API v4
 
 export async function onRequestPost(context) {
@@ -15,27 +15,20 @@ export async function onRequestPost(context) {
     };
 
     const tabName = TAB_MAP[head];
-    if (!tabName) {
-      return jsonResp({ error: `Unknown head: ${head}` }, 400);
-    }
+    if (!tabName) return jsonResp({ error: `Unknown head: ${head}` }, 400);
 
     const SHEET_ID   = context.env.FUNNEL_SHEET_ID;
     const SA_EMAIL   = context.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const SA_KEY_RAW = context.env.GOOGLE_PRIVATE_KEY;
 
     if (!SHEET_ID || !SA_EMAIL || !SA_KEY_RAW) {
-      return jsonResp({
-        error: "Missing env vars: FUNNEL_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY"
-      }, 500);
+      return jsonResp({ error: "Missing env vars: FUNNEL_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY" }, 500);
     }
 
-    const token = await getAccessToken(SA_EMAIL, SA_KEY_RAW);
-
+    const token     = await getAccessToken(SA_EMAIL, SA_KEY_RAW);
     const range     = encodeURIComponent(tabName);
     const sheetsURL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}`;
-    const sheetsRes = await fetch(sheetsURL, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const sheetsRes = await fetch(sheetsURL, { headers: { Authorization: `Bearer ${token}` } });
 
     if (!sheetsRes.ok) {
       const err = await sheetsRes.text();
@@ -44,13 +37,9 @@ export async function onRequestPost(context) {
 
     const sheetsData = await sheetsRes.json();
     const rows       = sheetsData.values || [];
+    if (!rows.length) return jsonResp({ error: `No data in tab "${tabName}"` }, 404);
 
-    if (!rows.length) {
-      return jsonResp({ error: `No data found in tab "${tabName}"` }, 404);
-    }
-
-    const parsed = parseSheet(rows, head, tabName);
-    return jsonResp(parsed, 200);
+    return jsonResp(parseSheet(rows, head, tabName), 200);
 
   } catch (e) {
     return jsonResp({ error: e.message }, 500);
@@ -58,12 +47,11 @@ export async function onRequestPost(context) {
 }
 
 // ════════════════════════════════════════════════════════════
-// SHEET PARSER
+// SHEET PARSER — reads raw owner values only, no Sheet formulas
 // ════════════════════════════════════════════════════════════
 function parseSheet(rows, head, tabName) {
 
-  // ── Find topmost month anchor row ──
-  // Col A matches "MonthName-YYYY" e.g. "August-2026"
+  // ── Find month anchor row ──
   const ANCHOR_RE = /^[A-Z][a-z]+-\d{4}$/;
   let anchorIdx = -1;
   for (let i = 0; i < rows.length; i++) {
@@ -74,100 +62,60 @@ function parseSheet(rows, head, tabName) {
   const anchorRow = rows[anchorIdx];
   const month     = anchorRow[0].trim();
 
-  // ── Per-head owner exclusions ──
-  // Names listed here are skipped when reading owner columns from the anchor row.
-  // The Sheet column still exists — we simply don't read or render it.
-  const EXCLUDE = {
-    tanuj_uk : ["sheldon", "sheldon fernandes"]
-  };
-  const excluded = new Set((EXCLUDE[head] || []).map(n => n.toLowerCase()));
-  const isExcluded = name => excluded.has(name.toLowerCase().trim());
+  // ── Owner exclusions ──
+  const EXCLUDE    = { tanuj_uk: ["sheldon", "sheldon fernandes", "total"] };
+  const excluded   = new Set((EXCLUDE[head] || []).map(n => n.toLowerCase()));
+  const isExcluded = n => excluded.has((n || "").toLowerCase().trim());
 
-  // ── Owner names — read dynamically from anchor row ──
-  // Digital BU: cols 1–5; stop at first empty cell
-  // Inter BU:   cols 12–16; stop at first empty cell
-  const digitalOwners = [];
-  const digitalOwnerCols = [];   // track which col index each owner sits in
+  // ── Read owner names + col indices from anchor row ──
+  // Digital BU: cols 1–5; Inter BU: cols 12–16
+  // Skip excluded names AND skip any cell whose value is not a real person name
+  // (guard against "Total" label cell bleeding into owner list)
+  const digitalOwners = [], digitalOwnerCols = [];
   for (let c = 1; c <= 5; c++) {
     const n = (anchorRow[c] || "").trim();
     if (!n) break;
     if (!isExcluded(n)) { digitalOwners.push(n); digitalOwnerCols.push(c); }
   }
-  const interOwners = [];
-  const interOwnerCols = [];
+  const interOwners = [], interOwnerCols = [];
   for (let c = 12; c <= 16; c++) {
     const n = (anchorRow[c] || "").trim();
     if (!n) break;
     if (!isExcluded(n)) { interOwners.push(n); interOwnerCols.push(c); }
   }
 
-  // ── Bug A fix: total column is DYNAMIC — based on non-excluded owner count ──
-  // Total col = last included owner col + 1
-  // If all owners included: 5 owners → col 6, 4 owners → col 5
-  // After exclusions: recalculate from the actual columns present
-  const dTotalCol = digitalOwnerCols.length > 0
-    ? Math.max(...digitalOwnerCols) + 1
-    : digitalOwners.length + 1;
-  const iTotalCol = interOwnerCols.length > 0
-    ? Math.max(...interOwnerCols) + 1
-    : 12 + interOwners.length;
-
-  // ── Row offset map (verified Apr–Aug 2026) ──
+  // ── Fixed row offsets from anchor (data rows only — no formula rows) ──
   const OFF = {
-    target              : 1,
-    opening             : 5,
-    predictedLoss       : 6,
-    postPaid            : 7,
-    existingPipeline    : 9,
-    closureFromPipeline : 10,
-    pipelineWon         : 11,
-    pipelineConversion  : 12,
-    existingOpp         : 14,
-    closureFromOpp      : 15,
-    oppConversion       : 16,
-    currentBooking      : 20,
-    prevP2PInvoices     : 21,
-    p2pFreshPipeline    : 23,
-    p2pClosurePipeline  : 24,
-    p2pPipelineWon      : 25,
-    p2pPipelineConv     : 26,
-    p2pOpportunities    : 28,
-    p2pClosureOpp       : 29,
-    p2pOppConv          : 30,
+    target             : 1,
+    opening            : 5,   // Pre-Paid Invoices
+    predictedLoss      : 6,
+    postPaid           : 7,   // Post-Paid Invoices
+    existingPipeline   : 9,
+    closureFromPipeline: 10,
+    pipelineWon        : 11,
+    pipelineConversion : 12,  // % — string
+    existingOpp        : 14,
+    closureFromOpp     : 15,
+    oppConversion      : 16,  // % — string
+    currentBooking     : 20,
+    prevP2PInvoices    : 21,
+    p2pFreshPipeline   : 23,
+    p2pClosurePipeline : 24,
+    p2pPipelineWon     : 25,
+    p2pPipelineConv    : 26,  // % — string
+    p2pOpportunities   : 28,
+    p2pClosureOpp      : 29,
+    p2pOppConv         : 30,  // % — string
   };
 
-  // ── Bug B fix: scan for summary rows reliably ──
-  // Strategy: scan col A for label text, but ALSO verify the row has a
-  // non-zero numeric value in the digital total column — avoids landing
-  // on section header rows that share similar label text.
-  // "gap" is an exception — it can legitimately be zero, so no value check.
-  const LABEL_TARGETS = {
-    recurringTotal : ["expected closing of recurring"],
-    p2pTotal       : ["expected p2p clos"],   // matches both "closures" and "closours" (Sheet typo)
-    grandTotal     : ["total closure from this month"],
-    gap            : ["gap remaining from this month"]
-  };
-
-  const labelRowIdx = {};
-  for (let i = anchorIdx + 1; i < Math.min(anchorIdx + 50, rows.length); i++) {
-    // Scan ALL cells in the row — label may not be in col A (merged cells, wide labels)
-    const rowText = (rows[i] || [])
-      .map(c => (c || "").toString().toLowerCase().trim())
-      .join(" ");
-    for (const [key, patterns] of Object.entries(LABEL_TARGETS)) {
-      if (labelRowIdx[key] !== undefined) continue;
-      if (patterns.some(p => rowText.includes(p))) {
-        labelRowIdx[key] = i;
-      }
-    }
-  }
+  const PCT_FIELDS = new Set(['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv']);
 
   // ── Helpers ──
   function num(rowIdx, colIdx) {
     const row = rows[rowIdx];
     if (!row) return 0;
     const raw = (row[colIdx] || "").toString().replace(/[$,]/g, "").trim();
-    if (raw === "" || raw === "#DIV/0!" || raw === "-") return 0;
+    if (!raw || raw === "#DIV/0!" || raw === "-") return 0;
     const n = parseFloat(raw);
     return isNaN(n) ? 0 : n;
   }
@@ -176,119 +124,38 @@ function parseSheet(rows, head, tabName) {
     const row = rows[rowIdx];
     if (!row) return "";
     const raw = (row[colIdx] || "").toString().trim();
-    if (raw === "#DIV/0!" || raw === "") return "";
+    if (!raw || raw === "#DIV/0!") return "";
     if (raw.includes("%")) return raw;
     const n = parseFloat(raw);
-    if (isNaN(n)) return "";
-    return (n * 100).toFixed(2) + "%";
+    return isNaN(n) ? "" : (n * 100).toFixed(2) + "%";
   }
 
-  // Extract a row — uses actual tracked column indices (respects exclusions)
-  function extractByIdx(rowIdx, isPercent) {
-    const extractor = isPercent ? pct : num;
-    const row = rows[rowIdx] || [];
+  // Extract owner values for a row — returns array aligned to ownerCols
+  function extractOwners(ownerCols, rowIdx, isPercent) {
+    return ownerCols.map(c => isPercent ? pct(rowIdx, c) : num(rowIdx, c));
+  }
 
-    // For the total column, scan up to 2 cols right of expected position
-    // in case the Sheet API returns the value shifted slightly
-    function safeTotal(expectedCol) {
-      for (let c = expectedCol; c <= expectedCol + 2; c++) {
-        const raw = (row[c] || "").toString().replace(/[$,]/g, "").trim();
-        if (raw !== "" && raw !== "#DIV/0!" && raw !== "-" && !isNaN(parseFloat(raw))) {
-          return isPercent ? pct(rowIdx, c) : num(rowIdx, c);
-        }
+  // Build per-owner data object for one BU
+  function buildBU(ownerNames, ownerCols) {
+    const owners = ownerNames.map((name, i) => {
+      const o = { name };
+      for (const [key, offset] of Object.entries(OFF)) {
+        const isPercent = PCT_FIELDS.has(key);
+        o[key] = isPercent
+          ? pct(anchorIdx + offset, ownerCols[i])
+          : num(anchorIdx + offset, ownerCols[i]);
       }
-      return isPercent ? "" : 0;
-    }
-
-    const digital = {
-      owners: digitalOwnerCols.map(c => extractor(rowIdx, c)),
-      total : safeTotal(dTotalCol)
-    };
-    const inter = {
-      owners: interOwnerCols.map(c => extractor(rowIdx, c)),
-      total : safeTotal(iTotalCol)
-    };
-    return { digital, inter };
-  }
-
-  function extractRow(offset, isPercent) {
-    return extractByIdx(anchorIdx + offset, isPercent);
-  }
-
-  // ── Build D: offset-based fields ──
-  const PCT_FIELDS = new Set([
-    'pipelineConversion', 'oppConversion', 'p2pPipelineConv', 'p2pOppConv'
-  ]);
-  const D = {};
-  for (const [key, offset] of Object.entries(OFF)) {
-    D[key] = extractRow(offset, PCT_FIELDS.has(key));
-  }
-
-  // ── Label-scanned summary rows ──
-  for (const key of ['recurringTotal', 'p2pTotal', 'grandTotal', 'gap']) {
-    const idx = labelRowIdx[key];
-    D[key] = idx !== undefined ? extractByIdx(idx, false) : { digital: { owners: [], total: 0 }, inter: { owners: [], total: 0 } };
-  }
-
-  // ── Per-owner output builder ──
-  function buildOwners(ownerNames, buKey) {
-    return ownerNames.map((name, i) => ({
-      name,
-      target             : D.target[buKey].owners[i],
-      opening            : D.opening[buKey].owners[i],
-      predictedLoss      : D.predictedLoss[buKey].owners[i],
-      postPaid           : D.postPaid[buKey].owners[i],
-      existingPipeline   : D.existingPipeline[buKey].owners[i],
-      closureFromPipeline: D.closureFromPipeline[buKey].owners[i],
-      pipelineWon        : D.pipelineWon[buKey].owners[i],
-      pipelineConversion : D.pipelineConversion[buKey].owners[i],
-      existingOpp        : D.existingOpp[buKey].owners[i],
-      closureFromOpp     : D.closureFromOpp[buKey].owners[i],
-      oppConversion      : D.oppConversion[buKey].owners[i],
-      recurringTotal     : D.recurringTotal[buKey].owners[i],
-      currentBooking     : D.currentBooking[buKey].owners[i],
-      prevP2PInvoices    : D.prevP2PInvoices[buKey].owners[i],
-      p2pFreshPipeline   : D.p2pFreshPipeline[buKey].owners[i],
-      p2pClosurePipeline : D.p2pClosurePipeline[buKey].owners[i],
-      p2pPipelineWon     : D.p2pPipelineWon[buKey].owners[i],
-      p2pPipelineConv    : D.p2pPipelineConv[buKey].owners[i],
-      p2pOpportunities   : D.p2pOpportunities[buKey].owners[i],
-      p2pClosureOpp      : D.p2pClosureOpp[buKey].owners[i],
-      p2pOppConv         : D.p2pOppConv[buKey].owners[i],
-      p2pTotal           : D.p2pTotal[buKey].owners[i],
-      grandTotal         : D.grandTotal[buKey].owners[i],
-      gap                : D.gap[buKey].owners[i]
-    }));
-  }
-
-  function buildTotals(buKey) {
-    const t = {};
-    for (const key of [
-      'target','opening','predictedLoss','postPaid',
-      'existingPipeline','closureFromPipeline','pipelineWon','pipelineConversion',
-      'existingOpp','closureFromOpp','oppConversion','recurringTotal',
-      'currentBooking','prevP2PInvoices',
-      'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon','p2pPipelineConv',
-      'p2pOpportunities','p2pClosureOpp','p2pOppConv',
-      'p2pTotal','grandTotal','gap'
-    ]) {
-      t[key] = D[key][buKey].total;
-    }
-    return t;
+      return o;
+    });
+    return owners;
   }
 
   return {
     month,
     head,
     tabName,
-    digital: {
-      owners: buildOwners(digitalOwners, 'digital'),
-      totals: buildTotals('digital')
-    },
-    inter: {
-      owners: buildOwners(interOwners, 'inter'),
-      totals: buildTotals('inter')
-    }
+    digital : { owners: buildBU(digitalOwners, digitalOwnerCols) },
+    inter   : { owners: buildBU(interOwners,   interOwnerCols)   }
   };
 }
 
@@ -337,11 +204,7 @@ async function getAccessToken(email, rawKey) {
     })
   });
 
-  if (!tokenRes.ok) {
-    const err = await tokenRes.text();
-    throw new Error(`OAuth token error ${tokenRes.status}: ${err}`);
-  }
-
+  if (!tokenRes.ok) throw new Error(`OAuth ${tokenRes.status}: ${await tokenRes.text()}`);
   const { access_token } = await tokenRes.json();
   return access_token;
 }
