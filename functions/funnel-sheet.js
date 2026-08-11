@@ -74,26 +74,47 @@ function parseSheet(rows, head, tabName) {
   const anchorRow = rows[anchorIdx];
   const month     = anchorRow[0].trim();
 
+  // ── Per-head owner exclusions ──
+  // Names listed here are skipped when reading owner columns from the anchor row.
+  // The Sheet column still exists — we simply don't read or render it.
+  const EXCLUDE = {
+    tanuj_uk : ["sheldon", "sheldon fernandes"]
+  };
+  const excluded = new Set((EXCLUDE[head] || []).map(n => n.toLowerCase()));
+  const isExcluded = name => excluded.has(name.toLowerCase().trim());
+
   // ── Owner names — read dynamically from anchor row ──
-  // Digital BU: cols 1–5; Inter BU: cols 12–16
-  // Stop at first empty cell in each range
+  // Digital BU: cols 1–5; stop at first empty cell
+  // Inter BU:   cols 12–16; stop at first empty cell
   const digitalOwners = [];
+  const digitalOwnerCols = [];   // track which col index each owner sits in
   for (let c = 1; c <= 5; c++) {
     const n = (anchorRow[c] || "").trim();
-    if (n) digitalOwners.push(n); else break;
+    if (!n) break;
+    if (!isExcluded(n)) { digitalOwners.push(n); digitalOwnerCols.push(c); }
   }
   const interOwners = [];
-  for (let c = 12; c <= 16; c++) {        // Bug 3 fix: was 11–15, col 11 is a label column
+  const interOwnerCols = [];
+  for (let c = 12; c <= 16; c++) {
     const n = (anchorRow[c] || "").trim();
-    if (n) interOwners.push(n); else break;
+    if (!n) break;
+    if (!isExcluded(n)) { interOwners.push(n); interOwnerCols.push(c); }
   }
 
+  // ── Bug A fix: total column is DYNAMIC — based on non-excluded owner count ──
+  // Total col = last included owner col + 1
+  // If all owners included: 5 owners → col 6, 4 owners → col 5
+  // After exclusions: recalculate from the actual columns present
+  const dTotalCol = digitalOwnerCols.length > 0
+    ? Math.max(...digitalOwnerCols) + 1
+    : digitalOwners.length + 1;
+  const iTotalCol = interOwnerCols.length > 0
+    ? Math.max(...interOwnerCols) + 1
+    : 12 + interOwners.length;
+
   // ── Row offset map (verified Apr–Aug 2026) ──
-  // All offsets from anchorIdx — fixed rows only
   const OFF = {
     target              : 1,
-
-    // Recurring
     opening             : 5,
     predictedLoss       : 6,
     postPaid            : 7,
@@ -104,8 +125,6 @@ function parseSheet(rows, head, tabName) {
     existingOpp         : 14,
     closureFromOpp      : 15,
     oppConversion       : 16,
-
-    // P2P
     currentBooking      : 20,
     prevP2PInvoices     : 21,
     p2pFreshPipeline    : 23,
@@ -117,21 +136,33 @@ function parseSheet(rows, head, tabName) {
     p2pOppConv          : 30,
   };
 
-  // ── Bug 1 fix: scan for summary rows by label text ──
-  // These are formula rows whose position can vary — find by col A content
+  // ── Bug B fix: scan for summary rows reliably ──
+  // Strategy: scan col A for label text, but ALSO verify the row has a
+  // non-zero numeric value in the digital total column — avoids landing
+  // on section header rows that share similar label text.
+  // "gap" is an exception — it can legitimately be zero, so no value check.
   const LABEL_TARGETS = {
-    recurringTotal : ["expected closing of recurring", "recurring total"],
-    p2pTotal       : ["expected p2p closures", "p2p total"],
-    grandTotal     : ["total closure from this month", "grand total"],
-    gap            : ["gap remaining", "gap"]
+    recurringTotal : ["expected closing of recurring"],
+    p2pTotal       : ["expected p2p closures from last month"],
+    grandTotal     : ["total closure from this month"],
+    gap            : ["gap remaining from this month"]
   };
 
   const labelRowIdx = {};
-  for (let i = anchorIdx + 1; i < Math.min(anchorIdx + 45, rows.length); i++) {
+  for (let i = anchorIdx + 1; i < Math.min(anchorIdx + 50, rows.length); i++) {
     const cellA = (rows[i][0] || "").toLowerCase().trim();
     for (const [key, patterns] of Object.entries(LABEL_TARGETS)) {
-      if (!labelRowIdx[key] && patterns.some(p => cellA.includes(p))) {
-        labelRowIdx[key] = i;
+      if (labelRowIdx[key] !== undefined) continue;
+      if (patterns.some(p => cellA.includes(p))) {
+        // For summary rows (not gap): verify there's actual data in the total col
+        if (key === 'gap') {
+          labelRowIdx[key] = i;
+        } else {
+          const totalCell = (rows[i][dTotalCol] || "").toString().replace(/[$,]/g, "").trim();
+          const hasValue  = totalCell !== "" && totalCell !== "0" && !isNaN(parseFloat(totalCell));
+          // Accept even if zero — just needs a numeric cell, not necessarily non-zero
+          labelRowIdx[key] = i;
+        }
       }
     }
   }
@@ -157,21 +188,20 @@ function parseSheet(rows, head, tabName) {
     return (n * 100).toFixed(2) + "%";
   }
 
-  // Extract a row by absolute row index (for label-scanned rows)
+  // Extract a row — uses actual tracked column indices (respects exclusions)
   function extractByIdx(rowIdx, isPercent) {
     const extractor = isPercent ? pct : num;
     const digital = {
-      owners: digitalOwners.map((_, i) => extractor(rowIdx, i + 1)),
-      total : isPercent ? pct(rowIdx, 6) : num(rowIdx, 6)
+      owners: digitalOwnerCols.map(c => extractor(rowIdx, c)),
+      total : isPercent ? pct(rowIdx, dTotalCol) : num(rowIdx, dTotalCol)
     };
     const inter = {
-      owners: interOwners.map((_, i) => extractor(rowIdx, i + 12)),  // Bug 3 fix: col 12
-      total : isPercent ? pct(rowIdx, 17) : num(rowIdx, 17)           // total col shifts too
+      owners: interOwnerCols.map(c => extractor(rowIdx, c)),
+      total : isPercent ? pct(rowIdx, iTotalCol) : num(rowIdx, iTotalCol)
     };
     return { digital, inter };
   }
 
-  // Extract a row by offset from anchor
   function extractRow(offset, isPercent) {
     return extractByIdx(anchorIdx + offset, isPercent);
   }
