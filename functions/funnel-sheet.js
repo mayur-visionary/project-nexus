@@ -143,7 +143,7 @@ function parseSheet(rows, head, tabName) {
   // "gap" is an exception — it can legitimately be zero, so no value check.
   const LABEL_TARGETS = {
     recurringTotal : ["expected closing of recurring"],
-    p2pTotal       : ["expected p2p closures from last month"],
+    p2pTotal       : ["expected p2p closures"],
     grandTotal     : ["total closure from this month"],
     gap            : ["gap remaining from this month"]
   };
