@@ -80,8 +80,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Table card ── */
 .tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
 .tcard-hdr{padding:12px 16px 10px;border-bottom:2px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.tcard-ttl{font-size:12px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
-.tcard-sub{font-size:10px;color:#9A9A9A;font-weight:600;margin-top:2px}
+.tcard-ttl{font-size:12px;font-weight:800;color:#2E2E2E;text-transform:uppercase;letter-spacing:.05em}
+.tcard-sub{font-size:10px;color:#5A5A5A;font-weight:600;margin-top:2px}
 .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
 /* ── Table ── */
@@ -93,51 +93,51 @@ col.num-col{width:100px}
 col.tot-col{width:110px}
 
 /* Head */
-thead th{padding:7px 10px;background:#F7F7F7;text-align:left;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
+thead th{padding:7px 10px;background:#EFEFEF;text-align:left;font-size:8px;font-weight:800;color:#555555;text-transform:uppercase;letter-spacing:.1em;border-bottom:2px solid #DCDCDC;white-space:nowrap}
 thead th.num{text-align:right}
-thead th.tot{text-align:right;background:#FFFBEA;color:#473400}
-thead th.tot-inter{text-align:right;background:#F0FAF8;color:#006E5E}
-thead th.tot-both{text-align:right;background:#F4F0FF;color:#3B3561}
+thead th.tot{text-align:right;background:#FFF3C0;color:#3A2800}
+thead th.tot-inter{text-align:right;background:#C8EDE6;color:#004D40}
+thead th.tot-both{text-align:right;background:#E0DAF8;color:#2A234A}
 
 /* Body base */
-tbody tr{border-bottom:1px solid #F5F5F5}
-tbody td{padding:7px 10px;color:#434343;font-weight:600;font-size:10.5px;vertical-align:middle}
-tbody td.lbl{color:#696969;font-size:10px;font-weight:700;max-width:220px}
+tbody tr{border-bottom:1px solid #EBEBEB}
+tbody td{padding:7px 10px;color:#2E2E2E;font-weight:600;font-size:10.5px;vertical-align:middle}
+tbody td.lbl{color:#4A4A4A;font-size:10px;font-weight:700;max-width:220px}
 tbody td.num{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-tbody td.tot{text-align:right;font-weight:800;background:#FFFDF0;font-variant-numeric:tabular-nums}
-tbody td.tot-inter{text-align:right;font-weight:800;background:#F0FAF8;font-variant-numeric:tabular-nums}
-tbody td.tot-both{text-align:right;font-weight:800;background:#F4F0FF;font-variant-numeric:tabular-nums}
+tbody td.tot{text-align:right;font-weight:800;background:#FFFBDF;color:#2E2000;font-variant-numeric:tabular-nums}
+tbody td.tot-inter{text-align:right;font-weight:800;background:#D8F2EC;color:#003D33;font-variant-numeric:tabular-nums}
+tbody td.tot-both{text-align:right;font-weight:800;background:#E8E4F8;color:#1E1840;font-variant-numeric:tabular-nums}
 tbody tr:hover td{background:#FFFBEA!important}
 
 /* Section headers inside table */
 tbody tr.sec-hdr td{
-  background:#F7F7F7;
-  font-size:8px;font-weight:800;color:#9A9A9A;
+  background:#EBEBEB;
+  font-size:8px;font-weight:800;color:#555555;
   text-transform:uppercase;letter-spacing:.14em;
   padding:5px 10px;
-  border-top:2px solid #E8E8E8;
-  border-bottom:1px solid #E8E8E8
+  border-top:2px solid #D8D8D8;
+  border-bottom:1px solid #D8D8D8
 }
 
 /* Highlighted result rows */
-tbody tr.row-recurring-total td{background:#FFFBEA;font-weight:800;color:#473400}
-tbody tr.row-recurring-total td.tot{background:#FFF3C0;color:#473400}
-tbody tr.row-p2p-total td{background:#F0FAF8;font-weight:800;color:#006E5E}
-tbody tr.row-p2p-total td.tot,tbody tr.row-p2p-total td.tot-inter,tbody tr.row-p2p-total td.tot-both{background:#D0F0E8;color:#006E5E}
-tbody tr.row-grand-total td{background:#473400;font-weight:800;color:#FFDA30}
-tbody tr.row-grand-total td.tot,tbody tr.row-grand-total td.tot-inter,tbody tr.row-grand-total td.tot-both{background:#3A2900;color:#FFDA30}
-tbody tr.row-gap td{background:#FFF8F0;font-weight:700;color:#434343}
-tbody tr.row-gap-pct td{background:#FFF8F0;font-weight:700;color:#434343}
-tbody tr.row-daily td{background:#F7F7F7;font-weight:700;color:#696969}
+tbody tr.row-recurring-total td{background:#FFF7D6;font-weight:800;color:#3A2800}
+tbody tr.row-recurring-total td.tot{background:#FFE870;color:#2E2000}
+tbody tr.row-p2p-total td{background:#D8F5EE;font-weight:800;color:#004D40}
+tbody tr.row-p2p-total td.tot,tbody tr.row-p2p-total td.tot-inter,tbody tr.row-p2p-total td.tot-both{background:#A8E6D8;color:#003028}
+tbody tr.row-grand-total td{background:#3A2800;font-weight:800;color:#FFDA30}
+tbody tr.row-grand-total td.tot,tbody tr.row-grand-total td.tot-inter,tbody tr.row-grand-total td.tot-both{background:#2A1C00;color:#FFE870}
+tbody tr.row-gap td{background:#FFF4E8;font-weight:700;color:#2E2E2E}
+tbody tr.row-gap-pct td{background:#FFF4E8;font-weight:700;color:#2E2E2E}
+tbody tr.row-daily td{background:#EBEBEB;font-weight:700;color:#3A3A3A}
 
 /* Hover override for special rows */
-tbody tr.row-grand-total:hover td{background:#5C4400!important}
-tbody tr.row-recurring-total:hover td{background:#FFF3C0!important}
-tbody tr.row-p2p-total:hover td{background:#D0F0E8!important}
+tbody tr.row-grand-total:hover td{background:#4D3800!important}
+tbody tr.row-recurring-total:hover td{background:#FFE870!important}
+tbody tr.row-p2p-total:hover td{background:#A8E6D8!important}
 
 /* Sign colouring */
 .neg{color:#EF2D56!important}
-.pos{color:#0CCE6B!important}
+.pos{color:#006E5E!important}
 
 /* ── State messages ── */
 .state-msg{text-align:center;padding:60px 20px;color:#9A9A9A;font-weight:600;font-size:11px}
@@ -145,7 +145,7 @@ tbody tr.row-p2p-total:hover td{background:#D0F0E8!important}
 .state-msg .sub{font-size:10px;font-weight:500;margin-top:6px;color:#B0B0B0}
 
 /* ── Footer ── */
-.footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#C0C0C0;letter-spacing:.12em;text-transform:uppercase}
+.footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Responsive ── */
 @media(max-width:900px){.hdr-in,.main{padding-left:18px;padding-right:18px}}
@@ -414,10 +414,9 @@ function renderTable(head, data, seg) {
   const rowPct = (label, key) => {
     const cells = owners.map(o => {
       const v = o[key] || '';
-      return `<td class="num" style="color:#696969;font-size:9.5px">${v || '—'}</td>`;
+      return `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${v || '—'}</td>`;
     }).join('');
-    // For % totals: show team total cell as blank (sheet formula, not summable)
-    return `<tr><td class="lbl" style="color:#B0B0B0;font-size:9.5px">${label}</td>${cells}<td class="${totCls}" style="color:#B0B0B0;font-size:9.5px">${totals[key] || '—'}</td></tr>`;
+    return `<tr><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">${label}</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">${totals[key] || '—'}</td></tr>`;
   };
 
   // Section header row spanning all columns
