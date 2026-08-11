@@ -372,124 +372,146 @@ function renderPanel(head, data) {
 }
 
 // ════════════════════════════════════════════════════════════
-// TABLE RENDER
+// TABLE RENDER — all totals computed client-side
 // ════════════════════════════════════════════════════════════
 function renderTable(head, data, seg) {
   const { digital, inter } = data;
 
-  // ── Determine owners and totals based on segment ──
-  let owners, totals, buCls, buLabel;
-
+  // ── Select owner list based on segment ──
+  let rawOwners, buCls, buLabel;
   if (seg === 'digital') {
-    owners  = digital.owners;
-    totals  = digital.totals;
-    buCls   = 'digital';
-    buLabel = '◆ Digital BU';
+    rawOwners = digital.owners;
+    buCls     = 'digital';
+    buLabel   = '◆ Digital BU';
   } else if (seg === 'inter') {
-    owners  = inter.owners;
-    totals  = inter.totals;
-    buCls   = 'inter';
-    buLabel = '◆ Inter BU';
+    rawOwners = inter.owners;
+    buCls     = 'inter';
+    buLabel   = '◆ Inter BU';
   } else {
-    // Both — merge owners from digital (they share names) + sum totals
-    // For "Both": we sum Digital + Inter values for each owner position
-    // Owner names come from digital side (same people)
-    owners  = mergeBothOwners(digital.owners, inter.owners);
-    totals  = mergeBothTotals(digital.totals, inter.totals);
-    buCls   = 'both';
-    buLabel = '◆ Digital + Inter BU';
+    // Both — sum Digital + Inter per owner position
+    rawOwners = mergeOwners(digital.owners, inter.owners);
+    buCls     = 'both';
+    buLabel   = '◆ Digital + Inter BU';
   }
 
-  const totCls = seg === 'digital' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
-  const thTotCls = seg === 'digital' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
+  // ── Compute all derived fields per owner ──
+  // This replaces ALL Sheet formula rows with our own calculations
+  const owners = rawOwners.map(o => {
+    const recurringTotal =
+      numVal(o.opening)
+      - numVal(o.predictedLoss)
+      + numVal(o.postPaid)
+      + numVal(o.closureFromPipeline)
+      + numVal(o.closureFromOpp);
 
-  // ── Build column headers ──
+    const p2pTotal =
+      numVal(o.currentBooking)
+      + numVal(o.prevP2PInvoices)
+      + numVal(o.p2pClosurePipeline)
+      + numVal(o.p2pPipelineWon)
+      + numVal(o.p2pClosureOpp);
+
+    const grandTotal = recurringTotal + p2pTotal;
+    const gap        = numVal(o.target) - grandTotal;
+
+    return { ...o, recurringTotal, p2pTotal, grandTotal, gap };
+  });
+
+  // ── Compute Team Sum per field by summing all owners ──
+  const ALL_NUM = [
+    'target','opening','predictedLoss','postPaid',
+    'existingPipeline','closureFromPipeline','pipelineWon',
+    'existingOpp','closureFromOpp',
+    'currentBooking','prevP2PInvoices',
+    'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
+    'p2pOpportunities','p2pClosureOpp',
+    'recurringTotal','p2pTotal','grandTotal','gap'
+  ];
+  const teamSum = {};
+  for (const k of ALL_NUM) {
+    teamSum[k] = owners.reduce((s, o) => s + numVal(o[k]), 0);
+  }
+
+  const totCls   = seg === 'digital' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
   const ownerThs = owners.map(o => `<th class="num">${o.name}</th>`).join('');
-  const totalTh  = `<th class="${thTotCls}">Team Sum</th>`;
+  const totalTh  = `<th class="${totCls}">Team Sum</th>`;
 
-  // ── Row builder helpers ──
-  // Plain numeric row
-  const row = (cls, label, key, negate) => {
+  // ── Row builders ──
+  const numRow = (cls, label, key, negate) => {
     const cells = owners.map(o => {
       const v = negate ? -numVal(o[key]) : numVal(o[key]);
       return `<td class="num${nc(v)}">${fm(v)}</td>`;
     }).join('');
-    const tv = negate ? -numVal(totals[key]) : numVal(totals[key]);
+    const tv = negate ? -numVal(teamSum[key]) : numVal(teamSum[key]);
     return `<tr class="${cls}"><td class="lbl">${label}</td>${cells}<td class="${totCls}${nc(tv)}">${fm(tv)}</td></tr>`;
   };
 
-  // Percentage row (read from Sheet as string)
-  const rowPct = (label, key) => {
-    const cells = owners.map(o => {
-      const v = o[key] || '';
-      return `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${v || '—'}</td>`;
-    }).join('');
-    return `<tr><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">${label}</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">${totals[key] || '—'}</td></tr>`;
+  const pctRow = (label, key) => {
+    const cells = owners.map(o =>
+      `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${o[key] || '—'}</td>`
+    ).join('');
+    // Team Sum for % rows is blank — can't sum percentages
+    return `<tr><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">${label}</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">—</td></tr>`;
   };
 
-  // Section header row spanning all columns
+  const gapPctRow = () => {
+    const cells = owners.map(o => {
+      const t = numVal(o.target), g = numVal(o.gap);
+      const v = t !== 0 ? ((g / t) * 100).toFixed(2) + '%' : '—';
+      return `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${v}</td>`;
+    }).join('');
+    const tt = numVal(teamSum.target), tg = numVal(teamSum.gap);
+    const tv = tt !== 0 ? ((tg / tt) * 100).toFixed(2) + '%' : '—';
+    return `<tr class="row-gap-pct"><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">GAP %</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">${tv}</td></tr>`;
+  };
+
   const secHdr = label =>
     `<tr class="sec-hdr"><td colspan="${owners.length + 2}">${label}</td></tr>`;
 
-  // ── Assemble table body ──
+  // ── Table body ──
   const tbody = [
-    // ── Target ──
-    row('', 'Target', 'target', false),
+    numRow('', 'Target', 'target', false),
 
-    // ── Recurring block ──
     secHdr('Recurring'),
-    row('', 'Pre-Paid Invoices',  'opening',      false),
-    row('', 'Predicted Loss',     'predictedLoss', true),
-    row('', 'Post-Paid Invoices', 'postPaid',      false),
+    numRow('', 'Pre-Paid Invoices',  'opening',       false),
+    numRow('', 'Predicted Loss',     'predictedLoss', true),
+    numRow('', 'Post-Paid Invoices', 'postPaid',      false),
 
     secHdr('Open Pipeline'),
-    row('', 'Open Pipeline',       'existingPipeline',    false),
-    row('', 'Expected Closures',   'closureFromPipeline', false),
-    row('', 'Pipeline Won',        'pipelineWon',         false),
-    rowPct('Anticipated Conversion (%)', 'pipelineConversion'),
+    numRow('', 'Open Pipeline',     'existingPipeline',    false),
+    numRow('', 'Expected Closures', 'closureFromPipeline', false),
+    numRow('', 'Pipeline Won',      'pipelineWon',         false),
+    pctRow('Anticipated Conversion (%)', 'pipelineConversion'),
 
     secHdr('Open Opportunities'),
-    row('', 'Open Opportunities',  'existingOpp',   false),
-    row('', 'Expected Closures',   'closureFromOpp', false),
-    rowPct('Anticipated Conversion (%)', 'oppConversion'),
+    numRow('', 'Open Opportunities', 'existingOpp',   false),
+    numRow('', 'Expected Closures',  'closureFromOpp', false),
+    pctRow('Anticipated Conversion (%)', 'oppConversion'),
 
-    row('row-recurring-total', 'Recurring Total', 'recurringTotal', false),
+    numRow('row-recurring-total', 'Recurring Total', 'recurringTotal', false),
 
-    // ── P2P block ──
     secHdr('P2P'),
-    row('', 'Current Booking',                          'currentBooking',   false),
-    row('', 'Previous P2P Invoices (50% or 25% or EOM P2P)', 'prevP2PInvoices', false),
+    numRow('', 'Current Booking',                           'currentBooking',   false),
+    numRow('', 'Previous P2P Invoices (50% or 25% or EOM)', 'prevP2PInvoices',  false),
 
     secHdr('P2P Fresh Pipeline (apart from 50% & EOM)'),
-    row('', 'P2P Fresh Pipeline',  'p2pFreshPipeline',   false),
-    row('', 'Expected Closures',   'p2pClosurePipeline', false),
-    row('', 'Pipeline Won',        'p2pPipelineWon',     false),
-    rowPct('Anticipated Conversion (%)', 'p2pPipelineConv'),
+    numRow('', 'P2P Fresh Pipeline',  'p2pFreshPipeline',   false),
+    numRow('', 'Expected Closures',   'p2pClosurePipeline', false),
+    numRow('', 'Pipeline Won',        'p2pPipelineWon',     false),
+    pctRow('Anticipated Conversion (%)', 'p2pPipelineConv'),
 
     secHdr('P2P Open Opportunities'),
-    row('', 'Open Opportunities',  'p2pOpportunities', false),
-    row('', 'Expected Closures',   'p2pClosureOpp',    false),
-    rowPct('Anticipated Conversion (%)', 'p2pOppConv'),
+    numRow('', 'Open Opportunities', 'p2pOpportunities', false),
+    numRow('', 'Expected Closures',  'p2pClosureOpp',    false),
+    pctRow('Anticipated Conversion (%)', 'p2pOppConv'),
 
-    row('row-p2p-total',   'P2P Total',   'p2pTotal',   false),
-
-    // ── Summary ──
-    row('row-grand-total', 'Grand Total', 'grandTotal', false),
-    row('row-gap',         'GAP',         'gap',        false),
-    (() => {
-      // GAP % = GAP / Target — computed client-side per owner and total
-      const ownerCells = owners.map(o => {
-        const t = numVal(o.target), g = numVal(o.gap);
-        const v = t !== 0 ? ((g / t) * 100).toFixed(2) + '%' : '—';
-        return `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${v}</td>`;
-      }).join('');
-      const tt = numVal(totals.target), tg = numVal(totals.gap);
-      const tv = tt !== 0 ? ((tg / tt) * 100).toFixed(2) + '%' : '—';
-      return `<tr class="row-gap-pct"><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">GAP %</td>${ownerCells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">${tv}</td></tr>`;
-    })(),
+    numRow('row-p2p-total',   'P2P Total',   'p2pTotal',   false),
+    numRow('row-grand-total', 'Grand Total', 'grandTotal', false),
+    numRow('row-gap',         'GAP',         'gap',        false),
+    gapPctRow(),
   ].join('');
 
-  const html = `
+  $('table-area-' + head).innerHTML = `
     <div class="bu-badge ${buCls}">${buLabel} · ${data.month}</div>
     <div class="tcard">
       <div class="tcard-hdr">
@@ -506,34 +528,17 @@ function renderTable(head, data, seg) {
             <col class="tot-col">
           </colgroup>
           <thead>
-            <tr>
-              <th>Current Month</th>
-              ${ownerThs}
-              ${totalTh}
-            </tr>
+            <tr><th>Current Month</th>${ownerThs}${totalTh}</tr>
           </thead>
           <tbody>${tbody}</tbody>
         </table>
       </div>
     </div>`;
-
-  $('table-area-' + head).innerHTML = html;
 }
 
 // ════════════════════════════════════════════════════════════
-// BOTH MERGE HELPERS
+// HELPERS
 // ════════════════════════════════════════════════════════════
-const NUMERIC_KEYS = [
-  'target','opening','predictedLoss','postPaid',
-  'existingPipeline','closureFromPipeline','pipelineWon',
-  'existingOpp','closureFromOpp','recurringTotal',
-  'currentBooking','prevP2PInvoices',
-  'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
-  'p2pOpportunities','p2pClosureOpp','p2pTotal',
-  'grandTotal','gap'
-];
-const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv'];
-
 function numVal(v) {
   if (typeof v === 'number') return v;
   if (typeof v === 'string') {
@@ -543,36 +548,26 @@ function numVal(v) {
   return 0;
 }
 
-function mergeBothOwners(dOwners, iOwners) {
-  // Use the longer owner list as the base
-  // Match by index (same owner order confirmed)
+// Merge Digital + Inter owners by position (Both view)
+function mergeOwners(dOwners, iOwners) {
+  const RAW_KEYS = [
+    'target','opening','predictedLoss','postPaid',
+    'existingPipeline','closureFromPipeline','pipelineWon',
+    'existingOpp','closureFromOpp',
+    'currentBooking','prevP2PInvoices',
+    'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
+    'p2pOpportunities','p2pClosureOpp'
+  ];
+  const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv'];
   const len = Math.max(dOwners.length, iOwners.length);
-  const merged = [];
-  for (let i = 0; i < len; i++) {
-    const d = dOwners[i] || {};
+  return Array.from({ length: len }, (_, i) => {
+    const d  = dOwners[i] || {};
     const iv = iOwners[i] || {};
-    const obj = { name: d.name || iv.name || `Owner ${i+1}` };
-    for (const k of NUMERIC_KEYS) {
-      obj[k] = numVal(d[k]) + numVal(iv[k]);
-    }
-    for (const k of PCT_KEYS) {
-      // Percentages can't be meaningfully summed — leave blank for Both view
-      obj[k] = '';
-    }
-    merged.push(obj);
-  }
-  return merged;
-}
-
-function mergeBothTotals(dt, it) {
-  const merged = {};
-  for (const k of NUMERIC_KEYS) {
-    merged[k] = numVal(dt[k]) + numVal(it[k]);
-  }
-  for (const k of PCT_KEYS) {
-    merged[k] = '';
-  }
-  return merged;
+    const o  = { name: d.name || iv.name || `Owner ${i+1}` };
+    for (const k of RAW_KEYS)  o[k] = numVal(d[k]) + numVal(iv[k]);
+    for (const k of PCT_KEYS)  o[k] = '';   // can't sum %
+    return o;
+  });
 }
 
 // ════════════════════════════════════════════════════════════
