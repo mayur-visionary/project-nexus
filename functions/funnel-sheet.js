@@ -186,13 +186,27 @@ function parseSheet(rows, head, tabName) {
   // Extract a row — uses actual tracked column indices (respects exclusions)
   function extractByIdx(rowIdx, isPercent) {
     const extractor = isPercent ? pct : num;
+    const row = rows[rowIdx] || [];
+
+    // For the total column, scan up to 2 cols right of expected position
+    // in case the Sheet API returns the value shifted slightly
+    function safeTotal(expectedCol) {
+      for (let c = expectedCol; c <= expectedCol + 2; c++) {
+        const raw = (row[c] || "").toString().replace(/[$,]/g, "").trim();
+        if (raw !== "" && raw !== "#DIV/0!" && raw !== "-" && !isNaN(parseFloat(raw))) {
+          return isPercent ? pct(rowIdx, c) : num(rowIdx, c);
+        }
+      }
+      return isPercent ? "" : 0;
+    }
+
     const digital = {
       owners: digitalOwnerCols.map(c => extractor(rowIdx, c)),
-      total : isPercent ? pct(rowIdx, dTotalCol) : num(rowIdx, dTotalCol)
+      total : safeTotal(dTotalCol)
     };
     const inter = {
       owners: interOwnerCols.map(c => extractor(rowIdx, c)),
-      total : isPercent ? pct(rowIdx, iTotalCol) : num(rowIdx, iTotalCol)
+      total : safeTotal(iTotalCol)
     };
     return { digital, inter };
   }
