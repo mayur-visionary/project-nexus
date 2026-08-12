@@ -40,6 +40,7 @@ export async function onRequestPost(context) {
           "name",
           "hubspot_owner_id",
           "business_unit",
+          "inter_bu",
           "createdate",
           "recent_deal_close_date"
         ],
@@ -72,6 +73,7 @@ export async function onRequestPost(context) {
           name: r.properties?.name || "",
           owner_id: ownerId,
           business_unit: r.properties?.business_unit || "",
+          inter_bu: r.properties?.inter_bu === "true",
           createdate: (r.properties?.createdate || "").split("T")[0],
           recent_deal_close_date: (r.properties?.recent_deal_close_date || "").split("T")[0]
         });
