@@ -604,91 +604,7 @@ function classifyDeal(lastDeal, thisMonthMap, todayDate){
 }
 
 // ── HubSpot fetch ──
-async function fetchDeals(bookingMonth){
-  const filters=[
-    {propertyName:"pipeline",             operator:"EQ",     value:PIPELINE},
-    {propertyName:"dealstage",            operator:"EQ",     value:STAGE},
-    {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ", value:bookingMonth}
-  ];
-  filters.push({propertyName:"engagement_model__invoice_app_", operator:"NOT_IN", values:["Wallet","Special Engagement"]});
-  filters.push({propertyName:"company_name__invoice_app_",     operator:"NOT_IN", values:["InboxArmy","Uplers","Solomax"]});
-  const fGroups=[{filters}];
 
-  let after=null; const results=[];
-  do{
-    const body={
-      filterGroups:fGroups,
-      properties:[
-        "dealname","amount_in_home_currency","deal_currency_code",
-        "hubspot_owner_id","closedate","createdate",
-        "contact_name__invoice_app_","zoho_display_name__invoice_app_",
-        "zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_",
-        "geo__invoice_app_","geo_head__invoice_app_",
-        "engagement_model__invoice_app_","company_name__invoice_app_"
-      ],
-      limit:200,
-      ...(after?{after}:{})
-    };
-    const r=await fetch("/api",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(body)
-    });
-    if(!r.ok)throw new Error("API "+r.status);
-    const data=await r.json();
-    (data.results||[]).forEach(r=>{
-      // Normalise month to lowercase — HubSpot can return "July-2026" (capital J)
-      // which would silently break JS period matching (JS is case-sensitive, HubSpot is not)
-      const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
-      const month=(()=>{
-        if(bm)return bm;
-        const cd=(r.properties?.closedate||"").split("T")[0];
-        if(!cd)return"";
-        try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
-        catch(e){return"";}
-      })();
-      results.push({
-        id:          String(r.id),
-        name:        (r.properties?.dealname||"").trim(),
-        amount:      parseFloat(r.properties?.amount_in_home_currency||0)||0,
-        closedate:   (r.properties?.closedate||"").split("T")[0],
-        owner_id:    String(r.properties?.hubspot_owner_id||""),
-        month,
-        geo:         (r.properties?.geo__invoice_app_||"").trim(),
-        geo_head:    (r.properties?.geo_head__invoice_app_||"").trim(),
-        eng_model:   (r.properties?.engagement_model__invoice_app_||"").trim(),
-        company_name:(r.properties?.company_name__invoice_app_||"").trim(),
-        // billing_id: contact_name first (Revenue Pulse canonical order), zoho_billing_id fallback
-        billing_id:  (r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"").trim(),
-        client:      (r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"").trim()
-      });
-    });
-    after=data.paging?.next?.after||null;
-  }while(after);
-  return results;
-}
-
-async function fetchLineItems(allDeals){
-  const result={};
-  for(let i=0;i<allDeals.length;i+=500){
-    const chunk=allDeals.slice(i,i+500).map(d=>d.id);
-    try{
-      const r=await fetch("/lineItems",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({dealIds:chunk})
-      });
-      if(r.ok){
-        const data=await r.json();
-        if(data._debug)console.log("[BookWatch] LI debug:",data._debug);
-        Object.entries(data.items||{}).forEach(([did,lis])=>{
-          result[did]=(lis||[]).filter(li=>li.amount!==0);
-        });
-      }else{console.warn("[BookWatch] LI fetch",r.status);}
-    }catch(e){console.error("[BookWatch] LI error:",e);}
-  }
-  return result;
-}
-
-// ── Main sync ──
 async function doSync(force=false){
   if(isSyncing)return;
   isSyncing=true;
@@ -702,25 +618,107 @@ async function doSync(force=false){
     const lastMStr=bookingMonthStr(lastM);
     const thisMStr=bookingMonthStr(now);
 
-    setLoading(`Fetching ${monthLabel(lastM)} recurring deals…`);
-    const rawLast=await fetchDeals(lastMStr);
+    setLoading(`Fetching ${monthLabel(lastM)} & ${monthLabel(now)} deals…`);
 
-    setLoading(`Fetching ${monthLabel(now)} recurring deals…`);
-    const rawThis=await fetchDeals(thisMStr);
+    // ── Fetch both months together in one pass (IN operator) — identical to Revenue Pulse ──
+    const filters=[
+      {propertyName:"pipeline",  operator:"EQ",  value:PIPELINE},
+      {propertyName:"dealstage", operator:"EQ",  value:STAGE},
+      {propertyName:"invoice_booking_month__invoice_app_", operator:"IN", values:[lastMStr,thisMStr]}
+    ];
+    filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
+    filters.push({propertyName:"company_name__invoice_app_",    operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
+    const fGroups=[{filters}];
 
+    const fetched=[];let after=null;
+    do{
+      const body={
+        filterGroups:fGroups,
+        properties:[
+          "dealname","amount_in_home_currency","deal_currency_code",
+          "hubspot_owner_id","closedate","createdate",
+          "contact_name__invoice_app_","zoho_display_name__invoice_app_",
+          "zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_",
+          "geo__invoice_app_","geo_head__invoice_app_",
+          "engagement_model__invoice_app_","company_name__invoice_app_"
+        ],
+        limit:200,
+        ...(after?{after}:{})
+      };
+      const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+      if(!res.ok)throw new Error("API "+res.status);
+      const data=await res.json();
+      (data.results||[]).forEach(r=>{
+        // Normalise month to lowercase — critical: HubSpot may return "July-2026" (capital J)
+        // which silently breaks JS period matching (JS case-sensitive; HubSpot filter is not)
+        const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
+        const month=(()=>{
+          if(bm)return bm;
+          const cd=(r.properties?.closedate||"").split("T")[0];
+          if(!cd)return"";
+          try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}
+          catch(e){return"";}
+        })();
+        fetched.push({
+          id:          String(r.id),
+          name:        (r.properties?.dealname||"").trim(),
+          amount:      parseFloat(r.properties?.amount_in_home_currency||0)||0,
+          closedate:   (r.properties?.closedate||"").split("T")[0],
+          owner_id:    String(r.properties?.hubspot_owner_id||""),
+          month,
+          geo:         (r.properties?.geo__invoice_app_||"").trim(),
+          geo_head:    (r.properties?.geo_head__invoice_app_||"").trim(),
+          eng_model:   (r.properties?.engagement_model__invoice_app_||"").trim(),
+          company_name:(r.properties?.company_name__invoice_app_||"").trim(),
+          billing_id:  (r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"").trim(),
+          client:      (r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"").trim()
+        });
+      });
+      after=data.paging?.next?.after||null;
+    }while(after);
+
+    // ── Dedup — identical to Revenue Pulse ──
+    const seen={};const dupes=[];
+    fetched.forEach(d=>{
+      const key=d.name+"|"+d.amount+"|"+(d.month||"");
+      if(seen[key]){dupes.push(d.id);return;}
+      seen[key]=d.id;
+    });
+    const allDeals=dupes.length?fetched.filter(d=>!dupes.includes(d.id)):fetched;
+    if(dupes.length)console.log("[BookWatch] Dupes excluded:",dupes.length);
+
+    // ── Line items — chunked in 500 like Revenue Pulse ──
     setLoading("Fetching line items…");
-    const allRaw=[...rawLast,...rawThis];
-    dealServiceMap=await fetchLineItems(allRaw);
+    dealServiceMap={};
+    for(let i=0;i<allDeals.length;i+=500){
+      const chunk=allDeals.slice(i,i+500).map(d=>d.id);
+      try{
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          if(liData._debug)console.log("[BookWatch] LI debug:",liData._debug);
+          Object.entries(liData.items||{}).forEach(([did,lis])=>{
+            dealServiceMap[did]=(lis||[]).filter(li=>li.amount!==0);
+          });
+        }else{console.warn("[BookWatch] LI fetch",liRes.status);}
+      }catch(e){console.error("[BookWatch] LI error:",e);}
+    }
 
-    // Attribute both sets
-    attributeDeals(rawLast);
-    attributeDeals(rawThis);
+    // ── Attribution ──
+    attributeDeals(allDeals);
 
-    // Filter to Recurring only
-    lastRecurring=rawLast.filter(d=>resolvedEngGroup(d)==="Recurring"&&d.billing_id&&d.amount>0);
-    thisRecurring=rawThis.filter(d=>resolvedEngGroup(d)==="Recurring"&&d.billing_id&&d.amount>0);
+    // ── Split by month ──
+    lastMonthDeals=allDeals.filter(d=>d.month===lastMStr);
+    thisMonthDeals=allDeals.filter(d=>d.month===thisMStr);
 
-    // Build this-month lookup: billing_id|owner_id → deals[]
+    // ── Filter to Recurring only ──
+    lastRecurring=lastMonthDeals.filter(d=>resolvedEngGroup(d)==="Recurring"&&d.billing_id&&d.amount>0);
+    thisRecurring=thisMonthDeals.filter(d=>resolvedEngGroup(d)==="Recurring"&&d.billing_id&&d.amount>0);
+
+    console.log(`[BookWatch] Last month recurring: ${lastRecurring.length} deals, $${lastRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
+    console.log(`[BookWatch] This month recurring: ${thisRecurring.length} deals, $${thisRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
+
+    // ── Build this-month lookup: billing_id|owner_id → deals[] ──
     const thisMap={};
     thisRecurring.forEach(d=>{
       const key=d.billing_id+"|"+d.owner_id;
@@ -728,7 +726,7 @@ async function doSync(force=false){
       thisMap[key].push(d);
     });
 
-    // Classify each last-month recurring deal
+    // ── Classify each last-month recurring deal ──
     matchedDeals=lastRecurring.map(d=>{
       const cl=classifyDeal(d,thisMap,now);
       return{...d,...cl};
