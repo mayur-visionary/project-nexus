@@ -1,14 +1,15 @@
 // functions/funnel-auth.js
-// Funnel Desk password + token gate
-// Password mode: POST { password, tab } → validates against env var
-// Token mode:    POST { tok, tab }      → validates tok owns tab (no password needed)
+// Funnel Desk auth — two modes:
+//   Password: POST { password, tab } — tab is the funnel tab name or null for master
+//   Token:    POST { tok, tab }      — carry-through from Revenue Pulse login
 
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
     const { password, tab, tok } = body;
 
-    // Map Funnel tab → clone key → env var
+    // tab → clone key → env var
+    // null/undefined tab = master access → NEXUS_PASSWORD
     const TAB_TO_KEY = {
       jiggyasa : "jiggyasa",
       tanuj_uk  : "tanuj",
@@ -22,7 +23,7 @@ export async function onRequestPost(context) {
       interbu  : "NEXUS_PASSWORD_INTERBU",
     };
 
-    const key        = TAB_TO_KEY[tab] || null;
+    const key        = tab ? (TAB_TO_KEY[tab] || null) : null;
     const envVarName = key ? CLONE_VAR_MAP[key] : "NEXUS_PASSWORD";
     const correct    = context.env[envVarName];
 
@@ -30,10 +31,10 @@ export async function onRequestPost(context) {
       return json({ error: `${envVarName} not configured` }, 500);
 
     // ── Token mode: carry-through from Revenue Pulse ──
-    // tok = the clone key stored by index.html (e.g. "tanuj", "jiggyasa")
-    // Valid if tok matches the owner of the requested tab
+    // tok = clone key stored by index.html on login (e.g. "tanuj", "jiggyasa")
+    // Valid only if tok === the owner of the requested tab
     if (tok !== undefined) {
-      const valid = (key !== null && key === tok);
+      const valid = key !== null && key === tok;
       return json({ success: valid }, valid ? 200 : 403);
     }
 
