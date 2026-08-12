@@ -13,11 +13,11 @@
 html{overflow-x:hidden}
 body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
 
-/* ── Login ── */
+/* ── Login (verbatim from portfolio.html) ── */
 .login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
 .login-logo{margin-bottom:22px}
-.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
 .login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
@@ -26,43 +26,39 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-btn:hover{background:#FFE870}
 .login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
 .login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
-.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
 
-/* ── Header ── */
+/* ── Header (verbatim from portfolio.html) ── */
 .hdr{background:#473400}
 .hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-eyebrow{margin-bottom:4px}
 .hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
 .hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
 .hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
 .hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
 .h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-.sdot{width:7px;height:7px;border-radius:50%;background:#0CCE6B;flex-shrink:0}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
 .refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .refresh-btn:disabled{opacity:.35;cursor:not-allowed}
-.nav-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
-.nav-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#fff}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 
-/* ── Nav tabs ── */
-.hdr-nav{display:flex;gap:0;border-top:1px solid rgba(255,255,255,.1)}
-.nav-tab{padding:8px 16px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-decoration:none;white-space:nowrap}
-.nav-tab:hover{color:rgba(255,255,255,.85)}
-.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
-
-/* ── Filter bar ── */
+/* ── Filter bar (verbatim from portfolio.html) ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
 .fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:155px}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
 .fsel.sm{max-width:120px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
 .ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
@@ -78,12 +74,18 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-item:hover{background:rgba(255,255,255,.05)}
 .ms-item input[type=checkbox]{accent-color:#FFDA30;width:12px;height:12px;cursor:pointer}
 .ms-item-lbl{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);user-select:none}
-.yellow-rule{height:3px;background:#FFDA30}
 
 /* ── Main ── */
 .main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
 .err-bar{background:#FFF0F0;border:1px solid #EF2D56;border-radius:8px;padding:10px 16px;font-size:11px;font-weight:600;color:#C0143C;margin-bottom:16px;display:none}
 .err-bar.show{display:block}
+
+/* ── Loading ── */
+.lo{display:none;position:fixed;inset:0;background:rgba(242,254,220,.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.lo.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid rgba(255,218,48,.25);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+.lo-lbl{font-size:10px;font-weight:700;color:#696969;letter-spacing:.08em;text-transform:uppercase}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Section header ── */
 .sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#434343;margin-bottom:14px;margin-top:32px}
@@ -122,10 +124,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .head-prog-bar.danger{background:#EF2D56}
 .head-at-risk{margin-top:10px;font-size:9px;font-weight:700;color:#EF2D56;letter-spacing:.04em}
 
-/* ── Owner drilldown table ── */
-.owner-section{margin-bottom:24px}
-.owner-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-radius:10px 10px 0 0;border-top:3px solid #FFDA30;border-bottom:1px solid #F0F0F0;cursor:pointer;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.owner-hdr.collapsed{border-radius:10px;margin-bottom:0}
+/* ── Owner drilldown ── */
+.owner-section{margin-bottom:6px}
+.owner-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-radius:10px;border-top:3px solid #FFDA30;border-bottom:1px solid #F0F0F0;cursor:pointer;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.owner-hdr.collapsed{border-radius:10px;margin-bottom:6px}
 .owner-hdr-left{display:flex;align-items:center;gap:10px}
 .owner-name{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em}
 .owner-meta{font-size:9px;font-weight:600;color:#9A9A9A}
@@ -135,8 +137,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .owner-sum-val{font-size:12px;font-weight:800;color:#434343}
 .owner-sum-val.gap{color:#EF2D56}
 .expand-arrow{font-size:9px;color:#9A9A9A;transition:transform .2s;margin-left:8px}
-.owner-hdr:not(.collapsed) .expand-arrow{transform:rotate(90deg)}
-.deal-table-wrap{background:#fff;border-radius:0 0 10px 10px;box-shadow:0 2px 6px rgba(0,0,0,.06);overflow:hidden}
+.deal-table-wrap{background:#fff;border-radius:0 0 10px 10px;box-shadow:0 2px 6px rgba(0,0,0,.06);overflow:hidden;margin-bottom:6px}
 .deal-table{width:100%;border-collapse:collapse;font-size:10px}
 .deal-table thead tr{background:#3B3561}
 .deal-table thead th{padding:8px 12px;text-align:left;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#FFDA30;white-space:nowrap}
@@ -146,7 +147,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .deal-table tbody tr:hover{background:#FAFAFA}
 .deal-table td{padding:9px 12px;color:#434343;vertical-align:middle}
 .deal-table td.num{text-align:right;font-weight:700;color:#434343;font-variant-numeric:tabular-nums}
-.deal-table td.muted{color:#9A9A9A;font-weight:500}
 .client-name{font-weight:700;color:#434343;font-size:10px}
 .deal-name{font-size:9px;color:#696969;font-weight:500;margin-top:1px}
 .status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:10px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
@@ -158,69 +158,72 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .gain-val{color:#006E5E;font-weight:800}
 .empty-state{padding:24px;text-align:center;font-size:10px;font-weight:600;color:#9A9A9A}
 
-/* ── Loading ── */
-.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 0;gap:14px}
-.spinner{width:36px;height:36px;border:3px solid #E2E2E2;border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-lbl{font-size:10px;font-weight:700;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
-
-/* ── Responsive ── */
 @media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.kpi-strip{grid-template-columns:1fr}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
+@media(max-width:700px){.kpi-strip{grid-template-columns:1fr}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- ══ LOGIN (verbatim from portfolio.html) ══ -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
     <div class="login-logo">
-      <svg width="44" height="34" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+      <svg height="26" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+        <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+        <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+        <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+        <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+        <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+        <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+        <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
         <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
-        <path fill="#473400" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow">Mavlers · Sales Operations</div>
-    <div class="login-title">Book Watch</div>
-    <input class="login-input" id="login-pw" type="password" placeholder="Enter password" autocomplete="current-password"
-      onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title" id="login-title">Book Watch</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-footer">Project Nexus · Mavlers Revenue Intelligence</div>
+    <div class="login-footer" id="login-footer">The Live Pulse of Mavlers Revenue</div>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
-<div id="app" style="display:none">
+<div class="lo" id="lo"><div class="spin"></div></div>
 
-  <!-- Header -->
-  <div class="hdr">
-    <div class="hdr-in">
-      <div class="hdr-top">
-        <a class="hdr-brand" href="/">
-          <svg width="40" height="31" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
-            <path fill="rgba(255,255,255,.6)" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
-          </svg>
-          <div>
-            <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
-            <div class="hdr-title">Book Watch</div>
-            <div class="hdr-sub">Recurring Revenue Retention · Project Nexus</div>
-          </div>
-        </a>
-        <div class="hdr-right">
-          <div class="h-status">
-            <div class="stxt"><span class="sdot" id="sync-dot"></span><span id="sync-label">Loading…</span></div>
-            <div class="last-sync" id="last-sync"></div>
-          </div>
-          <button class="refresh-btn" id="refresh-btn" onclick="doSync(true)" disabled>↻ Refresh</button>
-          <a class="nav-btn" href="/">↗ Revenue Nexus</a>
+<!-- ══ HEADER (verbatim from portfolio.html) ══ -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" onclick="location.reload()" title="Reload Book Watch" role="button">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+          <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+          <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+          <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+          <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+          <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+          <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title" id="hdr-title">Project Nexus</div>
+          <div class="hdr-sub" id="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="last-sync" id="last-sync"></div>
+        </div>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
+        <a class="nexus-btn" id="nexus-link" href="/" target="_blank">↗ Revenue Nexus</a>
       </div>
     </div>
   </div>
-
-  <!-- Filter bar -->
+  <!-- ══ FILTER BAR ══ -->
   <div class="fbar">
     <div class="fbar-in">
       <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Book Watch</span>
@@ -240,10 +243,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="ms-dropdown" id="bw-head-dropdown">
           <div class="ms-ctrl">
             <span class="ms-ctrl-lbl">Heads</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllHeads()">All</span>
-              <span class="ms-act" onclick="deselectAllHeads()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllHeads()">All</span><span class="ms-act" onclick="deselectAllHeads()">None</span></div>
           </div>
           <div id="bw-head-list"></div>
         </div>
@@ -257,10 +257,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="ms-dropdown" id="bw-owner-dropdown">
           <div class="ms-ctrl">
             <span class="ms-ctrl-lbl">Owners</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllOwners()">All</span>
-              <span class="ms-act" onclick="deselectAllOwners()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllOwners()">All</span><span class="ms-act" onclick="deselectAllOwners()">None</span></div>
           </div>
           <div id="bw-owner-list"></div>
         </div>
@@ -268,65 +265,60 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </div>
   </div>
   <div class="yellow-rule"></div>
+</div>
 
-  <!-- Main -->
-  <div class="main">
-    <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
 
-    <!-- Loading -->
-    <div class="loading-wrap" id="loading-wrap">
-      <div class="spinner"></div>
-      <div class="loading-lbl" id="loading-lbl">Fetching recurring deals…</div>
-    </div>
+  <div id="bw-content" style="display:none">
 
-    <!-- Content (hidden until loaded) -->
-    <div id="bw-content" style="display:none">
-
-      <!-- KPI Strip -->
-      <div class="kpi-strip">
-        <div class="kpi k-baseline">
-          <div class="kpi-lbl">Last Month Recurring</div>
-          <div class="kpi-val" id="k-baseline">—</div>
-          <div class="kpi-sub" id="k-baseline-sub">Total recurring booked</div>
-        </div>
-        <div class="kpi k-recovered">
-          <div class="kpi-lbl">Recovered This Month</div>
-          <div class="kpi-val" id="k-recovered">—</div>
-          <div class="kpi-sub" id="k-recovered-sub">Matched & closed so far</div>
-        </div>
-        <div class="kpi k-gap">
-          <div class="kpi-lbl">Gap</div>
-          <div class="kpi-val" id="k-gap">—</div>
-          <div class="kpi-sub" id="k-gap-sub">Unrecovered recurring</div>
-        </div>
-        <div class="kpi k-rate">
-          <div class="kpi-lbl">Recovery Rate</div>
-          <div class="kpi-val" id="k-rate">—</div>
-          <div class="kpi-sub" id="k-rate-sub">Recovered ÷ last month</div>
-        </div>
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi k-baseline">
+        <div class="kpi-lbl">Last Month Recurring</div>
+        <div class="kpi-val" id="k-baseline">—</div>
+        <div class="kpi-sub" id="k-baseline-sub">Total recurring booked</div>
       </div>
-
-      <!-- Head Summary -->
-      <div class="sec">Head Summary <div class="sec-bar"></div></div>
-      <div class="head-grid" id="head-grid"></div>
-
-      <!-- Owner Drilldown -->
-      <div class="sec" style="margin-top:28px">Owner Drill-Down <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span><div class="sec-bar"></div></div>
-      <div id="owner-drill"></div>
-
+      <div class="kpi k-recovered">
+        <div class="kpi-lbl">Recovered This Month</div>
+        <div class="kpi-val" id="k-recovered">—</div>
+        <div class="kpi-sub" id="k-recovered-sub">Matched &amp; closed so far</div>
+      </div>
+      <div class="kpi k-gap">
+        <div class="kpi-lbl">Gap</div>
+        <div class="kpi-val" id="k-gap">—</div>
+        <div class="kpi-sub" id="k-gap-sub">Unrecovered recurring</div>
+      </div>
+      <div class="kpi k-rate">
+        <div class="kpi-lbl">Recovery Rate</div>
+        <div class="kpi-val" id="k-rate">—</div>
+        <div class="kpi-sub" id="k-rate-sub">Recovered ÷ last month</div>
+      </div>
     </div>
+
+    <!-- Head Summary -->
+    <div class="sec">Head Summary <div class="sec-bar"></div></div>
+    <div class="head-grid" id="head-grid"></div>
+
+    <!-- Owner Drilldown -->
+    <div class="sec" style="margin-top:28px">Owner Drill-Down <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span><div class="sec-bar"></div></div>
+    <div id="owner-drill"></div>
+
   </div>
 </div>
 
 <script>
 // ══════════════════════════════════════════════════════
 // BOOK WATCH — Recurring Revenue Retention
-// Attribution: identical to Revenue Pulse (registry-first, fallback deal property)
-// Matching: zoho_billing_id (per-owner)
+// Auth/SSO: verbatim from portfolio.html
+// Attribution: verbatim from index.html (registry-first)
+// Recurring amount: verbatim from index.html engTypesLi() Recurring logic
+// Matching key: zoho_billing_id (contact_name || zoho_billing_id — canonical Revenue Pulse order)
 // Buffer: mirror date + 2 days before At Risk
 // ══════════════════════════════════════════════════════
 
-// ── Registry (copied verbatim from index.html) ──
+// ── Registry (verbatim from index.html) ──
 const OWNER_GROUPS={
   "Leaders / Heads":[
     {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},
@@ -364,7 +356,6 @@ const OWNER_GROUPS={
   ],
   "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
 };
-
 const ORDERED_OWNERS=[
   {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},
   {id:"34140174",name:"Mrugesh Dabhi"},{id:"467997340",name:"Karan Doshi"},
@@ -390,16 +381,13 @@ const OWN=Object.fromEntries(ORDERED_OWNERS.map(o=>[o.id,o.name]));
 
 const OWNER_GEO={
   "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
-  "19799470":"US","557894666":"US",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  "19799470":"US","557894666":"US","37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
   "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
   "86813698":"AU","255830830":"UK","37762663":"US",
   "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
   "82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"
 };
-
 const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
-
 const OWNER_BU_MAP=(()=>{
   const m={};
   OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
@@ -409,11 +397,10 @@ const OWNER_BU_MAP=(()=>{
     owners.forEach(o=>{m[o.id]=bu;});
   });
   m["107178262"]="MarTech";m["34140174"]="MarTech";m["17738843"]="MarTech";
-  m["17739173"]="Digital";m["86940863"]="Digital";
-  m["17739548"]="Digital";m["79217713"]="Digital";m["82663745"]="Digital";
+  m["17739173"]="Digital";m["86940863"]="Digital";m["17739548"]="Digital";
+  m["79217713"]="Digital";m["82663745"]="Digital";
   return m;
 })();
-
 const OWNER_HEAD_MAP=(()=>{
   const m={};
   Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
@@ -428,104 +415,84 @@ const OWNER_HEAD_MAP=(()=>{
   });
   return m;
 })();
-
 const HEADS_DISPLAY=[
-  {id:"jaydeep",  name:"Jaydeep Salla",     key:"Jaydeep Salla",        bu:"MarTech"},
-  {id:"jiggyasa", name:"Jiggyasa Agrawal",  key:"Jiggyasa Agrawal",     bu:"Digital"},
-  {id:"tanuj_uk", name:"Tanuj UK",          key:"Tanuj Gupta (UK)",     bu:"Digital"},
-  {id:"tanuj_us", name:"Tanuj US",          key:"Tanuj Gupta (US)",     bu:"Digital"},
-  {id:"nevilson", name:"Nevilson Christan", key:"Nevilson Christan",    bu:"Digital"}
+  {id:"jaydeep",  name:"Jaydeep Salla",    key:"Jaydeep Salla",     bu:"MarTech"},
+  {id:"jiggyasa", name:"Jiggyasa Agrawal", key:"Jiggyasa Agrawal",  bu:"Digital"},
+  {id:"tanuj_uk", name:"Tanuj UK",         key:"Tanuj Gupta (UK)",  bu:"Digital"},
+  {id:"tanuj_us", name:"Tanuj US",         key:"Tanuj Gupta (US)",  bu:"Digital"},
+  {id:"nevilson", name:"Nevilson Christan",key:"Nevilson Christan", bu:"Digital"}
 ];
+const ALL_HEAD_KEYS=HEADS_DISPLAY.map(h=>h.key);
+const ALL_OWNER_IDS=ORDERED_OWNERS.map(o=>o.id);
 
 const PIPELINE="115832232",STAGE="205348626";
 const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
-const EXCLUSIONS=["Wallet","Special Engagement","InboxArmy","Uplers","Solomax"];
-const NBD_OWNERS=["37762663","255830830","86813698","916030451"];
-
-// ── Date helpers ──
-function monthLabel(d){
-  return d.toLocaleString("en-US",{month:"long",year:"numeric"});
-}
-function bookingMonthStr(d){return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;}
-function today(){return new Date();}
-function lastMonthDate(){
-  const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);return d;
-}
-function fmtMoney(v){
-  if(!v&&v!==0)return"—";
-  return"$"+Math.round(v).toLocaleString();
-}
-function fmtPct(v){return Math.round(v)+"%";}
 
 // ── State ──
-let lastMonthDeals=[];   // all deals from last month
-let thisMonthDeals=[];   // all deals from current month
-let dealServiceMap={};   // combined line items
-let lastRecurring=[];    // last month filtered to Recurring + attributed
-let thisRecurring=[];    // this month filtered to Recurring + attributed
-let matchedDeals=[];     // final matched/classified set
+let dealServiceMap={};
+let lastRecurring=[];
+let thisRecurring=[];
+let matchedDeals=[];
 let isSyncing=false;
-let activeHeads=new Set();
-let activeOwners=new Set();
+let activeHeads=new Set(ALL_HEAD_KEYS);
+let activeOwners=new Set(ALL_OWNER_IDS);
 let headDropOpen=false;
 let ownerDropOpen=false;
 
-const ALL_HEADS=HEADS_DISPLAY.map(h=>h.key);
-const ALL_OWNER_IDS=ORDERED_OWNERS.map(o=>o.id);
-
-// ── SSO ──
-function checkSSO(){
-  const params=new URLSearchParams(window.location.search);
-  const tok=params.get("tok");
-  const head=params.get("head")||"";
-  if(tok){
-    const key=head?"bw_tok_"+head:"bw_tok_master";
-    localStorage.setItem(key,tok);
-    // Strip tok from URL cleanly
-    params.delete("tok");
-    const newUrl=window.location.pathname+(params.toString()?"?"+params.toString():"");
-    window.history.replaceState({},"",newUrl);
-    return tok;
-  }
-  const stored=head?localStorage.getItem("bw_tok_"+head):localStorage.getItem("bw_tok_master");
-  return stored||null;
+// ── Helpers (verbatim from portfolio.html) ──
+const $=id=>document.getElementById(id);
+function fmtDate(d){
+  if(!d)return"";
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return`${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
+function fmtMoney(v){return"$"+Math.round(v).toLocaleString();}
+function fmtPct(v){return Math.round(v)+"%";}
+function monthLabel(d){return d.toLocaleString("en-US",{month:"long",year:"numeric"});}
+function bookingMonthStr(d){return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;}
+function lastMonthDate(){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);return d;}
+function getAuthKey(head){return head?`nexus_auth_${head}`:"nexus_auth";}
 
-// ── Auth ──
+// ── Auth (verbatim from portfolio.html) ──
 async function doLogin(){
-  const pw=$("login-pw").value.trim();
-  if(!pw)return;
-  $("login-btn").disabled=true;
-  $("login-err").textContent="";
-  const params=new URLSearchParams(window.location.search);
-  const head=params.get("head")||"";
+  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
+  if(!pw){err.textContent="Please enter the access password.";return;}
+  btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
   try{
-    const r=await fetch("/recurring-auth",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({password:pw,head})
-    });
-    const d=await r.json();
-    if(d.success){
-      const key=head?"bw_tok_"+head:"bw_tok_master";
-      localStorage.setItem(key,pw);
-      showApp();
-      doSync();
-    } else {
-      $("login-err").textContent="Incorrect password";
-      $("login-btn").disabled=false;
+    const res=await fetch("/recurring-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem(getAuthKey(head),"1");
+      $("login-overlay").style.display="none";
+      doSync(true);
+    }else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
+    }else{
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value="";$("pw-input").focus();
     }
   }catch(e){
-    $("login-err").textContent="Connection error";
-    $("login-btn").disabled=false;
+    err.textContent="Connection error. Check your network.";
+  }finally{btn.disabled=false;btn.textContent="Access Dashboard";}
+}
+
+function checkSSO(){
+  const params=new URLSearchParams(location.search);
+  const head=(params.get("head")||"").toLowerCase().trim();
+  const tok=(params.get("tok")||"").toLowerCase().trim();
+  if(tok&&head&&tok===head){
+    localStorage.setItem(getAuthKey(head),"1");
+    const clean=new URL(location.href);clean.searchParams.delete("tok");
+    history.replaceState(null,"",clean.toString());
+    $("login-overlay").style.display="none";return true;
   }
+  if(head&&localStorage.getItem(getAuthKey(head))==="1"){$("login-overlay").style.display="none";return true;}
+  if(!head&&localStorage.getItem("nexus_auth")==="1"){$("login-overlay").style.display="none";return true;}
+  return false;
 }
 
-function showApp(){
-  $("login-overlay").style.display="none";
-  $("app").style.display="block";
-}
-
-// ── Attribution (identical to Revenue Pulse) ──
+// ── Attribution (verbatim from index.html) ──
 function headFromRegion(region,bu){
   if(bu==="MarTech")return"Jaydeep Salla";
   if(region==="UK")return"Tanuj Gupta (UK)";
@@ -535,9 +502,7 @@ function headFromRegion(region,bu){
 function geoFromDeal(d){
   const g=d.geo||"";
   if(g&&GEO_MAP[g]!==undefined){if(GEO_MAP[g])return GEO_MAP[g];}
-  const id=String(d.owner_id||"");
-  if(OWNER_GEO[id])return OWNER_GEO[id];
-  return null;
+  return OWNER_GEO[String(d.owner_id||"")]||null;
 }
 function attributeDeals(arr){
   arr.forEach(d=>{
@@ -550,7 +515,7 @@ function attributeDeals(arr){
   });
 }
 
-// ── Engagement utilities (verbatim from Revenue Pulse) ──
+// ── Engagement utilities (verbatim from index.html) ──
 function engGroup(val){
   if(!val)return null;
   if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
@@ -570,42 +535,34 @@ function engGroupFromLiName(name){
   return null;
 }
 
-// ── Recurring amount for a deal — exact replica of Revenue Pulse engTypesLi() Recurring logic ──
-// 1. Sum line items whose name prefix classifies as Recurring
-// 2. If LIs exist but none classify → fall back to engGroup(d.eng_model) with d.amount
-// 3. If no LIs at all → fall back to engGroup(d.eng_model) with d.amount
-// 4. ON-prefix deals → always P2P, return 0
+// ── Recurring amount — verbatim replica of index.html engTypesLi() Recurring logic ──
+// 1. ON-prefix → always P2P → return 0
+// 2. Sum line items whose name classifies as Recurring
+// 3. If LIs exist but none classify → fall back to engGroup(d.eng_model) with d.amount
+// 4. If no LIs → fall back to engGroup(d.eng_model) with d.amount
 function recurringAmount(d){
-  // Rule 1: ON-prefix → always P2P
   if(/^ON[-\s]/i.test((d.name||"").trim()))return 0;
   const lis=dealServiceMap[d.id]||[];
   if(lis.length){
     let recurringSum=0,classified=false;
     lis.forEach(li=>{
       const eg=engGroupFromLiName(li.name);
-      if(eg){
-        classified=true;
-        if(eg==="Recurring")recurringSum+=li.amount;
-      }
+      if(eg){classified=true;if(eg==="Recurring")recurringSum+=li.amount;}
     });
     if(classified)return recurringSum;
-    // LIs exist but none classified by name → fall back to deal eng_model
     return engGroup(d.eng_model)==="Recurring"?d.amount:0;
   }
-  // No LIs — fall back to deal eng_model
   return engGroup(d.eng_model)==="Recurring"?d.amount:0;
 }
 
 // ── Status classification ──
-function classifyDeal(lastDeal, thisMonthMap, todayDate){
-  // thisMonthMap: billing_id → array of this-month recurring deals from same owner
-  const matches=thisMonthMap[lastDeal.billing_id+"|"+lastDeal.owner_id]||[];
+function classifyDeal(lastDeal,thisMap,todayDate){
+  const matches=thisMap[lastDeal.billing_id+"|"+lastDeal.owner_id]||[];
   if(matches.length>0){
     const thisAmt=matches.reduce((s,d)=>s+d.amount,0);
     if(thisAmt>=lastDeal.amount)return{status:"retained",thisAmt,gap:0};
     return{status:"partial",thisAmt,gap:lastDeal.amount-thisAmt};
   }
-  // No match — check buffer
   const closeDay=parseInt((lastDeal.closedate||"").split("-")[2]||"1",10);
   const mirrorDate=new Date(todayDate.getFullYear(),todayDate.getMonth(),closeDay);
   const bufferDate=new Date(mirrorDate);bufferDate.setDate(bufferDate.getDate()+2);
@@ -613,14 +570,15 @@ function classifyDeal(lastDeal, thisMonthMap, todayDate){
   return{status:"pending",thisAmt:0,gap:lastDeal.amount};
 }
 
-// ── HubSpot fetch ──
-
+// ── Main sync (fetch pattern verbatim from index.html doFYSync) ──
 async function doSync(force=false){
-  if(isSyncing)return;
+  if(isSyncing&&!force)return;
   isSyncing=true;
-  setSyncState("syncing");
-  showLoading(true);
-  showErr(false);
+  $("sdot").style.background="#FFDA30";$("stxt").textContent="SYNCING...";
+  $("rfbtn").disabled=true;
+  $("lo").classList.add("show");
+  $("err-bar").classList.remove("show");
+  $("bw-content").style.display="none";
 
   try{
     const now=new Date();
@@ -628,13 +586,11 @@ async function doSync(force=false){
     const lastMStr=bookingMonthStr(lastM);
     const thisMStr=bookingMonthStr(now);
 
-    setLoading(`Fetching ${monthLabel(lastM)} & ${monthLabel(now)} deals…`);
-
-    // ── Fetch both months together in one pass (IN operator) — identical to Revenue Pulse ──
+    // ── Fetch both months in one pass with IN — verbatim from index.html doFYSync ──
     const filters=[
-      {propertyName:"pipeline",  operator:"EQ",  value:PIPELINE},
-      {propertyName:"dealstage", operator:"EQ",  value:STAGE},
-      {propertyName:"invoice_booking_month__invoice_app_", operator:"IN", values:[lastMStr,thisMStr]}
+      {propertyName:"pipeline",  operator:"EQ", value:PIPELINE},
+      {propertyName:"dealstage", operator:"EQ", value:STAGE},
+      {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:[lastMStr,thisMStr]}
     ];
     filters.push({propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]});
     filters.push({propertyName:"company_name__invoice_app_",    operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]});
@@ -659,8 +615,7 @@ async function doSync(force=false){
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        // Normalise month to lowercase — critical: HubSpot may return "July-2026" (capital J)
-        // which silently breaks JS period matching (JS case-sensitive; HubSpot filter is not)
+        // Normalise month to lowercase — HubSpot may return "July-2026" (capital J)
         const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
         const month=(()=>{
           if(bm)return bm;
@@ -687,7 +642,7 @@ async function doSync(force=false){
       after=data.paging?.next?.after||null;
     }while(after);
 
-    // ── Dedup — identical to Revenue Pulse ──
+    // ── Dedup (verbatim from index.html) ──
     const seen={};const dupes=[];
     fetched.forEach(d=>{
       const key=d.name+"|"+d.amount+"|"+(d.month||"");
@@ -697,8 +652,7 @@ async function doSync(force=false){
     const allDeals=dupes.length?fetched.filter(d=>!dupes.includes(d.id)):fetched;
     if(dupes.length)console.log("[BookWatch] Dupes excluded:",dupes.length);
 
-    // ── Line items — chunked in 500 like Revenue Pulse ──
-    setLoading("Fetching line items…");
+    // ── Line items — chunked in 500 (verbatim from index.html) ──
     dealServiceMap={};
     for(let i=0;i<allDeals.length;i+=500){
       const chunk=allDeals.slice(i,i+500).map(d=>d.id);
@@ -718,10 +672,10 @@ async function doSync(force=false){
     attributeDeals(allDeals);
 
     // ── Split by month ──
-    lastMonthDeals=allDeals.filter(d=>d.month===lastMStr);
-    thisMonthDeals=allDeals.filter(d=>d.month===thisMStr);
+    const lastMonthDeals=allDeals.filter(d=>d.month===lastMStr);
+    const thisMonthDeals=allDeals.filter(d=>d.month===thisMStr);
 
-    // ── Filter to Recurring only — amount = recurring portion of line items (Revenue Pulse canonical) ──
+    // ── Filter to Recurring — amount = recurring portion (verbatim engTypesLi logic) ──
     lastRecurring=lastMonthDeals.map(d=>{
       const ra=recurringAmount(d);
       return ra>0?{...d,amount:ra}:null;
@@ -732,10 +686,10 @@ async function doSync(force=false){
       return ra>0?{...d,amount:ra}:null;
     }).filter(Boolean).filter(d=>d.billing_id);
 
-    console.log(`[BookWatch] Last month recurring: ${lastRecurring.length} deals, $${lastRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
-    console.log(`[BookWatch] This month recurring: ${thisRecurring.length} deals, $${thisRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
+    console.log(`[BookWatch] Last month recurring: ${lastRecurring.length} deals $${lastRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
+    console.log(`[BookWatch] This month recurring: ${thisRecurring.length} deals $${thisRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
 
-    // ── Build this-month lookup: billing_id|owner_id → deals[] ──
+    // ── Build this-month lookup ──
     const thisMap={};
     thisRecurring.forEach(d=>{
       const key=d.billing_id+"|"+d.owner_id;
@@ -743,23 +697,25 @@ async function doSync(force=false){
       thisMap[key].push(d);
     });
 
-    // ── Classify each last-month recurring deal ──
-    matchedDeals=lastRecurring.map(d=>{
-      const cl=classifyDeal(d,thisMap,now);
-      return{...d,...cl};
-    });
+    // ── Classify ──
+    matchedDeals=lastRecurring.map(d=>({...d,...classifyDeal(d,thisMap,now)}));
 
-    setSyncState("live");
-    $("last-sync").textContent=`Synced ${now.toLocaleDateString("en-US",{month:"short",day:"numeric"})} · ${now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`;
-    $("refresh-btn").disabled=false;
+    // ── Update header (verbatim from portfolio.html sync state) ──
+    $("sdot").style.background="#0CCE6B";
+    $("stxt").textContent=`LIVE · ${lastRecurring.length} RECURRING DEALS`;
+    $("last-sync").textContent=`Synced ${fmtDate(now)} · ${now.toLocaleTimeString()}`;
+    $("rfbtn").disabled=false;
+    $("lo").classList.remove("show");
     buildFilters();
-    showLoading(false);
     $("bw-content").style.display="block";
     reRender();
   }catch(e){
-    setSyncState("error");
-    showErr(true,e.message);
-    showLoading(false);
+    $("sdot").style.background="#696969";
+    $("stxt").textContent="SYNC FAILED";
+    $("err-bar").classList.add("show");
+    $("err-msg").textContent=e.message;
+    $("lo").classList.remove("show");
+    $("rfbtn").disabled=false;
     console.error("[BookWatch] Sync error:",e);
   }
   isSyncing=false;
@@ -767,92 +723,49 @@ async function doSync(force=false){
 
 // ── Filters ──
 function buildFilters(){
-  // Heads
-  const hList=$("bw-head-list");
-  hList.innerHTML="";
-  activeHeads=new Set(ALL_HEADS);
+  activeHeads=new Set(ALL_HEAD_KEYS);
+  const hList=$("bw-head-list");hList.innerHTML="";
   HEADS_DISPLAY.forEach(h=>{
-    const item=document.createElement("div");
-    item.className="ms-item";
-    item.innerHTML=`<input type="checkbox" id="hchk-${h.id}" checked onchange="onHeadChk()">
-      <label class="ms-item-lbl" for="hchk-${h.id}">${h.name}</label>`;
+    const item=document.createElement("div");item.className="ms-item";
+    item.innerHTML=`<input type="checkbox" id="hchk-${h.id}" checked onchange="onHeadChk()"><label class="ms-item-lbl" for="hchk-${h.id}">${h.name}</label>`;
     hList.appendChild(item);
   });
-  // Owners
-  const oList=$("bw-owner-list");
-  oList.innerHTML="";
   activeOwners=new Set(ALL_OWNER_IDS);
+  const oList=$("bw-owner-list");oList.innerHTML="";
   ORDERED_OWNERS.forEach(o=>{
-    const item=document.createElement("div");
-    item.className="ms-item";
-    item.innerHTML=`<input type="checkbox" id="ochk-${o.id}" checked onchange="onOwnerChk()">
-      <label class="ms-item-lbl" for="ochk-${o.id}">${o.name}</label>`;
+    const item=document.createElement("div");item.className="ms-item";
+    item.innerHTML=`<input type="checkbox" id="ochk-${o.id}" checked onchange="onOwnerChk()"><label class="ms-item-lbl" for="ochk-${o.id}">${o.name}</label>`;
     oList.appendChild(item);
   });
 }
-
 function onHeadChk(){
   activeHeads=new Set();
-  HEADS_DISPLAY.forEach(h=>{
-    const el=document.getElementById("hchk-"+h.id);
-    if(el?.checked)activeHeads.add(h.key);
-  });
-  updateHeadLabel();
+  HEADS_DISPLAY.forEach(h=>{const el=document.getElementById("hchk-"+h.id);if(el?.checked)activeHeads.add(h.key);});
+  const lbl=$("bw-head-label");
+  lbl.textContent=activeHeads.size===ALL_HEAD_KEYS.length?"All Heads":activeHeads.size===0?"None":activeHeads.size+" Heads";
   reRender();
 }
-function updateHeadLabel(){
-  const lbl=$("bw-head-label");
-  if(activeHeads.size===ALL_HEADS.length)lbl.textContent="All Heads";
-  else if(activeHeads.size===0)lbl.textContent="None";
-  else if(activeHeads.size===1)lbl.textContent=HEADS_DISPLAY.find(h=>activeHeads.has(h.key))?.name||"1 Head";
-  else lbl.textContent=activeHeads.size+" Heads";
+function onOwnerChk(){
+  activeOwners=new Set();
+  ORDERED_OWNERS.forEach(o=>{const el=document.getElementById("ochk-"+o.id);if(el?.checked)activeOwners.add(o.id);});
+  const lbl=$("bw-owner-label");
+  lbl.textContent=activeOwners.size===ALL_OWNER_IDS.length?"All Owners":activeOwners.size===0?"None":activeOwners.size+" Selected";
+  reRender();
 }
 function selectAllHeads(){HEADS_DISPLAY.forEach(h=>{const el=document.getElementById("hchk-"+h.id);if(el)el.checked=true;});onHeadChk();}
 function deselectAllHeads(){HEADS_DISPLAY.forEach(h=>{const el=document.getElementById("hchk-"+h.id);if(el)el.checked=false;});onHeadChk();}
-
-function onOwnerChk(){
-  activeOwners=new Set();
-  ORDERED_OWNERS.forEach(o=>{
-    const el=document.getElementById("ochk-"+o.id);
-    if(el?.checked)activeOwners.add(o.id);
-  });
-  updateOwnerLabel();
-  reRender();
-}
-function updateOwnerLabel(){
-  const lbl=$("bw-owner-label");
-  if(activeOwners.size===ALL_OWNER_IDS.length)lbl.textContent="All Owners";
-  else if(activeOwners.size===0)lbl.textContent="None";
-  else if(activeOwners.size===1)lbl.textContent=OWN[[...activeOwners][0]]||"1 Owner";
-  else lbl.textContent=activeOwners.size+" Selected";
-}
 function selectAllOwners(){ORDERED_OWNERS.forEach(o=>{const el=document.getElementById("ochk-"+o.id);if(el)el.checked=true;});onOwnerChk();}
 function deselectAllOwners(){ORDERED_OWNERS.forEach(o=>{const el=document.getElementById("ochk-"+o.id);if(el)el.checked=false;});onOwnerChk();}
-
-function toggleHeadDrop(e){
-  e.stopPropagation();
-  headDropOpen=!headDropOpen;
-  $("bw-head-dropdown").classList.toggle("open",headDropOpen);
-  if(headDropOpen){ownerDropOpen=false;$("bw-owner-dropdown").classList.remove("open");}
-}
-function toggleOwnerDrop(e){
-  e.stopPropagation();
-  ownerDropOpen=!ownerDropOpen;
-  $("bw-owner-dropdown").classList.toggle("open",ownerDropOpen);
-  if(ownerDropOpen){headDropOpen=false;$("bw-head-dropdown").classList.remove("open");}
-}
-document.addEventListener("click",()=>{
-  headDropOpen=false;ownerDropOpen=false;
-  $("bw-head-dropdown")?.classList.remove("open");
-  $("bw-owner-dropdown")?.classList.remove("open");
-});
+function toggleHeadDrop(e){e.stopPropagation();headDropOpen=!headDropOpen;$("bw-head-dropdown").classList.toggle("open",headDropOpen);if(headDropOpen){ownerDropOpen=false;$("bw-owner-dropdown").classList.remove("open");}}
+function toggleOwnerDrop(e){e.stopPropagation();ownerDropOpen=!ownerDropOpen;$("bw-owner-dropdown").classList.toggle("open",ownerDropOpen);if(ownerDropOpen){headDropOpen=false;$("bw-head-dropdown").classList.remove("open");}}
+document.addEventListener("click",()=>{headDropOpen=false;ownerDropOpen=false;$("bw-head-dropdown")?.classList.remove("open");$("bw-owner-dropdown")?.classList.remove("open");});
 
 // ── Filtered view ──
 function filteredDeals(){
   const bu=$("bw-bu-sel")?.value||"";
   return matchedDeals.filter(d=>{
     if(bu&&d.bu!==bu)return false;
-    if(activeHeads.size<ALL_HEADS.length&&d.head&&!activeHeads.has(d.head))return false;
+    if(activeHeads.size<ALL_HEAD_KEYS.length&&d.head&&!activeHeads.has(d.head))return false;
     if(activeOwners.size<ALL_OWNER_IDS.length&&!activeOwners.has(String(d.owner_id)))return false;
     return true;
   });
@@ -871,31 +784,27 @@ function renderKPIs(fd){
   const recovered=fd.filter(d=>d.status==="retained"||d.status==="partial").reduce((s,d)=>s+d.thisAmt,0);
   const gap=baseline-recovered;
   const rate=baseline>0?recovered/baseline*100:0;
+  const lastM=lastMonthDate();const now=new Date();
   $("k-baseline").textContent=fmtMoney(baseline);
   $("k-recovered").textContent=fmtMoney(recovered);
   $("k-gap").textContent=fmtMoney(gap);
   $("k-rate").textContent=fmtPct(rate);
-  const lm=lastMonthDate();
-  const now=new Date();
-  $("k-baseline-sub").textContent=`${monthLabel(lm)} · ${fd.length} deals`;
+  $("k-baseline-sub").textContent=`${monthLabel(lastM)} · ${fd.length} deals`;
   $("k-recovered-sub").textContent=`${fd.filter(d=>d.status==="retained").length} retained · ${fd.filter(d=>d.status==="partial").length} partial`;
   $("k-gap-sub").textContent=`${fd.filter(d=>d.status==="atrisk").length} at risk · ${fd.filter(d=>d.status==="pending").length} pending`;
   $("k-rate-sub").textContent=`As of ${now.toLocaleDateString("en-US",{month:"short",day:"numeric"})}`;
 }
 
 function renderHeadGrid(fd){
-  const grid=$("head-grid");
   const headData={};
   HEADS_DISPLAY.forEach(h=>{headData[h.key]={hcfg:h,baseline:0,recovered:0,atrisk:0,count:0};});
   fd.forEach(d=>{
-    const key=d.head;
-    if(!headData[key])return;
-    headData[key].baseline+=d.amount;
-    headData[key].count++;
+    const key=d.head;if(!headData[key])return;
+    headData[key].baseline+=d.amount;headData[key].count++;
     if(d.status==="retained"||d.status==="partial")headData[key].recovered+=d.thisAmt;
     if(d.status==="atrisk")headData[key].atrisk+=d.amount;
   });
-  grid.innerHTML=Object.values(headData).filter(h=>h.count>0).map(({hcfg,baseline,recovered,atrisk,count})=>{
+  $("head-grid").innerHTML=Object.values(headData).filter(h=>h.count>0).map(({hcfg,baseline,recovered,atrisk,count})=>{
     const gap=baseline-recovered;
     const rate=baseline>0?recovered/baseline*100:0;
     const barCls=rate>=80?"":rate>=50?"warn":"danger";
@@ -904,116 +813,62 @@ function renderHeadGrid(fd){
       <div class="head-card-name">${hcfg.name}</div>
       <div class="head-card-bu ${buCls}">${hcfg.bu}</div>
       <div class="head-stats">
-        <div class="head-stat">
-          <div class="head-stat-lbl">Last Month</div>
-          <div class="head-stat-val">${fmtMoney(baseline)}</div>
-        </div>
-        <div class="head-stat">
-          <div class="head-stat-lbl">Recovered</div>
-          <div class="head-stat-val recovered">${fmtMoney(recovered)}</div>
-        </div>
-        <div class="head-stat">
-          <div class="head-stat-lbl">Gap</div>
-          <div class="head-stat-val gap">${fmtMoney(gap)}</div>
-        </div>
-        <div class="head-stat">
-          <div class="head-stat-lbl">Deals</div>
-          <div class="head-stat-val">${count}</div>
-        </div>
+        <div class="head-stat"><div class="head-stat-lbl">Last Month</div><div class="head-stat-val">${fmtMoney(baseline)}</div></div>
+        <div class="head-stat"><div class="head-stat-lbl">Recovered</div><div class="head-stat-val recovered">${fmtMoney(recovered)}</div></div>
+        <div class="head-stat"><div class="head-stat-lbl">Gap</div><div class="head-stat-val gap">${fmtMoney(gap)}</div></div>
+        <div class="head-stat"><div class="head-stat-lbl">Deals</div><div class="head-stat-val">${count}</div></div>
       </div>
-      <div class="head-rate">
-        <div class="head-rate-lbl">Recovery Rate</div>
-        <div class="head-rate-val">${fmtPct(rate)}</div>
-      </div>
-      <div class="head-prog-wrap">
-        <div class="head-prog-bar ${barCls}" style="width:${Math.min(rate,100).toFixed(1)}%"></div>
-      </div>
+      <div class="head-rate"><div class="head-rate-lbl">Recovery Rate</div><div class="head-rate-val">${fmtPct(rate)}</div></div>
+      <div class="head-prog-wrap"><div class="head-prog-bar ${barCls}" style="width:${Math.min(rate,100).toFixed(1)}%"></div></div>
       ${atrisk>0?`<div class="head-at-risk">⚠ ${fmtMoney(atrisk)} at risk</div>`:""}
     </div>`;
-  }).join("") || `<div class="empty-state">No recurring deals match the current filter.</div>`;
+  }).join("")||`<div class="empty-state">No recurring deals match the current filter.</div>`;
 }
 
 function renderOwnerDrill(fd){
   const drill=$("owner-drill");
-  // Group by owner — maintain ORDERED_OWNERS sequence
   const byOwner={};
-  fd.forEach(d=>{
-    const oid=String(d.owner_id);
-    if(!byOwner[oid])byOwner[oid]=[];
-    byOwner[oid].push(d);
-  });
-  const sections=ORDERED_OWNERS
-    .filter(o=>byOwner[o.id]&&byOwner[o.id].length>0)
-    .map(o=>({owner:o,deals:byOwner[o.id]}));
-
-  if(!sections.length){
-    drill.innerHTML=`<div class="empty-state">No recurring deals match the current filter.</div>`;
-    return;
-  }
-
+  fd.forEach(d=>{const oid=String(d.owner_id);if(!byOwner[oid])byOwner[oid]=[];byOwner[oid].push(d);});
+  const sections=ORDERED_OWNERS.filter(o=>byOwner[o.id]?.length>0).map(o=>({owner:o,deals:byOwner[o.id]}));
+  if(!sections.length){drill.innerHTML=`<div class="empty-state">No recurring deals match the current filter.</div>`;return;}
+  const pillMap={
+    retained:`<span class="status-pill pill-retained">✓ Retained</span>`,
+    partial:`<span class="status-pill pill-partial">◑ Partial</span>`,
+    pending:`<span class="status-pill pill-pending">◷ Pending</span>`,
+    atrisk:`<span class="status-pill pill-atrisk">⚠ At Risk</span>`
+  };
   drill.innerHTML=sections.map(({owner,deals})=>{
     const baseline=deals.reduce((s,d)=>s+d.amount,0);
     const recovered=deals.filter(d=>d.status==="retained"||d.status==="partial").reduce((s,d)=>s+d.thisAmt,0);
     const gap=baseline-recovered;
-    const head=deals[0]?.head||"—";
-    const bu=deals[0]?.bu||"—";
+    const headDisplay=(deals[0]?.head||"").replace(" Agrawal","").replace(" Salla","").replace(" Christan","").replace(" Gupta (UK)","UK").replace(" Gupta (US)","US");
+    const bu=deals[0]?.bu||"";
     const rowId="owner-"+owner.id;
-    const rows=deals.sort((a,b)=>{
-      const order={atrisk:0,pending:1,partial:2,retained:3};
-      return(order[a.status]||0)-(order[b.status]||0);
-    }).map(d=>{
-      const pillMap={
-        retained:`<span class="status-pill pill-retained">✓ Retained</span>`,
-        partial:`<span class="status-pill pill-partial">◑ Partial</span>`,
-        pending:`<span class="status-pill pill-pending">◷ Pending</span>`,
-        atrisk:`<span class="status-pill pill-atrisk">⚠ At Risk</span>`
-      };
-      const thisFmt=d.thisAmt>0?fmtMoney(d.thisAmt):`<span class="muted">—</span>`;
-      const gapFmt=d.gap>0?`<span class="gap-val">${fmtMoney(d.gap)}</span>`:(d.gap<0?`<span class="gain-val">+${fmtMoney(Math.abs(d.gap))}</span>`:"—");
-      return`<tr>
-        <td><div class="client-name">${d.client||d.billing_id}</div><div class="deal-name">${d.name}</div></td>
-        <td class="num">${fmtMoney(d.amount)}</td>
-        <td>${pillMap[d.status]||d.status}</td>
-        <td class="num">${thisFmt}</td>
-        <td class="num">${gapFmt}</td>
-      </tr>`;
-    }).join("");
-
+    const rows=deals.sort((a,b)=>({atrisk:0,pending:1,partial:2,retained:3}[a.status]||0)-({atrisk:0,pending:1,partial:2,retained:3}[b.status]||0))
+      .map(d=>{
+        const thisFmt=d.thisAmt>0?fmtMoney(d.thisAmt):`<span style="color:#9A9A9A">—</span>`;
+        const gapFmt=d.gap>0?`<span class="gap-val">${fmtMoney(d.gap)}</span>`:d.gap<0?`<span class="gain-val">+${fmtMoney(Math.abs(d.gap))}</span>`:"—";
+        return`<tr><td><div class="client-name">${d.client||d.billing_id}</div><div class="deal-name">${d.name}</div></td>
+          <td class="num">${fmtMoney(d.amount)}</td><td>${pillMap[d.status]||d.status}</td>
+          <td class="num">${thisFmt}</td><td class="num">${gapFmt}</td></tr>`;
+      }).join("");
     return`<div class="owner-section">
       <div class="owner-hdr collapsed" id="hdr-${rowId}" onclick="toggleOwnerSection('${rowId}')">
         <div class="owner-hdr-left">
           <span class="owner-name">${owner.name}</span>
-          <span class="owner-meta">${bu} · ${head.replace(" Agrawal","").replace(" Salla","").replace(" Christan","").replace(" Gupta (UK)","UK").replace(" Gupta (US)","US")}</span>
+          <span class="owner-meta">${bu} · ${headDisplay}</span>
           <span class="expand-arrow" id="arr-${rowId}">▶</span>
         </div>
         <div class="owner-summary">
-          <div class="owner-sum-item">
-            <span class="owner-sum-lbl">Last Month</span>
-            <span class="owner-sum-val">${fmtMoney(baseline)}</span>
-          </div>
-          <div class="owner-sum-item">
-            <span class="owner-sum-lbl">Recovered</span>
-            <span class="owner-sum-val">${fmtMoney(recovered)}</span>
-          </div>
-          <div class="owner-sum-item">
-            <span class="owner-sum-lbl">Gap</span>
-            <span class="owner-sum-val gap">${fmtMoney(gap)}</span>
-          </div>
-          <div class="owner-sum-item">
-            <span class="owner-sum-lbl">Deals</span>
-            <span class="owner-sum-val">${deals.length}</span>
-          </div>
+          <div class="owner-sum-item"><span class="owner-sum-lbl">Last Month</span><span class="owner-sum-val">${fmtMoney(baseline)}</span></div>
+          <div class="owner-sum-item"><span class="owner-sum-lbl">Recovered</span><span class="owner-sum-val">${fmtMoney(recovered)}</span></div>
+          <div class="owner-sum-item"><span class="owner-sum-lbl">Gap</span><span class="owner-sum-val gap">${fmtMoney(gap)}</span></div>
+          <div class="owner-sum-item"><span class="owner-sum-lbl">Deals</span><span class="owner-sum-val">${deals.length}</span></div>
         </div>
       </div>
       <div class="deal-table-wrap" id="tbl-${rowId}" style="display:none">
         <table class="deal-table">
-          <thead><tr>
-            <th>Client · Deal</th>
-            <th class="num">Last Month</th>
-            <th>Status</th>
-            <th class="num">This Month</th>
-            <th class="num">Gap</th>
-          </tr></thead>
+          <thead><tr><th>Client · Deal</th><th class="num">Last Month</th><th>Status</th><th class="num">This Month</th><th class="num">Gap</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -1022,39 +877,17 @@ function renderOwnerDrill(fd){
 }
 
 function toggleOwnerSection(rowId){
-  const hdr=$("hdr-"+rowId);
-  const tbl=$("tbl-"+rowId);
-  const arr=$("arr-"+rowId);
+  const tbl=$("tbl-"+rowId),hdr=$("hdr-"+rowId),arr=$("arr-"+rowId);
   const isOpen=tbl.style.display!=="none";
   tbl.style.display=isOpen?"none":"block";
   hdr.classList.toggle("collapsed",isOpen);
   if(arr)arr.style.transform=isOpen?"":"rotate(90deg)";
 }
 
-// ── UI helpers ──
-function $(id){return document.getElementById(id);}
-function setSyncState(state){
-  const dot=$("sync-dot");const lbl=$("sync-label");
-  if(state==="syncing"){dot.style.background="#FFDA30";lbl.textContent="Syncing…";}
-  else if(state==="live"){dot.style.background="#0CCE6B";lbl.textContent=`Live · ${lastRecurring.length} Recurring Deals`;}
-  else{dot.style.background="#EF2D56";lbl.textContent="Sync Error";}
-}
-function showLoading(v,lbl){
-  $("loading-wrap").style.display=v?"flex":"none";
-  if(lbl)$("loading-lbl").textContent=lbl;
-}
-function setLoading(msg){$("loading-lbl").textContent=msg;}
-function showErr(v,msg){
-  const bar=$("err-bar");
-  bar.classList.toggle("show",v);
-  if(msg)$("err-msg").textContent=msg;
-}
-
-// ── Boot ──
-window.addEventListener("DOMContentLoaded",()=>{
-  const tok=checkSSO();
-  if(tok){showApp();doSync();}
-  $("login-pw")?.addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+// ── Boot (verbatim from portfolio.html) ──
+window.addEventListener("DOMContentLoaded",function(){
+  const authed=checkSSO();
+  if(authed)doSync(true);
 });
 </script>
 </body>
