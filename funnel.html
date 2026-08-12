@@ -150,7 +150,13 @@ tbody tr.row-gap-pct td{background:#FAFAFA;font-weight:700;color:#9A9A9A;font-si
 /* Hover overrides for special rows */
 tbody tr.row-grand-total:hover td{background:#5A4200!important}
 tbody tr.row-recurring-total:hover td{background:#FFF3CC!important}
+tbody tr.row-recurring-total:hover td.tot,
+tbody tr.row-recurring-total:hover td.tot-inter,
+tbody tr.row-recurring-total:hover td.tot-both{background:#FFDA30!important;color:#2E2000!important}
 tbody tr.row-p2p-total:hover td{background:#D0EEE9!important}
+tbody tr.row-p2p-total:hover td.tot,
+tbody tr.row-p2p-total:hover td.tot-inter,
+tbody tr.row-p2p-total:hover td.tot-both{background:#006E5E!important;color:#FFFFFF!important}
 tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!important}
 
 /* Sign colouring */
@@ -440,7 +446,10 @@ function renderTable(head, data, seg) {
       return `<td class="num${nc(v)}">${fm(v)}</td>`;
     }).join('');
     const tv = negate ? -numVal(teamSum[key]) : numVal(teamSum[key]);
-    return `<tr class="${cls}"><td class="lbl">${label}</td>${cells}<td class="${totCls}${nc(tv)}">${fm(tv)}</td></tr>`;
+    // No sign class on team sum for highlighted rows — their intentional bg+text colours
+    // must not be overridden by .neg/.pos (e.g. white text on teal, gold text on dark brown)
+    const totSignCls = cls ? '' : nc(tv);
+    return `<tr class="${cls}"><td class="lbl">${label}</td>${cells}<td class="${totCls}${totSignCls}">${fm(tv)}</td></tr>`;
   };
 
   const pctRow = (label, key) => {
