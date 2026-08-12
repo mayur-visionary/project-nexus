@@ -640,6 +640,11 @@ async function doLogin() {
     const data = await res.json();
     if(data.success){
       const owner = TAB_OWNER[tab] || null;
+      // Clear all other tokens — strict isolation
+      ["nexus_auth","nexus_auth_jiggyasa","nexus_auth_jaydeep","nexus_auth_tanuj",
+       "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu"].forEach(k=>{
+        if(k!==authKey(owner))localStorage.removeItem(k);
+      });
       localStorage.setItem(authKey(owner), '1');
       $('login-overlay').style.display='none';
       bootApp();
@@ -705,7 +710,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ── 2. Stored token: already authenticated in a previous session ──
-  if(hasToken(owner)){
+  // Strict isolation: only the exact owner token for this tab is valid.
+  // master token (nexus_auth) never unlocks a scoped funnel tab.
+  // null owner = no scoped tab = always require password (no localStorage bypass).
+  if(owner && hasToken(owner)){
     $('login-overlay').style.display='none';
     bootApp();
     return;
