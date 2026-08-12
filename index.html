@@ -713,32 +713,32 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   <div id="trends-section">
   <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
-    <span>Revenue Trends · FY 2026 (Apr–Aug)</span>
+    <span>Revenue Trends · FY 2026 (Apr–Jul)</span>
     <span id="trend-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase">Loading...</span>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Revenue &amp; Unique Clients</div>
-      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026 Apr–Aug</div>
+      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Business Unit Trend</div>
-      <div class="card-sub">Digital (Pure) · Inter BU · MarTech bars · FY 2026 Apr–Aug</div>
+      <div class="card-sub">Digital (Pure) · Inter BU · MarTech bars · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div>
     </div>
     <div class="card">
       <div class="card-ttl">Engagement Model Trend</div>
-      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026 Apr–Aug</div>
+      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Avg Revenue per Unique Client</div>
-      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026 Apr–Aug</div>
+      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026 Apr–Jul</div>
       <div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div>
     </div>
   </div>
@@ -3838,22 +3838,6 @@ const BW_HEADS=[
   {id:"nevilson", name:"Nevilson Christan",key:"Nevilson Christan",bu:"Digital"}
 ];
 
-// Recurring amount for a deal — mirrors engTypesLi() Recurring logic exactly.
-// ON-prefix → always P2P → 0. Otherwise sum recurring line items; fallback to eng_model.
-function bwRecurringAmount(d){
-  if(/^ON[-\s]/i.test((d.name||"").trim()))return 0;
-  const lis=dealServiceMap[d.id]||[];
-  if(lis.length){
-    let sum=0,classified=false;
-    lis.forEach(li=>{
-      const eg=engGroupFromLiName(li.name);
-      if(eg){classified=true;if(eg==="Recurring")sum+=li.amount;}
-    });
-    if(classified)return sum;
-    return engGroup(d.eng_model)==="Recurring"?d.amount:0;
-  }
-  return engGroup(d.eng_model)==="Recurring"?d.amount:0;
-}
 
 // Classify a last-month deal against this-month lookup.
 // Key: billing_id|owner_id — same as standalone recurring.html.
@@ -3878,35 +3862,35 @@ function renderBookWatch(){
 
   // ── Derive last month and this month strings ──
   const lastM=new Date(now.getFullYear(),now.getMonth()-1,1);
-  const lastMStr=monthVal(lastM);   // e.g. "july-2026"
-  const thisMStr=monthVal(now);     // e.g. "august-2026"
+  const lastMStr=monthVal(lastM);
+  const thisMStr=monthVal(now);
 
   // Update header label
   const hdr=$("bw-month-hdr");
   if(hdr)hdr.textContent=`· ${lastM.toLocaleString("en-US",{month:"long",year:"numeric"})} vs ${now.toLocaleString("en-US",{month:"long",year:"numeric"})}`;
 
-  // ── Apply sidebar filters (BU, Head, Owner — same selectors as Revenue Pulse) ──
-  const selBU=$("bu-sel")?.value||"";
-  const selHeads=getSelectedHeads();
-  const selOwnerIds=selOwners();
+  // ── Use view() exactly as every other screen does — all filters applied identically ──
+  // view() accepts a src array; we pass each month's slice of allDeals.
+  // All active filters (BU, Region, Head, Owner, Engagement Model, Service) carry through.
+  const lastViewed=view(allDeals.filter(d=>d.month===lastMStr),dealServiceMap);
+  const thisViewed=view(allDeals.filter(d=>d.month===thisMStr),dealServiceMap);
 
-  function passesFilters(d){
-    if(selBU&&d.bu!==selBU)return false;
-    if(selHeads.length<ALL_HEADS.length&&d.head&&!selHeads.includes(d.head))return false;
-    if(selOwnerIds.length<ALL_IDS.length&&!selOwnerIds.includes(String(d.owner_id)))return false;
-    return true;
+  // ── Extract recurring portion per deal using engTypesLi — single source of truth ──
+  // engTypesLi(v)["Recurring"] is exactly what Revenue Pulse uses for the Pie chart.
+  // We apply it per-deal so we get the recurring amount for each individual deal.
+  function recurringAmountForDeal(d){
+    const types=engTypesLi([d]);
+    return types["Recurring"]||0;
   }
 
-  // ── Split allDeals into last month and this month recurring ──
-  const lastRec=allDeals
-    .filter(d=>d.month===lastMStr&&passesFilters(d))
-    .map(d=>{const ra=bwRecurringAmount(d);return ra>0?{...d,amount:ra}:null;})
+  // ── Build recurring deal arrays ──
+  const lastRec=lastViewed
+    .map(d=>{const ra=recurringAmountForDeal(d);return ra>0?{...d,amount:ra}:null;})
     .filter(Boolean)
     .filter(d=>d.billing_id);
 
-  const thisRec=allDeals
-    .filter(d=>d.month===thisMStr&&passesFilters(d))
-    .map(d=>{const ra=bwRecurringAmount(d);return ra>0?{...d,amount:ra}:null;})
+  const thisRec=thisViewed
+    .map(d=>{const ra=recurringAmountForDeal(d);return ra>0?{...d,amount:ra}:null;})
     .filter(Boolean)
     .filter(d=>d.billing_id);
 
