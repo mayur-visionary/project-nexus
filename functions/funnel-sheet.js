@@ -100,9 +100,12 @@ function parse(rows, head, cfg) {
     return { owners, teamSum };
   }
 
+  const month = new Date().toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "Asia/Kolkata" });
+
   return {
     head,
     tab    : cfg.tab,
+    month,
     digital: buildBlock(digHeader,   0),
     inter  : buildBlock(interHeader, INTER_OFFSET),
   };
