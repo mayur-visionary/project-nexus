@@ -37,6 +37,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .refresh-btn:disabled{opacity:.35;cursor:not-allowed}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 
 /* ── Nav tabs ── */
 .nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
@@ -191,7 +193,9 @@ tbody tr.row-p2p-total:hover td{background:#C0EDE0!important}
           <div class="stxt"><div class="sdot" id="sdot" style="background:#C0C0C0"></div><span id="stxt">Ready</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
+        <span class="month-badge" id="hdr-month" style="margin-bottom:0">📅 —</span>
         <button class="refresh-btn" id="rfbtn" onclick="refreshActive()">⟳ Refresh</button>
+        <a class="nexus-btn" href="/index.html">↗ Revenue Nexus</a>
       </div>
     </div>
 
@@ -287,7 +291,7 @@ function switchTab(head) {
     $('panel-' + h).classList.toggle('active', h === head);
   });
   if (!cache[head]) loadHead(head);
-  else setStatus('#006E5E', 'Sheet loaded', cache[head].month);
+  else { setStatus('#006E5E', 'Sheet loaded', cache[head].month); $('hdr-month').textContent = '📅 ' + cache[head].month; }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -325,6 +329,7 @@ async function loadHead(head) {
     cache[head] = data;
     renderPanel(head, data);
     setStatus('#006E5E', 'Sheet loaded', data.month);
+    $('hdr-month').textContent = '📅 ' + data.month;
   } catch (e) {
     showErr(e.message);
     setStatus('#EF2D56', 'Error', '');
