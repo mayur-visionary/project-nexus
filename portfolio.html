@@ -79,6 +79,11 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Anchor chip ── */
 .anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase}
 
+/* ── Inter BU toggle ── */
+.interbu-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.interbu-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.interbu-btn.active{background:rgba(59,53,97,.85);border-color:#3B3561;color:#FFDA30}
+
 /* ── Spinner ── */
 .lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
 .lo.show{display:flex}
@@ -89,20 +94,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
 
 /* ── KPI strip — elevated hierarchy ── */
-.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}
 .kpi{background:#fff;border-radius:12px;padding:20px 20px 16px;border:1px solid #E2E2E2;border-top:4px solid #FFDA30;transition:all .2s;position:relative}
 .kpi:hover{box-shadow:0 6px 24px rgba(67,67,67,.13);transform:translateY(-2px)}
 .kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
 .kpi-val{font-size:clamp(26px,2.2vw,36px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
 .kpi-sub{font-size:10px;color:#9A9A9A;font-weight:500}
 .kpi.k-active{border-top-color:#006E5E}
-.kpi.k-active .kpi-val{color:#006E5E}
 .kpi.k-silent{border-top-color:#FFDA30}
-.kpi.k-silent .kpi-val{color:#A07A00}
 .kpi.k-inactive{border-top-color:#EF2D56}
-.kpi.k-inactive .kpi-val{color:#EF2D56}
 .kpi.k-lost{border-top-color:#696969}
-.kpi.k-lost .kpi-val{color:#696969}
+.kpi.k-interbu{border-top-color:#3B3561}
 @media(max-width:900px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:580px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
 
@@ -190,7 +192,7 @@ tbody td.num{text-align:right;font-weight:700}
 .donut-legend-row:hover{background:#F7F7F7}
 .donut-legend-row.seg-highlight{background:#F0FAF7}
 .donut-seg-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
-.donut-seg-lbl{font-size:10px;font-weight:600;color:#434343}
+.donut-seg-lbl{font-size:10px;font-weight:600;color:#696969}
 .donut-seg-cnt{font-size:10px;font-weight:800;color:#434343;text-align:right}
 .donut-seg-pct{font-size:9px;font-weight:500;color:#9A9A9A;text-align:right;min-width:36px}
 .donut-arc-group{cursor:pointer}
@@ -263,7 +265,7 @@ tbody td.num{text-align:right;font-weight:700}
 .footer{text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Responsive ── */
-@media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1200px){.kpi-strip{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
 @media(max-width:400px){.kpi-strip{grid-template-columns:1fr}}
 </style>
@@ -372,6 +374,10 @@ tbody td.num{text-align:right;font-weight:700}
         </div>
       </div>
       <div class="vdiv"></div>
+      <!-- Inter BU -->
+      <div class="vdiv"></div>
+      <button class="interbu-btn" id="interbu-btn" onclick="toggleInterBU()">Inter BU</button>
+      <div class="vdiv"></div>
       <!-- Owner -->
       <span class="fl">Owner</span>
       <div class="ms-wrap" id="p-owner-wrap">
@@ -420,6 +426,11 @@ tbody td.num{text-align:right;font-weight:700}
       <div class="kpi-lbl">Organic Lost</div>
       <div class="kpi-val" id="k-lost">—</div>
       <div class="kpi-sub">365+ days no revenue</div>
+    </div>
+    <div class="kpi k-interbu">
+      <div class="kpi-lbl">Inter BU</div>
+      <div class="kpi-val" id="k-interbu">—</div>
+      <div class="kpi-sub" id="k-interbu-sub">Cross-BU kitty clients</div>
     </div>
   </div>
 
@@ -661,6 +672,7 @@ let kittyCompanies=[];
 let cloneHead=null;
 let activeBU="";
 let isSyncing=false;
+let interBUOnly=false;
 
 // ── Filter state ── (activeOwners populated by initPOwners() at boot)
 let activeRegions=new Set(["US","UK","AU"]);
@@ -679,6 +691,7 @@ function filteredCompanies(){
     if(activeRegions.size<ALL_REGIONS_P.length&&c.region&&!activeRegions.has(c.region))return false;
     if(activeHeads.size<ALL_HEADS_P.length&&c.head&&!activeHeads.has(c.head))return false;
     if(ownerFilterActive&&!activeOwners.has(String(c.owner_id)))return false;
+    if(interBUOnly&&!c.inter_bu)return false;
     return true;
   });
 }
@@ -815,6 +828,14 @@ function onPortfolioBUChange(){
   reRender();
 }
 
+// ════ INTER BU TOGGLE ════
+function toggleInterBU(){
+  interBUOnly=!interBUOnly;
+  const btn=$("interbu-btn");
+  if(btn)btn.classList.toggle("active",interBUOnly);
+  reRender();
+}
+
 // ════ DATA FETCHING ════
 
 // Step 1: Kitty companies from /portfolio endpoint
@@ -871,11 +892,14 @@ function renderAll(){
 
   const total=classified.length;
   const n=s=>classified.filter(c=>c.status===s).length;
+  const interBUCount=fc.filter(c=>c.inter_bu).length;
   $("k-total").textContent   =total.toLocaleString();
   $("k-active").textContent  =n("active").toLocaleString();
   $("k-silent").textContent  =n("silent").toLocaleString();
   $("k-inactive").textContent=n("inactive").toLocaleString();
   $("k-lost").textContent    =n("lost").toLocaleString();
+  $("k-interbu").textContent =interBUCount.toLocaleString();
+  $("k-interbu-sub").textContent=`of ${total.toLocaleString()} kitty`;
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
 
@@ -935,12 +959,12 @@ function renderTable(classified){
     html+=`<tr id="row-${rowId}" onclick="toggleOwners('${rowId}')" style="cursor:pointer">
       <td><span class="head-badge"><span class="head-dot" style="background:${hcfg.color}"></span>${hcfg.name}<span class="expand-arrow" id="arr-${rowId}">▶</span></span></td>
       <td><span class="bu-pill" style="background:${buColor};color:${buText}">${hcfg.bu}</span></td>
-      <td class="num cnt-total">${agg.kitty}</td>
-      <td class="num cnt-active">${agg.active}</td>
-      <td class="num cnt-silent">${agg.silent}</td>
-      <td class="num cnt-inactive">${agg.inactive}</td>
-      <td class="num cnt-lost">${agg.lost}</td>
-      <td class="num cnt-never">${agg.never}</td>
+      <td class="num" style="color:#434343;font-weight:800">${agg.kitty}</td>
+      <td class="num" style="color:#434343;font-weight:700">${agg.active}</td>
+      <td class="num" style="color:#434343;font-weight:700">${agg.silent}</td>
+      <td class="num" style="color:#434343;font-weight:700">${agg.inactive}</td>
+      <td class="num" style="color:#434343;font-weight:700">${agg.lost}</td>
+      <td class="num" style="color:#434343;font-weight:700">${agg.never}</td>
       <td>${healthBar(agg)}</td>
     </tr>`;
 
@@ -949,12 +973,12 @@ function renderTable(classified){
       ownerRows.forEach(o=>{
         html+=`<tr>
           <td class="owner-name-cell">${o.name}</td><td></td>
-          <td class="num" style="color:#434343;font-weight:600">${o.kitty}</td>
-          <td class="num cnt-active">${o.active||"—"}</td>
-          <td class="num cnt-silent">${o.silent||"—"}</td>
-          <td class="num cnt-inactive">${o.inactive||"—"}</td>
-          <td class="num cnt-lost">${o.lost||"—"}</td>
-          <td class="num cnt-never">${o.never||"—"}</td>
+          <td class="num" style="color:#434343;font-weight:700">${o.kitty}</td>
+          <td class="num" style="color:#434343;font-weight:600">${o.active||"—"}</td>
+          <td class="num" style="color:#434343;font-weight:600">${o.silent||"—"}</td>
+          <td class="num" style="color:#434343;font-weight:600">${o.inactive||"—"}</td>
+          <td class="num" style="color:#434343;font-weight:600">${o.lost||"—"}</td>
+          <td class="num" style="color:#434343;font-weight:600">${o.never||"—"}</td>
           <td>${healthBar(o)}</td>
         </tr>`;
       });
@@ -965,12 +989,12 @@ function renderTable(classified){
   // Grand total
   html+=`<tr class="total-row">
     <td style="font-size:10px;letter-spacing:.06em;text-transform:uppercase">Grand Total</td><td></td>
-    <td class="num cnt-total">${totals.kitty}</td>
-    <td class="num cnt-active">${totals.active}</td>
-    <td class="num cnt-silent">${totals.silent}</td>
-    <td class="num cnt-inactive">${totals.inactive}</td>
-    <td class="num cnt-lost">${totals.lost}</td>
-    <td class="num cnt-never">${totals.never}</td>
+    <td class="num" style="color:#434343;font-weight:800">${totals.kitty}</td>
+    <td class="num" style="color:#434343;font-weight:700">${totals.active}</td>
+    <td class="num" style="color:#434343;font-weight:700">${totals.silent}</td>
+    <td class="num" style="color:#434343;font-weight:700">${totals.inactive}</td>
+    <td class="num" style="color:#434343;font-weight:700">${totals.lost}</td>
+    <td class="num" style="color:#434343;font-weight:700">${totals.never}</td>
     <td>${healthBar(totals)}</td>
   </tr>`;
 
@@ -1159,7 +1183,6 @@ function renderHealthDonuts(classified){
     };
 
     const score=Math.round(((counts.active*4)+(counts.silent*2)+(counts.inactive*1))/(total*4)*100);
-    const scoreCol=score>=75?"#006E5E":score>=50?"#A07A00":score>=25?"#EF2D56":"#696969";
     const badge=HEAD_BADGE[hcfg.id]||{bg:"#F2F2F2",color:"#696969"};
 
     // Build arcs — thinner stroke, small gap
@@ -1212,7 +1235,7 @@ function renderHealthDonuts(classified){
           ${arcsSVG}
         </svg>
         <div class="donut-centre">
-          <div class="donut-score" id="dscore-${hcfg.id}" style="color:${scoreCol}" data-target="${score}">0%</div>
+          <div class="donut-score" id="dscore-${hcfg.id}" style="color:#434343" data-target="${score}">0%</div>
           <div class="donut-score-lbl">Health</div>
           <div class="donut-kitty-count">${total.toLocaleString()} Kitty</div>
         </div>
@@ -1232,15 +1255,12 @@ function renderHealthDonuts(classified){
 function animateScores(){
   document.querySelectorAll(".donut-score[data-target]").forEach(el=>{
     const target=parseInt(el.getAttribute("data-target"),10);
-    const color=el.style.color; // preserve the scoreCol set at render time
     let current=0;
     const step=Math.max(1,Math.ceil(target/30));
     el.textContent="0%";
-    el.style.color=color; // re-apply immediately before animation starts
     const timer=setInterval(()=>{
       current=Math.min(current+step,target);
       el.textContent=current+"%";
-      el.style.color=color; // re-apply on every tick to survive any browser resets
       if(current>=target)clearInterval(timer);
     },22);
   });
@@ -1292,22 +1312,21 @@ function renderHealthScores(classified){
     const inactive=hc.filter(c=>c.status==="inactive").length;
     const lost=hc.filter(c=>c.status==="lost").length;
     const score=Math.round(((active*4)+(silent*2)+(inactive*1))/(total*4)*100);
-    const color=scoreColor(score);
     const r=36,circ=2*Math.PI*r,fill=circ*(score/100);
-    return{hcfg,total,active,silent,inactive,lost,score,color,r,circ,fill};
+    return{hcfg,total,active,silent,inactive,lost,score,r,circ,fill};
   }).filter(Boolean);
 
-  $("score-grid").innerHTML=cards.map(({hcfg,total,active,silent,inactive,lost,score,color,r,circ,fill})=>`
+  $("score-grid").innerHTML=cards.map(({hcfg,total,active,silent,inactive,lost,score,r,circ,fill})=>`
     <div class="score-card">
       <div class="score-head">${hcfg.name.split(" ")[0]}<span style="font-weight:500;color:#9A9A9A"> · ${hcfg.bu}</span></div>
       <div class="score-ring">
         <svg width="80" height="80" viewBox="0 0 80 80">
           <circle cx="40" cy="40" r="${r}" fill="none" stroke="#F2F2F2" stroke-width="7"/>
-          <circle cx="40" cy="40" r="${r}" fill="none" stroke="${color}" stroke-width="7"
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="#3B3561" stroke-width="7"
             stroke-dasharray="${fill.toFixed(1)} ${circ.toFixed(1)}"
             stroke-linecap="round"/>
         </svg>
-        <div class="score-ring-val" style="color:${color}">${score}%</div>
+        <div class="score-ring-val" style="color:#434343">${score}%</div>
       </div>
       <div class="score-breakdown">
         <span class="score-pill sp-active">${active} Active</span>
@@ -1485,11 +1504,14 @@ function reRender(){
   const classified=fc.map(c=>({...c,status:classifyCompany(c)}));
   const total=classified.length;
   const n=s=>classified.filter(c=>c.status===s).length;
+  const interBUCount=fc.filter(c=>c.inter_bu).length;
   $("k-total").textContent   =total.toLocaleString();
   $("k-active").textContent  =n("active").toLocaleString();
   $("k-silent").textContent  =n("silent").toLocaleString();
   $("k-inactive").textContent=n("inactive").toLocaleString();
   $("k-lost").textContent    =n("lost").toLocaleString();
+  $("k-interbu").textContent =interBUCount.toLocaleString();
+  $("k-interbu-sub").textContent=interBUOnly?`of ${total.toLocaleString()} shown`:`of ${total.toLocaleString()} kitty`;
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
   renderHealthDonuts(classified);
