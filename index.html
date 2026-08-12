@@ -2514,6 +2514,7 @@ async function doLogin(){
     if(data.success){
       document.getElementById("login-overlay").style.display="none";
       localStorage.setItem(_cloneHead?`nexus_auth_${_cloneHead}`:"nexus_auth","1");
+      doFYSync(true); // ← boot data fetch now that auth is confirmed
     } else if(res.status===500||data.error){
       err.textContent="Server config error. Contact Mayur.";
       console.error("Auth error:",data.error||"unknown");
@@ -2554,11 +2555,9 @@ function bootCloneMode(){
   // Pipeline Scout link → master /pipeline
   if(cfg.buClone){
     const portfolioLink=$("portfolio-link");
-    if(portfolioLink)portfolioLink.href=`/portfolio?tok=1`;
+    if(portfolioLink)portfolioLink.href=`/portfolio`;
     const pipelineLink=$("pipeline-link");
-    if(pipelineLink)pipelineLink.href=`/pipeline?tok=1`;
-    const funnelLinkA=$("funnel-link");
-    if(funnelLinkA)funnelLinkA.href=`/funnel?tok=1`;
+    if(pipelineLink)pipelineLink.href=`/pipeline`;
     // Lock BU filter to Digital, hide BU dropdown from filter bar
     const buSel=$("bu-sel");
     if(buSel){
@@ -2620,15 +2619,11 @@ function bootCloneMode(){
     return;
   }
 
-  // ── Portfolio Health + Pipeline Scout + Funnel Desk links carry ?head= param ──
+  // ── Portfolio Health + Pipeline Scout links carry ?head= param for head clones ──
   const portfolioLink=$("portfolio-link");
-  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}&tok=1`;
+  if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}`;
   const pipelineLink=$("pipeline-link");
-  if(pipelineLink)pipelineLink.href=`/pipeline?head=${param}&tok=1`;
-  // Funnel Desk — scoped tab + carry auth token for seamless SSO
-  const FUNNEL_TAB_MAP={jiggyasa:"jiggyasa",tanuj:"tanuj_uk",nevilson:null,jaydeep:null};
-  const funnelLink=$("funnel-link");
-  if(funnelLink){const ft=FUNNEL_TAB_MAP[param];if(ft===null)funnelLink.style.display="none";else if(ft)funnelLink.href=`/funnel?tab=${ft}&tok=${param}`;}
+  if(pipelineLink)pipelineLink.href=`/pipeline?head=${param}`;
 
   // ════ BRANCH C: Head clone — jiggyasa / jaydeep / tanuj / nevilson ════
 
@@ -2671,15 +2666,23 @@ window.addEventListener("DOMContentLoaded",function(){
     initHeadFilter();
     initRegionFilter();
     initServiceFilter();
-    initClubsPeriodSel();     // Client Clubs period selector
-    initClubsPeriodOptions(); // Hide unavailable clubs period options
-    initWeeklyPeriodSel();    // Weekly Numbers month selector
-    loadFunnelInputs();       // Funnel Desk — restore saved inputs from localStorage
+    initClubsPeriodSel();
+    initClubsPeriodOptions();
+    initWeeklyPeriodSel();
+    loadFunnelInputs();
     const ps=$("period-sel");if(ps)ps.value="this-month";
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
-    // Single unified sync — fetches all FY months, one source of truth for everything
     bootCloneMode(); // ← must run before doFYSync so filters are pre-set
-    doFYSync(true);
+
+    // ── Auth gate — check localStorage before starting any API calls ──
+    const _cloneHead=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+    const _authKey=_cloneHead?`nexus_auth_${_cloneHead}`:"nexus_auth";
+    if(localStorage.getItem(_authKey)==="1"){
+      // Already authenticated — hide overlay and boot immediately
+      const ov=$("login-overlay");if(ov)ov.style.display="none";
+      doFYSync(true);
+    }
+    // If not authenticated: overlay stays visible, doFYSync called by doLogin on success
   }catch(e){
     console.error("Nexus boot error:",e);
     const st=$("stxt");if(st)st.textContent="BOOT ERROR · CHECK CONSOLE";
