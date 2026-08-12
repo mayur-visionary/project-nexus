@@ -550,7 +550,7 @@ function attributeDeals(arr){
   });
 }
 
-// ── Engagement classification (identical to Revenue Pulse) ──
+// ── Engagement utilities (verbatim from Revenue Pulse) ──
 function engGroup(val){
   if(!val)return null;
   if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
@@ -569,21 +569,31 @@ function engGroupFromLiName(name){
   if(n.includes("email coding"))return"P2P";
   return null;
 }
-function engGroupFromLi(d){
-  const lis=dealServiceMap[d.id]||[];
-  if(!lis.length)return engGroup(d.eng_model);
-  const m={};
-  lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg)m[eg]=(m[eg]||0)+li.amount;});
-  const entries=Object.entries(m);
-  if(!entries.length)return engGroup(d.eng_model);
-  return entries.sort((a,b)=>b[1]-a[1])[0][0];
-}
-function resolvedEngGroup(d){
+
+// ── Recurring amount for a deal — exact replica of Revenue Pulse engTypesLi() Recurring logic ──
+// 1. Sum line items whose name prefix classifies as Recurring
+// 2. If LIs exist but none classify → fall back to engGroup(d.eng_model) with d.amount
+// 3. If no LIs at all → fall back to engGroup(d.eng_model) with d.amount
+// 4. ON-prefix deals → always P2P, return 0
+function recurringAmount(d){
   // Rule 1: ON-prefix → always P2P
-  const name=(d.name||"").trim();
-  if(/^ON[-\s]/i.test(name))return"P2P";
-  // Rule 2: INV deals → line-item majority
-  return engGroupFromLi(d);
+  if(/^ON[-\s]/i.test((d.name||"").trim()))return 0;
+  const lis=dealServiceMap[d.id]||[];
+  if(lis.length){
+    let recurringSum=0,classified=false;
+    lis.forEach(li=>{
+      const eg=engGroupFromLiName(li.name);
+      if(eg){
+        classified=true;
+        if(eg==="Recurring")recurringSum+=li.amount;
+      }
+    });
+    if(classified)return recurringSum;
+    // LIs exist but none classified by name → fall back to deal eng_model
+    return engGroup(d.eng_model)==="Recurring"?d.amount:0;
+  }
+  // No LIs — fall back to deal eng_model
+  return engGroup(d.eng_model)==="Recurring"?d.amount:0;
 }
 
 // ── Status classification ──
@@ -711,9 +721,16 @@ async function doSync(force=false){
     lastMonthDeals=allDeals.filter(d=>d.month===lastMStr);
     thisMonthDeals=allDeals.filter(d=>d.month===thisMStr);
 
-    // ── Filter to Recurring only ──
-    lastRecurring=lastMonthDeals.filter(d=>resolvedEngGroup(d)==="Recurring"&&d.billing_id&&d.amount>0);
-    thisRecurring=thisMonthDeals.filter(d=>resolvedEngGroup(d)==="Recurring"&&d.billing_id&&d.amount>0);
+    // ── Filter to Recurring only — amount = recurring portion of line items (Revenue Pulse canonical) ──
+    lastRecurring=lastMonthDeals.map(d=>{
+      const ra=recurringAmount(d);
+      return ra>0?{...d,amount:ra}:null;
+    }).filter(Boolean).filter(d=>d.billing_id);
+
+    thisRecurring=thisMonthDeals.map(d=>{
+      const ra=recurringAmount(d);
+      return ra>0?{...d,amount:ra}:null;
+    }).filter(Boolean).filter(d=>d.billing_id);
 
     console.log(`[BookWatch] Last month recurring: ${lastRecurring.length} deals, $${lastRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
     console.log(`[BookWatch] This month recurring: ${thisRecurring.length} deals, $${thisRecurring.reduce((s,d)=>s+d.amount,0).toFixed(2)}`);
