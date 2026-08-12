@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Watch · Mavlers</title>
+<title>Book Watch · Project Nexus · Mavlers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,11 +13,11 @@
 html{overflow-x:hidden}
 body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
 
-/* ── Login (verbatim from portfolio.html) ── */
+/* ── Login (verbatim from index.html) ── */
 .login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
 .login-logo{margin-bottom:22px}
-.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
 .login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
@@ -26,14 +26,16 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-btn:hover{background:#FFE870}
 .login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
 .login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
-.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
 
-/* ── Header (verbatim from portfolio.html) ── */
+/* ── Header (verbatim from index.html) ── */
 .hdr{background:#473400}
 .hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-brand svg{transition:opacity .2s}
+.hdr-brand:hover svg{opacity:.85}
 .hdr-eyebrow{margin-bottom:4px}
 .hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
 .hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
@@ -43,13 +45,15 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
+.reset-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.reset-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#fff}
 .refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
-.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
+.refresh-btn:disabled,.reset-btn:disabled{opacity:.35;cursor:not-allowed}
 
-/* ── Nav tabs (verbatim from index.html) ── */
+/* ── Nav Tabs (verbatim from index.html) ── */
 .nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
-.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;align-items:stretch}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;gap:0}
 .nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
 .nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
 .nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
@@ -59,18 +63,20 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Filter bar (verbatim from index.html) ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
 .fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:155px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
 .fsel.sm{max-width:120px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+
+/* ── Multi-select (verbatim from index.html) ── */
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
 .ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
 .ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
-.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:210px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:320px;overflow-y:auto}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:230px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:360px;overflow-y:auto}
 .ms-dropdown.open{display:block}
 .ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
 .ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
@@ -78,31 +84,57 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
 .ms-act:hover{opacity:.7}
 .ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
-.ms-item:hover{background:rgba(255,255,255,.05)}
-.ms-item input[type=checkbox]{accent-color:#FFDA30;width:12px;height:12px;cursor:pointer}
-.ms-item-lbl{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);user-select:none}
+.ms-item:hover{background:rgba(255,255,255,.07)}
+.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
+.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
 
-/* ── Main ── */
-.main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
-.err-bar{background:#FFF0F0;border:1px solid #EF2D56;border-radius:8px;padding:10px 16px;font-size:11px;font-weight:600;color:#C0143C;margin-bottom:16px;display:none}
+/* ── Sidebar (verbatim from index.html) ── */
+.app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 200px)}
+.sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
+.sb-section{margin-bottom:0}
+.sb-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:5px}
+.sb-sel{width:100%;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:none}
+.sb-sel:hover,.sb-sel:focus{border-color:#FFDA30;background:#FFFBEA}
+.sb-sel option{background:#fff;color:#434343}
+.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
+.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
+.nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
+.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
+.nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
+.sidebar .ms-dropdown{min-width:100%}
+.sidebar .ms-btn{background:#F7F7F7;border:1px solid #E2E2E2;color:#434343}
+.sidebar .ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.sidebar .ms-dropdown{background:#fff;border:1px solid #E2E2E2}
+.sidebar .ms-item:hover{background:#FFFBEA}
+.sidebar .ms-item label{color:#434343}
+.sidebar .ms-ctrl-lbl{color:#9A9A9A}
+.sidebar .ms-act{color:#006E5E}
+.sidebar .ms-arrow{color:#9A9A9A}
+
+/* ── Main content area ── */
+.main{flex:1;min-width:0;padding:18px 28px 48px}
+.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px;margin-top:24px}
+.sec-bar{flex:1;height:1px;background:rgba(67,67,67,.1)}
+
+/* ── Error ── */
+.err-wrap{max-width:1540px;margin:0 auto;padding:8px 28px 0}
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500;margin-bottom:12px}
+.err-bar strong{color:#FFDA30}
 .err-bar.show{display:block}
 
-/* ── Loading ── */
-.lo{display:none;position:fixed;inset:0;background:rgba(242,254,220,.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+/* ── Spinner (verbatim from index.html) ── */
+.lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
 .lo.show{display:flex}
-.spin{width:36px;height:36px;border:3px solid rgba(255,218,48,.25);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
-.lo-lbl{font-size:10px;font-weight:700;color:#696969;letter-spacing:.08em;text-transform:uppercase}
+.spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Section header ── */
-.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#434343;margin-bottom:14px;margin-top:32px}
-.sec-bar{flex:1;height:1px;background:rgba(67,67,67,.12)}
-
 /* ── KPI strip ── */
-.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-.kpi{background:#fff;border-radius:10px;padding:18px 20px;border-top:3px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
-.kpi-val{font-size:clamp(24px,2vw,34px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:#fff;border-radius:10px;padding:18px 20px;border-top:3px solid #E2E2E2;border:1px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:all .2s;cursor:default}
+.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
+.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;font-weight:700}
+.kpi-val{font-size:clamp(20px,2vw,30px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
 .kpi-sub{font-size:10px;color:#696969;font-weight:600}
 .kpi.k-baseline{border-top-color:#3B3561}
 .kpi.k-recovered{border-top-color:#0CCE6B}
@@ -111,7 +143,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Head summary cards ── */
 .head-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:8px}
-.head-card{background:#fff;border-radius:10px;padding:20px;border-top:3px solid #FFDA30;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.head-card{background:#fff;border-radius:10px;padding:20px;border-top:3px solid #FFDA30;border:1px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .head-card-name{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
 .head-card-bu{display:inline-block;font-size:8px;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
 .bu-digital{background:#F0F8F5;color:#006E5E}
@@ -133,7 +165,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Owner drilldown ── */
 .owner-section{margin-bottom:6px}
-.owner-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-radius:10px;border-top:3px solid #FFDA30;border-bottom:1px solid #F0F0F0;cursor:pointer;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.owner-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-radius:10px;border-top:3px solid #FFDA30;border:1px solid #E2E2E2;border-bottom:1px solid #F0F0F0;cursor:pointer;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .owner-hdr.collapsed{border-radius:10px;margin-bottom:6px}
 .owner-hdr-left{display:flex;align-items:center;gap:10px}
 .owner-name{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em}
@@ -163,15 +195,39 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .pill-atrisk{background:#FEECEE;color:#C0143C}
 .gap-val{color:#EF2D56;font-weight:800}
 .gain-val{color:#006E5E;font-weight:800}
-.empty-state{padding:24px;text-align:center;font-size:10px;font-weight:600;color:#9A9A9A}
+.empty-state{padding:32px 20px;text-align:center;font-size:10px;font-weight:600;color:#9A9A9A}
 
-@media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.kpi-strip{grid-template-columns:1fr}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
+/* ── Footer (verbatim from index.html) ── */
+.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+
+/* ── Responsive (verbatim from index.html) ── */
+@media(max-width:900px){
+  .hdr-in{padding:14px 18px 0}
+  .fbar{padding:10px 18px}
+  .main{padding:16px 18px 40px}
+  .app-layout{flex-direction:column}
+  .sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static;max-height:none;align-items:flex-end}
+  .sb-section{flex:1;min-width:120px}
+  .sb-divider{display:none}
+  .kpi-strip{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .hdr-top{flex-direction:column}
+  .hdr-right{justify-content:flex-start}
+  .hdr-title{font-size:17px}
+  .fbar-in{gap:6px}
+  .fsel{max-width:130px;font-size:9px}
+  .login-box{padding:28px 24px;margin:16px}
+  .kpi-strip{grid-template-columns:1fr}
+}
+@media(max-width:400px){
+  .kpi-strip{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN (verbatim from portfolio.html) ══ -->
+<!-- ══ LOGIN (verbatim from index.html) ══ -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
     <div class="login-logo">
@@ -191,11 +247,11 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <div class="lo" id="lo"><div class="spin"></div></div>
 
-<!-- ══ HEADER (verbatim from portfolio.html) ══ -->
+<!-- ══ HEADER (verbatim from index.html) ══ -->
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
-      <a class="hdr-brand" onclick="location.reload()" title="Reload Book Watch" role="button">
+      <a class="hdr-brand" href="/" title="Revenue Pulse">
         <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
@@ -209,39 +265,53 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         </svg>
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
-          <div class="hdr-title" id="hdr-title">Project Nexus</div>
-          <div class="hdr-sub" id="hdr-sub">The Live Pulse of Mavlers Revenue</div>
+          <div class="hdr-title">Project Nexus</div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
       </a>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#696969"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
       </div>
     </div>
   </div>
-  <!-- ── SCREEN NAVIGATION (verbatim from index.html) ── -->
+
+  <!-- ── NAV TABS (verbatim from index.html, Book Watch active) ── -->
   <div class="nav-tabs-bar">
     <div class="nav-in">
-      <a class="nav-tab nav-tab-ext active-ext" href="/">Revenue Pulse</a>
+      <a class="nav-tab nav-tab-ext" href="/">Revenue Pulse</a>
       <a class="nav-tab nav-tab-ext" href="/funnel" target="_blank">Funnel Desk ↗</a>
       <a class="nav-tab nav-tab-ext" href="/portfolio" target="_blank">Portfolio Health ↗</a>
       <a class="nav-tab nav-tab-ext" style="color:#FFDA30;border-bottom:2px solid #FFDA30" href="/recurring">Book Watch</a>
     </div>
   </div>
-  <!-- ══ FILTER BAR ══ -->
+
+  <!-- ── HORIZONTAL FILTER BAR (verbatim from index.html) ── -->
   <div class="fbar">
     <div class="fbar-in">
-      <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Book Watch</span>
-      <div class="vdiv"></div>
       <span class="fl">Business Unit</span>
       <select class="fsel sm" id="bw-bu-sel" onchange="reRender()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
         <option value="MarTech">MarTech</option>
       </select>
+      <div class="vdiv"></div>
+      <span class="fl">Region</span>
+      <div class="ms-wrap" id="bw-geo-wrap">
+        <div class="ms-btn" id="bw-geo-btn" onclick="toggleGeoDrop(event)">
+          <span id="bw-geo-label">All Regions</span><span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="bw-geo-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Regions</span>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllGeo()">All</span><span class="ms-act" onclick="deselectAllGeo()">None</span></div>
+          </div>
+          <div id="bw-geo-list"></div>
+        </div>
+      </div>
       <div class="vdiv"></div>
       <span class="fl">Head</span>
       <div class="ms-wrap" id="bw-head-wrap">
@@ -256,70 +326,102 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <div id="bw-head-list"></div>
         </div>
       </div>
-      <div class="vdiv"></div>
-      <span class="fl">Owner</span>
-      <div class="ms-wrap" id="bw-owner-wrap">
-        <div class="ms-btn" id="bw-owner-btn" onclick="toggleOwnerDrop(event)">
-          <span id="bw-owner-label">All Owners</span><span class="ms-arrow">▼</span>
-        </div>
-        <div class="ms-dropdown" id="bw-owner-dropdown">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Owners</span>
-            <div class="ms-actions"><span class="ms-act" onclick="selectAllOwners()">All</span><span class="ms-act" onclick="deselectAllOwners()">None</span></div>
-          </div>
-          <div id="bw-owner-list"></div>
-        </div>
-      </div>
     </div>
   </div>
   <div class="yellow-rule"></div>
 </div>
 
-<!-- ══ MAIN ══ -->
-<div class="main">
-  <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
+<!-- ══ APP LAYOUT: Sidebar + Main (verbatim from index.html) ══ -->
+<div class="app-layout">
 
-  <div id="bw-content" style="display:none">
-
-    <!-- KPI Strip -->
-    <div class="kpi-strip">
-      <div class="kpi k-baseline">
-        <div class="kpi-lbl">Last Month Recurring</div>
-        <div class="kpi-val" id="k-baseline">—</div>
-        <div class="kpi-sub" id="k-baseline-sub">Total recurring booked</div>
-      </div>
-      <div class="kpi k-recovered">
-        <div class="kpi-lbl">Recovered This Month</div>
-        <div class="kpi-val" id="k-recovered">—</div>
-        <div class="kpi-sub" id="k-recovered-sub">Matched &amp; closed so far</div>
-      </div>
-      <div class="kpi k-gap">
-        <div class="kpi-lbl">Gap</div>
-        <div class="kpi-val" id="k-gap">—</div>
-        <div class="kpi-sub" id="k-gap-sub">Unrecovered recurring</div>
-      </div>
-      <div class="kpi k-rate">
-        <div class="kpi-lbl">Recovery Rate</div>
-        <div class="kpi-val" id="k-rate">—</div>
-        <div class="kpi-sub" id="k-rate-sub">Recovered ÷ last month</div>
+  <!-- ── SIDEBAR (verbatim from index.html) ── -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <div class="ms-wrap" style="width:100%">
+        <div class="ms-btn sb-ms-btn" id="sb-owner-btn" onclick="toggleOwnerDrop(event)">
+          <span id="sb-owner-label">All Owners</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="bw-owner-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Deal Owners</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllOwners()">All</span>
+              <span class="ms-act" onclick="deselectAllOwners()">None</span>
+            </div>
+          </div>
+          <div id="bw-owner-list"></div>
+        </div>
       </div>
     </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Status</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="nbd-toggle active" id="st-retained" onclick="toggleStatus('retained')" style="flex:1;min-width:52px">Retained</button>
+        <button class="nbd-toggle active" id="st-partial"  onclick="toggleStatus('partial')"  style="flex:1;min-width:52px">Partial</button>
+        <button class="nbd-toggle active" id="st-pending"  onclick="toggleStatus('pending')"  style="flex:1;min-width:52px">Pending</button>
+        <button class="nbd-toggle active" id="st-atrisk"   onclick="toggleStatus('atrisk')"   style="flex:1;min-width:52px">At Risk</button>
+      </div>
+    </div>
+  </aside>
 
-    <!-- Head Summary -->
-    <div class="sec">Head Summary <div class="sec-bar"></div></div>
-    <div class="head-grid" id="head-grid"></div>
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
 
-    <!-- Owner Drilldown -->
-    <div class="sec" style="margin-top:28px">Owner Drill-Down <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span><div class="sec-bar"></div></div>
-    <div id="owner-drill"></div>
+    <div id="bw-content" style="display:none">
 
-  </div>
-</div>
+      <!-- KPI Strip -->
+      <div class="sec" style="margin-top:0">Key Metrics <div class="sec-bar"></div></div>
+      <div class="kpi-strip">
+        <div class="kpi k-baseline">
+          <div class="kpi-lbl">Last Month Recurring</div>
+          <div class="kpi-val" id="k-baseline">—</div>
+          <div class="kpi-sub" id="k-baseline-sub">Total recurring booked</div>
+        </div>
+        <div class="kpi k-recovered">
+          <div class="kpi-lbl">Recovered This Month</div>
+          <div class="kpi-val" id="k-recovered">—</div>
+          <div class="kpi-sub" id="k-recovered-sub">Matched &amp; closed so far</div>
+        </div>
+        <div class="kpi k-gap">
+          <div class="kpi-lbl">Gap</div>
+          <div class="kpi-val" id="k-gap">—</div>
+          <div class="kpi-sub" id="k-gap-sub">Unrecovered recurring</div>
+        </div>
+        <div class="kpi k-rate">
+          <div class="kpi-lbl">Recovery Rate</div>
+          <div class="kpi-val" id="k-rate">—</div>
+          <div class="kpi-sub" id="k-rate-sub">Recovered ÷ last month</div>
+        </div>
+      </div>
+
+      <!-- Head Summary -->
+      <div class="sec">Head Summary <div class="sec-bar"></div></div>
+      <div class="head-grid" id="head-grid"></div>
+
+      <!-- Owner Drilldown -->
+      <div class="sec" style="margin-top:28px">
+        Owner Drill-Down
+        <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span>
+        <div class="sec-bar"></div>
+      </div>
+      <div id="owner-drill"></div>
+
+    </div><!-- /bw-content -->
+
+    <!-- Footer (verbatim from index.html) -->
+    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  </div><!-- /main -->
+
+</div><!-- /app-layout -->
 
 <script>
 // ══════════════════════════════════════════════════════
 // BOOK WATCH — Recurring Revenue Retention
-// Auth/SSO: verbatim from portfolio.html
+// Auth/SSO: verbatim from index.html
 // Attribution: verbatim from index.html (registry-first)
 // Recurring amount: verbatim from index.html engTypesLi() Recurring logic
 // Matching key: zoho_billing_id (contact_name || zoho_billing_id — canonical Revenue Pulse order)
@@ -396,6 +498,7 @@ const OWNER_GEO={
   "82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"
 };
 const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+
 const OWNER_BU_MAP=(()=>{
   const m={};
   OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
@@ -432,6 +535,8 @@ const HEADS_DISPLAY=[
 ];
 const ALL_HEAD_KEYS=HEADS_DISPLAY.map(h=>h.key);
 const ALL_OWNER_IDS=ORDERED_OWNERS.map(o=>o.id);
+const ALL_GEOS=["US","UK","AU"];
+const ALL_STATUSES=["retained","partial","pending","atrisk"];
 
 const PIPELINE="115832232",STAGE="205348626";
 const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
@@ -444,10 +549,13 @@ let matchedDeals=[];
 let isSyncing=false;
 let activeHeads=new Set(ALL_HEAD_KEYS);
 let activeOwners=new Set(ALL_OWNER_IDS);
+let activeGeos=new Set(ALL_GEOS);
+let activeStatuses=new Set(ALL_STATUSES);
 let headDropOpen=false;
 let ownerDropOpen=false;
+let geoDropOpen=false;
 
-// ── Helpers (verbatim from portfolio.html) ──
+// ── Helpers ──
 const $=id=>document.getElementById(id);
 function fmtDate(d){
   if(!d)return"";
@@ -461,7 +569,7 @@ function bookingMonthStr(d){return`${MFULL[d.getMonth()]}-${d.getFullYear()}`;}
 function lastMonthDate(){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);return d;}
 function getAuthKey(head){return head?`nexus_auth_${head}`:"nexus_auth";}
 
-// ── Auth (verbatim from portfolio.html) ──
+// ── Auth (verbatim from index.html) ──
 async function doLogin(){
   const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
   if(!pw){err.textContent="Please enter the access password.";return;}
@@ -543,11 +651,7 @@ function engGroupFromLiName(name){
   return null;
 }
 
-// ── Recurring amount — verbatim replica of index.html engTypesLi() Recurring logic ──
-// 1. ON-prefix → always P2P → return 0
-// 2. Sum line items whose name classifies as Recurring
-// 3. If LIs exist but none classify → fall back to engGroup(d.eng_model) with d.amount
-// 4. If no LIs → fall back to engGroup(d.eng_model) with d.amount
+// ── Recurring amount (verbatim from index.html engTypesLi() Recurring logic) ──
 function recurringAmount(d){
   if(/^ON[-\s]/i.test((d.name||"").trim()))return 0;
   const lis=dealServiceMap[d.id]||[];
@@ -594,7 +698,6 @@ async function doSync(force=false){
     const lastMStr=bookingMonthStr(lastM);
     const thisMStr=bookingMonthStr(now);
 
-    // ── Fetch both months in one pass with IN — verbatim from index.html doFYSync ──
     const filters=[
       {propertyName:"pipeline",  operator:"EQ", value:PIPELINE},
       {propertyName:"dealstage", operator:"EQ", value:STAGE},
@@ -623,7 +726,6 @@ async function doSync(force=false){
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        // Normalise month to lowercase — HubSpot may return "July-2026" (capital J)
         const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
         const month=(()=>{
           if(bm)return bm;
@@ -683,7 +785,7 @@ async function doSync(force=false){
     const lastMonthDeals=allDeals.filter(d=>d.month===lastMStr);
     const thisMonthDeals=allDeals.filter(d=>d.month===thisMStr);
 
-    // ── Filter to Recurring — amount = recurring portion (verbatim engTypesLi logic) ──
+    // ── Filter to Recurring ──
     lastRecurring=lastMonthDeals.map(d=>{
       const ra=recurringAmount(d);
       return ra>0?{...d,amount:ra}:null;
@@ -708,7 +810,7 @@ async function doSync(force=false){
     // ── Classify ──
     matchedDeals=lastRecurring.map(d=>({...d,...classifyDeal(d,thisMap,now)}));
 
-    // ── Update header (verbatim from portfolio.html sync state) ──
+    // ── Update header ──
     $("sdot").style.background="#0CCE6B";
     $("stxt").textContent=`LIVE · ${lastRecurring.length} RECURRING DEALS`;
     $("last-sync").textContent=`Synced ${fmtDate(now)} · ${now.toLocaleTimeString()}`;
@@ -729,23 +831,37 @@ async function doSync(force=false){
   isSyncing=false;
 }
 
-// ── Filters ──
+// ── Build filters ──
 function buildFilters(){
+  // Heads (horizontal)
   activeHeads=new Set(ALL_HEAD_KEYS);
   const hList=$("bw-head-list");hList.innerHTML="";
   HEADS_DISPLAY.forEach(h=>{
     const item=document.createElement("div");item.className="ms-item";
-    item.innerHTML=`<input type="checkbox" id="hchk-${h.id}" checked onchange="onHeadChk()"><label class="ms-item-lbl" for="hchk-${h.id}">${h.name}</label>`;
+    item.innerHTML=`<input type="checkbox" id="hchk-${h.id}" checked onchange="onHeadChk()"><label for="hchk-${h.id}">${h.name}</label>`;
     hList.appendChild(item);
   });
+
+  // Geo (horizontal)
+  activeGeos=new Set(ALL_GEOS);
+  const gList=$("bw-geo-list");gList.innerHTML="";
+  ALL_GEOS.forEach(g=>{
+    const item=document.createElement("div");item.className="ms-item";
+    item.innerHTML=`<input type="checkbox" id="gchk-${g}" checked onchange="onGeoChk()"><label for="gchk-${g}">${g}</label>`;
+    gList.appendChild(item);
+  });
+
+  // Owners (sidebar)
   activeOwners=new Set(ALL_OWNER_IDS);
   const oList=$("bw-owner-list");oList.innerHTML="";
   ORDERED_OWNERS.forEach(o=>{
     const item=document.createElement("div");item.className="ms-item";
-    item.innerHTML=`<input type="checkbox" id="ochk-${o.id}" checked onchange="onOwnerChk()"><label class="ms-item-lbl" for="ochk-${o.id}">${o.name}</label>`;
+    item.innerHTML=`<input type="checkbox" id="ochk-${o.id}" checked onchange="onOwnerChk()"><label for="ochk-${o.id}">${o.name}</label>`;
     oList.appendChild(item);
   });
 }
+
+// ── Filter change handlers ──
 function onHeadChk(){
   activeHeads=new Set();
   HEADS_DISPLAY.forEach(h=>{const el=document.getElementById("hchk-"+h.id);if(el?.checked)activeHeads.add(h.key);});
@@ -753,20 +869,47 @@ function onHeadChk(){
   lbl.textContent=activeHeads.size===ALL_HEAD_KEYS.length?"All Heads":activeHeads.size===0?"None":activeHeads.size+" Heads";
   reRender();
 }
+function onGeoChk(){
+  activeGeos=new Set();
+  ALL_GEOS.forEach(g=>{const el=document.getElementById("gchk-"+g);if(el?.checked)activeGeos.add(g);});
+  const lbl=$("bw-geo-label");
+  lbl.textContent=activeGeos.size===ALL_GEOS.length?"All Regions":activeGeos.size===0?"None":activeGeos.size+" Regions";
+  reRender();
+}
 function onOwnerChk(){
   activeOwners=new Set();
   ORDERED_OWNERS.forEach(o=>{const el=document.getElementById("ochk-"+o.id);if(el?.checked)activeOwners.add(o.id);});
-  const lbl=$("bw-owner-label");
+  const lbl=$("sb-owner-label");
   lbl.textContent=activeOwners.size===ALL_OWNER_IDS.length?"All Owners":activeOwners.size===0?"None":activeOwners.size+" Selected";
   reRender();
 }
+
+// ── Select / deselect all ──
 function selectAllHeads(){HEADS_DISPLAY.forEach(h=>{const el=document.getElementById("hchk-"+h.id);if(el)el.checked=true;});onHeadChk();}
 function deselectAllHeads(){HEADS_DISPLAY.forEach(h=>{const el=document.getElementById("hchk-"+h.id);if(el)el.checked=false;});onHeadChk();}
+function selectAllGeo(){ALL_GEOS.forEach(g=>{const el=document.getElementById("gchk-"+g);if(el)el.checked=true;});onGeoChk();}
+function deselectAllGeo(){ALL_GEOS.forEach(g=>{const el=document.getElementById("gchk-"+g);if(el)el.checked=false;});onGeoChk();}
 function selectAllOwners(){ORDERED_OWNERS.forEach(o=>{const el=document.getElementById("ochk-"+o.id);if(el)el.checked=true;});onOwnerChk();}
 function deselectAllOwners(){ORDERED_OWNERS.forEach(o=>{const el=document.getElementById("ochk-"+o.id);if(el)el.checked=false;});onOwnerChk();}
-function toggleHeadDrop(e){e.stopPropagation();headDropOpen=!headDropOpen;$("bw-head-dropdown").classList.toggle("open",headDropOpen);if(headDropOpen){ownerDropOpen=false;$("bw-owner-dropdown").classList.remove("open");}}
-function toggleOwnerDrop(e){e.stopPropagation();ownerDropOpen=!ownerDropOpen;$("bw-owner-dropdown").classList.toggle("open",ownerDropOpen);if(ownerDropOpen){headDropOpen=false;$("bw-head-dropdown").classList.remove("open");}}
-document.addEventListener("click",()=>{headDropOpen=false;ownerDropOpen=false;$("bw-head-dropdown")?.classList.remove("open");$("bw-owner-dropdown")?.classList.remove("open");});
+
+// ── Status toggle (sidebar) ──
+function toggleStatus(s){
+  if(activeStatuses.has(s)){if(activeStatuses.size===1)return;activeStatuses.delete(s);}
+  else{activeStatuses.add(s);}
+  $("st-"+s).classList.toggle("active",activeStatuses.has(s));
+  reRender();
+}
+
+// ── Dropdown toggles ──
+function toggleHeadDrop(e){e.stopPropagation();headDropOpen=!headDropOpen;$("bw-head-dropdown").classList.toggle("open",headDropOpen);if(headDropOpen){ownerDropOpen=false;geoDropOpen=false;$("bw-owner-dropdown").classList.remove("open");$("bw-geo-dropdown").classList.remove("open");}}
+function toggleOwnerDrop(e){e.stopPropagation();ownerDropOpen=!ownerDropOpen;$("bw-owner-dropdown").classList.toggle("open",ownerDropOpen);if(ownerDropOpen){headDropOpen=false;geoDropOpen=false;$("bw-head-dropdown").classList.remove("open");$("bw-geo-dropdown").classList.remove("open");}}
+function toggleGeoDrop(e){e.stopPropagation();geoDropOpen=!geoDropOpen;$("bw-geo-dropdown").classList.toggle("open",geoDropOpen);if(geoDropOpen){headDropOpen=false;ownerDropOpen=false;$("bw-head-dropdown").classList.remove("open");$("bw-owner-dropdown").classList.remove("open");}}
+document.addEventListener("click",()=>{
+  headDropOpen=false;ownerDropOpen=false;geoDropOpen=false;
+  $("bw-head-dropdown")?.classList.remove("open");
+  $("bw-owner-dropdown")?.classList.remove("open");
+  $("bw-geo-dropdown")?.classList.remove("open");
+});
 
 // ── Filtered view ──
 function filteredDeals(){
@@ -774,7 +917,9 @@ function filteredDeals(){
   return matchedDeals.filter(d=>{
     if(bu&&d.bu!==bu)return false;
     if(activeHeads.size<ALL_HEAD_KEYS.length&&d.head&&!activeHeads.has(d.head))return false;
+    if(activeGeos.size<ALL_GEOS.length&&d.region&&!activeGeos.has(d.region))return false;
     if(activeOwners.size<ALL_OWNER_IDS.length&&!activeOwners.has(String(d.owner_id)))return false;
+    if(!activeStatuses.has(d.status))return false;
     return true;
   });
 }
@@ -892,7 +1037,7 @@ function toggleOwnerSection(rowId){
   if(arr)arr.style.transform=isOpen?"":"rotate(90deg)";
 }
 
-// ── Boot (verbatim from portfolio.html) ──
+// ── Boot ──
 window.addEventListener("DOMContentLoaded",function(){
   const authed=checkSSO();
   if(authed)doSync(true);
