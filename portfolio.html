@@ -52,7 +52,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Filter bar (mirrors Nexus) ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
 .fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap}
 .fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
@@ -80,7 +80,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase}
 
 /* ── Inter BU toggle ── */
-.interbu-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.interbu-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .interbu-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
 .interbu-btn.active{background:rgba(59,53,97,.85);border-color:#3B3561;color:#FFDA30}
 
@@ -97,9 +97,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}
 .kpi{background:#fff;border-radius:12px;padding:20px 20px 16px;border:1px solid #E2E2E2;border-top:4px solid #FFDA30;transition:all .2s;position:relative}
 .kpi:hover{box-shadow:0 6px 24px rgba(67,67,67,.13);transform:translateY(-2px)}
-.kpi-lbl{font-size:9px;color:#9A9A9A;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
+.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
 .kpi-val{font-size:clamp(26px,2.2vw,36px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
-.kpi-sub{font-size:10px;color:#9A9A9A;font-weight:500}
+.kpi-sub{font-size:10px;color:#696969;font-weight:600}
 .kpi.k-active{border-top-color:#006E5E}
 .kpi.k-silent{border-top-color:#FFDA30}
 .kpi.k-inactive{border-top-color:#EF2D56}
@@ -109,7 +109,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 @media(max-width:580px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
 
 /* ── Section labels — left accent bar + breathing room ── */
-.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#696969;margin-bottom:14px;margin-top:36px}
+.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#434343;margin-bottom:14px;margin-top:36px}
 .sec::before{content:'';display:block;width:3px;height:14px;border-radius:2px;background:#FFDA30;flex-shrink:0}
 .sec.first{margin-top:0}
 
@@ -166,7 +166,7 @@ tbody td.num{text-align:right;font-weight:700}
 
 /* ── Legend ── */
 .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#696969;text-transform:uppercase;letter-spacing:.06em}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:#434343;text-transform:uppercase;letter-spacing:.06em}
 .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
 
@@ -194,7 +194,7 @@ tbody td.num{text-align:right;font-weight:700}
 .donut-seg-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
 .donut-seg-lbl{font-size:10px;font-weight:600;color:#696969}
 .donut-seg-cnt{font-size:10px;font-weight:800;color:#434343;text-align:right}
-.donut-seg-pct{font-size:9px;font-weight:500;color:#9A9A9A;text-align:right;min-width:36px}
+.donut-seg-pct{font-size:9px;font-weight:600;color:#9A9A9A;text-align:right;min-width:36px}
 .donut-arc-group{cursor:pointer}
 @media(max-width:1000px){.donut-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.donut-grid{grid-template-columns:1fr}}
@@ -204,8 +204,8 @@ tbody td.num{text-align:right;font-weight:700}
 .radar-left{display:flex;align-items:center;gap:14px}
 .radar-icon{font-size:22px;flex-shrink:0}
 .radar-count{font-size:32px;font-weight:800;color:#A07A00;line-height:1}
-.radar-lbl{font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
-.radar-sub{font-size:10px;font-weight:500;color:#696969;margin-top:3px}
+.radar-lbl{font-size:9px;font-weight:700;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+.radar-sub{font-size:10px;font-weight:600;color:#696969;margin-top:3px}
 .radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
 .radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
 .radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
@@ -336,7 +336,7 @@ tbody td.num{text-align:right;font-weight:700}
   <!-- ══ FILTER BAR ══ -->
   <div class="fbar">
     <div class="fbar-in">
-      <span class="fl" style="color:rgba(255,255,255,.35);font-size:10px;font-weight:700;letter-spacing:.02em">Portfolio Health</span>
+      <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Portfolio Health</span>
       <div class="vdiv"></div>
       <!-- BU -->
       <span class="fl">BU</span>
@@ -345,6 +345,7 @@ tbody td.num{text-align:right;font-weight:700}
         <option value="Digital">Digital</option>
         <option value="MarTech">MarTech</option>
       </select>
+      <button class="interbu-btn" id="interbu-btn" onclick="toggleInterBU()">Inter BU</button>
       <div class="vdiv"></div>
       <!-- Region -->
       <span class="fl">Region</span>
@@ -374,9 +375,6 @@ tbody td.num{text-align:right;font-weight:700}
         </div>
       </div>
       <div class="vdiv"></div>
-      <!-- Inter BU -->
-      <div class="vdiv"></div>
-      <button class="interbu-btn" id="interbu-btn" onclick="toggleInterBU()">Inter BU</button>
       <div class="vdiv"></div>
       <!-- Owner -->
       <span class="fl">Owner</span>
@@ -444,13 +442,13 @@ tbody td.num{text-align:right;font-weight:700}
   </div>
 
   <!-- ══ PORTFOLIO HEALTH DONUT ══ -->
-  <div class="sec first">Portfolio Health Distribution <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· client status split · health score per head</span></div>
+  <div class="sec first">Portfolio Health Distribution <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· client status split · health score per head</span></div>
   <div class="donut-grid" id="donut-grid">
     <div class="donut-card" style="opacity:.4"><div class="donut-head-lbl">Loading...</div></div>
   </div>
 
   <!-- ══ AT-RISK RADAR ══ -->
-  <div class="sec" style="margin-top:24px">At-Risk Radar <span style="font-weight:500;color:#C0C0C0;font-size:8px;letter-spacing:.04em;text-transform:none">· Active clients approaching Silent in ≤30 days</span></div>
+  <div class="sec" style="margin-top:24px">At-Risk Radar <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· Active clients approaching Silent in ≤30 days</span></div>
   <div class="radar-banner" id="radar-banner">
     <div class="radar-left">
       <div class="radar-icon">⚠️</div>
