@@ -583,11 +583,17 @@ window.addEventListener('DOMContentLoaded', () => {
   // Read ?tab= param for clone linking — fall back to jiggyasa
   const tabParam = new URLSearchParams(location.search).get('tab');
   const bootTab  = HEADS.includes(tabParam) ? tabParam : 'jiggyasa';
-  // If scoped to a single tab, hide the other nav tabs
-  if(tabParam && HEADS.includes(tabParam)){
-    HEADS.forEach(h => { if(h !== bootTab){ const t=$('tab-'+h); if(t)t.style.display='none'; } });
-  }
-  switchTab(bootTab);
+  // Tab groups — define which tabs stay visible per entry point
+const TAB_GROUPS = {
+  jiggyasa : ['jiggyasa'],
+  tanuj_uk : ['tanuj_uk', 'tanuj_us'],  // Tanuj sees both UK and US
+  tanuj_us : ['tanuj_uk', 'tanuj_us'],
+};
+if(tabParam && HEADS.includes(tabParam)){
+  const visible = TAB_GROUPS[tabParam] || [tabParam];
+  HEADS.forEach(h => { const t=$('tab-'+h); if(t) t.style.display = visible.includes(h) ? '' : 'none'; });
+}
+switchTab(bootTab);
 });
 </script>
 </body>
