@@ -632,14 +632,14 @@ async function doLogin() {
   btn.disabled=true; btn.textContent='Verifying...'; err.textContent='';
   try {
     const params = new URLSearchParams(location.search);
-    const tab    = params.get('tab') || 'jiggyasa';
+    const tab    = params.get('tab') || null;  // null = master access, no tab scoping
     const res    = await fetch('/funnel-auth', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ password: pw, tab })
     });
     const data = await res.json();
     if(data.success){
-      const owner = TAB_OWNER[tab] || null;
+      const owner = tab ? (TAB_OWNER[tab] || null) : null;
       // Clear all other tokens — strict isolation
       ["nexus_auth","nexus_auth_jiggyasa","nexus_auth_jaydeep","nexus_auth_tanuj",
        "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu"].forEach(k=>{
@@ -709,22 +709,28 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Unknown tok — fall through to password gate
   }
 
-  // ── 2. Stored token: already authenticated in a previous session ──
-  // Strict isolation: only the exact owner token for this tab is valid.
-  // master token (nexus_auth) never unlocks a scoped funnel tab.
-  // null owner = no scoped tab = always require password (no localStorage bypass).
-  if(owner && hasToken(owner)){
+  // ── 2. Stored token check ──
+  // No ?tab= param → opened from master Nexus → master token unlocks, all tabs visible
+  // ?tab= param → scoped clone → only that owner's token unlocks, strict isolation
+  const isMasterAccess = !tabParam;
+  if(isMasterAccess && localStorage.getItem('nexus_auth') === '1'){
+    $('login-overlay').style.display='none';
+    bootApp();
+    return;
+  }
+  if(!isMasterAccess && owner && hasToken(owner)){
     $('login-overlay').style.display='none';
     bootApp();
     return;
   }
 
   // ── 3. No token, no stored auth — show password gate ──
-  // Personalise the eyebrow label
   const OWNER_LABELS = { jiggyasa:'Jiggyasa · AU', tanuj:'Tanuj · UK & US' };
   const eyebrow = $('login-eyebrow');
-  if(eyebrow && owner && OWNER_LABELS[owner])
-    eyebrow.textContent = `Mavlers · ${OWNER_LABELS[owner]}`;
+  if(eyebrow){
+    if(isMasterAccess) eyebrow.textContent = 'Mavlers · Sales-Ops';
+    else if(owner && OWNER_LABELS[owner]) eyebrow.textContent = `Mavlers · ${OWNER_LABELS[owner]}`;
+  }
 });
 </script>
 </body>
