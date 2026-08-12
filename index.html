@@ -2513,8 +2513,14 @@ async function doLogin(){
     const data=await res.json();
     if(data.success){
       document.getElementById("login-overlay").style.display="none";
+      // ── Strict token isolation: clear ALL other clone tokens before setting this one ──
+      // Prevents a stale token from a different clone/master granting unintended access.
+      ["nexus_auth","nexus_auth_jiggyasa","nexus_auth_jaydeep","nexus_auth_tanuj",
+       "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu"].forEach(k=>{
+        if(k!==(_cloneHead?`nexus_auth_${_cloneHead}`:"nexus_auth"))localStorage.removeItem(k);
+      });
       localStorage.setItem(_cloneHead?`nexus_auth_${_cloneHead}`:"nexus_auth","1");
-      doFYSync(true); // ← boot data fetch now that auth is confirmed
+      doFYSync(true);
     } else if(res.status===500||data.error){
       err.textContent="Server config error. Contact Mayur.";
       console.error("Auth error:",data.error||"unknown");
@@ -2674,15 +2680,16 @@ window.addEventListener("DOMContentLoaded",function(){
     const cr=$("custom-range");if(cr)cr.classList.remove("show");
     bootCloneMode(); // ← must run before doFYSync so filters are pre-set
 
-    // ── Auth gate — check localStorage before starting any API calls ──
+    // ── Auth gate — strict token isolation per clone ──
+    // Master token (nexus_auth) never unlocks a clone. Clone token never unlocks master or another clone.
     const _cloneHead=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
     const _authKey=_cloneHead?`nexus_auth_${_cloneHead}`:"nexus_auth";
-    if(localStorage.getItem(_authKey)==="1"){
-      // Already authenticated — hide overlay and boot immediately
+    const _isAuthed=localStorage.getItem(_authKey)==="1";
+    if(_isAuthed){
       const ov=$("login-overlay");if(ov)ov.style.display="none";
       doFYSync(true);
     }
-    // If not authenticated: overlay stays visible, doFYSync called by doLogin on success
+    // Not authenticated: overlay stays, doFYSync fired by doLogin on success
   }catch(e){
     console.error("Nexus boot error:",e);
     const st=$("stxt");if(st)st.textContent="BOOT ERROR · CHECK CONSOLE";
