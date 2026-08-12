@@ -2554,9 +2554,11 @@ function bootCloneMode(){
   // Pipeline Scout link → master /pipeline
   if(cfg.buClone){
     const portfolioLink=$("portfolio-link");
-    if(portfolioLink)portfolioLink.href=`/portfolio`;
+    if(portfolioLink)portfolioLink.href=`/portfolio?tok=1`;
     const pipelineLink=$("pipeline-link");
-    if(pipelineLink)pipelineLink.href=`/pipeline`;
+    if(pipelineLink)pipelineLink.href=`/pipeline?tok=1`;
+    const funnelLinkA=$("funnel-link");
+    if(funnelLinkA)funnelLinkA.href=`/funnel?tok=1`;
     // Lock BU filter to Digital, hide BU dropdown from filter bar
     const buSel=$("bu-sel");
     if(buSel){
@@ -2618,7 +2620,7 @@ function bootCloneMode(){
     return;
   }
 
-  // ── Portfolio Health + Pipeline Scout links carry ?head= param for head clones ──
+  // ── Portfolio Health + Pipeline Scout + Funnel Desk links carry ?head= param ──
   const portfolioLink=$("portfolio-link");
   if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}&tok=1`;
   const pipelineLink=$("pipeline-link");
@@ -2627,10 +2629,6 @@ function bootCloneMode(){
   const FUNNEL_TAB_MAP={jiggyasa:"jiggyasa",tanuj:"tanuj_uk",nevilson:null,jaydeep:null};
   const funnelLink=$("funnel-link");
   if(funnelLink){const ft=FUNNEL_TAB_MAP[param];if(ft===null)funnelLink.style.display="none";else if(ft)funnelLink.href=`/funnel?tab=${ft}&tok=${param}`;}
-  // Funnel Desk — open scoped to this head's tab (jaydeep/nevilson: no tab built yet)
-  const FUNNEL_TAB_MAP={jiggyasa:"jiggyasa",tanuj:"tanuj_uk",nevilson:null,jaydeep:null};
-  const funnelLink=$("funnel-link");
-  if(funnelLink){const ft=FUNNEL_TAB_MAP[param];if(ft===null)funnelLink.style.display="none";else if(ft)funnelLink.href=`/funnel?tab=${ft}`;}
 
   // ════ BRANCH C: Head clone — jiggyasa / jaydeep / tanuj / nevilson ════
 
