@@ -724,6 +724,7 @@ async function doLogin(){
     if(data.success){
       localStorage.setItem(getAuthKey(head),"1");
       $("login-overlay").style.display="none";
+      doSync(true);
     }else if(res.status===500||data.error){
       err.textContent="Server config error. Contact Mayur.";
     }else{
@@ -737,10 +738,30 @@ async function doLogin(){
 
 // Check SSO — called before showing overlay
 function checkSSO(){
-  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
-  // Accept master token OR head-specific token
-  if(localStorage.getItem("nexus_auth")==="1"||
-     (head&&localStorage.getItem(getAuthKey(head))==="1")){
+  const params=new URLSearchParams(location.search);
+  const head=( params.get("head")||"").toLowerCase().trim();
+  const tok=(params.get("tok")||"").toLowerCase().trim();
+
+  // ── Token carry-through from Revenue Pulse ──
+  // tok = clone key set by index.html (e.g. "tanuj", "jiggyasa")
+  // Valid only if tok matches the head param exactly — no cross-clone bypass
+  if(tok && head && tok===head){
+    localStorage.setItem(getAuthKey(head),"1");
+    // Clean tok from URL
+    const clean=new URL(location.href);
+    clean.searchParams.delete("tok");
+    history.replaceState(null,"",clean.toString());
+    $("login-overlay").style.display="none";
+    return true;
+  }
+
+  // ── Stored token check — strict: clone token only for clone, no master bypass ──
+  if(head&&localStorage.getItem(getAuthKey(head))==="1"){
+    $("login-overlay").style.display="none";
+    return true;
+  }
+  // Master (no head param): master token only
+  if(!head&&localStorage.getItem("nexus_auth")==="1"){
     $("login-overlay").style.display="none";
     return true;
   }
@@ -1480,10 +1501,11 @@ function reRender(){
 }
 window.addEventListener("DOMContentLoaded",function(){
   $("anchor-chip").textContent=ANCHOR_STR;
-  checkSSO();
-  initPortfolioFilters(); // ← init all filter dropdowns before clone mode
-  bootCloneMode();        // ← clone mode may lock/cascade filters
-  doSync(true);
+  const _authed=checkSSO();
+  initPortfolioFilters();
+  bootCloneMode();
+  if(_authed)doSync(true);
+  // Not authed: overlay stays, doSync fired by doLogin on success
 });
 </script>
 </body>
