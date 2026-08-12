@@ -174,9 +174,36 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
 /* ── Responsive ── */
 @media(max-width:900px){.hdr-in,.main{padding-left:18px;padding-right:18px}}
 @media(max-width:600px){.hdr-top{flex-direction:column}.hdr-title{font-size:17px}.nav-tab{padding:8px 12px;font-size:8.5px}}
+
+/* ── Login overlay (mirrors index.html) ── */
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
 </style>
 </head>
 <body>
+
+
+<!-- ════ LOGIN OVERLAY ════ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title">Funnel Desk</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">The Live Pulse of Mavlers Revenue</div>
+  </div>
+</div>
 
 <div class="lo" id="lo"><div class="spin"></div></div>
 
@@ -579,21 +606,117 @@ function mergeOwners(dOwners, iOwners) {
 // ════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  // Read ?tab= param for clone linking — fall back to jiggyasa
-  const tabParam = new URLSearchParams(location.search).get('tab');
-  const bootTab  = HEADS.includes(tabParam) ? tabParam : 'jiggyasa';
-  // Tab groups — define which tabs stay visible per entry point
+// ════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════
+
+// Tab → owner key mapping (used for token ownership check)
+const TAB_OWNER = { jiggyasa:'jiggyasa', tanuj_uk:'tanuj', tanuj_us:'tanuj' };
+
+// Tab groups — which tabs are visible per entry point
 const TAB_GROUPS = {
   jiggyasa : ['jiggyasa'],
-  tanuj_uk : ['tanuj_uk', 'tanuj_us'],  // Tanuj sees both UK and US
-  tanuj_us : ['tanuj_uk', 'tanuj_us'],
+  tanuj_uk : ['tanuj_uk','tanuj_us'],
+  tanuj_us : ['tanuj_uk','tanuj_us'],
 };
-if(tabParam && HEADS.includes(tabParam)){
-  const visible = TAB_GROUPS[tabParam] || [tabParam];
-  HEADS.forEach(h => { const t=$('tab-'+h); if(t) t.style.display = visible.includes(h) ? '' : 'none'; });
+
+// localStorage key for a given owner
+const authKey = owner => owner ? `nexus_auth_${owner}` : 'nexus_auth';
+
+// Is the stored token valid for this owner?
+const hasToken = owner => localStorage.getItem(authKey(owner)) === '1';
+
+async function doLogin() {
+  const btn=$('login-btn'), err=$('login-err'), pw=$('pw-input').value.trim();
+  if(!pw){ err.textContent='Please enter the access password.'; return; }
+  btn.disabled=true; btn.textContent='Verifying...'; err.textContent='';
+  try {
+    const params = new URLSearchParams(location.search);
+    const tab    = params.get('tab') || 'jiggyasa';
+    const res    = await fetch('/funnel-auth', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pw, tab })
+    });
+    const data = await res.json();
+    if(data.success){
+      const owner = TAB_OWNER[tab] || null;
+      localStorage.setItem(authKey(owner), '1');
+      $('login-overlay').style.display='none';
+      bootApp();
+    } else if(res.status===500||data.error){
+      err.textContent='Server config error. Contact Mayur.';
+    } else {
+      err.textContent='Incorrect password. Please try again.';
+      $('pw-input').value=''; $('pw-input').focus();
+    }
+  } catch(e) {
+    err.textContent='Connection error. Check your network.';
+  } finally {
+    btn.disabled=false; btn.textContent='Access Dashboard';
+  }
 }
-switchTab(bootTab);
+
+function bootApp() {
+  const params   = new URLSearchParams(location.search);
+  const tabParam = params.get('tab');
+  const bootTab  = HEADS.includes(tabParam) ? tabParam : 'jiggyasa';
+
+  // Scope visible tabs
+  if(tabParam && HEADS.includes(tabParam)){
+    const visible = TAB_GROUPS[tabParam] || [tabParam];
+    HEADS.forEach(h => { const t=$('tab-'+h); if(t) t.style.display=visible.includes(h)?'':'none'; });
+  }
+  switchTab(bootTab);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const params   = new URLSearchParams(location.search);
+  const tabParam = params.get('tab');
+  const tok      = params.get('tok');  // clone key passed from Revenue Pulse (e.g. "tanuj")
+  const bootTab  = HEADS.includes(tabParam) ? tabParam : 'jiggyasa';
+  const owner    = TAB_OWNER[bootTab] || null;
+
+  // ── 1. Token carry-through: came from Revenue Pulse with a valid session ──
+  if(tok){
+    // Validate: does this token own this tab?
+    const res  = await fetch('/funnel-auth', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ tok, tab: bootTab })
+    });
+    const data = await res.json();
+    if(data.success){
+      // Token is valid for this tab — store it and unlock
+      localStorage.setItem(authKey(owner), '1');
+      $('login-overlay').style.display='none';
+      // Clean the URL (remove tok param — security hygiene)
+      const clean = new URL(location.href);
+      clean.searchParams.delete('tok');
+      history.replaceState(null,'',clean.toString());
+      bootApp();
+      return;
+    }
+    // Token doesn't own this tab — redirect to their rightful tab
+    const rightfulTab = Object.keys(TAB_OWNER).find(t => TAB_OWNER[t]===tok);
+    if(rightfulTab){
+      location.replace(`/funnel?tab=${rightfulTab}&tok=${tok}`);
+      return;
+    }
+    // Unknown tok — fall through to password gate
+  }
+
+  // ── 2. Stored token: already authenticated in a previous session ──
+  if(hasToken(owner)){
+    $('login-overlay').style.display='none';
+    bootApp();
+    return;
+  }
+
+  // ── 3. No token, no stored auth — show password gate ──
+  // Personalise the eyebrow label
+  const OWNER_LABELS = { jiggyasa:'Jiggyasa · AU', tanuj:'Tanuj · UK & US' };
+  const eyebrow = $('login-eyebrow');
+  if(eyebrow && owner && OWNER_LABELS[owner])
+    eyebrow.textContent = `Mavlers · ${OWNER_LABELS[owner]}`;
 });
 </script>
 </body>
