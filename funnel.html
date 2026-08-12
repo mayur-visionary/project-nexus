@@ -579,7 +579,16 @@ function mergeOwners(dOwners, iOwners) {
 // ════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => switchTab('jiggyasa'));
+window.addEventListener('DOMContentLoaded', () => {
+  // Read ?tab= param for clone linking — fall back to jiggyasa
+  const tabParam = new URLSearchParams(location.search).get('tab');
+  const bootTab  = HEADS.includes(tabParam) ? tabParam : 'jiggyasa';
+  // If scoped to a single tab, hide the other nav tabs
+  if(tabParam && HEADS.includes(tabParam)){
+    HEADS.forEach(h => { if(h !== bootTab){ const t=$('tab-'+h); if(t)t.style.display='none'; } });
+  }
+  switchTab(bootTab);
+});
 </script>
 </body>
 </html>
