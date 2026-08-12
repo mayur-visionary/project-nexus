@@ -501,7 +501,7 @@ async function doLogin(){
   const params=new URLSearchParams(window.location.search);
   const head=params.get("head")||"";
   try{
-    const r=await fetch("/functions/recurring-auth",{
+    const r=await fetch("/recurring-auth",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({password:pw,head})
     });
@@ -628,7 +628,7 @@ async function fetchDeals(bookingMonth){
       limit:100,
       ...(after?{after}:{})
     };
-    const r=await fetch("/functions/api",{
+    const r=await fetch("/api",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify(body)
     });
@@ -655,7 +655,7 @@ async function fetchDeals(bookingMonth){
 async function fetchLineItems(allDeals){
   const ids=allDeals.map(d=>d.id);
   if(!ids.length)return{};
-  const r=await fetch("/functions/lineItems",{
+  const r=await fetch("/lineItems",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({dealIds:ids})
   });
