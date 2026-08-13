@@ -351,67 +351,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .wk-tbl-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
 @media(max-width:900px){.wk-tiles{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.wk-tiles{grid-template-columns:1fr}}
-
-/* ── Book Watch ── */
-.bw-layout{display:none;flex:1;min-width:0}
-.bw-main{max-width:1440px;padding:18px 28px 48px}
-.bw-kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
-.bw-kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:default}
-.bw-kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
-.bw-kpi.k-baseline{border-top-color:#3B3561}
-.bw-kpi.k-recovered{border-top-color:#0CCE6B}
-.bw-kpi.k-gap{border-top-color:#EF2D56}
-.bw-kpi.k-rate{border-top-color:#FFDA30}
-.bw-head-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:8px}
-.bw-head-card{background:#fff;border-radius:10px;padding:18px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30}
-.bw-head-card-name{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
-.bw-head-card-bu{display:inline-block;font-size:8px;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
-.bw-head-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.bw-head-stat-lbl{font-size:8px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em}
-.bw-head-stat-val{font-size:15px;font-weight:800;color:#434343}
-.bw-head-stat-val.gap{color:#EF2D56}
-.bw-head-stat-val.recovered{color:#006E5E}
-.bw-head-rate{background:#F7F7F7;border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.bw-head-rate-lbl{font-size:9px;font-weight:700;color:#696969;text-transform:uppercase;letter-spacing:.06em}
-.bw-head-rate-val{font-size:12px;font-weight:800;color:#434343}
-.bw-prog-wrap{background:#F0F0F0;border-radius:4px;height:4px;overflow:hidden}
-.bw-prog-bar{height:100%;border-radius:4px;background:#0CCE6B;transition:width .6s ease}
-.bw-prog-bar.warn{background:#FFDA30}
-.bw-prog-bar.danger{background:#EF2D56}
-.bw-at-risk{margin-top:8px;font-size:9px;font-weight:700;color:#EF2D56;letter-spacing:.04em}
-.bw-owner-section{margin-bottom:6px}
-.bw-owner-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;cursor:pointer;user-select:none}
-.bw-owner-hdr.collapsed{margin-bottom:6px}
-.bw-owner-hdr-left{display:flex;align-items:center;gap:8px}
-.bw-owner-name{font-size:10.5px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em}
-.bw-owner-meta{font-size:9px;font-weight:600;color:#9A9A9A}
-.bw-owner-summary{display:flex;align-items:center;gap:14px}
-.bw-sum-item{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.bw-sum-lbl{font-size:8px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.06em}
-.bw-sum-val{font-size:11px;font-weight:800;color:#434343}
-.bw-sum-val.gap{color:#EF2D56}
-.bw-expand-arrow{font-size:9px;color:#9A9A9A;transition:transform .2s;margin-left:6px}
-.bw-deal-wrap{background:#fff;border-radius:0 0 10px 10px;overflow:hidden;margin-bottom:6px;border:1px solid #E2E2E2;border-top:none}
-.bw-deal-table{width:100%;border-collapse:collapse;font-size:10px}
-.bw-deal-table thead tr{background:#3B3561}
-.bw-deal-table thead th{padding:7px 11px;text-align:left;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#FFDA30;white-space:nowrap}
-.bw-deal-table thead th.num{text-align:right}
-.bw-deal-table tbody tr{border-bottom:1px solid #F5F5F5;transition:background .12s}
-.bw-deal-table tbody tr:last-child{border-bottom:none}
-.bw-deal-table tbody tr:hover{background:#FFFBEA}
-.bw-deal-table td{padding:8px 11px;color:#434343;vertical-align:middle}
-.bw-deal-table td.num{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
-.bw-client-name{font-weight:700;color:#434343;font-size:10px}
-.bw-deal-name{font-size:9px;color:#696969;font-weight:500;margin-top:1px}
-.bw-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:10px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.bw-pill-retained{background:#E8FAF0;color:#006E5E}
-.bw-pill-partial{background:#FFF8E6;color:#7A5800}
-.bw-pill-pending{background:#F0F4FF;color:#3B3561}
-.bw-pill-atrisk{background:#FEECEE;color:#C0143C}
-.bw-gap-val{color:#EF2D56;font-weight:800}
-.bw-gain-val{color:#006E5E;font-weight:800}
-@media(max-width:900px){.bw-kpi-strip{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.bw-kpi-strip{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -475,7 +414,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
       <a class="nav-tab nav-tab-ext" id="funnel-link" href="/funnel" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Funnel Desk ↗</a>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
-      <button class="nav-tab" data-screen="bookwatch" onclick="setScreen('bookwatch')">Book Watch</button>
       <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
     </div>
   </div>
@@ -713,32 +651,32 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   <div id="trends-section">
   <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
-    <span>Revenue Trends · FY 2026 (Apr–Jul)</span>
+    <span>Revenue Trends · FY 2026 (Apr–Aug)</span>
     <span id="trend-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase">Loading...</span>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Revenue &amp; Unique Clients</div>
-      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026 Apr–Jul</div>
+      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026 Apr–Aug</div>
       <div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Business Unit Trend</div>
-      <div class="card-sub">Digital (Pure) · Inter BU · MarTech bars · FY 2026 Apr–Jul</div>
+      <div class="card-sub">Digital (Pure) · Inter BU · MarTech bars · FY 2026 Apr–Aug</div>
       <div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div>
     </div>
     <div class="card">
       <div class="card-ttl">Engagement Model Trend</div>
-      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026 Apr–Jul</div>
+      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026 Apr–Aug</div>
       <div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Avg Revenue per Unique Client</div>
-      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026 Apr–Jul</div>
+      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026 Apr–Aug</div>
       <div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div>
     </div>
   </div>
@@ -919,51 +857,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   </div><!-- /clubs-main -->
 </div><!-- /clubs-layout -->
-
-<!-- ════ BOOK WATCH — inside app-layout, shares the sidebar ════ -->
-<div class="bw-layout" id="bw-layout">
-  <div class="bw-main">
-
-    <!-- KPI Strip -->
-    <div class="sec" style="margin-bottom:10px">Key Metrics <span id="bw-month-hdr" style="font-weight:600;color:#434343;text-transform:none;letter-spacing:0;font-size:11px"></span></div>
-    <div class="bw-kpi-strip">
-      <div class="bw-kpi k-baseline">
-        <div class="kpi-lbl">Last Month Recurring</div>
-        <div class="kpi-val" id="bw-k-baseline">—</div>
-        <div class="kpi-sub" id="bw-k-baseline-sub">Total recurring booked</div>
-      </div>
-      <div class="bw-kpi k-recovered">
-        <div class="kpi-lbl">Recovered This Month</div>
-        <div class="kpi-val" id="bw-k-recovered">—</div>
-        <div class="kpi-sub" id="bw-k-recovered-sub">Matched &amp; closed so far</div>
-      </div>
-      <div class="bw-kpi k-gap">
-        <div class="kpi-lbl">Gap</div>
-        <div class="kpi-val" id="bw-k-gap">—</div>
-        <div class="kpi-sub" id="bw-k-gap-sub">Unrecovered recurring</div>
-      </div>
-      <div class="bw-kpi k-rate">
-        <div class="kpi-lbl">Recovery Rate</div>
-        <div class="kpi-val" id="bw-k-rate">—</div>
-        <div class="kpi-sub" id="bw-k-rate-sub">Recovered ÷ last month</div>
-      </div>
-    </div>
-
-    <!-- Head Summary -->
-    <div class="sec" style="margin-bottom:10px">Head Summary <div style="flex:1;height:1px;background:rgba(67,67,67,.1);margin-left:8px"></div></div>
-    <div class="bw-head-grid" id="bw-head-grid"></div>
-
-    <!-- Owner Drill-Down -->
-    <div class="sec" style="margin-top:24px;margin-bottom:10px">
-      Owner Drill-Down
-      <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span>
-      <div style="flex:1;height:1px;background:rgba(67,67,67,.1);margin-left:8px"></div>
-    </div>
-    <div id="bw-owner-drill"></div>
-
-    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-  </div>
-</div><!-- /bw-layout -->
 
 </div><!-- /app-layout -->
 
@@ -2547,8 +2440,6 @@ function renderAll(){
   if(currentScreen==='weekly'&&allDeals.length)renderWeekly();
   // Funnel Desk — re-render if active
   if(currentScreen==='funnel'&&allDeals.length)renderFunnel();
-  // Book Watch — re-render if active
-  if(currentScreen==='bookwatch'&&allDeals.length)renderBookWatch();
 }
 
 // ════ KPI ACTIONS ════
@@ -2826,7 +2717,6 @@ function setScreen(name){
   const isWeekly=name==='weekly';
   const isFunnel=name==='funnel';
   const isClubs=name==='clubs';
-  const isBW=name==='bookwatch';
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
@@ -2850,14 +2740,12 @@ function setScreen(name){
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
   const fl=$('funnel-layout');if(fl)fl.style.display=isFunnel?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
-  const bl=$('bw-layout');if(bl)bl.style.display=isBW?'block':'none';
   // Tier + Movement sections in shared sidebar — visible on Client Club only
   const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
   if(isFunnel&&allDeals.length)renderFunnel();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
-  if(isBW&&allDeals.length)renderBookWatch();
 }
 
 // ── Clubs Period Selector ──
@@ -3824,195 +3712,6 @@ function renderFunnelWaterfall(opening,predLoss,postPaid,pipeline,opp,expected,t
 // ════ END FUNNEL DESK ════
 
 // ════ END CLIENT CLUBS ════
-
-// ════ BOOK WATCH ════
-// Uses allDeals already in memory — no extra API call.
-// Derives recurring amount per deal using same engTypesLi logic (engGroupFromLiName).
-// Splits last month vs this month, classifies, renders.
-
-const BW_HEADS=[
-  {id:"jaydeep",  name:"Jaydeep Salla",   key:"Jaydeep Salla",   bu:"MarTech"},
-  {id:"jiggyasa", name:"Jiggyasa Agrawal",key:"Jiggyasa Agrawal",bu:"Digital"},
-  {id:"tanuk",    name:"Tanuj UK",        key:"Tanuj Gupta (UK)",bu:"Digital"},
-  {id:"tanus",    name:"Tanuj US",        key:"Tanuj Gupta (US)",bu:"Digital"},
-  {id:"nevilson", name:"Nevilson Christan",key:"Nevilson Christan",bu:"Digital"}
-];
-
-
-// Classify a last-month deal against this-month lookup.
-// Key: billing_id|owner_id — same as standalone recurring.html.
-function bwClassify(lastDeal,thisMap){
-  const now=new Date();
-  const matches=thisMap[(lastDeal.billing_id||"")+"|"+String(lastDeal.owner_id||"")]||[];
-  if(matches.length){
-    const thisAmt=matches.reduce((s,d)=>s+d.amount,0);
-    if(thisAmt>=lastDeal.amount)return{status:"retained",thisAmt,gap:0};
-    return{status:"partial",thisAmt,gap:lastDeal.amount-thisAmt};
-  }
-  const closeDay=parseInt((lastDeal.closedate||"").split("-")[2]||"1",10);
-  const mirror=new Date(now.getFullYear(),now.getMonth(),closeDay);
-  mirror.setDate(mirror.getDate()+2); // 2-day buffer
-  if(now>mirror)return{status:"atrisk",thisAmt:0,gap:lastDeal.amount};
-  return{status:"pending",thisAmt:0,gap:lastDeal.amount};
-}
-
-function renderBookWatch(){
-  if(!allDeals.length)return;
-  const now=new Date();
-
-  // ── Derive last month and this month strings ──
-  const lastM=new Date(now.getFullYear(),now.getMonth()-1,1);
-  const lastMStr=monthVal(lastM);
-  const thisMStr=monthVal(now);
-
-  // Update header label
-  const hdr=$("bw-month-hdr");
-  if(hdr)hdr.textContent=`· ${lastM.toLocaleString("en-US",{month:"long",year:"numeric"})} vs ${now.toLocaleString("en-US",{month:"long",year:"numeric"})}`;
-
-  // ── Use view() exactly as every other screen does — all filters applied identically ──
-  // view() accepts a src array; we pass each month's slice of allDeals.
-  // All active filters (BU, Region, Head, Owner, Engagement Model, Service) carry through.
-  const lastViewed=view(allDeals.filter(d=>d.month===lastMStr),dealServiceMap);
-  const thisViewed=view(allDeals.filter(d=>d.month===thisMStr),dealServiceMap);
-
-  // ── Extract recurring portion per deal using engTypesLi — single source of truth ──
-  // engTypesLi(v)["Recurring"] is exactly what Revenue Pulse uses for the Pie chart.
-  // We apply it per-deal so we get the recurring amount for each individual deal.
-  function recurringAmountForDeal(d){
-    const types=engTypesLi([d]);
-    return types["Recurring"]||0;
-  }
-
-  // ── Build recurring deal arrays ──
-  const lastRec=lastViewed
-    .map(d=>{const ra=recurringAmountForDeal(d);return ra>0?{...d,amount:ra}:null;})
-    .filter(Boolean)
-    .filter(d=>d.billing_id);
-
-  const thisRec=thisViewed
-    .map(d=>{const ra=recurringAmountForDeal(d);return ra>0?{...d,amount:ra}:null;})
-    .filter(Boolean)
-    .filter(d=>d.billing_id);
-
-  // ── Build this-month lookup: billing_id|owner_id → [deals] ──
-  const thisMap={};
-  thisRec.forEach(d=>{
-    const key=(d.billing_id||"")+"|"+String(d.owner_id||"");
-    if(!thisMap[key])thisMap[key]=[];
-    thisMap[key].push(d);
-  });
-
-  // ── Classify each last-month recurring deal ──
-  const matched=lastRec.map(d=>({...d,...bwClassify(d,thisMap)}));
-
-  // ── Render KPIs ──
-  const baseline=matched.reduce((s,d)=>s+d.amount,0);
-  const recovered=matched.filter(d=>d.status==="retained"||d.status==="partial").reduce((s,d)=>s+d.thisAmt,0);
-  const gap=baseline-recovered;
-  const rate=baseline>0?recovered/baseline*100:0;
-  const fmtM=v=>"$"+Math.round(v).toLocaleString();
-  const fmtP=v=>Math.round(v)+"%";
-
-  $("bw-k-baseline").textContent=fmtM(baseline);
-  $("bw-k-recovered").textContent=fmtM(recovered);
-  $("bw-k-gap").textContent=fmtM(gap);
-  $("bw-k-rate").textContent=fmtP(rate);
-  $("bw-k-baseline-sub").textContent=`${lastM.toLocaleString("en-US",{month:"long",year:"numeric"})} · ${matched.length} deals`;
-  $("bw-k-recovered-sub").textContent=`${matched.filter(d=>d.status==="retained").length} retained · ${matched.filter(d=>d.status==="partial").length} partial`;
-  $("bw-k-gap-sub").textContent=`${matched.filter(d=>d.status==="atrisk").length} at risk · ${matched.filter(d=>d.status==="pending").length} pending`;
-  $("bw-k-rate-sub").textContent=`As of ${now.toLocaleDateString("en-US",{month:"short",day:"numeric"})}`;
-
-  // ── Render Head Summary ──
-  const headData={};
-  BW_HEADS.forEach(h=>{headData[h.key]={hcfg:h,baseline:0,recovered:0,atrisk:0,count:0};});
-  matched.forEach(d=>{
-    const key=d.head;if(!headData[key])return;
-    headData[key].baseline+=d.amount;headData[key].count++;
-    if(d.status==="retained"||d.status==="partial")headData[key].recovered+=d.thisAmt;
-    if(d.status==="atrisk")headData[key].atrisk+=d.amount;
-  });
-  const buCls=bu=>bu==="Digital"?"bu-digital":"bu-martech";
-  $("bw-head-grid").innerHTML=Object.values(headData).filter(h=>h.count>0).map(({hcfg,baseline,recovered,atrisk,count})=>{
-    const g=baseline-recovered,r=baseline>0?recovered/baseline*100:0;
-    const barCls=r>=80?"":r>=50?"warn":"danger";
-    return`<div class="bw-head-card">
-      <div class="bw-head-card-name">${hcfg.name}</div>
-      <div class="bw-head-card-bu ${buCls(hcfg.bu)}">${hcfg.bu}</div>
-      <div class="bw-head-stats">
-        <div><div class="bw-head-stat-lbl">Last Month</div><div class="bw-head-stat-val">${fmtM(baseline)}</div></div>
-        <div><div class="bw-head-stat-lbl">Recovered</div><div class="bw-head-stat-val recovered">${fmtM(recovered)}</div></div>
-        <div><div class="bw-head-stat-lbl">Gap</div><div class="bw-head-stat-val gap">${fmtM(g)}</div></div>
-        <div><div class="bw-head-stat-lbl">Deals</div><div class="bw-head-stat-val">${count}</div></div>
-      </div>
-      <div class="bw-head-rate"><div class="bw-head-rate-lbl">Recovery Rate</div><div class="bw-head-rate-val">${fmtP(r)}</div></div>
-      <div class="bw-prog-wrap"><div class="bw-prog-bar ${barCls}" style="width:${Math.min(r,100).toFixed(1)}%"></div></div>
-      ${atrisk>0?`<div class="bw-at-risk">⚠ ${fmtM(atrisk)} at risk</div>`:""}
-    </div>`;
-  }).join("")||`<div class="empty-state"><div class="es-icon">📋</div><div class="es-title">No Data</div><div class="es-sub">No recurring deals found for last month matching current filters.</div></div>`;
-
-  // ── Render Owner Drill-Down ──
-  const pillMap={
-    retained:`<span class="bw-pill bw-pill-retained">✓ Retained</span>`,
-    partial:`<span class="bw-pill bw-pill-partial">◑ Partial</span>`,
-    pending:`<span class="bw-pill bw-pill-pending">◷ Pending</span>`,
-    atrisk:`<span class="bw-pill bw-pill-atrisk">⚠ At Risk</span>`
-  };
-  const byOwner={};
-  matched.forEach(d=>{const oid=String(d.owner_id);if(!byOwner[oid])byOwner[oid]=[];byOwner[oid].push(d);});
-  const sections=ALL_OWNERS.filter(o=>byOwner[o.id]?.length>0).map(o=>({owner:o,deals:byOwner[o.id]}));
-  const drill=$("bw-owner-drill");
-  if(!sections.length){drill.innerHTML=`<div class="empty-state"><div class="es-icon">📋</div><div class="es-title">No Data</div><div class="es-sub">No recurring deals match the current filter.</div></div>`;return;}
-  drill.innerHTML=sections.map(({owner,deals})=>{
-    const bl=deals.reduce((s,d)=>s+d.amount,0);
-    const rc=deals.filter(d=>d.status==="retained"||d.status==="partial").reduce((s,d)=>s+d.thisAmt,0);
-    const gp=bl-rc;
-    const headDisp=(deals[0]?.head||"").replace(" Agrawal","").replace(" Salla","").replace(" Christan","").replace(" Gupta (UK)"," UK").replace(" Gupta (US)"," US");
-    const bu=deals[0]?.bu||"";
-    const rid="bwown-"+owner.id;
-    const statusOrder={atrisk:0,pending:1,partial:2,retained:3};
-    const rows=deals.sort((a,b)=>(statusOrder[a.status]||0)-(statusOrder[b.status]||0)).map(d=>{
-      const tf=d.thisAmt>0?fmtM(d.thisAmt):`<span style="color:#9A9A9A">—</span>`;
-      const gf=d.gap>0?`<span class="bw-gap-val">${fmtM(d.gap)}</span>`:d.gap<0?`<span class="bw-gain-val">+${fmtM(Math.abs(d.gap))}</span>`:"—";
-      return`<tr>
-        <td><div class="bw-client-name">${d.client||d.billing_id||"—"}</div><div class="bw-deal-name">${d.name}</div></td>
-        <td class="num">${fmtM(d.amount)}</td>
-        <td>${pillMap[d.status]||d.status}</td>
-        <td class="num">${tf}</td>
-        <td class="num">${gf}</td>
-      </tr>`;
-    }).join("");
-    return`<div class="bw-owner-section">
-      <div class="bw-owner-hdr collapsed" id="bwhdr-${rid}" onclick="bwToggle('${rid}')">
-        <div class="bw-owner-hdr-left">
-          <span class="bw-owner-name">${owner.name}</span>
-          <span class="bw-owner-meta">${bu}${headDisp?" · "+headDisp:""}</span>
-          <span class="bw-expand-arrow" id="bwarr-${rid}">▶</span>
-        </div>
-        <div class="bw-owner-summary">
-          <div class="bw-sum-item"><span class="bw-sum-lbl">Last Month</span><span class="bw-sum-val">${fmtM(bl)}</span></div>
-          <div class="bw-sum-item"><span class="bw-sum-lbl">Recovered</span><span class="bw-sum-val">${fmtM(rc)}</span></div>
-          <div class="bw-sum-item"><span class="bw-sum-lbl">Gap</span><span class="bw-sum-val gap">${fmtM(gp)}</span></div>
-          <div class="bw-sum-item"><span class="bw-sum-lbl">Deals</span><span class="bw-sum-val">${deals.length}</span></div>
-        </div>
-      </div>
-      <div class="bw-deal-wrap" id="bwtbl-${rid}" style="display:none">
-        <table class="bw-deal-table">
-          <thead><tr><th>Client · Deal</th><th class="num">Last Month</th><th>Status</th><th class="num">This Month</th><th class="num">Gap</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>`;
-  }).join("");
-}
-
-function bwToggle(rid){
-  const tbl=$("bwtbl-"+rid),hdr=$("bwhdr-"+rid),arr=$("bwarr-"+rid);
-  const isOpen=tbl.style.display!=="none";
-  tbl.style.display=isOpen?"none":"block";
-  hdr.classList.toggle("collapsed",isOpen);
-  if(arr)arr.style.transform=isOpen?"":"rotate(90deg)";
-}
-// ════ END BOOK WATCH ════
 </script>
 </body>
 </html>
