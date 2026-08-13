@@ -1857,15 +1857,7 @@ function engGroup(val){
   return null;
 }
 // Classify engagement from line item name prefix
-function engGroupFromLiName(name, engModel){
-  // Primary: engagement_model_name field — canonical HubSpot source, same as dashboard
-  if(engModel && engModel !== "0" && engModel !== ""){
-    const em=engModel.toLowerCase().replace(/\s/g,"");
-    if(em==="recurring"||em==="recurringservices"||em==="dedicatedfte"||
-       em==="dedicatedpte"||em==="multiple")return"Recurring";
-    if(em==="p2p"||em==="timeandmaterial"||em==="t&m"||em==="time")return"P2P";
-  }
-  // Fallback: name prefix (for items where engModel is blank or "0")
+function engGroupFromLiName(name){
   if(!name)return null;
   const n=name.toLowerCase();
   if(n.startsWith("dedicated fte"))return"Recurring";
