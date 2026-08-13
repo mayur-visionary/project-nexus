@@ -1932,21 +1932,29 @@ function engTypesLi(v){
   const _svcDrill=drill.service||null;
   const _selSvc=getSelectedServices();
   const _svcFiltered=_selSvc.length>0&&_selSvc.length<ALL_SERVICES.length;
+  const _itype=$("itype-sel")?.value||"";
+  const _drillEng=drill.eng_model||"";
+  const _activeEng=_itype||_drillEng; // either sidebar filter or pie click drill
   const m={};
   v.forEach(d=>{
+    // When engagement filter is active, view() has already adjusted d.amount to the matching
+    // engagement portion only. Use d.amount directly — no re-classification needed.
+    if(_activeEng){
+      const _engGroup=_activeEng==="One Time"?"P2P":_activeEng;
+      m[_engGroup]=(m[_engGroup]||0)+d.amount;
+      return;
+    }
+    // No engagement filter — full LI-level classification as before
     const _lis=(dealServiceMap[d.id]||[]).filter(li=>{
       if(_svcDrill&&li.svc!==_svcDrill)return false;
       if(_svcFiltered&&!_selSvc.includes(li.svc))return false;
       return true;
     });
     if(_lis.length){
-      // Try line-item name classification first
       let classified=false;
       _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){m[eg]=(m[eg]||0)+li.amount;classified=true;}});
-      // If line items passed filter but none matched a known name prefix, fall back to deal eng_model
       if(!classified){const eg=engGroup(d.eng_model);if(eg)m[eg]=(m[eg]||0)+d.amount;}
     } else {
-      // No line items (or all filtered out) — use deal-level eng_model with deal amount
       const eg=engGroup(d.eng_model);
       if(eg)m[eg]=(m[eg]||0)+d.amount;
     }
