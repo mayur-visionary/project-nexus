@@ -79,7 +79,34 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Anchor chip ── */
 .anchor-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.35);border-radius:5px;padding:3px 10px;font-size:9px;font-weight:700;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase}
 
-/* ── Inter BU toggle ── */
+/* ── KPI Drill Panel ── */
+.kpi{cursor:pointer;transition:box-shadow .18s,transform .18s}
+.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.10);transform:translateY(-2px)}
+.kpi.kpi-active-card{box-shadow:0 0 0 2px #473400,0 4px 18px rgba(0,0,0,.13);transform:translateY(-2px)}
+.drill-panel{background:#fff;border-radius:10px;border:1px solid #EEE;overflow:hidden;margin-bottom:20px;animation:drillIn .22s ease}
+@keyframes drillIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.drill-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #F2F2F2;background:#FAFAFA}
+.drill-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#434343;display:flex;align-items:center;gap:8px}
+.drill-count{font-size:9px;font-weight:700;color:#9A9A9A;letter-spacing:.04em}
+.drill-close{font-size:14px;color:#9A9A9A;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .15s;line-height:1}
+.drill-close:hover{background:#F0F0F0;color:#434343}
+.drill-table{width:100%;border-collapse:collapse;font-size:11px}
+.drill-table th{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;padding:8px 14px;text-align:left;border-bottom:1px solid #F2F2F2;background:#FAFAFA}
+.drill-table th.num{text-align:right}
+.drill-table td{padding:8px 14px;border-bottom:1px solid #F9F9F9;color:#434343;font-weight:600;vertical-align:middle}
+.drill-table td.num{text-align:right;color:#696969;font-weight:500}
+.drill-table tr:last-child td{border-bottom:none}
+.drill-table tr:hover td{background:#FAFFF5}
+.drill-status{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600}
+.drill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.drill-date{font-size:10px;color:#696969;font-weight:500}
+.drill-none{padding:28px;text-align:center;color:#9A9A9A;font-size:11px;font-weight:600}
+.drill-pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid #F2F2F2;background:#FAFAFA}
+.drill-page-info{font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em}
+.drill-page-btns{display:flex;gap:6px}
+.drill-page-btn{font-size:9px;font-weight:800;padding:4px 12px;border-radius:5px;border:1px solid #E0E0E0;background:#fff;color:#434343;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.04em;transition:all .15s}
+.drill-page-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
+.drill-page-btn:disabled{opacity:.35;cursor:default}
 .interbu-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .interbu-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
 .interbu-btn.active{background:rgba(59,53,97,.85);border-color:#3B3561;color:#FFDA30}
@@ -339,7 +366,7 @@ tbody td.num{text-align:right;font-weight:700}
       <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Portfolio Health</span>
       <div class="vdiv"></div>
       <!-- BU -->
-      <span class="fl">Business Unit</span>
+      <span class="fl">BU</span>
       <select class="fsel sm" id="p-bu-sel" onchange="onPortfolioBUChange()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
@@ -400,37 +427,40 @@ tbody td.num{text-align:right;font-weight:700}
 
   <!-- KPI Strip -->
   <div class="kpi-strip">
-    <div class="kpi">
+    <div class="kpi" id="kpi-total" onclick="openDrill('total')">
       <div class="kpi-lbl">Total Kitty</div>
       <div class="kpi-val" id="k-total">—</div>
       <div class="kpi-sub">Existing kitty customers</div>
     </div>
-    <div class="kpi k-active">
+    <div class="kpi k-active" id="kpi-active" onclick="openDrill('active')">
       <div class="kpi-lbl">Active</div>
       <div class="kpi-val" id="k-active">—</div>
       <div class="kpi-sub" id="k-active-sub">Revenue in last 90 days</div>
     </div>
-    <div class="kpi k-silent">
+    <div class="kpi k-silent" id="kpi-silent" onclick="openDrill('silent')">
       <div class="kpi-lbl">Silent</div>
       <div class="kpi-val" id="k-silent">—</div>
       <div class="kpi-sub">91–180 days no revenue</div>
     </div>
-    <div class="kpi k-inactive">
+    <div class="kpi k-inactive" id="kpi-inactive" onclick="openDrill('inactive')">
       <div class="kpi-lbl">Inactive</div>
       <div class="kpi-val" id="k-inactive">—</div>
       <div class="kpi-sub">181–365 days no revenue</div>
     </div>
-    <div class="kpi k-lost">
+    <div class="kpi k-lost" id="kpi-lost" onclick="openDrill('lost')">
       <div class="kpi-lbl">Organic Lost</div>
       <div class="kpi-val" id="k-lost">—</div>
       <div class="kpi-sub">365+ days no revenue</div>
     </div>
-    <div class="kpi k-interbu">
+    <div class="kpi k-interbu" id="kpi-interbu" onclick="openDrill('interbu')">
       <div class="kpi-lbl">Inter BU</div>
       <div class="kpi-val" id="k-interbu">—</div>
       <div class="kpi-sub" id="k-interbu-sub">Cross-BU kitty clients</div>
     </div>
   </div>
+
+  <!-- ══ KPI DRILL PANEL ══ -->
+  <div id="drill-panel" style="display:none"></div>
 
   <!-- Legend -->
   <div class="legend">
@@ -831,7 +861,136 @@ function toggleInterBU(){
   interBUOnly=!interBUOnly;
   const btn=$("interbu-btn");
   if(btn)btn.classList.toggle("active",interBUOnly);
+  closeDrill(); // reset drill on filter change
   reRender();
+}
+
+// ════ KPI DRILL PANEL ════
+const DRILL_PAGE_SIZE=8;
+let drillState={card:null,page:1};
+
+const DRILL_CFG={
+  total:  {label:"Total Kitty",   color:"#473400", filter:c=>true},
+  active: {label:"Active",        color:"#006E5E", filter:c=>c.status==="active"},
+  silent: {label:"Silent",        color:"#FFDA30", filter:c=>c.status==="silent"},
+  inactive:{label:"Inactive",     color:"#EF2D56", filter:c=>c.status==="inactive"},
+  lost:   {label:"Organic Lost",  color:"#696969", filter:c=>c.status==="lost"},
+  interbu:{label:"Inter BU",      color:"#3B3561", filter:c=>c.inter_bu}
+};
+
+const STATUS_CFG={
+  active:  {label:"Active",       color:"#006E5E"},
+  silent:  {label:"Silent",       color:"#FFDA30"},
+  inactive:{label:"Inactive",     color:"#EF2D56"},
+  lost:    {label:"Org. Lost",    color:"#696969"},
+  never:   {label:"Never Active", color:"#5B3B8C"}
+};
+
+function formatDrillDate(dateStr){
+  if(!dateStr)return"—";
+  const d=new Date(dateStr+"T00:00:00");
+  if(isNaN(d))return"—";
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return`${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function openDrill(card){
+  // toggle off if same card clicked
+  if(drillState.card===card){closeDrill();return;}
+  drillState={card,page:1};
+  // update KPI card selected states
+  ["total","active","silent","inactive","lost","interbu"].forEach(k=>{
+    const el=$(`kpi-${k}`);
+    if(el)el.classList.toggle("kpi-active-card",k===card);
+  });
+  renderDrill();
+  const panel=$("drill-panel");
+  panel.style.display="block";
+  panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function closeDrill(){
+  drillState={card:null,page:1};
+  const panel=$("drill-panel");
+  if(panel){panel.style.display="none";panel.innerHTML="";}
+  ["total","active","silent","inactive","lost","interbu"].forEach(k=>{
+    const el=$(`kpi-${k}`);
+    if(el)el.classList.remove("kpi-active-card");
+  });
+}
+
+function renderDrill(){
+  const {card,page}=drillState;
+  if(!card)return;
+  const cfg=DRILL_CFG[card];
+  const fc=filteredCompanies().map(c=>({...c,status:classifyCompany(c)}));
+  const rows=fc.filter(cfg.filter);
+  const total=rows.length;
+  const totalPages=Math.max(1,Math.ceil(total/DRILL_PAGE_SIZE));
+  const safePage=Math.min(page,totalPages);
+  drillState.page=safePage;
+  const start=(safePage-1)*DRILL_PAGE_SIZE;
+  const slice=rows.slice(start,start+DRILL_PAGE_SIZE);
+
+  let html=`
+  <div class="drill-panel">
+    <div class="drill-header">
+      <div class="drill-title">
+        <span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${cfg.color};flex-shrink:0"></span>
+        ${cfg.label} Clients
+        <span class="drill-count">${total.toLocaleString()} ${total===1?"client":"clients"}</span>
+      </div>
+      <span class="drill-close" onclick="closeDrill()" title="Close">✕</span>
+    </div>`;
+
+  if(total===0){
+    html+=`<div class="drill-none">No clients match the current filters.</div>`;
+  } else {
+    html+=`
+    <table class="drill-table">
+      <thead><tr>
+        <th style="width:40px">#</th>
+        <th>Client</th>
+        <th>Status</th>
+        <th>Owner</th>
+        <th>Last Deal</th>
+      </tr></thead>
+      <tbody>`;
+    slice.forEach((c,i)=>{
+      const rowNum=start+i+1;
+      const ownerName=OWNER_NAME[String(c.owner_id)]||"—";
+      const sCfg=STATUS_CFG[c.status]||{label:c.status,color:"#9A9A9A"};
+      const lastDeal=formatDrillDate(c.recent_deal_close_date);
+      html+=`<tr>
+        <td class="num" style="color:#9A9A9A;font-size:10px">${rowNum}</td>
+        <td style="font-weight:700;color:#434343">${c.name||"—"}</td>
+        <td><span class="drill-status"><span class="drill-dot" style="background:${sCfg.color}"></span>${sCfg.label}</span></td>
+        <td style="color:#696969;font-weight:500">${ownerName}</td>
+        <td class="drill-date">${lastDeal}</td>
+      </tr>`;
+    });
+    html+=`</tbody></table>`;
+
+    // pagination
+    if(totalPages>1){
+      html+=`
+      <div class="drill-pagination">
+        <div class="drill-page-info">Page ${safePage} of ${totalPages} · ${total.toLocaleString()} clients</div>
+        <div class="drill-page-btns">
+          <button class="drill-page-btn" onclick="drillPage(${safePage-1})" ${safePage<=1?"disabled":""}>← Prev</button>
+          <button class="drill-page-btn" onclick="drillPage(${safePage+1})" ${safePage>=totalPages?"disabled":""}>Next →</button>
+        </div>
+      </div>`;
+    }
+  }
+  html+=`</div>`;
+  $("drill-panel").innerHTML=html;
+}
+
+function drillPage(page){
+  drillState.page=page;
+  renderDrill();
+  $("drill-panel").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
 // ════ DATA FETCHING ════
@@ -1514,10 +1673,12 @@ function reRender(){
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
   renderHealthDonuts(classified);
   renderAtRisk(fc);
-  if(radarOpen)renderRadarDetail(); // re-render open radar detail with fresh data
+  if(radarOpen)renderRadarDetail();
   renderHealthScores(classified);
   renderRevenueAtRisk(classified,revMap);
   renderTable(classified);
+  // refresh drill panel if open with updated filter data
+  if(drillState.card){drillState.page=1;renderDrill();}
 }
 window.addEventListener("DOMContentLoaded",function(){
   $("anchor-chip").textContent=ANCHOR_STR;
