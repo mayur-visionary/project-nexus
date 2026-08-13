@@ -689,32 +689,32 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
   <div id="trends-section">
   <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
-    <span>Revenue Trends · FY 2026 (Apr–Jul)</span>
+    <span id="trend-section-hdr">Revenue Trends</span>
     <span id="trend-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase">Loading...</span>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Revenue &amp; Unique Clients</div>
-      <div class="card-sub">Monthly Net Revenue (bars) · Unique Clients (line) · FY 2026 Apr–Jul</div>
+      <div class="card-sub" id="trend-sub-rev">Monthly Net Revenue (bars) · Unique Clients (line)</div>
       <div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card">
       <div class="card-ttl">Business Unit Trend</div>
-      <div class="card-sub">Digital (Pure) · Inter BU · MarTech bars · FY 2026 Apr–Jul</div>
+      <div class="card-sub" id="trend-sub-bu">Digital (Pure) · Inter BU · MarTech bars</div>
       <div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div>
     </div>
     <div class="card">
       <div class="card-ttl">Engagement Model Trend</div>
-      <div class="card-sub">P2P · Recurring monthly revenue · FY 2026 Apr–Jul</div>
+      <div class="card-sub" id="trend-sub-eng">P2P · Recurring monthly revenue</div>
       <div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div>
     </div>
   </div>
   <div class="chart-row">
     <div class="card" style="grid-column:1/-1">
       <div class="card-ttl">Avg Revenue per Unique Client</div>
-      <div class="card-sub">Net Revenue ÷ Unique Clients per month · FY 2026 Apr–Jul</div>
+      <div class="card-sub" id="trend-sub-avg">Net Revenue ÷ Unique Clients per month</div>
       <div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div>
     </div>
   </div>
@@ -792,11 +792,14 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl"><h3>All Deals</h3><p id="tmeta"></p></div>
+      <button class="radar-toggle" id="deals-toggle-btn" onclick="toggleDealsTable()">Show Deals ▾</button>
     </div>
-    <div class="twrap">
-      <table><thead id="dth"></thead><tbody id="dtb"><tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading live data from HubSpot...</td></tr></tbody></table>
+    <div id="deals-table-body" style="display:none">
+      <div class="twrap">
+        <table><thead id="dth"></thead><tbody id="dtb"><tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading live data from HubSpot...</td></tr></tbody></table>
+      </div>
+      <div class="pgs" id="pgs"></div>
     </div>
-    <div class="pgs" id="pgs"></div>
   </div>
 
   </div><!-- /deal-records-section -->
@@ -1218,6 +1221,7 @@ const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","
 // ════ STATE ════
 let deals=[],netRevTotal=0,sk="amount",sd="desc",pg=1;
 const PER=10;
+let dealsTableOpen=false;
 let tlcChart=null,itcChart=null,debTimer=null,isSyncing=false;
 let ownerManuallyFiltered=false;
 const drill={};
@@ -2173,6 +2177,16 @@ function renderInvChart(_v){
 }
 
 // ════ RENDER TABLE ════
+function toggleDealsTable(){
+  dealsTableOpen=!dealsTableOpen;
+  const btn=$("deals-toggle-btn"),body=$("deals-table-body");
+  if(!btn||!body)return;
+  btn.textContent=dealsTableOpen?"Hide Deals ▴":"Show Deals ▾";
+  btn.classList.toggle("open",dealsTableOpen);
+  body.style.display=dealsTableOpen?"":"none";
+  if(dealsTableOpen)renderTable();
+}
+
 function renderTable(_v){
   const v=_v||view();
   const srt=[...v].sort((a,b)=>{const m=sd==="asc"?1:-1;if(sk==="amount")return m*(a.amount-b.amount);if(sk==="closedate")return m*(a.closedate||"").localeCompare(b.closedate||"");if(sk==="client")return m*(a.client||"").localeCompare(b.client||"");if(sk==="geo")return m*(a.geo||"").localeCompare(b.geo||"");return m*(a.dealname||"").localeCompare(b.dealname||"");});
@@ -2180,6 +2194,7 @@ function renderTable(_v){
   if(pg>tot)pg=tot;
   const paged=srt.slice((pg-1)*PER,pg*PER);
   $("tmeta").textContent=`${v.length} deal${v.length!==1?"s":""} · Page ${pg} of ${tot}`;
+  if(!dealsTableOpen)return; // meta always updates; rows only render when visible
   const ar=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
   $("dth").innerHTML=`<tr><th onclick="sortBy('dealname')">Deal Name${ar("dealname")}</th><th onclick="sortBy('client')">Client${ar("client")}</th><th>Owner</th><th>Head</th><th onclick="sortBy('geo')">Region${ar("geo")}</th><th onclick="sortBy('amount')" style="text-align:right">Amount${ar("amount")}</th><th onclick="sortBy('closedate')">Close Date${ar("closedate")}</th><th style="text-align:center">↗</th></tr>`;
   if(!paged.length){$("dtb").innerHTML=`<tr><td colspan="8">${emptyHTML()}</td></tr>`;$("pgs").innerHTML="";return;}
@@ -2288,11 +2303,20 @@ function renderSvcBars(_v){
 // Data sourced from allDeals[] — same unified dataset as main dashboard.
 
 function getFY2026Months(){
+  // FY starts April. FY label year = the calendar year April falls in.
+  // FY 2026 = Apr 2026 → Mar 2027. FY 2027 = Apr 2027 → Mar 2028. Etc.
   const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
+  // Determine current FY start year: if we are Jan–Mar, FY started previous April (cy-1). Apr–Dec: FY started this April (cy).
+  const fyStartYear=cm<3?cy-1:cy; // Jan=0, Feb=1, Mar=2 → previous FY; Apr=3+ → current FY
   const months=[];
-  // FY 2026 = Apr 2026 → current month (BU structure formed Apr 1, 2026)
-  for(let m=3;m<12;m++){ // m=3 = April (0-indexed)
-    if(cy>2026||(cy===2026&&m<=cm))months.push(`${MFULL[m]}-2026`);
+  // FY months: Apr(3)–Dec(11) of fyStartYear, then Jan(0)–Mar(2) of fyStartYear+1
+  for(let m=3;m<=11;m++){
+    // Only include months up to and including today
+    if(fyStartYear<cy||(fyStartYear===cy&&m<=cm))months.push(`${MFULL[m]}-${fyStartYear}`);
+  }
+  for(let m=0;m<=2;m++){
+    const yr=fyStartYear+1;
+    if(yr<cy||(yr===cy&&m<=cm))months.push(`${MFULL[m]}-${yr}`);
   }
   return months;
 }
@@ -2390,8 +2414,33 @@ function destroyTrendCharts(){
 function renderTrends(months,src){
   destroyTrendCharts();
   const byMonth=buildTrendData(months,src);
-  // Month display labels e.g. "Jan", "Feb"
-  const labels=months.map(m=>{const[mn,yr]=m.split("-");return MSHRT[MFULL.indexOf(mn)];});
+  // Month display labels e.g. "Jan", "Feb" — append year only when FY spans two calendar years
+  const firstYr=months.length?months[0].split("-")[1]:"";
+  const lastYr=months.length?months[months.length-1].split("-")[1]:"";
+  const labels=months.map(m=>{
+    const[mn,yr]=m.split("-");
+    const short=MSHRT[MFULL.indexOf(mn)];
+    // Show year suffix when FY spans two calendar years and this is the first month of the new year
+    return(firstYr!==lastYr&&yr===lastYr&&mn==="January")?`${short} '${yr.slice(2)}`:short;
+  });
+  // Dynamic FY label — e.g. "FY 2026 (Apr–Aug)" — computed from months array
+  const fyLabel=(()=>{
+    if(!months.length)return"";
+    const [startMn,startYr]=months[0].split("-");
+    const [endMn,endYr]=months[months.length-1].split("-");
+    const fyYear=startYr; // FY label always uses the April year
+    const range=startYr===endYr
+      ?`${MSHRT[MFULL.indexOf(startMn)]}–${MSHRT[MFULL.indexOf(endMn)]}`
+      :`${MSHRT[MFULL.indexOf(startMn)]}–${MSHRT[MFULL.indexOf(endMn)]}`;
+    return`FY ${fyYear} (${range})`;
+  })();
+  // Update all trend labels dynamically
+  const el=id=>$(id);
+  if(el("trend-section-hdr"))el("trend-section-hdr").textContent=`Revenue Trends · ${fyLabel}`;
+  if(el("trend-sub-rev"))el("trend-sub-rev").textContent=`Monthly Net Revenue (bars) · Unique Clients (line) · ${fyLabel}`;
+  if(el("trend-sub-bu"))el("trend-sub-bu").textContent=`Digital (Pure) · Inter BU · MarTech bars · ${fyLabel}`;
+  if(el("trend-sub-eng"))el("trend-sub-eng").textContent=`P2P · Recurring monthly revenue · ${fyLabel}`;
+  if(el("trend-sub-avg"))el("trend-sub-avg").textContent=`Net Revenue ÷ Unique Clients per month · ${fyLabel}`;
   const net       =months.map(m=>byMonth[m].net);
   const clients   =months.map(m=>byMonth[m].clientCount);
   const digital   =months.map(m=>byMonth[m].digital);
