@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book Watch · Project Nexus · Mavlers</title>
+<title>Book Watch · Mavlers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,12 +13,12 @@
 html{overflow-x:hidden}
 body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
 
-/* ── Login ── */
+/* ── Login (verbatim from portfolio.html) ── */
 .login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
 .login-logo{margin-bottom:22px}
-.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
-.login-title{font-size:20px;font-weight:800;color:#434343;text-transform  :uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
 .login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
@@ -26,16 +26,14 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-btn:hover{background:#FFE870}
 .login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
 .login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
-.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
 
-/* ── Header ── */
+/* ── Header (verbatim from portfolio.html) ── */
 .hdr{background:#473400}
 .hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
-.hdr-brand svg{transition:opacity .2s}
-.hdr-brand:hover svg{opacity:.85}
 .hdr-eyebrow{margin-bottom:4px}
 .hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
 .hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
@@ -45,316 +43,67 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
-.reset-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
-.reset-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#fff}
 .refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
-.refresh-btn:disabled,.reset-btn:disabled{opacity:.35;cursor:not-allowed}
+.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
 
-/* ── Filter bar ── */
+/* ── Nav tabs (verbatim from index.html) ── */
+.nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;align-items:stretch}
+.nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
+.nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important;text-decoration:none;display:inline-flex;align-items:center;gap:5px;padding:9px 22px;font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;transition:all .2s;white-space:nowrap}
+.nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
+
+/* ── Filter bar (verbatim from index.html) ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
 .fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:155px}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
 .fsel.sm{max-width:120px}
-.custom-range{display:none;align-items:center;gap:5px}
-.custom-range.show{display:flex}
-.range-sep{font-size:9px;color:rgba(255,255,255,.35);font-weight:600}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
-
-/* Owner multi-select */
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
 .ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
 .ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
-.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:230px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:360px;overflow-y:auto}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:210px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:320px;overflow-y:auto}
 .ms-dropdown.open{display:block}
 .ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
 .ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
 .ms-actions{display:flex;gap:8px}
 .ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
 .ms-act:hover{opacity:.7}
-
 .ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
-.ms-item:hover{background:rgba(255,255,255,.07)}
-.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
-.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
-.clubs-sidebar .ms-item label{color:#434343}
-.clubs-sidebar .ms-item{padding:4px 0}
-.clubs-sidebar .ms-item:hover{background:#FFFBEA;border-radius:4px}
-.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
-
-/* ── Drill chips ── */
-.drill-bar{max-width:1540px;margin:0 auto;padding:0 28px}
-.drill-chips{display:none;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 0}
-.drill-chips.show{display:flex}
-.dchip{display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;background:#FFDA30;color:#111;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.dchip-lbl{font-size:8px;font-weight:700;opacity:.6;margin-right:2px}
-.dchip-x{cursor:pointer;font-size:10px;font-weight:700;padding:0 2px;border-radius:50%;transition:background .15s}
-.dchip-x:hover{background:rgba(0,0,0,.15)}
-.drill-clear{padding:3px 10px;border-radius:20px;border:1px solid #9A9A9A;background:transparent;color:#696969;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.04em;text-transform:uppercase;transition:all .15s}
-.drill-clear:hover{border-color:#434343;color:#434343}
-
-/* ── Error ── */
-.err-wrap{max-width:1440px;margin:0 auto;padding:8px 28px 0}
-.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500}
-.err-bar strong{color:#FFDA30}
+.ms-item:hover{background:rgba(255,255,255,.05)}
+.ms-item input[type=checkbox]{accent-color:#FFDA30;width:12px;height:12px;cursor:pointer}
+.ms-item-lbl{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);user-select:none}
 
 /* ── Main ── */
-.app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
-.sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
-.sb-section{margin-bottom:0}
-.sb-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:5px}
-.sb-sel{width:100%;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:none}
-.sb-sel:hover,.sb-sel:focus{border-color:#FFDA30;background:#FFFBEA}
-.sb-sel option{background:#fff;color:#434343}
-.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
-.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
-.sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
-.nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
-.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
-.nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
-.main{flex:1;min-width:0;max-width:1440px;padding:18px 28px 48px}
-.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px}
+.main{max-width:1440px;margin:0 auto;padding:24px 28px 60px}
+.err-bar{background:#FFF0F0;border:1px solid #EF2D56;border-radius:8px;padding:10px 16px;font-size:11px;font-weight:600;color:#C0143C;margin-bottom:16px;display:none}
+.err-bar.show{display:block}
 
-/* ── KPI — all borders uniform yellow ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;min-width:0}
-.kpi{background:#fff;border-radius:10px;padding:14px 15px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;transition:all .2s;cursor:default;overflow:hidden;min-width:0}
-.kpi:hover{box-shadow:0 4px 18px rgba(67,67,67,.12);transform:translateY(-1px)}
-/* Inter BU clone — highlight the Inter BU KPI card with Teal accent */
-[data-clone="interbu"] .kpi.kpi-interbu{border-top-color:#006E5E;box-shadow:0 0 0 2px rgba(0,110,94,.12);background:#F0FAF8}
-[data-clone="interbu"] .kpi.kpi-interbu .kpi-lbl{color:#006E5E}
-[data-clone="interbu"] .kpi.kpi-interbu .kpi-val{color:#006E5E}
-.kpi-ico{font-size:14px;margin-bottom:7px}
-.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:700}
-.kpi-val{font-size:clamp(11px,1.15vw,16px);font-weight:800;color:#434343;line-height:1.15;word-break:break-all;overflow-wrap:anywhere}
-.kpi-sub{font-size:10px;color:#696969;margin-top:4px;font-weight:600}
-
-/* ── Charts ── */
-.chart-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
-.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:15px 17px}
-.card-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
-.drill-notice{font-size:9px;font-weight:700;color:#434343;background:#FFDA30;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em;display:none;margin-bottom:10px}
-.drill-notice.show{display:block}
-.card-sub{font-size:10px;color:#696969;margin-bottom:12px;font-weight:600}
-
-/* Owner bars */
-.orow{margin-bottom:11px;cursor:pointer;border-radius:6px;padding:4px 6px;transition:all .15s;position:relative}
-.orow:last-child{margin-bottom:0}
-.orow:hover{background:#FFFBEA}
-.orow.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
-.orow-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.ometa{display:flex;align-items:center;gap:6px}
-.oav{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:#111;flex-shrink:0;background:#FFDA30}
-.oname{font-size:10.5px;color:#434343;font-weight:700}
-.ocnt{font-size:9.5px;color:#9A9A9A;font-weight:500}
-.orev{font-size:10.5px;font-weight:800;color:#434343}
-.opct{font-size:9.5px;color:#9A9A9A;font-weight:500}
-.btrack{height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden}
-.bfill{height:4px;border-radius:2px;transition:width .9s cubic-bezier(.34,1.2,.64,1);background:#FFDA30}
-
-/* Geo bars */
-.gbar-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;padding:6px 8px;border-radius:6px;transition:background .15s}
-.gbar-row:hover{background:#FFFBEA}
-.gbar-row.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
-.gbar-badge{font-size:10px;font-weight:800;padding:4px 9px;border-radius:5px;min-width:54px;text-align:center;flex-shrink:0;letter-spacing:.04em;white-space:nowrap}
-.gbar-track{flex:1;height:8px;background:#EDEDED;border-radius:4px;overflow:hidden}
-.gbar-fill{height:8px;border-radius:4px;transition:width .7s ease}
-.gbar-info{text-align:right;flex-shrink:0;width:80px}
-.gbar-rev{font-size:11px;font-weight:800;color:#434343}
-.gbar-cnt{font-size:9.5px;color:#696969;font-weight:600}
-
-/* Client bars */
-.cbar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;cursor:pointer;padding:3px 6px;border-radius:5px;transition:background .15s}
-.cbar-row:hover{background:#FFFBEA}
-.cbar-row.drill-active{background:#FFFBEA;outline:2px solid #FFDA30;box-shadow:0 0 0 2px rgba(255,218,48,.15)}
-.cbar-name{font-size:9.5px;font-weight:600;color:#434343;width:115px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cbar-track{flex:1;height:4px;background:#F2F2F2;border-radius:2px;overflow:hidden}
-.cbar-fill{height:4px;background:#FFDA30;border-radius:2px;transition:width .7s ease}
-.cbar-val{font-size:9.5px;font-weight:700;color:#434343;width:52px;text-align:right;flex-shrink:0}
-
-/* Empty state */
-.empty-state{text-align:center;padding:32px 20px}
-.es-icon{font-size:28px;margin-bottom:10px}
-.es-title{font-size:13px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
-.es-sub{font-size:11px;color:#696969;font-weight:500;margin-bottom:4px}
-.es-hint{font-size:10px;color:#9A9A9A;font-weight:500}
-
-/* Table */
-.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
-.tcard-hdr{padding:11px 16px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.tcard-ttl h3{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
-.tcard-ttl p{font-size:10px;color:#9A9A9A;margin-top:2px;font-weight:500}
-.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif;min-width:860px}
-thead th{padding:8px 12px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;cursor:pointer;user-select:none;white-space:nowrap}
-thead th:hover{background:#EEE;color:#434343}
-tbody tr{border-bottom:1px solid #F5F5F5;cursor:pointer;transition:background .1s}
-tbody tr:hover td{background:#FFFBEA!important}
-tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
-.mono{font-family:'Montserrat',monospace;font-size:10px;font-weight:700;color:#434343}
-.amt{text-align:right;font-weight:800;font-size:11px}
-.cred td{background:#FAFAFA!important}
-.geo-tag{font-size:8.5px;font-weight:800;padding:2px 5px;border-radius:3px;cursor:pointer}
-.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#fff}.geo-AU{background:#473400;color:#FFDA30}.geo-Other{background:#E2E2E2;color:#696969}
-.inv-tag{font-size:8.5px;font-weight:600;padding:2px 5px;border-radius:3px;background:#F2F2F2;color:#696969;cursor:pointer}
-.hs-a{color:#006E5E;text-decoration:none;font-size:13px;font-weight:700;transition:color .15s}
-.hs-a:hover{color:#FFDA30}
-.pgs{padding:10px 16px;border-top:1px solid #F2F2F2;display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap}
-.pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;transition:all .15s;font-family:'Montserrat',sans-serif}
-.pg:hover{background:#FFFBEA;border-color:#FFDA30}
-.pg.on{background:#FFDA30;color:#111;border-color:#FFDA30}
-.pg-nav{font-size:14px;font-weight:800;color:#434343;width:27px}
-.pg-nav:disabled{opacity:.3;cursor:not-allowed}
-.pg-ellipsis{display:flex;align-items:center;justify-content:center;width:20px;height:27px;color:#9A9A9A;font-size:12px;user-select:none}
-
-/* Footer */
-.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
-
-/* Spinner */
-.lo{position:fixed;inset:0;background:rgba(67,67,67,.12);backdrop-filter:blur(1px);z-index:500;display:none;align-items:center;justify-content:center;pointer-events:none}
+/* ── Loading ── */
+.lo{display:none;position:fixed;inset:0;background:rgba(242,254,220,.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:14px}
 .lo.show{display:flex}
-.spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+.spin{width:36px;height:36px;border:3px solid rgba(255,218,48,.25);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+.lo-lbl{font-size:10px;font-weight:700;color:#696969;letter-spacing:.08em;text-transform:uppercase}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Responsive ── */
-@media(max-width:1200px){
-  .chart-row-3{grid-template-columns:1fr 1fr}
-  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
-}
-@media(max-width:900px){
-  .chart-row-3,.chart-row{grid-template-columns:1fr}
-  .hdr-in{padding:14px 18px 0}
-  .fbar{padding:10px 18px}
-  .main{padding:16px 18px 40px}
-  .drill-bar{padding:0 18px}
-  .err-wrap{padding:8px 18px 0}
-  .app-layout{flex-direction:column}
-  .sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static;max-height:none;align-items:flex-end}
-  .sb-section{flex:1;min-width:120px}
-  .sb-divider{display:none}
-}
-@media(max-width:600px){
-  .hdr-top{flex-direction:column}
-  .hdr-right{justify-content:flex-start}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .hdr-title{font-size:17px}
-  .fbar-in{gap:6px}
-  .fsel{max-width:130px;font-size:9px}
-  .login-box{padding:28px 24px;margin:16px}
-}
-@media(max-width:400px){
-  .kpi-grid{grid-template-columns:1fr}
-}
+/* ── Section header ── */
+.sec{display:flex;align-items:center;gap:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#434343;margin-bottom:14px;margin-top:32px}
+.sec-bar{flex:1;height:1px;background:rgba(67,67,67,.12)}
 
-/* ── Nav Tabs ── */
-.nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
-.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;gap:0}
-.nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
-.nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
-.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
-.nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important;text-decoration:none}
-.nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
-
-/* ── Clubs Filter Bar ── */
-.clubs-fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
-/* ── Clubs layout — mirrors Revenue app-layout ── */
-.clubs-app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
-.clubs-sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
-.clubs-main{flex:1;min-width:0;padding:18px 28px 48px}
-
-/* ── Clubs Main Layout ── */
-.clubs-layout{display:none;flex:1;min-width:0}
-
-/* ── Owner dropdown: constrain to sidebar width — prevents overflow into clubs-sidebar ── */
-.sidebar .ms-dropdown{min-width:100%}
-
-/* ── Tier Sidebar Buttons — colours match KPI badge exactly per tier ── */
-.tb{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
-.tb:hover{opacity:.65;transform:scale(1.02)}
-.tb.active{opacity:1}
-.tb-premier{background:#3B3561;color:#FFDA30}
-.tb-select{background:#FFDA30;color:#111}
-.tb-core{background:#5C5C5C;color:#fff}
-.tb-base{background:#9A9A9A;color:#fff}
-
-/* ── Tier Cards ── */
-.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.tier-card{background:#fff;border-radius:10px;padding:18px 20px;border:1px solid #E2E2E2;position:relative;overflow:hidden;transition:box-shadow .2s}
-.tier-card:hover{box-shadow:0 4px 18px rgba(67,67,67,.1)}
-.tier-card.premier{border-top:3px solid #3B3561}
-.tier-card.select{border-top:3px solid #FFDA30}
-.tier-card.core{border-top:3px solid #5C5C5C}
-.tier-card.base{border-top:3px solid #9A9A9A;background:#F6F6F6}
-
-
-.t-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;white-space:nowrap}
-.t-badge.premier{background:#3B3561;color:#FFDA30}
-.t-badge.select{background:#FFDA30;color:#111}
-.t-badge.core{background:#5C5C5C;color:#fff}
-.t-badge.base{background:#9A9A9A;color:#fff}
-
-
-.t-count{font-size:34px;font-weight:800;color:#434343;line-height:1;margin-bottom:2px}
-.t-sublbl{font-size:8.5px;color:#9A9A9A;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.t-rev{font-size:13px;font-weight:800;color:#434343;margin-bottom:3px}
-.t-avg{font-size:10px;font-weight:600;color:#9A9A9A}
-.t-spark{position:absolute;bottom:14px;right:16px;opacity:.55;pointer-events:none}
-
-/* ── Movement Flags (roster badges) ── */
-.mvt{font-size:8px;font-weight:800;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-.mvt-new{background:#0CCE6B;color:#111}
-.mvt-retained{background:#006E5E;color:#fff}
-.mvt-upgraded{background:#FFDA30;color:#111}
-.mvt-atrisk{background:#EF2D56;color:#fff}
-/* ── Movement Sidebar Buttons (mirrors Tier style, semantic colours) ── */
-.mvt-btn{flex:1;min-width:60px;border:none;border-radius:6px;padding:7px 4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;opacity:.3;transition:opacity .2s,transform .1s;font-family:'Montserrat',sans-serif}
-.mvt-btn:hover{opacity:.65;transform:scale(1.02)}
-.mvt-btn.active{opacity:1}
-.mb-new{background:#0CCE6B;color:#111}
-.mb-retained{background:#006E5E;color:#fff}
-.mb-upgraded{background:#FFDA30;color:#111}
-.mb-atrisk{background:#EF2D56;color:#fff}
-
-/* ── Tier group header rows in roster table ── */
-.tier-group-hdr td{background:#F7F7F7!important;padding:7px 12px!important;font-size:9px!important;font-weight:800!important;text-transform:uppercase!important;letter-spacing:.1em!important;color:#434343!important;border-top:2px solid #E2E2E2!important;border-bottom:1px solid #E8E8E8!important;cursor:default!important}
-.tier-group-hdr:hover td{background:#F7F7F7!important}
-
-/* ── Clubs empty state ── */
-.clubs-empty{text-align:center;padding:48px 20px;color:#9A9A9A}
-.clubs-empty .es-icon{font-size:32px;margin-bottom:12px}
-.clubs-empty p{font-size:11px;font-weight:600}
-
-@media(max-width:900px){.tier-grid{grid-template-columns:repeat(2,1fr)}.clubs-app-layout{flex-direction:column}.clubs-sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static}.clubs-main{padding:14px 18px 36px}}
-@media(max-width:600px){.tier-grid{grid-template-columns:1fr}}
-
-/* ── Weekly Sprint ── */
-.weekly-layout{display:none;flex:1;min-width:0}
-.weekly-main{max-width:1440px;padding:18px 28px 48px}
-.funnel-layout{display:none;flex:1;min-width:0}
-.funnel-main{max-width:1440px;padding:18px 28px 48px}
-/* Tiles */
-.wk-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.wk-tile{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #E2E2E2;padding:13px 15px 14px;cursor:pointer;transition:box-shadow .2s,transform .15s}
-.wk-tile:hover{box-shadow:0 4px 16px rgba(67,67,67,.12);transform:translateY(-1px)}
-.wk-tile.active{box-shadow:0 5px 20px rgba(67,67,67,.15)}
-.wkt-badge{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:4px;letter-spacing:.04em;margin-bottom:2px}
-.wkt-dates{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:10px}
-.wkt-rev{font-size:23px;font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
-.wkt-count{font-size:10px;font-weight:700;color:#696969}
-.wkt-pct{font-size:10px;font-weight:600;color:#9A9A9A}
-.wkt-empty{font-size:11px;font-weight:600;color:#C0C0C0;margin-top:4px}
-/* Active week deal table section label */
-.wk-tbl-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
-@media(max-width:900px){.wk-tiles{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.wk-tiles{grid-template-columns:1fr}}
-</style>
-<style>
-/* ── Book Watch — KPI strip ── */
+/* ── KPI strip ── */
 .kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.kpi{background:#fff;border-radius:10px;padding:18px 20px;border-top:3px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.kpi-lbl{font-size:9px;color:#696969;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;font-weight:800}
+.kpi-val{font-size:clamp(24px,2vw,34px);font-weight:800;color:#434343;line-height:1;margin-bottom:5px}
+.kpi-sub{font-size:10px;color:#696969;font-weight:600}
 .kpi.k-baseline{border-top-color:#3B3561}
 .kpi.k-recovered{border-top-color:#0CCE6B}
 .kpi.k-gap{border-top-color:#EF2D56}
@@ -416,17 +165,13 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .gain-val{color:#006E5E;font-weight:800}
 .empty-state{padding:24px;text-align:center;font-size:10px;font-weight:600;color:#9A9A9A}
 
-/* ── Book Watch sec header ── */
-.sec{display:flex;align-items:center;gap:9px}
-.sec-bar{flex:1;height:1px;background:rgba(67,67,67,.12)}
-
 @media(max-width:1100px){.kpi-strip{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.kpi-strip{grid-template-columns:1fr}}
+@media(max-width:700px){.kpi-strip{grid-template-columns:1fr}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ══ LOGIN (verbatim from portfolio.html) ══ -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
     <div class="login-logo">
@@ -446,11 +191,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 
 <div class="lo" id="lo"><div class="spin"></div></div>
 
-<!-- HEADER -->
+<!-- ══ HEADER (verbatim from portfolio.html) ══ -->
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
-      <a class="hdr-brand" onclick="location.reload()" title="Reload Nexus" role="button">
+      <a class="hdr-brand" onclick="location.reload()" title="Reload Book Watch" role="button">
         <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
@@ -464,8 +209,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         </svg>
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
-          <div class="hdr-title">Project Nexus</div>
-          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
+          <div class="hdr-title" id="hdr-title">Project Nexus</div>
+          <div class="hdr-sub" id="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
       </a>
       <div class="hdr-right">
@@ -473,123 +218,56 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
-        <button class="reset-btn" id="resetbtn" onclick="resetFilters()">⊗ Reset All</button>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
       </div>
     </div>
   </div>
-  <!-- ── SCREEN NAVIGATION ── -->
+  <!-- ── SCREEN NAVIGATION (verbatim from index.html) ── -->
   <div class="nav-tabs-bar">
     <div class="nav-in">
-      <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue Pulse</button>
-      <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
-      <a class="nav-tab nav-tab-ext" id="funnel-link" href="/funnel" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Funnel Desk ↗</a>
-      <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
-      <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
+      <a class="nav-tab nav-tab-ext active-ext" href="/">Revenue Pulse</a>
+      <a class="nav-tab nav-tab-ext" href="/funnel" target="_blank">Funnel Desk ↗</a>
+      <a class="nav-tab nav-tab-ext" href="/portfolio" target="_blank">Portfolio Health ↗</a>
+      <a class="nav-tab nav-tab-ext" style="color:#FFDA30;border-bottom:2px solid #FFDA30" href="/recurring">Book Watch</a>
     </div>
   </div>
-  <div class="fbar" id="fbar">
+  <!-- ══ FILTER BAR ══ -->
+  <div class="fbar">
     <div class="fbar-in">
-      <div id="rev-period-wrap" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-        <span class="fl">Period</span>
-        <!-- Revenue period (visible on Revenue screen) -->
-        <div id="rev-period-inner" style="display:flex;align-items:center;gap:8px">
-          <select class="fsel" id="period-sel" onchange="onPeriodChange()">
-            <option value="this-month" selected>This Month</option>
-            <option value="last-month" id="opt-last-month">Last Month</option>
-            <option value="this-quarter">This Quarter (FY)</option>
-            <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
-            <option value="this-fy">This FY (Apr 2026)</option>
-            <option value="custom">Custom ▾</option>
-          </select>
-          <div class="custom-range" id="custom-range">
-            <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
-            <span class="range-sep">→</span>
-            <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
-          </div>
-        </div>
-        <!-- Clubs period (visible on Client Clubs screen) -->
-        <div id="clubs-period-inner" style="display:none;align-items:center;gap:8px">
-          <select class="fsel" id="clubs-period-sel" onchange="onClubsPeriodChange()">
-            <option value="this-month">This Month</option>
-            <option value="last-month" id="clubs-opt-last-month" selected>Last Month</option>
-            <option value="this-quarter">This Quarter (FY)</option>
-            <option value="last-quarter" id="clubs-opt-last-quarter">Last Quarter (FY)</option>
-            <option value="this-fy">This FY (Apr 2026)</option>
-            <option value="custom">Custom ▾</option>
-          </select>
-          <div class="custom-range" id="clubs-custom-range">
-            <select class="fsel sm" id="clubs-from-sel" onchange="onClubsPeriodChange()"></select>
-            <span class="range-sep">→</span>
-            <select class="fsel sm" id="clubs-to-sel" onchange="onClubsPeriodChange()"></select>
-          </div>
-        </div>
-        <!-- Weekly Numbers period (visible on Weekly Numbers screen) -->
-        <div id="weekly-period-inner" style="display:none;align-items:center;gap:8px">
-          <select class="fsel" id="weekly-period-sel" onchange="onWeeklyPeriodChange()">
-            <!-- Populated by initWeeklyPeriodSel() at boot -->
-          </select>
-        </div>
-        <div class="vdiv"></div>
-      </div>
-      <span class="fl">Business Unit</span>
-      <select class="fsel sm" id="bu-sel" onchange="onBUChange()">
+      <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Book Watch</span>
+      <div class="vdiv"></div>
+      <span class="fl">BU</span>
+      <select class="fsel sm" id="bw-bu-sel" onchange="reRender()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
         <option value="MarTech">MarTech</option>
       </select>
       <div class="vdiv"></div>
-      <span class="fl">Region</span>
-      <div class="ms-wrap" id="geo-ms-wrap">
-        <div class="ms-btn" id="geo-ms-btn" onclick="toggleGeoMS(event)">
-          <span id="geo-ms-label">All Regions</span>
-          <span class="ms-arrow">▼</span>
-        </div>
-        <div class="ms-dropdown" id="geo-ms-dropdown">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Regions</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllGeo()">All</span>
-              <span class="ms-act" onclick="deselectAllGeo()">None</span>
-            </div>
-          </div>
-          <div id="geo-ms-list"></div>
-        </div>
-      </div>
-      <div class="vdiv"></div>
       <span class="fl">Head</span>
-      <div class="ms-wrap" id="head-ms-wrap">
-        <div class="ms-btn" id="head-ms-btn" onclick="toggleHeadMS(event)">
-          <span id="head-ms-label">All Heads</span>
-          <span class="ms-arrow">▼</span>
+      <div class="ms-wrap" id="bw-head-wrap">
+        <div class="ms-btn" id="bw-head-btn" onclick="toggleHeadDrop(event)">
+          <span id="bw-head-label">All Heads</span><span class="ms-arrow">▼</span>
         </div>
-        <div class="ms-dropdown" id="head-ms-dropdown">
+        <div class="ms-dropdown" id="bw-head-dropdown">
           <div class="ms-ctrl">
             <span class="ms-ctrl-lbl">Heads</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllHeads()">All</span>
-              <span class="ms-act" onclick="deselectAllHeads()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllHeads()">All</span><span class="ms-act" onclick="deselectAllHeads()">None</span></div>
           </div>
-          <div id="head-ms-list"></div>
+          <div id="bw-head-list"></div>
         </div>
       </div>
       <div class="vdiv"></div>
-      <span class="fl">Service</span>
-      <div class="ms-wrap" id="svc-ms-wrap">
-        <div class="ms-btn" id="svc-ms-btn" onclick="toggleSvcMS(event)">
-          <span id="svc-ms-label">All Services</span>
-          <span class="ms-arrow">▼</span>
+      <span class="fl">Owner</span>
+      <div class="ms-wrap" id="bw-owner-wrap">
+        <div class="ms-btn" id="bw-owner-btn" onclick="toggleOwnerDrop(event)">
+          <span id="bw-owner-label">All Owners</span><span class="ms-arrow">▼</span>
         </div>
-        <div class="ms-dropdown" id="svc-ms-dropdown">
+        <div class="ms-dropdown" id="bw-owner-dropdown">
           <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Services</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllSvc()">All</span>
-              <span class="ms-act" onclick="deselectAllSvc()">None</span>
-            </div>
+            <span class="ms-ctrl-lbl">Owners</span>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllOwners()">All</span><span class="ms-act" onclick="deselectAllOwners()">None</span></div>
           </div>
-          <div id="svc-ms-list"></div>
+          <div id="bw-owner-list"></div>
         </div>
       </div>
     </div>
@@ -597,127 +275,46 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="yellow-rule"></div>
 </div>
 
-<div class="drill-bar" id="drill-bar"><div class="drill-chips" id="drill-chips"></div></div>
-<div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div></div>
-
-<!-- LAYOUT: Sidebar + Main -->
-<div class="app-layout" id="app-layout">
-  <aside class="sidebar">
-    <div class="sb-section">
-      <div class="sb-lbl">Owners</div>
-      <div class="ms-wrap" id="ms-wrap" style="width:100%">
-        <div class="ms-btn sb-ms-btn" id="ms-btn" onclick="toggleMS(event)">
-          <span id="ms-label">All Owners</span>
-          <span class="ms-arrow">▼</span>
-        </div>
-        <div class="ms-dropdown" id="ms-dropdown">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Deal Owners</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAll()">All</span>
-              <span class="ms-act" onclick="deselectAll()">None</span>
-            </div>
-          </div>
-          <div id="ms-list"></div>
-        </div>
-      </div>
-    </div>
-    <div class="sb-divider"></div>
-    <div class="sb-section">
-      <div class="sb-lbl">Quick Filter</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="nbd-toggle" id="existing-toggle" onclick="toggleExisting()" style="flex:1;min-width:60px">Existing</button>
-        <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()" style="flex:1;min-width:45px">NBD</button>
-        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1;min-width:50px">React.</button>
-      </div>
-    </div>
-    <div class="sb-divider"></div>
-    <div class="sb-section">
-      <div class="sb-lbl">Engagement Model</div>
-      <select class="fsel sb-sel" id="itype-sel" onchange="onGeoChange()">
-        <option value="">All Types</option>
-        <option value="One Time">P2P</option>
-        <option value="Recurring">Recurring</option>
-      </select>
-    </div>
-    <!-- ── Client Club filters — shown only on Client Club tab ── -->
-    <div id="sidebar-clubs-section" style="display:none">
-      <div class="sb-divider"></div>
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Tier</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllTiers()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllTiers()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="tb tb-premier active" id="ct-premier" onclick="toggleClubsTier('Premier')">Premier</button>
-          <button class="tb tb-select active"  id="ct-select"  onclick="toggleClubsTier('Select')">Select</button>
-          <button class="tb tb-core active"    id="ct-core"    onclick="toggleClubsTier('Core')">Core</button>
-          <button class="tb tb-base active"    id="ct-base"    onclick="toggleClubsTier('Base')">Base</button>
-        </div>
-      </div>
-      <div class="sb-divider"></div>
-      <div class="sb-section">
-        <div class="sb-lbl" style="display:flex;justify-content:space-between;align-items:center">
-          <span>Movement</span>
-          <span style="display:flex;gap:6px">
-            <span style="font-size:9px;color:#006E5E;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="selectAllMovements()">All</span>
-            <span style="font-size:9px;color:#9A9A9A;font-weight:700;cursor:pointer;letter-spacing:.04em" onclick="deselectAllMovements()">None</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">
-          <button class="mvt-btn mb-new active"      id="mb-new"      onclick="toggleClubsMovement('New')">New</button>
-          <button class="mvt-btn mb-retained active" id="mb-retained" onclick="toggleClubsMovement('Retained')">Retained</button>
-          <button class="mvt-btn mb-upgraded active" id="mb-upgraded" onclick="toggleClubsMovement('Upgraded')">Upgraded</button>
-          <button class="mvt-btn mb-atrisk active"   id="mb-atrisk"   onclick="toggleClubsMovement('At-risk')">At-risk</button>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main" id="rev-main">
+<!-- ══ MAIN ══ -->
+<div class="main">
   <div class="err-bar" id="err-bar"><strong>Sync error:</strong> <span id="err-msg"></span></div>
 
-    <div id="bw-content" style="display:none">
+  <div id="bw-content" style="display:none">
 
-      <!-- KPI Strip -->
-      <div class="kpi-strip">
-        <div class="kpi k-baseline">
-          <div class="kpi-lbl">Last Month Recurring</div>
-          <div class="kpi-val" id="k-baseline">—</div>
-          <div class="kpi-sub" id="k-baseline-sub">Total recurring booked</div>
-        </div>
-        <div class="kpi k-recovered">
-          <div class="kpi-lbl">Recovered This Month</div>
-          <div class="kpi-val" id="k-recovered">—</div>
-          <div class="kpi-sub" id="k-recovered-sub">Matched &amp; closed so far</div>
-        </div>
-        <div class="kpi k-gap">
-          <div class="kpi-lbl">Gap</div>
-          <div class="kpi-val" id="k-gap">—</div>
-          <div class="kpi-sub" id="k-gap-sub">Unrecovered recurring</div>
-        </div>
-        <div class="kpi k-rate">
-          <div class="kpi-lbl">Recovery Rate</div>
-          <div class="kpi-val" id="k-rate">—</div>
-          <div class="kpi-sub" id="k-rate-sub">Recovered ÷ last month</div>
-        </div>
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi k-baseline">
+        <div class="kpi-lbl">Last Month Recurring</div>
+        <div class="kpi-val" id="k-baseline">—</div>
+        <div class="kpi-sub" id="k-baseline-sub">Total recurring booked</div>
       </div>
-
-      <!-- Head Summary -->
-      <div class="sec">Head Summary <div class="sec-bar"></div></div>
-      <div class="head-grid" id="head-grid"></div>
-
-      <!-- Owner Drilldown -->
-      <div class="sec" style="margin-top:28px">Owner Drill-Down <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span><div class="sec-bar"></div></div>
-      <div id="owner-drill"></div>
-
+      <div class="kpi k-recovered">
+        <div class="kpi-lbl">Recovered This Month</div>
+        <div class="kpi-val" id="k-recovered">—</div>
+        <div class="kpi-sub" id="k-recovered-sub">Matched &amp; closed so far</div>
+      </div>
+      <div class="kpi k-gap">
+        <div class="kpi-lbl">Gap</div>
+        <div class="kpi-val" id="k-gap">—</div>
+        <div class="kpi-sub" id="k-gap-sub">Unrecovered recurring</div>
+      </div>
+      <div class="kpi k-rate">
+        <div class="kpi-lbl">Recovery Rate</div>
+        <div class="kpi-val" id="k-rate">—</div>
+        <div class="kpi-sub" id="k-rate-sub">Recovered ÷ last month</div>
+      </div>
     </div>
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-</div><!-- /rev-main -->
+
+    <!-- Head Summary -->
+    <div class="sec">Head Summary <div class="sec-bar"></div></div>
+    <div class="head-grid" id="head-grid"></div>
+
+    <!-- Owner Drilldown -->
+    <div class="sec" style="margin-top:28px">Owner Drill-Down <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· recurring deals from last month vs this month</span><div class="sec-bar"></div></div>
+    <div id="owner-drill"></div>
+
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════════
@@ -1293,18 +890,6 @@ function toggleOwnerSection(rowId){
   tbl.style.display=isOpen?"none":"block";
   hdr.classList.toggle("collapsed",isOpen);
   if(arr)arr.style.transform=isOpen?"":"rotate(90deg)";
-}
-
-// ── Reset all filters ──
-function resetFilters(){
-  // BU
-  const buSel=document.getElementById("bw-bu-sel");
-  if(buSel)buSel.value="";
-  // Heads — check all
-  selectAllHeads();
-  // Owners — check all
-  selectAllOwners();
-  reRender();
 }
 
 // ── Boot (verbatim from portfolio.html) ──
