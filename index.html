@@ -372,6 +372,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 /* ── Weekly Sprint ── */
 .weekly-layout{display:none;flex:1;min-width:0}
 .weekly-main{max-width:1440px;padding:18px 28px 48px}
+.rra-layout{display:none;flex:1;min-width:0}
+.rra-main{max-width:1440px;padding:18px 28px 48px}
 .funnel-layout{display:none;flex:1;min-width:0}
 .funnel-main{max-width:1440px;padding:18px 28px 48px}
 /* Tiles */
@@ -450,6 +452,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="nav-in">
       <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue Pulse</button>
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
+      <button class="nav-tab" data-screen="rra" onclick="setScreen('rra')">Recurring Radar</button>
       <a class="nav-tab nav-tab-ext" id="funnel-link" href="/funnel" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Funnel Desk ↗</a>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
       <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
@@ -720,72 +723,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   </div>
   </div>
 
-  <!-- ══ RECURRING REVENUE ANALYSIS — shown only when Engagement = Recurring ══ -->
-  <div id="rra-section" style="display:none">
-    <div class="sec">Recurring Revenue Analysis
-      <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none" id="rra-period-lbl"></span>
-    </div>
-    <!-- KPI Strip -->
-    <div class="rra-kpi-strip">
-      <div class="rra-kpi">
-        <div class="rra-kpi-lbl">Total Recurring</div>
-        <div class="rra-kpi-val" id="rra-k-total">—</div>
-        <div class="rra-kpi-sub" id="rra-k-total-sub">current month</div>
-      </div>
-      <div class="rra-kpi rra-retained">
-        <div class="rra-kpi-lbl">Retained</div>
-        <div class="rra-kpi-val" id="rra-k-retained">—</div>
-        <div class="rra-kpi-sub" id="rra-k-retained-sub">carried from last month</div>
-      </div>
-      <div class="rra-kpi rra-lost">
-        <div class="rra-kpi-lbl">Lost</div>
-        <div class="rra-kpi-val" id="rra-k-lost">—</div>
-        <div class="rra-kpi-sub" id="rra-k-lost-sub">grace period expired</div>
-      </div>
-      <div class="rra-kpi rra-new">
-        <div class="rra-kpi-lbl">New</div>
-        <div class="rra-kpi-val" id="rra-k-new">—</div>
-        <div class="rra-kpi-sub">not in previous month</div>
-      </div>
-    </div>
-    <!-- Table -->
-    <div class="rra-tcard">
-      <div class="rra-tcard-hdr">
-        <div>
-          <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
-          <div class="rra-tcard-sub" id="rra-table-meta"></div>
-        </div>
-        <button class="radar-toggle" id="rra-toggle-btn" onclick="toggleRRATable()">Show Deals ▾</button>
-      </div>
-      <div id="rra-table-body" style="display:none">
-        <div class="twrap">
-          <table class="rra-table">
-            <thead>
-              <tr>
-                <th style="width:36px">#</th>
-                <th>Client</th>
-                <th>Service</th>
-                <th>Owner</th>
-                <th class="num">Last Deal Amount</th>
-                <th>Close Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="rra-tbody">
-              <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Select Engagement = Recurring to load analysis.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="rra-pagination" id="rra-pagination" style="display:none">
-          <div class="rra-page-info" id="rra-page-info"></div>
-          <div class="rra-page-btns">
-            <button class="rra-page-btn" id="rra-prev" onclick="rraPage(-1)">← Prev</button>
-            <button class="rra-page-btn" id="rra-next" onclick="rraPage(1)">Next →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div><!-- /rra-section -->
+
 
   <div id="deal-records-section">
   <div class="sec">Deal Records</div>
@@ -860,6 +798,83 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
   </div>
 </div><!-- /weekly-layout -->
+
+<!-- ════ RECURRING RADAR — inside app-layout, shares the sidebar ════ -->
+<div class="rra-layout" id="rra-layout" style="display:none">
+  <div class="rra-main">
+
+    <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Recurring Radar
+        <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none" id="rra-period-lbl"></span>
+      </span>
+      <span id="rra-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
+    </div>
+
+    <!-- KPI Strip -->
+    <div class="rra-kpi-strip">
+      <div class="rra-kpi">
+        <div class="rra-kpi-lbl">Total Recurring</div>
+        <div class="rra-kpi-val" id="rra-k-total">—</div>
+        <div class="rra-kpi-sub" id="rra-k-total-sub">current month</div>
+      </div>
+      <div class="rra-kpi rra-retained">
+        <div class="rra-kpi-lbl">Retained</div>
+        <div class="rra-kpi-val" id="rra-k-retained">—</div>
+        <div class="rra-kpi-sub" id="rra-k-retained-sub">carried from last month</div>
+      </div>
+      <div class="rra-kpi rra-lost">
+        <div class="rra-kpi-lbl">Lost</div>
+        <div class="rra-kpi-val" id="rra-k-lost">—</div>
+        <div class="rra-kpi-sub" id="rra-k-lost-sub">grace period expired</div>
+      </div>
+      <div class="rra-kpi rra-new">
+        <div class="rra-kpi-lbl">New</div>
+        <div class="rra-kpi-val" id="rra-k-new">—</div>
+        <div class="rra-kpi-sub">not in previous month</div>
+      </div>
+    </div>
+
+    <!-- Detail Table -->
+    <div class="rra-tcard">
+      <div class="rra-tcard-hdr">
+        <div>
+          <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
+          <div class="rra-tcard-sub" id="rra-table-meta"></div>
+        </div>
+        <button class="radar-toggle open" id="rra-toggle-btn" onclick="toggleRRATable()">Hide Deals ▴</button>
+      </div>
+      <div id="rra-table-body">
+        <div class="twrap">
+          <table class="rra-table">
+            <thead>
+              <tr>
+                <th style="width:36px">#</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Owner</th>
+                <th class="num">Recurring Amount</th>
+                <th>Close Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rra-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rra-pagination" id="rra-pagination" style="display:none">
+          <div class="rra-page-info" id="rra-page-info"></div>
+          <div class="rra-page-btns">
+            <button class="rra-page-btn" id="rra-prev" onclick="rraPage(-1)">← Prev</button>
+            <button class="rra-page-btn" id="rra-next" onclick="rraPage(1)">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  </div>
+</div><!-- /rra-layout -->
 
 <!-- ════ FUNNEL DESK — inside app-layout, shares the sidebar ════ -->
 <div class="funnel-layout" id="funnel-layout">
@@ -2577,7 +2592,7 @@ function renderTrends(months,src){
 const RRA_PAGE_SIZE = 15;
 let rraPage_current = 1;
 let rraRows = []; // full sorted row set, re-used by pagination
-let rraTableOpen = false;
+let rraTableOpen = true;
 
 const RRA_STATUS_ORDER = { lost: 0, atrisk: 1, retained: 2, new: 3 };
 
@@ -2588,20 +2603,13 @@ function toggleRRATable() {
   btn.textContent = rraTableOpen ? "Hide Deals ▴" : "Show Deals ▾";
   btn.classList.toggle("open", rraTableOpen);
   body.style.display = rraTableOpen ? "" : "none";
-  if (rraTableOpen) renderRRATable();
+  if (rraTableOpen && rraRows.length) renderRRATable();
 }
 
 function renderRRA() {
-  const itypeVal = $("itype-sel")?.value || "";
-  const rraSec = $("rra-section");
-  if (!rraSec) return;
-
-  // Show only when Engagement = Recurring
-  if (itypeVal !== "Recurring") {
-    rraSec.style.display = "none";
-    return;
-  }
-  rraSec.style.display = "";
+  // Only run when Recurring Radar tab is active
+  if (currentScreen !== 'rra') return;
+  if (!allDeals.length) return;
 
   // ── Derive M and M+1 from current period ──
   // M+1 = the last month in the selected period (current month for "This Month")
@@ -2838,10 +2846,9 @@ function renderAll(){
   if(allDeals.length)renderTrends(getFY2026Months(),trendView());
   // Weekly Numbers — re-render if active (shares all filter state via trendView())
   if(currentScreen==='weekly'&&allDeals.length)renderWeekly();
+  if(currentScreen==='rra'&&allDeals.length)renderRRA();
   // Funnel Desk — re-render if active
   if(currentScreen==='funnel'&&allDeals.length)renderFunnel();
-  // Recurring Revenue Analysis — shown only when Engagement = Recurring
-  renderRRA();
 }
 
 // ════ KPI ACTIONS ════
@@ -3117,20 +3124,21 @@ function setScreen(name){
   currentScreen=name;
   const isRevenue=name==='revenue';
   const isWeekly=name==='weekly';
+  const isRRA=name==='rra';
   const isFunnel=name==='funnel';
   const isClubs=name==='clubs';
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Swap Period inner — one per screen (Funnel inherits Revenue period selector)
+  // Swap Period inner — RRA shares Revenue period selector (M and M+1 derive from getMonths())
   const rpi=$('rev-period-inner');
   const wpi=$('weekly-period-inner');
   const cpi=$('clubs-period-inner');
-  if(rpi)rpi.style.display=(isRevenue||isFunnel)?'flex':'none';
+  if(rpi)rpi.style.display=(isRevenue||isFunnel||isRRA)?'flex':'none';
   if(wpi)wpi.style.display=isWeekly?'flex':'none';
   if(cpi)cpi.style.display=isClubs?'flex':'none';
   // Clear inactive custom ranges
-  if(!isRevenue&&!isFunnel)$('custom-range')?.classList.remove('show');
+  if(!isRevenue&&!isFunnel&&!isRRA)$('custom-range')?.classList.remove('show');
   if(!isClubs){$('clubs-custom-range')?.classList.remove('show');}
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
@@ -3140,12 +3148,14 @@ function setScreen(name){
   const al=$('app-layout');if(al)al.style.display='flex';
   const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
+  const rl=$('rra-layout');if(rl)rl.style.display=isRRA?'block':'none';
   const fl=$('funnel-layout');if(fl)fl.style.display=isFunnel?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
   // Tier + Movement sections in shared sidebar — visible on Client Club only
   const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
+  if(isRRA&&allDeals.length)renderRRA();
   if(isFunnel&&allDeals.length)renderFunnel();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
 }
