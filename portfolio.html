@@ -43,7 +43,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
-.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.reset-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.reset-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.55);color:#fff}
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .refresh-btn:disabled{opacity:.35;cursor:not-allowed}
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
@@ -354,6 +355,7 @@ tbody td.num{text-align:right;font-weight:700}
           <div class="last-sync" id="last-sync"></div>
         </div>
         <span class="anchor-chip" id="anchor-chip" title="Portfolio anchor date">—</span>
+        <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
         <a class="nexus-btn" id="nexus-link" href="/" target="_blank">↗ Revenue Nexus</a>
       </div>
@@ -366,7 +368,7 @@ tbody td.num{text-align:right;font-weight:700}
       <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Portfolio Health</span>
       <div class="vdiv"></div>
       <!-- BU -->
-      <span class="fl">Business Unit</span>
+      <span class="fl">BU</span>
       <select class="fsel sm" id="p-bu-sel" onchange="onPortfolioBUChange()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
@@ -848,6 +850,42 @@ function bootCloneMode(){
     if(buSel){buSel.value="MarTech";activeBU="MarTech";}
   }
   console.log(`[Portfolio] Clone mode → ${cfg.name}`);
+}
+
+// ════ RESET ALL ════
+function resetAll(){
+  // BU select
+  const buSel=$("p-bu-sel");
+  if(buSel)buSel.value="";
+  activeBU="";
+
+  // Inter BU toggle
+  interBUOnly=false;
+  const ibuBtn=$("interbu-btn");
+  if(ibuBtn)ibuBtn.classList.remove("active");
+
+  // Region — restore all
+  ALL_REGIONS_P.forEach(r=>{const el=$(`pgeo-${r}`);if(el)el.checked=true;});
+  activeRegions=new Set(ALL_REGIONS_P);
+  updatePGeoLabel();
+
+  // Head — restore all (unless clone mode locks it)
+  if(!cloneHead){
+    ALL_HEADS_P.forEach(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);if(el)el.checked=true;});
+    activeHeads=new Set(ALL_HEADS_P);
+    updatePHeadLabel();
+  }
+
+  // Owner — restore all
+  ORDERED_OWNERS_P.forEach(o=>{const el=$(`pown-${o.id}`);if(el)el.checked=true;});
+  activeOwners=new Set(ORDERED_OWNERS_P.map(o=>o.id));
+  ownerFilterActive=false;
+  updatePOwnerLabel();
+
+  // Drill panel
+  closeDrill();
+
+  reRender();
 }
 
 // ════ BU FILTER (updated — uses select, not buttons) ════
