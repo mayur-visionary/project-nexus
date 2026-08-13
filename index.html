@@ -2608,19 +2608,22 @@ function renderRRA() {
     let status;
     if (m1Map[key]) {
       status = "retained";
+      // Retained: use M+1 data (current month amount + closedate) for correct KPI and table display
+      const m1rec = m1Map[key];
+      rows.push({ ...m1rec, status, m_amount: rec.amount, m_closedate: rec.closedate });
     } else {
-      // Grace = closedate + 2 days
+      // Grace = M closedate + 2 days
       const cd = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
       const grace = cd ? new Date(cd.getTime() + 2 * 86400000) : null;
       status = (!grace || today > grace) ? "lost" : "atrisk";
+      rows.push({ ...rec, status });
     }
-    rows.push({ ...rec, status, closedate: rec.closedate });
   });
 
   // New keys in M+1 not in M
   Object.entries(m1Map).forEach(([key, rec]) => {
     if (!mMap[key]) {
-      rows.push({ ...rec, status: "new", closedate: rec.closedate });
+      rows.push({ ...rec, status: "new" });
     }
   });
 
@@ -2634,6 +2637,10 @@ function renderRRA() {
   rraPage_current = 1;
 
   // ── KPI strip ──
+  // retained.amount = M+1 amount (correct — shows current month value of retained clients)
+  // lost.amount = M amount (what revenue was lost from last month)
+  // atrisk.amount = M amount (at risk of being lost)
+  // newRows.amount = M+1 amount (new recurring this month)
   const retained = rows.filter(r => r.status === "retained");
   const lost     = rows.filter(r => r.status === "lost");
   const atrisk   = rows.filter(r => r.status === "atrisk");
@@ -2651,7 +2658,7 @@ function renderRRA() {
   $("rra-k-retained").textContent  = fmtUSD(retained.reduce((s, r) => s + r.amount, 0));
   $("rra-k-retained-sub").textContent = `${retained.length} pairs from ${mLbl}`;
   $("rra-k-lost").textContent      = fmtUSD(lost.reduce((s, r) => s + r.amount, 0));
-  $("rra-k-lost-sub").textContent  = `${lost.length} lost · ${atrisk.length} at risk`;
+  $("rra-k-lost-sub").textContent  = `${lost.length} lost · ${atrisk.length} at risk (${fmtUSD(atrisk.reduce((s,r)=>s+r.amount,0))})`;
   $("rra-k-new").textContent       = fmtUSD(newRows.reduce((s, r) => s + r.amount, 0));
 
   renderRRATable();
