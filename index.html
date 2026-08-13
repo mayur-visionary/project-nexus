@@ -1863,7 +1863,6 @@ function engGroupFromLiName(name){
   if(n.startsWith("dedicated fte"))return"Recurring";
   if(n.startsWith("dedicated pte"))return"Recurring";
   if(n.startsWith("recurring"))return"Recurring";
-  if(n.startsWith("multiple"))return"Recurring";
   if(n.startsWith("p2p"))return"P2P";
   if(n.startsWith("time and material")||n.startsWith("t&m"))return"P2P";
   // EMail Coding has no engagement prefix in HubSpot — hardcoded P2P (permanent fix, Session 14)
