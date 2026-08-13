@@ -50,22 +50,31 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 
-/* ── Filter bar — row 1 (period) ── */
+/* ── Filter bar — verbatim from Revenue Pulse ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
 .fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
+.fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:155px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
+.fsel.sm{max-width:120px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
-
-/* ── Filter bar — row 2 (slice filters) ── */
-.fbar2{background:#2A2A2A;border-top:1px solid rgba(255,255,255,.05);padding:8px 28px}
-.fbar2-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.fsel2{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:600;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
-.fsel2:hover,.fsel2:focus{border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1);color:#fff}
-.fsel2 option{background:#2A2A2A;color:#fff}
-.fsel2.active{background:rgba(255,218,48,.12);border-color:rgba(255,218,48,.4);color:#FFDA30}
+/* Multi-select — verbatim from Revenue Pulse */
+.ms-wrap{position:relative}
+.ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
+.ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+.ms-arrow{font-size:8px;color:rgba(255,255,255,.4)}
+.ms-dropdown{position:absolute;top:calc(100% + 6px);left:0;min-width:230px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:300;display:none;overflow:hidden;max-height:360px;overflow-y:auto}
+.ms-dropdown.open{display:block}
+.ms-ctrl{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
+.ms-ctrl-lbl{font-size:9px;font-weight:800;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase}
+.ms-actions{display:flex;gap:8px}
+.ms-act{color:#FFDA30;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;transition:opacity .15s}
+.ms-act:hover{opacity:.7}
+.ms-item{display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;transition:background .12s}
+.ms-item:hover{background:rgba(255,255,255,.07)}
+.ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
+.ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
 
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
@@ -78,10 +87,27 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Error bar ── */
 .err-bar{background:#EF2D56;color:#fff;font-size:10px;font-weight:700;padding:10px 28px;letter-spacing:.04em;display:none}
 
-/* ── Main layout ── */
-.main{max-width:1440px;margin:0 auto;padding:18px 28px 48px}
-.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#473400;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #FFDA30}
-.sec-row{display:flex;align-items:center;justify-content:space-between}
+/* ── App layout: sidebar + main — verbatim from Revenue Pulse ── */
+.app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
+.sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
+.sb-section{margin-bottom:0}
+.sb-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:5px}
+.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
+.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.sb-ms-btn .ms-arrow{color:#9A9A9A}
+.sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
+/* Sidebar owner dropdown — constrain to sidebar width */
+.sidebar .ms-dropdown{min-width:100%;background:#fff;border-color:#E2E2E2}
+.sidebar .ms-dropdown .ms-ctrl{border-bottom-color:#F0F0F0}
+.sidebar .ms-dropdown .ms-ctrl-lbl{color:#9A9A9A}
+.sidebar .ms-dropdown .ms-item:hover{background:#FFFBEA}
+.sidebar .ms-dropdown .ms-item label{color:#434343}
+.sidebar .ms-dropdown .ms-item input{accent-color:#FFDA30}
+.sidebar .ms-dropdown .ms-act{color:#006E5E}
+
+/* ── Main content ── */
+.main{flex:1;min-width:0;padding:18px 28px 48px}
+.sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#473400;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #FFDA30;display:flex;align-items:center;justify-content:space-between}
 
 /* ── Trend chart card ── */
 .trend-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:20px}
@@ -90,30 +116,38 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .trend-card-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
 .trend-chart-wrap{padding:18px 20px;height:220px;position:relative}
 
-/* ── RRA KPI strip — 5 cards ── */
-.rra-kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
-.rra-kpi{background:#fff;border-radius:12px;padding:18px 20px 14px;border:1px solid #E2E2E2;border-top:4px solid #E2E2E2}
-.rra-kpi.rra-total{border-top-color:#473400}
-.rra-kpi.rra-retained{border-top-color:#006E5E}
-.rra-kpi.rra-atrisk{border-top-color:#FFDA30}
-.rra-kpi.rra-lost{border-top-color:#EF2D56}
-.rra-kpi.rra-new{border-top-color:#0CCE6B}
-.rra-kpi.rra-nrr{border-top-color:#3B3561}
-.rra-kpi-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#696969;margin-bottom:8px}
-.rra-kpi-val{font-size:clamp(18px,1.6vw,26px);font-weight:800;color:#434343;line-height:1;margin-bottom:4px}
-.rra-kpi-sub{font-size:10px;font-weight:600;color:#696969}
-.nrr-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+/* ── KPI strip — 6 cards, clickable ── */
+.rra-kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.rra-kpi{background:#fff;border-radius:12px;padding:16px 18px 13px;border:1px solid #E2E2E2;border-top:4px solid #E2E2E2;cursor:pointer;transition:box-shadow .18s,transform .12s}
+.rra-kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.09);transform:translateY(-1px)}
+.rra-kpi.kpi-active{box-shadow:0 4px 20px rgba(0,0,0,.13);transform:translateY(-1px)}
+.rra-kpi.rra-total  {border-top-color:#473400}.rra-kpi.rra-total.kpi-active  {outline:2px solid #473400}
+.rra-kpi.rra-retained{border-top-color:#006E5E}.rra-kpi.rra-retained.kpi-active{outline:2px solid #006E5E}
+.rra-kpi.rra-atrisk {border-top-color:#FFDA30}.rra-kpi.rra-atrisk.kpi-active {outline:2px solid #FFDA30}
+.rra-kpi.rra-lost   {border-top-color:#EF2D56}.rra-kpi.rra-lost.kpi-active   {outline:2px solid #EF2D56}
+.rra-kpi.rra-new    {border-top-color:#0CCE6B}.rra-kpi.rra-new.kpi-active    {outline:2px solid #0CCE6B}
+.rra-kpi.rra-nrr    {border-top-color:#3B3561;cursor:default;transform:none!important;box-shadow:none!important}
+.rra-kpi-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#696969;margin-bottom:7px}
+.rra-kpi-val{font-size:clamp(16px,1.4vw,22px);font-weight:800;color:#434343;line-height:1;margin-bottom:3px}
+.rra-kpi-sub{font-size:9px;font-weight:600;color:#696969}
+.rra-kpi-hint{font-size:8px;font-weight:700;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase;margin-top:5px}
+.nrr-pill{display:inline-block;padding:2px 7px;border-radius:4px;font-size:8px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-top:5px}
 .nrr-green{background:#E6F4F1;color:#006E5E}
 .nrr-amber{background:#FFFBEA;color:#A07A00}
 .nrr-red{background:#FEE8EC;color:#C0143C}
 
-/* ── RRA table card ── */
-.rra-tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
-.rra-tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:#FAFAFA}
-.rra-tcard-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
-.rra-tcard-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
+/* ── KPI drill panel ── */
+.kpi-drill-wrap{margin-bottom:20px}
+.kpi-drill-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden}
+.kpi-drill-hdr{padding:11px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;background:#FAFAFA}
+.kpi-drill-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
+.kpi-drill-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:1px}
+.kpi-drill-close{font-size:9px;font-weight:800;color:#9A9A9A;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;padding:4px 10px;border-radius:5px;border:1px solid #E2E2E2;background:#F7F7F7;font-family:'Montserrat',sans-serif;transition:all .15s}
+.kpi-drill-close:hover{border-color:#FFDA30;background:#FFFBEA;color:#434343}
+
+/* ── RRA table — shared by drill panel and main detail ── */
 .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.rra-table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+.rra-table{width:100%;border-collapse:collapse;font-size:11px;min-width:620px}
 .rra-table thead th{padding:9px 14px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
 .rra-table thead th.num{text-align:right}
 .rra-table tbody td{padding:9px 14px;border-bottom:1px solid #F5F5F5;white-space:nowrap;color:#434343;font-weight:600}
@@ -133,16 +167,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .rra-page-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
 .rra-page-btn:disabled{opacity:.35;cursor:default}
 
-/* ── Toggle button ── */
+/* ── Main detail table card ── */
+.rra-tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
+.rra-tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:#FAFAFA}
+.rra-tcard-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
+.rra-tcard-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
 .radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
 .radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
 .radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
 
-/* ── Footer ── */
-.footer{text-align:center;font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#9A9A9A;padding:28px 0 12px;margin-top:12px}
+/* ── Footer — verbatim from Revenue Pulse ── */
+.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
-@media(max-width:1100px){.rra-kpi-strip{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:900px){.rra-kpi-strip{grid-template-columns:repeat(2,1fr)}.main{padding:16px 18px 40px}}
+@media(max-width:1200px){.rra-kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){
+  .rra-kpi-strip{grid-template-columns:repeat(2,1fr)}
+  .app-layout{flex-direction:column}
+  .sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static}
+  .main{padding:16px 18px 40px}
+  .fbar{padding:10px 18px}
+}
 </style>
 </head>
 <body>
@@ -151,17 +195,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
     <div class="login-logo">
-      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
         <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
         <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
-    <div class="login-title" id="login-title">Recurring Radar</div>
+    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title">Recurring Radar</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-footer" id="login-footer">The Live Pulse of Mavlers Revenue</div>
+    <div class="login-footer">The Live Pulse of Mavlers Revenue</div>
   </div>
 </div>
 
@@ -172,7 +216,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <div class="hdr-in">
     <div class="hdr-top">
       <a class="hdr-brand" id="nexus-link" href="/" title="Back to Revenue Pulse">
-        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
           <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
@@ -186,7 +230,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
           <div class="hdr-title" id="hdr-title">Project Nexus</div>
-          <div class="hdr-sub" id="hdr-sub">The Live Pulse of Mavlers Revenue</div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
       </a>
       <div class="hdr-right">
@@ -202,7 +246,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <div class="yellow-rule"></div>
 </div>
 
-<!-- FILTER BAR ROW 1: Period -->
+<!-- FILTER BAR — verbatim structure from Revenue Pulse -->
 <div class="fbar">
   <div class="fbar-in">
     <span class="fl">Period</span>
@@ -212,779 +256,927 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <option value="2-months-ago">2 Months Ago</option>
       <option value="3-months-ago">3 Months Ago</option>
     </select>
-  </div>
-</div>
-
-<!-- FILTER BAR ROW 2: Slice filters -->
-<div class="fbar2">
-  <div class="fbar2-in">
-    <span class="fl" style="color:rgba(255,255,255,.55)">Slice</span>
-    <select class="fsel2" id="f-bu" onchange="onFilterChange()">
+    <div class="vdiv"></div>
+    <span class="fl">Business Unit</span>
+    <select class="fsel sm" id="bu-sel" onchange="onFilterChange()">
       <option value="">All BUs</option>
-      <option value="MarTech">MarTech</option>
       <option value="Digital">Digital</option>
+      <option value="MarTech">MarTech</option>
     </select>
     <div class="vdiv"></div>
-    <select class="fsel2" id="f-head" onchange="onFilterChange()">
-      <option value="">All Heads</option>
-      <option value="Jaydeep">Jaydeep</option>
-      <option value="Jiggyasa">Jiggyasa</option>
-      <option value="Tanuj UK">Tanuj UK</option>
-      <option value="Tanuj US">Tanuj US</option>
-      <option value="Nevilson">Nevilson</option>
-    </select>
+    <span class="fl">Region</span>
+    <div class="ms-wrap" id="geo-ms-wrap">
+      <div class="ms-btn" id="geo-ms-btn" onclick="toggleGeoMS(event)">
+        <span id="geo-ms-label">All Regions</span>
+        <span class="ms-arrow">▼</span>
+      </div>
+      <div class="ms-dropdown" id="geo-ms-dropdown">
+        <div class="ms-ctrl">
+          <span class="ms-ctrl-lbl">Regions</span>
+          <div class="ms-actions">
+            <span class="ms-act" onclick="selectAllGeo()">All</span>
+            <span class="ms-act" onclick="deselectAllGeo()">None</span>
+          </div>
+        </div>
+        <div id="geo-ms-list"></div>
+      </div>
+    </div>
     <div class="vdiv"></div>
-    <select class="fsel2" id="f-svc" onchange="onFilterChange()">
-      <option value="">All Services</option>
-      <option value="Campaign">Campaign</option>
-      <option value="Email">Email</option>
-      <option value="Design">Design</option>
-      <option value="Search">Search</option>
-      <option value="Web">Web</option>
-    </select>
+    <span class="fl">Head</span>
+    <div class="ms-wrap" id="head-ms-wrap">
+      <div class="ms-btn" id="head-ms-btn" onclick="toggleHeadMS(event)">
+        <span id="head-ms-label">All Heads</span>
+        <span class="ms-arrow">▼</span>
+      </div>
+      <div class="ms-dropdown" id="head-ms-dropdown">
+        <div class="ms-ctrl">
+          <span class="ms-ctrl-lbl">Heads</span>
+          <div class="ms-actions">
+            <span class="ms-act" onclick="selectAllHeads()">All</span>
+            <span class="ms-act" onclick="deselectAllHeads()">None</span>
+          </div>
+        </div>
+        <div id="head-ms-list"></div>
+      </div>
+    </div>
+    <div class="vdiv"></div>
+    <span class="fl">Service</span>
+    <div class="ms-wrap" id="svc-ms-wrap">
+      <div class="ms-btn" id="svc-ms-btn" onclick="toggleSvcMS(event)">
+        <span id="svc-ms-label">All Services</span>
+        <span class="ms-arrow">▼</span>
+      </div>
+      <div class="ms-dropdown" id="svc-ms-dropdown">
+        <div class="ms-ctrl">
+          <span class="ms-ctrl-lbl">Services</span>
+          <div class="ms-actions">
+            <span class="ms-act" onclick="selectAllSvc()">All</span>
+            <span class="ms-act" onclick="deselectAllSvc()">None</span>
+          </div>
+        </div>
+        <div id="svc-ms-list"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="err-bar" id="err-bar"><span id="err-msg"></span></div>
 
-<!-- MAIN -->
-<div class="main">
+<!-- APP LAYOUT -->
+<div class="app-layout">
 
-  <!-- Section header -->
-  <div class="sec sec-row">
-    <span>Recurring Radar
-      <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none" id="rra-period-lbl"></span>
-    </span>
-    <span id="rra-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
-  </div>
-
-  <!-- Retention Trend Chart -->
-  <div class="trend-card">
-    <div class="trend-card-hdr">
-      <div>
-        <div class="trend-card-ttl">Retention Trend · FY 2026</div>
-        <div class="trend-card-sub" id="trend-sub">Recurring revenue by status — full financial year</div>
-      </div>
-    </div>
-    <div class="trend-chart-wrap">
-      <canvas id="trend-chart"></canvas>
-    </div>
-  </div>
-
-  <!-- KPI Strip — 5 cards -->
-  <div class="rra-kpi-strip">
-    <div class="rra-kpi rra-total">
-      <div class="rra-kpi-lbl">Total Recurring</div>
-      <div class="rra-kpi-val" id="rra-k-total">—</div>
-      <div class="rra-kpi-sub" id="rra-k-total-sub">current month</div>
-    </div>
-    <div class="rra-kpi rra-retained">
-      <div class="rra-kpi-lbl">Retained</div>
-      <div class="rra-kpi-val" id="rra-k-retained">—</div>
-      <div class="rra-kpi-sub" id="rra-k-retained-sub">carried from prev month</div>
-    </div>
-    <div class="rra-kpi rra-atrisk">
-      <div class="rra-kpi-lbl">At Risk</div>
-      <div class="rra-kpi-val" id="rra-k-atrisk">—</div>
-      <div class="rra-kpi-sub" id="rra-k-atrisk-sub">within grace period</div>
-    </div>
-    <div class="rra-kpi rra-lost">
-      <div class="rra-kpi-lbl">Lost</div>
-      <div class="rra-kpi-val" id="rra-k-lost">—</div>
-      <div class="rra-kpi-sub" id="rra-k-lost-sub">grace period expired</div>
-    </div>
-    <div class="rra-kpi rra-new">
-      <div class="rra-kpi-lbl">New</div>
-      <div class="rra-kpi-val" id="rra-k-new">—</div>
-      <div class="rra-kpi-sub" id="rra-k-new-sub">not in prev month</div>
-    </div>
-  </div>
-
-  <!-- NRR card (full width) -->
-  <div class="rra-kpi rra-nrr" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div>
-      <div class="rra-kpi-lbl">Net Retention Rate (NRR)</div>
-      <div class="rra-kpi-val" id="rra-k-nrr">—</div>
-      <div class="rra-kpi-sub" id="rra-k-nrr-sub">Retained ÷ Previous Month Recurring</div>
-    </div>
-    <div id="rra-nrr-pill"></div>
-  </div>
-
-  <!-- Detail Table -->
-  <div class="rra-tcard">
-    <div class="rra-tcard-hdr">
-      <div>
-        <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
-        <div class="rra-tcard-sub" id="rra-table-meta"></div>
-      </div>
-      <button class="radar-toggle open" id="rra-toggle-btn" onclick="toggleRRATable()">Hide Deals ▴</button>
-    </div>
-    <div id="rra-table-body">
-      <div class="twrap">
-        <table class="rra-table">
-          <thead>
-            <tr>
-              <th style="width:36px">#</th>
-              <th>Client</th>
-              <th>Service</th>
-              <th>Owner</th>
-              <th class="num">Recurring Amount</th>
-              <th>Close Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="rra-tbody">
-            <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="rra-pagination" id="rra-pagination" style="display:none">
-        <div class="rra-page-info" id="rra-page-info"></div>
-        <div class="rra-page-btns">
-          <button class="rra-page-btn" id="rra-prev" onclick="rraPageNav(-1)">← Prev</button>
-          <button class="rra-page-btn" id="rra-next" onclick="rraPageNav(1)">Next →</button>
+  <!-- SIDEBAR — Owners, verbatim from Revenue Pulse -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <div class="ms-wrap" id="ms-wrap" style="width:100%">
+        <div class="ms-btn sb-ms-btn" id="ms-btn" onclick="toggleMS(event)">
+          <span id="ms-label">All Owners</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="ms-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Deal Owners</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAll()">All</span>
+              <span class="ms-act" onclick="deselectAll()">None</span>
+            </div>
+          </div>
+          <div id="ms-list"></div>
         </div>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-</div>
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- Section header -->
+    <div class="sec">
+      <span>Recurring Radar
+        <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none" id="rra-period-lbl"></span>
+      </span>
+      <span id="rra-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
+    </div>
+
+    <!-- Retention Trend Chart -->
+    <div class="trend-card">
+      <div class="trend-card-hdr">
+        <div>
+          <div class="trend-card-ttl">Retention Trend · FY 2026</div>
+          <div class="trend-card-sub">Recurring revenue by status — full financial year</div>
+        </div>
+      </div>
+      <div class="trend-chart-wrap">
+        <canvas id="trend-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- KPI Strip — 6 cards -->
+    <div class="rra-kpi-strip">
+      <div class="rra-kpi rra-total" id="kpi-total" onclick="toggleKPIDrill('total')">
+        <div class="rra-kpi-lbl">Total Recurring</div>
+        <div class="rra-kpi-val" id="rra-k-total">—</div>
+        <div class="rra-kpi-sub" id="rra-k-total-sub">—</div>
+        <div class="rra-kpi-hint">Click to explore ↓</div>
+      </div>
+      <div class="rra-kpi rra-retained" id="kpi-retained" onclick="toggleKPIDrill('retained')">
+        <div class="rra-kpi-lbl">Retained</div>
+        <div class="rra-kpi-val" id="rra-k-retained">—</div>
+        <div class="rra-kpi-sub" id="rra-k-retained-sub">—</div>
+        <div class="rra-kpi-hint">Click to explore ↓</div>
+      </div>
+      <div class="rra-kpi rra-atrisk" id="kpi-atrisk" onclick="toggleKPIDrill('atrisk')">
+        <div class="rra-kpi-lbl">At Risk</div>
+        <div class="rra-kpi-val" id="rra-k-atrisk">—</div>
+        <div class="rra-kpi-sub" id="rra-k-atrisk-sub">—</div>
+        <div class="rra-kpi-hint">Click to explore ↓</div>
+      </div>
+      <div class="rra-kpi rra-lost" id="kpi-lost" onclick="toggleKPIDrill('lost')">
+        <div class="rra-kpi-lbl">Lost</div>
+        <div class="rra-kpi-val" id="rra-k-lost">—</div>
+        <div class="rra-kpi-sub" id="rra-k-lost-sub">—</div>
+        <div class="rra-kpi-hint">Click to explore ↓</div>
+      </div>
+      <div class="rra-kpi rra-new" id="kpi-new" onclick="toggleKPIDrill('new')">
+        <div class="rra-kpi-lbl">New</div>
+        <div class="rra-kpi-val" id="rra-k-new">—</div>
+        <div class="rra-kpi-sub" id="rra-k-new-sub">—</div>
+        <div class="rra-kpi-hint">Click to explore ↓</div>
+      </div>
+      <div class="rra-kpi rra-nrr">
+        <div class="rra-kpi-lbl">NRR</div>
+        <div class="rra-kpi-val" id="rra-k-nrr">—</div>
+        <div class="rra-kpi-sub" id="rra-k-nrr-sub">—</div>
+        <div id="rra-nrr-pill"></div>
+      </div>
+    </div>
+
+    <!-- KPI Drill Panel (collapsible) -->
+    <div class="kpi-drill-wrap" id="kpi-drill-wrap" style="display:none">
+      <div class="kpi-drill-card">
+        <div class="kpi-drill-hdr">
+          <div>
+            <div class="kpi-drill-ttl" id="drill-ttl">—</div>
+            <div class="kpi-drill-sub" id="drill-sub">—</div>
+          </div>
+          <button class="kpi-drill-close" onclick="closeDrill()">✕ Close</button>
+        </div>
+        <div class="twrap">
+          <table class="rra-table">
+            <thead>
+              <tr>
+                <th style="width:32px">#</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Owner</th>
+                <th class="num">Amount</th>
+                <th>Close Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="drill-tbody"></tbody>
+          </table>
+        </div>
+        <div class="rra-pagination" id="drill-pagination" style="display:none">
+          <div class="rra-page-info" id="drill-page-info"></div>
+          <div class="rra-page-btns">
+            <button class="rra-page-btn" id="drill-prev" onclick="drillPageNav(-1)">← Prev</button>
+            <button class="rra-page-btn" id="drill-next" onclick="drillPageNav(1)">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Detail Table -->
+    <div class="rra-tcard">
+      <div class="rra-tcard-hdr">
+        <div>
+          <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
+          <div class="rra-tcard-sub" id="rra-table-meta"></div>
+        </div>
+        <button class="radar-toggle open" id="rra-toggle-btn" onclick="toggleRRATable()">Hide Deals ▴</button>
+      </div>
+      <div id="rra-table-body">
+        <div class="twrap">
+          <table class="rra-table">
+            <thead>
+              <tr>
+                <th style="width:32px">#</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Owner</th>
+                <th class="num">Recurring Amount</th>
+                <th>Close Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rra-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rra-pagination" id="rra-pagination" style="display:none">
+          <div class="rra-page-info" id="rra-page-info"></div>
+          <div class="rra-page-btns">
+            <button class="rra-page-btn" id="rra-prev" onclick="rraPageNav(-1)">← Prev</button>
+            <button class="rra-page-btn" id="rra-next" onclick="rraPageNav(1)">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  </div><!-- /main -->
+</div><!-- /app-layout -->
 
 <script>
 // ════ CONSTANTS ════
-const PIPELINE = "115832232", STAGE = "205348626", PORTAL = "2700725";
+const PIPELINE = "115832232", STAGE = "205348626";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const ALL_REGIONS = ["US","UK","AU"];
+const ALL_HEADS   = ["Jaydeep","Jiggyasa","Tanuj UK","Tanuj US","Nevilson"];
+const ALL_SERVICES= ["Campaign","Email","Design","Search","Web"];
 
 // ════ OWNER REGISTRY ════
 const ALL_OWNERS = [
-  {id:"107178262",name:"Chintan Doshi",     bu:"MarTech", head:"Jaydeep"},
-  {id:"17738843", name:"Jaydeep Salla",     bu:"MarTech", head:"Jaydeep"},
-  {id:"34140174", name:"Mrugesh Dabhi",     bu:"MarTech", head:"Jaydeep"},
-  {id:"467997340",name:"Karan Doshi",       bu:"MarTech", head:"Jaydeep"},
-  {id:"82911376", name:"Divya S",           bu:"MarTech", head:"Jaydeep"},
-  {id:"82030736", name:"Sakshi Bissa",      bu:"MarTech", head:"Jaydeep"},
-  {id:"93107638", name:"Ayush Dhupar",      bu:"MarTech", head:"Jaydeep"},
-  {id:"46153051", name:"Ayush Rathi",       bu:"MarTech", head:"Jaydeep"},
-  {id:"86147905", name:"Preeti Thapliyal", bu:"MarTech", head:"Jaydeep"},
-  {id:"85767516", name:"Rupali Sindhu",     bu:"MarTech", head:"Jaydeep"},
-  {id:"89530815", name:"Vinita Raidu",      bu:"MarTech", head:"Jaydeep"},
-  {id:"916030451",name:"Kamesh Biniwale",   bu:"MarTech", head:"Jaydeep"},
-  {id:"41490632", name:"Mukund Basita",     bu:"MarTech", head:"Jaydeep"},
-  {id:"17739548", name:"Darshan Modi",      bu:"Digital", head:""},
-  {id:"79217713", name:"Krunal Bakraniya",  bu:"Digital", head:""},
-  {id:"17739173", name:"Tanuj Gupta",       bu:"Digital", head:""},
-  {id:"131779647",name:"Jiggyasa Agrawal",  bu:"Digital", head:"Jiggyasa"},
-  {id:"78831011", name:"Kunal Gohil",       bu:"Digital", head:"Jiggyasa"},
-  {id:"94746500", name:"Manvi Choumal",     bu:"Digital", head:"Jiggyasa"},
-  {id:"176516495",name:"Prachi Porwal",     bu:"Digital", head:"Jiggyasa"},
-  {id:"263464861",name:"Saquib Khan",       bu:"Digital", head:"Jiggyasa"},
-  {id:"46156316", name:"Flintoff Mehta",    bu:"Digital", head:"Tanuj UK"},
-  {id:"37344296", name:"Kalgi Shah",        bu:"Digital", head:"Tanuj UK"},
-  {id:"24817892", name:"Sheldon Fernandes", bu:"Digital", head:"Tanuj UK"},
-  {id:"31730801", name:"Vikram Sahi",       bu:"Digital", head:"Tanuj UK"},
-  {id:"38568120", name:"Baspin Thomas",     bu:"Digital", head:"Tanuj US"},
-  {id:"42663191", name:"Dhaval Damania",    bu:"Digital", head:"Tanuj US"},
-  {id:"240935328",name:"Hammad Bhaldar",    bu:"Digital", head:"Tanuj US"},
-  {id:"19799470", name:"Jebin Joy",         bu:"Digital", head:"Tanuj US"},
-  {id:"34558123", name:"Kaustubh Agrawal",  bu:"Digital", head:"Tanuj US"},
-  {id:"284770744",name:"Sourya Ghosh",      bu:"Digital", head:"Tanuj US"},
-  {id:"557894666",name:"Sudarshan Damani",  bu:"Digital", head:"Tanuj US"},
-  {id:"86813698", name:"Aman Acharya",      bu:"Digital", head:"Nevilson"},
-  {id:"255830830",name:"Devanshu Kumar",    bu:"Digital", head:"Nevilson"},
-  {id:"37762663", name:"Malav Modi",        bu:"Digital", head:"Nevilson"},
-  {id:"82663745", name:"Prativa Dubey",     bu:"Digital", head:""}
+  {id:"107178262",name:"Chintan Doshi",    bu:"MarTech",head:"Jaydeep",  region:""},
+  {id:"17738843", name:"Jaydeep Salla",    bu:"MarTech",head:"Jaydeep",  region:""},
+  {id:"34140174", name:"Mrugesh Dabhi",    bu:"MarTech",head:"Jaydeep",  region:""},
+  {id:"467997340",name:"Karan Doshi",      bu:"MarTech",head:"Jaydeep",  region:"AU"},
+  {id:"82911376", name:"Divya S",          bu:"MarTech",head:"Jaydeep",  region:"UK"},
+  {id:"82030736", name:"Sakshi Bissa",     bu:"MarTech",head:"Jaydeep",  region:"UK"},
+  {id:"93107638", name:"Ayush Dhupar",     bu:"MarTech",head:"Jaydeep",  region:"US"},
+  {id:"46153051", name:"Ayush Rathi",      bu:"MarTech",head:"Jaydeep",  region:"US"},
+  {id:"86147905", name:"Preeti Thapliyal",bu:"MarTech",head:"Jaydeep",  region:"US"},
+  {id:"85767516", name:"Rupali Sindhu",    bu:"MarTech",head:"Jaydeep",  region:"US"},
+  {id:"89530815", name:"Vinita Raidu",     bu:"MarTech",head:"Jaydeep",  region:"US"},
+  {id:"916030451",name:"Kamesh Biniwale",  bu:"MarTech",head:"Jaydeep",  region:"US"},
+  {id:"41490632", name:"Mukund Basita",    bu:"MarTech",head:"Jaydeep",  region:""},
+  {id:"17739548", name:"Darshan Modi",     bu:"Digital",head:"",         region:""},
+  {id:"79217713", name:"Krunal Bakraniya", bu:"Digital",head:"",         region:""},
+  {id:"17739173", name:"Tanuj Gupta",      bu:"Digital",head:"",         region:""},
+  {id:"131779647",name:"Jiggyasa Agrawal", bu:"Digital",head:"Jiggyasa", region:"AU"},
+  {id:"78831011", name:"Kunal Gohil",      bu:"Digital",head:"Jiggyasa", region:"AU"},
+  {id:"94746500", name:"Manvi Choumal",    bu:"Digital",head:"Jiggyasa", region:"AU"},
+  {id:"176516495",name:"Prachi Porwal",    bu:"Digital",head:"Jiggyasa", region:"AU"},
+  {id:"263464861",name:"Saquib Khan",      bu:"Digital",head:"Jiggyasa", region:"AU"},
+  {id:"46156316", name:"Flintoff Mehta",   bu:"Digital",head:"Tanuj UK", region:"UK"},
+  {id:"37344296", name:"Kalgi Shah",       bu:"Digital",head:"Tanuj UK", region:"UK"},
+  {id:"24817892", name:"Sheldon Fernandes",bu:"Digital",head:"Tanuj UK", region:"UK"},
+  {id:"31730801", name:"Vikram Sahi",      bu:"Digital",head:"Tanuj UK", region:"UK"},
+  {id:"38568120", name:"Baspin Thomas",    bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"42663191", name:"Dhaval Damania",   bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"240935328",name:"Hammad Bhaldar",   bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"19799470", name:"Jebin Joy",        bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"34558123", name:"Kaustubh Agrawal", bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"284770744",name:"Sourya Ghosh",     bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"557894666",name:"Sudarshan Damani", bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"86813698", name:"Aman Acharya",     bu:"Digital",head:"Nevilson", region:"AU"},
+  {id:"255830830",name:"Devanshu Kumar",   bu:"Digital",head:"Nevilson", region:"UK"},
+  {id:"37762663", name:"Malav Modi",       bu:"Digital",head:"Nevilson", region:"US"},
+  {id:"82663745", name:"Prativa Dubey",    bu:"Digital",head:"",         region:""}
 ];
-const OWN     = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.name]));
-const OWN_BU  = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.bu]));
-const OWN_HD  = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.head]));
-const ownerName = id => OWN[String(id)] || ("Mbr-" + String(id).slice(-4));
-const ownerBU   = id => OWN_BU[String(id)] || "";
-const ownerHead = id => OWN_HD[String(id)] || "";
+const OWN_MAP = Object.fromEntries(ALL_OWNERS.map(o=>[o.id,o]));
+const ownerName   = id => OWN_MAP[String(id)]?.name   || ("Mbr-"+String(id).slice(-4));
+const ownerBU     = id => OWN_MAP[String(id)]?.bu     || "";
+const ownerHead   = id => OWN_MAP[String(id)]?.head   || "";
+const ownerRegion = id => OWN_MAP[String(id)]?.region || "";
 
 // ════ HELPERS ════
 const $ = id => document.getElementById(id);
-const fmtUSD = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
+const fmtUSD     = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
 const fmtUSDfull = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2}).format(n);
-const monthVal = d => `${MFULL[d.getMonth()]}-${d.getFullYear()}`;
+const monthVal   = d => `${MFULL[d.getMonth()]}-${d.getFullYear()}`;
 
 // ════ STATE ════
-let isSyncing    = false;
-let allDeals     = [];       // all FY deals fetched
-let dealServiceMap = {};     // dealId → [{svc,bu,amount,name}]
-let allFYMaps    = {};       // monthStr → expandKeys() result — cached per month
-let rraRows      = [];
+let isSyncing = false;
+let allDeals  = [];
+let dealServiceMap = {};
+let allFYMaps = {};       // monthStr → expandKeys() map (unfiltered)
+let rraRows   = [];       // full filtered rows for main table
 let rraPage_current = 1;
-let rraTableOpen = true;
-const RRA_PAGE_SIZE  = 15;
-const RRA_STATUS_ORDER = { lost:0, atrisk:1, retained:2, new:3 };
+let rraTableOpen    = true;
+let activeDrillStatus = null;  // which KPI card is open
+let drillRows         = [];
+let drillPage_current = 1;
 let trendChart = null;
+const RRA_PAGE_SIZE   = 15;
+const DRILL_PAGE_SIZE = 15;
+const RRA_STATUS_ORDER = {lost:0,atrisk:1,retained:2,new:3};
 
 // ════ FY MONTHS ════
 function getFYMonths() {
-  const now = new Date(), cy = now.getFullYear(), cm = now.getMonth();
-  const fyStartYear = cm < 3 ? cy - 1 : cy;
-  const months = [];
-  for(let m = 3; m <= 11; m++) {
-    if(fyStartYear < cy || (fyStartYear === cy && m <= cm))
-      months.push(`${MFULL[m]}-${fyStartYear}`);
+  const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
+  const fyStartYear=cm<3?cy-1:cy;
+  const months=[];
+  for(let m=3;m<=11;m++){
+    if(fyStartYear<cy||(fyStartYear===cy&&m<=cm))months.push(`${MFULL[m]}-${fyStartYear}`);
   }
-  for(let m = 0; m <= 2; m++) {
-    const yr = fyStartYear + 1;
-    if(yr < cy || (yr === cy && m <= cm))
-      months.push(`${MFULL[m]}-${yr}`);
+  for(let m=0;m<=2;m++){
+    const yr=fyStartYear+1;
+    if(yr<cy||(yr===cy&&m<=cm))months.push(`${MFULL[m]}-${yr}`);
   }
   return months;
 }
 
-// ════ PERIOD SELECTOR → selected month + previous month ════
 function getSelectedMonthPair() {
-  const now = new Date(), cy = now.getFullYear(), cm = now.getMonth();
-  const p = $("period-sel").value;
-  let offset = 0;
-  if(p === "last-month")    offset = 1;
-  if(p === "2-months-ago")  offset = 2;
-  if(p === "3-months-ago")  offset = 3;
+  const now=new Date(),cy=now.getFullYear(),cm=now.getMonth();
+  const p=$("period-sel").value;
+  let offset=0;
+  if(p==="last-month")   offset=1;
+  if(p==="2-months-ago") offset=2;
+  if(p==="3-months-ago") offset=3;
+  const m1Date=new Date(cy,cm-offset,1);
+  const mDate =new Date(cy,cm-offset-1,1);
+  return{mMonth:monthVal(mDate),m1Month:monthVal(m1Date)};
+}
 
-  const m1Date = new Date(cy, cm - offset, 1);      // selected (current) month
-  const mDate  = new Date(cy, cm - offset - 1, 1);  // previous month (for comparison)
-  return { mMonth: monthVal(mDate), m1Month: monthVal(m1Date) };
+// ════ ACTIVE FILTERS ════
+function getActiveFilters() {
+  const bu   = $("bu-sel").value;
+  const geos = ALL_REGIONS.filter(r=>{ const e=$("geo-"+r); return e&&e.checked; });
+  const heads= ALL_HEADS.filter(h=>{ const e=$("head-"+h.replace(/\s/g,"_")); return e&&e.checked; });
+  const svcs = ALL_SERVICES.filter(s=>{ const e=$("svc-"+s); return e&&e.checked; });
+  const ownerIds = new Set(ALL_OWNERS.filter(o=>{ const e=$("ow-"+o.id); return e&&e.checked; }).map(o=>o.id));
+  return{bu,geos,heads,svcs,ownerIds};
+}
+
+function applyFilters(map) {
+  const {bu,geos,heads,svcs,ownerIds} = getActiveFilters();
+  const allGeos  = geos.length  === ALL_REGIONS.length;
+  const allHeads = heads.length === ALL_HEADS.length;
+  const allSvcs  = svcs.length  === ALL_SERVICES.length;
+  const allOwners= ownerIds.size=== ALL_OWNERS.length;
+  if(!bu && allGeos && allHeads && allSvcs && allOwners) return map;
+  const out={};
+  Object.entries(map).forEach(([key,rec])=>{
+    if(bu && rec.bu!==bu) return;
+    if(!allGeos  && rec.region && !geos.includes(rec.region))  return;
+    if(!allHeads && rec.head   && !heads.includes(rec.head))   return;
+    if(!allSvcs  && !svcs.includes(rec.svc))                   return;
+    if(!allOwners&& !ownerIds.has(rec.owner_id))               return;
+    out[key]=rec;
+  });
+  return out;
 }
 
 // ════ CLASSIFICATION ════
-// LI name prefix → engagement group. Exact prefixes only. No deal-level fallback.
 function engGroupFromLiName(name) {
   if(!name) return null;
-  const n = name.toLowerCase();
-  if(n.startsWith("dedicated fte"))     return "Recurring";
-  if(n.startsWith("dedicated pte"))     return "Recurring";
-  if(n.startsWith("recurring services"))return "Recurring";
-  if(n.startsWith("p2p"))               return "P2P";
-  if(n.startsWith("time and material")) return "P2P";
+  const n=name.toLowerCase();
+  if(n.startsWith("dedicated fte"))      return "Recurring";
+  if(n.startsWith("dedicated pte"))      return "Recurring";
+  if(n.startsWith("recurring services")) return "Recurring";
+  if(n.startsWith("p2p"))                return "P2P";
+  if(n.startsWith("time and material"))  return "P2P";
   if(n.startsWith("t&m"))               return "P2P";
-  if(n.includes("email coding"))        return "P2P";
+  if(n.includes("email coding"))         return "P2P";
   return null;
 }
 
-// LI name → service classification
 function classifyLineItem(name) {
   if(!name) return null;
-  const n = name.toLowerCase();
-  if(n.includes("campaign -") || n.includes("campaign manager") ||
-     n.includes("campaign operation specialist") || n.includes("sfmc"))
-    return {svc:"Campaign", bu:"MarTech"};
-  if(n.includes("design - asset") || n.includes("design - digital"))
-    return {svc:"Web", bu:"Digital"};
+  const n=name.toLowerCase();
+  if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
+    return{svc:"Campaign",bu:"MarTech"};
+  if(n.includes("design - asset")||n.includes("design - digital"))
+    return{svc:"Web",bu:"Digital"};
   if(n.includes("design - "))
-    return {svc:"Design", bu:"MarTech"};
-  if(n.includes("development - email") || n.includes("email coding"))
-    return {svc:"Email", bu:"MarTech"};
+    return{svc:"Design",bu:"MarTech"};
+  if(n.includes("development - email")||n.includes("email coding"))
+    return{svc:"Email",bu:"MarTech"};
   if(n.includes("email design and coding"))
-    return {svc:"Design", bu:"MarTech"};
-  if(n.includes("development - web") || n.includes("development - lp/hub") ||
-     n.includes("development - mobile app") || n.includes("ai & automation - web") ||
-     n.includes("dot-net development") || n.includes("operational service - data entry") ||
+    return{svc:"Design",bu:"MarTech"};
+  if(n.includes("development - web")||n.includes("development - lp/hub")||
+     n.includes("development - mobile app")||n.includes("ai & automation - web")||
+     n.includes("dot-net development")||n.includes("operational service - data entry")||
      n.includes("landing page coding"))
-    return {svc:"Web", bu:"Digital"};
-  if(n.includes("search -") || n.includes("consultancy fees"))
-    return {svc:"Search", bu:"Digital"};
+    return{svc:"Web",bu:"Digital"};
+  if(n.includes("search -")||n.includes("consultancy fees"))
+    return{svc:"Search",bu:"Digital"};
   return null;
 }
 
 // ════ expandKeys — LI-only, no eng_model fallback ════
-// Layer 1: ON-prefix → skip (always P2P)
-// Layer 2: classify each LI by name prefix, accumulate Recurring LI amounts only
-// No Layer 3 — eng_model is never used
 function expandKeys(dealList) {
-  const map = {};
-  dealList.forEach(d => {
-    // Layer 1: ON-prefix deals are always P2P — skip entirely
-    if((d.dealname || "").startsWith("ON")) return;
-
-    const lis = dealServiceMap[d.id] || [];
-    lis.forEach(li => {
-      const eg = engGroupFromLiName(li.name);
-      if(eg !== "Recurring") return; // only Recurring LIs flow into Radar
-
-      const svc = li.svc || "Unknown";
-      const key = `${d.billing_id}||${svc}`;
-      if(!map[key]) {
-        map[key] = {
-          billing_id: d.billing_id,
-          svc,
-          bu:       li.bu || ownerBU(d.owner_id),
-          head:     ownerHead(d.owner_id),
-          client:   d.client || d.billing_id,
-          owner_id: d.owner_id,
-          amount:   0,
-          closedate:d.closedate
-        };
-      }
-      map[key].amount += li.amount;
-      if(!map[key].closedate || d.closedate > map[key].closedate)
-        map[key].closedate = d.closedate;
+  const map={};
+  dealList.forEach(d=>{
+    if((d.dealname||"").startsWith("ON")) return;
+    const lis=dealServiceMap[d.id]||[];
+    lis.forEach(li=>{
+      if(engGroupFromLiName(li.name)!=="Recurring") return;
+      const svc=li.svc||"Unknown";
+      const key=`${d.billing_id}||${svc}`;
+      if(!map[key]) map[key]={
+        billing_id:d.billing_id, svc, bu:li.bu||ownerBU(d.owner_id),
+        head:ownerHead(d.owner_id), region:ownerRegion(d.owner_id),
+        client:d.client||d.billing_id, owner_id:d.owner_id,
+        amount:0, closedate:d.closedate
+      };
+      map[key].amount+=li.amount;
+      if(!map[key].closedate||d.closedate>map[key].closedate) map[key].closedate=d.closedate;
     });
   });
   return map;
 }
 
-// ════ DEDUP ════
 function dedup(deals) {
-  const seen = {}, out = [];
-  deals.forEach(d => {
-    const key = d.dealname + "|" + d.amount + "|" + d.month;
-    if(!seen[key]) { seen[key] = true; out.push(d); }
+  const seen={},out=[];
+  deals.forEach(d=>{
+    const key=d.dealname+"|"+d.amount+"|"+d.month;
+    if(!seen[key]){seen[key]=true;out.push(d);}
   });
   return out;
 }
 
-// ════ FILTERS ════
-function activeFilters() {
-  return {
-    bu:   $("f-bu").value,
-    head: $("f-head").value,
-    svc:  $("f-svc").value
-  };
-}
-
-function applyFilters(map) {
-  const {bu, head, svc} = activeFilters();
-  if(!bu && !head && !svc) return map;
-  const out = {};
-  Object.entries(map).forEach(([key, rec]) => {
-    if(bu   && rec.bu   !== bu)   return;
-    if(head && rec.head !== head) return;
-    if(svc  && rec.svc  !== svc)  return;
-    out[key] = rec;
-  });
-  return out;
-}
-
-// Update filter select active styling
-function updateFilterStyles() {
-  ["f-bu","f-head","f-svc"].forEach(id => {
-    const el = $(id);
-    el.classList.toggle("active", el.value !== "");
-  });
-}
-
-// ════ BUILD ROWS from two maps ════
-function buildRows(mMap, m1Map) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const rows = [];
-
-  Object.entries(mMap).forEach(([key, rec]) => {
-    if(m1Map[key]) {
-      const m1rec = m1Map[key];
-      rows.push({...m1rec, status:"retained", m_amount:rec.amount, m_closedate:rec.closedate});
+// ════ BUILD ROWS ════
+function buildRows(mMap,m1Map) {
+  const today=new Date();today.setHours(0,0,0,0);
+  const rows=[];
+  Object.entries(mMap).forEach(([key,rec])=>{
+    if(m1Map[key]){
+      rows.push({...m1Map[key],status:"retained",m_amount:rec.amount});
     } else {
-      const cd    = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
-      const grace = cd ? new Date(cd.getTime() + 2 * 86400000) : null;
-      const status = (!grace || today > grace) ? "lost" : "atrisk";
-      rows.push({...rec, status});
+      const cd=rec.closedate?new Date(rec.closedate+"T00:00:00"):null;
+      const grace=cd?new Date(cd.getTime()+2*86400000):null;
+      rows.push({...rec,status:(!grace||today>grace)?"lost":"atrisk"});
     }
   });
-
-  Object.entries(m1Map).forEach(([key, rec]) => {
-    if(!mMap[key]) rows.push({...rec, status:"new"});
+  Object.entries(m1Map).forEach(([key,rec])=>{
+    if(!mMap[key]) rows.push({...rec,status:"new"});
   });
-
-  rows.sort((a,b) => {
-    const so = RRA_STATUS_ORDER[a.status] - RRA_STATUS_ORDER[b.status];
-    return so !== 0 ? so : b.amount - a.amount;
+  rows.sort((a,b)=>{
+    const so=RRA_STATUS_ORDER[a.status]-RRA_STATUS_ORDER[b.status];
+    return so!==0?so:b.amount-a.amount;
   });
   return rows;
 }
 
 // ════ RENDER KPI STRIP ════
-function renderKPIs(rows, m1Map, mMap, mLbl, m1Lbl, m1Year) {
-  const retained = rows.filter(r => r.status === "retained");
-  const lost     = rows.filter(r => r.status === "lost");
-  const atrisk   = rows.filter(r => r.status === "atrisk");
-  const newRows  = rows.filter(r => r.status === "new");
-  const m1Total  = Object.values(m1Map).reduce((s,r) => s + r.amount, 0);
-  const mTotal   = Object.values(mMap).reduce((s,r) => s + r.amount, 0);
+function renderKPIs(rows,m1Map,mMap,mLbl,m1Lbl,m1Year) {
+  const retained=rows.filter(r=>r.status==="retained");
+  const lost    =rows.filter(r=>r.status==="lost");
+  const atrisk  =rows.filter(r=>r.status==="atrisk");
+  const newRows =rows.filter(r=>r.status==="new");
+  const m1Total =Object.values(m1Map).reduce((s,r)=>s+r.amount,0);
+  const mTotal  =Object.values(mMap).reduce((s,r)=>s+r.amount,0);
+  const retAmt  =retained.reduce((s,r)=>s+r.amount,0);
+  const nrr     =mTotal>0?(retAmt/mTotal*100):null;
 
-  const retainedAmt = retained.reduce((s,r) => s + r.amount, 0);
-  const nrr = mTotal > 0 ? (retainedAmt / mTotal * 100) : null;
+  $("rra-period-lbl").textContent=`· ${m1Lbl} ${m1Year} vs ${mLbl}`;
+  $("rra-k-total").textContent   =fmtUSD(m1Total);
+  $("rra-k-total-sub").textContent=`${Object.keys(m1Map).length} client · service pairs`;
+  $("rra-k-retained").textContent=fmtUSD(retAmt);
+  $("rra-k-retained-sub").textContent=`${retained.length} pairs from ${mLbl}`;
+  $("rra-k-atrisk").textContent  =fmtUSD(atrisk.reduce((s,r)=>s+r.amount,0));
+  $("rra-k-atrisk-sub").textContent=`${atrisk.length} pairs · 2-day grace`;
+  $("rra-k-lost").textContent    =fmtUSD(lost.reduce((s,r)=>s+r.amount,0));
+  $("rra-k-lost-sub").textContent=`${lost.length} pairs gone`;
+  $("rra-k-new").textContent     =fmtUSD(newRows.reduce((s,r)=>s+r.amount,0));
+  $("rra-k-new-sub").textContent =`${newRows.length} new pairs`;
 
-  $("rra-period-lbl").textContent     = `· ${m1Lbl} ${m1Year} vs ${mLbl}`;
-  $("rra-k-total").textContent        = fmtUSD(m1Total);
-  $("rra-k-total-sub").textContent    = `${Object.keys(m1Map).length} client · service pairs`;
-  $("rra-k-retained").textContent     = fmtUSD(retainedAmt);
-  $("rra-k-retained-sub").textContent = `${retained.length} pairs from ${mLbl}`;
-  $("rra-k-atrisk").textContent       = fmtUSD(atrisk.reduce((s,r) => s + r.amount, 0));
-  $("rra-k-atrisk-sub").textContent   = `${atrisk.length} pairs · 2-day grace`;
-  $("rra-k-lost").textContent         = fmtUSD(lost.reduce((s,r) => s + r.amount, 0));
-  $("rra-k-lost-sub").textContent     = `${lost.length} pairs gone`;
-  $("rra-k-new").textContent          = fmtUSD(newRows.reduce((s,r) => s + r.amount, 0));
-  $("rra-k-new-sub").textContent      = `${newRows.length} new pairs`;
-
-  // NRR
-  if(nrr !== null) {
-    $("rra-k-nrr").textContent     = nrr.toFixed(1) + "%";
-    $("rra-k-nrr-sub").textContent = `Retained ${fmtUSD(retainedAmt)} ÷ Prev Month ${fmtUSD(mTotal)}`;
-    const pillCls = nrr >= 90 ? "nrr-green" : nrr >= 75 ? "nrr-amber" : "nrr-red";
-    const pillLbl = nrr >= 90 ? "Healthy" : nrr >= 75 ? "Watch" : "Critical";
-    $("rra-nrr-pill").innerHTML = `<span class="nrr-pill ${pillCls}">${pillLbl}</span>`;
+  if(nrr!==null){
+    $("rra-k-nrr").textContent    =nrr.toFixed(1)+"%";
+    $("rra-k-nrr-sub").textContent=`Retained ${fmtUSD(retAmt)} ÷ Prev ${fmtUSD(mTotal)}`;
+    const cls=nrr>=90?"nrr-green":nrr>=75?"nrr-amber":"nrr-red";
+    const lbl=nrr>=90?"Healthy":nrr>=75?"Watch":"Critical";
+    $("rra-nrr-pill").innerHTML=`<span class="nrr-pill ${cls}">${lbl}</span>`;
   } else {
-    $("rra-k-nrr").textContent     = "—";
-    $("rra-k-nrr-sub").textContent = "No previous month data";
-    $("rra-nrr-pill").innerHTML    = "";
+    $("rra-k-nrr").textContent="—";
+    $("rra-k-nrr-sub").textContent="No previous month data";
+    $("rra-nrr-pill").innerHTML="";
   }
-
-  $("rra-table-meta").textContent = `${rows.length} client · service pairs`;
 }
 
-// ════ RENDER TREND CHART ════
+// ════ KPI DRILL (clickable cards) ════
+const STATUS_CFG={
+  retained:{cls:"rra-s-retained",label:"Retained"},
+  atrisk:  {cls:"rra-s-atrisk",  label:"At Risk"},
+  lost:    {cls:"rra-s-lost",    label:"Lost"},
+  new:     {cls:"rra-s-new",     label:"New"},
+  total:   {cls:"",              label:"All"}
+};
+const KPI_NAMES={
+  total:"Total Recurring",retained:"Retained",atrisk:"At Risk",lost:"Lost",new:"New"
+};
+
+function toggleKPIDrill(status) {
+  // Toggle off if same card clicked again
+  if(activeDrillStatus===status){
+    closeDrill();
+    return;
+  }
+  activeDrillStatus=status;
+
+  // Clear active state on all cards
+  ["total","retained","atrisk","lost","new"].forEach(s=>{
+    $("kpi-"+s).classList.remove("kpi-active");
+  });
+  $("kpi-"+status).classList.add("kpi-active");
+
+  // Filter rows by status
+  const filtered = status==="total"
+    ? [...rraRows]
+    : rraRows.filter(r=>r.status===status);
+
+  drillRows=filtered;
+  drillPage_current=1;
+
+  $("drill-ttl").textContent=KPI_NAMES[status]+" · Detail";
+  $("kpi-drill-wrap").style.display="";
+  renderDrillTable();
+  $("kpi-drill-wrap").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function closeDrill() {
+  activeDrillStatus=null;
+  $("kpi-drill-wrap").style.display="none";
+  ["total","retained","atrisk","lost","new"].forEach(s=>{
+    const el=$("kpi-"+s); if(el) el.classList.remove("kpi-active");
+  });
+}
+
+function renderDrillTable() {
+  const rows=drillRows,total=rows.length;
+  const totalPages=Math.max(1,Math.ceil(total/DRILL_PAGE_SIZE));
+  const safePage=Math.min(drillPage_current,totalPages);
+  drillPage_current=safePage;
+  const start=(safePage-1)*DRILL_PAGE_SIZE;
+  const slice=rows.slice(start,start+DRILL_PAGE_SIZE);
+
+  $("drill-sub").textContent=`${total} client · service pairs`;
+
+  const html=slice.map((r,i)=>{
+    const sc=STATUS_CFG[r.status];
+    return`<tr>
+      <td class="muted" style="font-size:10px">${start+i+1}</td>
+      <td style="font-weight:700">${r.client||"—"}</td>
+      <td class="muted">${r.svc||"—"}</td>
+      <td class="muted">${ownerName(r.owner_id)}</td>
+      <td class="num">${fmtUSDfull(r.amount)}</td>
+      <td class="muted">${r.closedate||"—"}</td>
+      <td><span class="rra-status ${sc.cls}">${sc.label}</span></td>
+    </tr>`;
+  }).join("");
+
+  $("drill-tbody").innerHTML=html||
+    `<tr><td colspan="7" style="text-align:center;padding:28px;color:#9A9A9A;font-weight:500">No data</td></tr>`;
+
+  const pagDiv=$("drill-pagination");
+  if(total>DRILL_PAGE_SIZE){
+    pagDiv.style.display="";
+    $("drill-page-info").textContent=`${total} pairs · page ${safePage} of ${totalPages}`;
+    $("drill-prev").disabled=safePage<=1;
+    $("drill-next").disabled=safePage>=totalPages;
+  } else {
+    pagDiv.style.display="none";
+  }
+}
+
+function drillPageNav(dir){
+  drillPage_current+=dir;
+  renderDrillTable();
+}
+
+// ════ TREND CHART ════
 function renderTrendChart(fyMonths) {
-  const retained = [], newArr = [], atrisk = [], lost = [], labels = [];
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  // Need at least 2 months for a comparison
-  for(let i = 1; i < fyMonths.length; i++) {
-    const mMonth  = fyMonths[i - 1];
-    const m1Month = fyMonths[i];
-
-    // Use cached maps — apply NO slice filters for the chart (always full FY view)
-    const mMap  = allFYMaps[mMonth]  || {};
-    const m1Map = allFYMaps[m1Month] || {};
-
-    let ret = 0, nw = 0, ar = 0, ls = 0;
-
-    Object.entries(mMap).forEach(([key, rec]) => {
-      if(m1Map[key]) {
-        ret += m1Map[key].amount;
-      } else {
-        const cd    = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
-        const grace = cd ? new Date(cd.getTime() + 2 * 86400000) : null;
-        if(!grace || today > grace) ls += rec.amount;
-        else                        ar += rec.amount;
+  const retained=[],newArr=[],atrisk=[],lost=[],labels=[];
+  const today=new Date();today.setHours(0,0,0,0);
+  for(let i=1;i<fyMonths.length;i++){
+    const mMap =allFYMaps[fyMonths[i-1]]||{};
+    const m1Map=allFYMaps[fyMonths[i]]  ||{};
+    let ret=0,nw=0,ar=0,ls=0;
+    Object.entries(mMap).forEach(([key,rec])=>{
+      if(m1Map[key]){ret+=m1Map[key].amount;}
+      else{
+        const cd=rec.closedate?new Date(rec.closedate+"T00:00:00"):null;
+        const grace=cd?new Date(cd.getTime()+2*86400000):null;
+        if(!grace||today>grace)ls+=rec.amount;else ar+=rec.amount;
       }
     });
-    Object.entries(m1Map).forEach(([key, rec]) => {
-      if(!mMap[key]) nw += rec.amount;
-    });
-
-    const [mn, yr] = m1Month.split("-");
-    labels.push(MSHRT[MFULL.indexOf(mn)] + " " + yr.slice(2));
-    retained.push(Math.round(ret));
-    newArr.push(Math.round(nw));
-    atrisk.push(Math.round(ar));
-    lost.push(Math.round(ls));
+    Object.entries(m1Map).forEach(([key,rec])=>{if(!mMap[key])nw+=rec.amount;});
+    const[mn,yr]=fyMonths[i].split("-");
+    labels.push(MSHRT[MFULL.indexOf(mn)]+" "+yr.slice(2));
+    retained.push(Math.round(ret));newArr.push(Math.round(nw));
+    atrisk.push(Math.round(ar));lost.push(Math.round(ls));
   }
-
-  const ctx = $("trend-chart").getContext("2d");
-  if(trendChart) trendChart.destroy();
-
-  trendChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        {label:"Retained",     data:retained, backgroundColor:"#006E5E", stack:"s"},
-        {label:"New",          data:newArr,   backgroundColor:"#0CCE6B", stack:"s"},
-        {label:"At Risk",      data:atrisk,   backgroundColor:"#FFDA30", stack:"s"},
-        {label:"Lost",         data:lost,     backgroundColor:"#EF2D56", stack:"s"}
-      ]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
+  const ctx=$("trend-chart").getContext("2d");
+  if(trendChart)trendChart.destroy();
+  trendChart=new Chart(ctx,{
+    type:"bar",
+    data:{labels,datasets:[
+      {label:"Retained",data:retained,backgroundColor:"#006E5E",stack:"s"},
+      {label:"New",     data:newArr,  backgroundColor:"#0CCE6B",stack:"s"},
+      {label:"At Risk", data:atrisk,  backgroundColor:"#FFDA30",stack:"s"},
+      {label:"Lost",    data:lost,    backgroundColor:"#EF2D56",stack:"s"}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{
-          position:"bottom",
-          labels:{font:{family:"Montserrat",size:9},color:"#696969",boxWidth:10,padding:12}
-        },
-        tooltip:{
-          callbacks:{
-            label: c => `${c.dataset.label}: ${fmtUSD(c.parsed.y)}`
-          },
-          bodyFont:{family:"Montserrat",size:11}
-        }
+        legend:{position:"bottom",labels:{font:{family:"Montserrat",size:9},color:"#696969",boxWidth:10,padding:12}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtUSD(c.parsed.y)}`},bodyFont:{family:"Montserrat",size:11}}
       },
       scales:{
-        x:{stacked:true, grid:{display:false}, ticks:{font:{family:"Montserrat",size:9},color:"#696969"}},
-        y:{stacked:true, grid:{color:"#F0F0F0"},
-           ticks:{font:{family:"Montserrat",size:9},color:"#696969",
-                  callback: v => "$" + (v>=1000 ? (v/1000).toFixed(0)+"k" : v)}}
+        x:{stacked:true,grid:{display:false},ticks:{font:{family:"Montserrat",size:9},color:"#696969"}},
+        y:{stacked:true,grid:{color:"#F0F0F0"},ticks:{font:{family:"Montserrat",size:9},color:"#696969",
+           callback:v=>"$"+(v>=1000?(v/1000).toFixed(0)+"k":v)}}
       }
     }
   });
 }
 
-// ════ RENDER TABLE ════
+// ════ MAIN TABLE ════
 function renderRRATable() {
-  const rows = rraRows;
-  const total = rows.length;
-  const totalPages = Math.max(1, Math.ceil(total / RRA_PAGE_SIZE));
-  const safePage   = Math.min(rraPage_current, totalPages);
-  rraPage_current  = safePage;
-  const start = (safePage - 1) * RRA_PAGE_SIZE;
-  const slice = rows.slice(start, start + RRA_PAGE_SIZE);
-
-  const STATUS_CFG = {
-    retained:{cls:"rra-s-retained",label:"Retained"},
-    atrisk:  {cls:"rra-s-atrisk",  label:"At Risk"},
-    lost:    {cls:"rra-s-lost",    label:"Lost"},
-    new:     {cls:"rra-s-new",     label:"New"}
-  };
-
-  const html = slice.map((r, i) => {
-    const sc = STATUS_CFG[r.status];
-    return `<tr>
-      <td class="muted" style="font-size:10px">${start + i + 1}</td>
-      <td style="font-weight:700">${r.client || "—"}</td>
-      <td class="muted">${r.svc || "—"}</td>
+  const rows=rraRows,total=rows.length;
+  const totalPages=Math.max(1,Math.ceil(total/RRA_PAGE_SIZE));
+  const safePage=Math.min(rraPage_current,totalPages);
+  rraPage_current=safePage;
+  const start=(safePage-1)*RRA_PAGE_SIZE;
+  const slice=rows.slice(start,start+RRA_PAGE_SIZE);
+  const html=slice.map((r,i)=>{
+    const sc=STATUS_CFG[r.status];
+    return`<tr>
+      <td class="muted" style="font-size:10px">${start+i+1}</td>
+      <td style="font-weight:700">${r.client||"—"}</td>
+      <td class="muted">${r.svc||"—"}</td>
       <td class="muted">${ownerName(r.owner_id)}</td>
       <td class="num">${fmtUSDfull(r.amount)}</td>
-      <td class="muted">${r.closedate || "—"}</td>
+      <td class="muted">${r.closedate||"—"}</td>
       <td><span class="rra-status ${sc.cls}">${sc.label}</span></td>
     </tr>`;
   }).join("");
-
-  $("rra-tbody").innerHTML = html ||
+  $("rra-tbody").innerHTML=html||
     `<tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">No data for current filters</td></tr>`;
-
-  const pagDiv = $("rra-pagination");
-  if(total > RRA_PAGE_SIZE) {
-    pagDiv.style.display = "";
-    $("rra-page-info").textContent = `${total} pairs · page ${safePage} of ${totalPages}`;
-    $("rra-prev").disabled = safePage <= 1;
-    $("rra-next").disabled = safePage >= totalPages;
-  } else {
-    pagDiv.style.display = "none";
-  }
-  $("rra-table-meta").textContent =
-    `${total} client · service pairs${total > RRA_PAGE_SIZE ? ` · page ${safePage} of ${totalPages}` : ""}`;
+  const pagDiv=$("rra-pagination");
+  if(total>RRA_PAGE_SIZE){
+    pagDiv.style.display="";
+    $("rra-page-info").textContent=`${total} pairs · page ${safePage} of ${totalPages}`;
+    $("rra-prev").disabled=safePage<=1;
+    $("rra-next").disabled=safePage>=totalPages;
+  } else {pagDiv.style.display="none";}
+  $("rra-table-meta").textContent=`${total} client · service pairs${total>RRA_PAGE_SIZE?` · page ${safePage} of ${Math.ceil(total/RRA_PAGE_SIZE)}`:""}`;
 }
 
-function toggleRRATable() {
-  rraTableOpen = !rraTableOpen;
-  const btn = $("rra-toggle-btn"), body = $("rra-table-body");
-  btn.textContent = rraTableOpen ? "Hide Deals ▴" : "Show Deals ▾";
-  btn.classList.toggle("open", rraTableOpen);
-  body.style.display = rraTableOpen ? "" : "none";
-  if(rraTableOpen && rraRows.length) renderRRATable();
+function toggleRRATable(){
+  rraTableOpen=!rraTableOpen;
+  const btn=$("rra-toggle-btn"),body=$("rra-table-body");
+  btn.textContent=rraTableOpen?"Hide Deals ▴":"Show Deals ▾";
+  btn.classList.toggle("open",rraTableOpen);
+  body.style.display=rraTableOpen?"":"none";
+  if(rraTableOpen&&rraRows.length)renderRRATable();
 }
 
-function rraPageNav(dir) {
-  rraPage_current += dir;
+function rraPageNav(dir){
+  rraPage_current+=dir;
   renderRRATable();
-  $("rra-table-body").scrollIntoView({behavior:"smooth", block:"nearest"});
+  $("rra-table-body").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
-// ════ RENDER ALL — driven by period + slice filters ════
+// ════ RENDER ALL ════
 function renderAll() {
-  const fyMonths = getFYMonths();
-  const {mMonth, m1Month} = getSelectedMonthPair();
-
-  // Ensure selected months are within FY data
-  const rawMMap  = allFYMaps[mMonth]  || {};
-  const rawM1Map = allFYMaps[m1Month] || {};
-
-  // Apply slice filters to both maps
-  const mMap  = applyFilters(rawMMap);
-  const m1Map = applyFilters(rawM1Map);
-
-  const [m1M, m1Y] = m1Month.split("-");
-  const [mM]       = mMonth.split("-");
-  const m1Lbl = MSHRT[MFULL.indexOf(m1M)];
-  const mLbl  = MSHRT[MFULL.indexOf(mM)];
-
-  const rows = buildRows(mMap, m1Map);
-  rraRows = rows;
-  rraPage_current = 1;
-
-  renderKPIs(rows, m1Map, mMap, mLbl, m1Lbl, m1Y);
-  if(rraTableOpen) renderRRATable();
-
-  // Chart always uses full unfiltered FY maps
-  if(fyMonths.length >= 2) renderTrendChart(fyMonths);
+  const fyMonths=getFYMonths();
+  const{mMonth,m1Month}=getSelectedMonthPair();
+  const rawMMap =allFYMaps[mMonth] ||{};
+  const rawM1Map=allFYMaps[m1Month]||{};
+  const mMap =applyFilters(rawMMap);
+  const m1Map=applyFilters(rawM1Map);
+  const[m1M,m1Y]=m1Month.split("-");
+  const[mM]=mMonth.split("-");
+  const m1Lbl=MSHRT[MFULL.indexOf(m1M)];
+  const mLbl =MSHRT[MFULL.indexOf(mM)];
+  const rows=buildRows(mMap,m1Map);
+  rraRows=rows;rraPage_current=1;
+  renderKPIs(rows,m1Map,mMap,mLbl,m1Lbl,m1Y);
+  if(rraTableOpen)renderRRATable();
+  // Re-render open drill if any
+  if(activeDrillStatus){
+    const filtered=activeDrillStatus==="total"?[...rraRows]:rraRows.filter(r=>r.status===activeDrillStatus);
+    drillRows=filtered;drillPage_current=1;
+    $("drill-sub").textContent=`${filtered.length} client · service pairs`;
+    renderDrillTable();
+  }
+  if(fyMonths.length>=2)renderTrendChart(fyMonths);
 }
 
-// ════ FILTER CHANGE — client-side only, no re-fetch ════
-function onFilterChange() {
-  updateFilterStyles();
-  renderAll();
+function onFilterChange(){renderAll();}
+
+// ════ MULTI-SELECT HELPERS — verbatim pattern from Revenue Pulse ════
+function buildGeoList(){
+  $("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>
+    `<div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="onGeoChange()"><label for="geo-${r}">${r}</label></div>`
+  ).join("");
 }
+function onGeoChange(){updateGeoLabel();onFilterChange();}
+function updateGeoLabel(){
+  const sel=ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return e&&e.checked;});
+  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.join(", ");
+}
+function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");closeOthers("geo-ms-dropdown");}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onFilterChange();}
+function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();onFilterChange();}
+
+function buildHeadList(){
+  $("head-ms-list").innerHTML=ALL_HEADS.map(h=>
+    `<div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h}</label></div>`
+  ).join("");
+}
+function onHeadChange(){updateHeadLabel();onFilterChange();}
+function updateHeadLabel(){
+  const sel=ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return e&&e.checked;});
+  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.join(", ");
+}
+function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");closeOthers("head-ms-dropdown");}
+function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();onFilterChange();}
+function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();onFilterChange();}
+
+function buildSvcList(){
+  $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>
+    `<div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="onSvcChange()"><label for="svc-${s}">${s}</label></div>`
+  ).join("");
+}
+function onSvcChange(){updateSvcLabel();onFilterChange();}
+function updateSvcLabel(){
+  const sel=ALL_SERVICES.filter(s=>{const e=$("svc-"+s);return e&&e.checked;});
+  $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.join(", ");
+}
+function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");closeOthers("svc-ms-dropdown");}
+function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onFilterChange();}
+function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();onFilterChange();}
+
+// Sidebar owner multi-select
+function buildOwnerList(){
+  $("ms-list").innerHTML=ALL_OWNERS.map(o=>
+    `<div class="ms-item"><input type="checkbox" id="ow-${o.id}" checked onchange="onOwnerChange()"><label for="ow-${o.id}">${o.name}</label></div>`
+  ).join("");
+}
+function onOwnerChange(){updateOwnerLabel();onFilterChange();}
+function updateOwnerLabel(){
+  const sel=ALL_OWNERS.filter(o=>{const e=$("ow-"+o.id);return e&&e.checked;});
+  $("ms-label").textContent=sel.length===ALL_OWNERS.length?"All Owners":sel.length===0?"None":`${sel.length} selected`;
+}
+function toggleMS(e){e.stopPropagation();$("ms-dropdown").classList.toggle("open");closeOthers("ms-dropdown");}
+function selectAll(){ALL_OWNERS.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();onFilterChange();}
+function deselectAll(){ALL_OWNERS.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=false;});updateOwnerLabel();onFilterChange();}
+
+function closeOthers(exceptId){
+  ["geo-ms-dropdown","head-ms-dropdown","svc-ms-dropdown","ms-dropdown"].forEach(id=>{
+    if(id!==exceptId)$(id)&&$(id).classList.remove("open");
+  });
+}
+
+// Close all dropdowns on outside click
+document.addEventListener("click",()=>{
+  ["geo-ms-dropdown","head-ms-dropdown","svc-ms-dropdown","ms-dropdown"].forEach(id=>{
+    $(id)&&$(id).classList.remove("open");
+  });
+});
 
 // ════ DATA FETCH ════
 async function fetchAllFYDeals() {
-  const fyMonths = getFYMonths();
-  const props = [
-    "dealname","amount_in_home_currency","hubspot_owner_id",
-    "closedate","createdate",
-    "contact_name__invoice_app_","zoho_display_name__invoice_app_",
-    "zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_",
-    "engagement_model__invoice_app_","order_type","company_name__invoice_app_",
-    "geo__invoice_app_","geo_head__invoice_app_"
+  const fyMonths=getFYMonths();
+  const props=["dealname","amount_in_home_currency","hubspot_owner_id","closedate","createdate",
+    "contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_",
+    "invoice_booking_month__invoice_app_","engagement_model__invoice_app_",
+    "order_type","company_name__invoice_app_","geo__invoice_app_","geo_head__invoice_app_"];
+  const filters=[
+    {propertyName:"pipeline",    operator:"EQ",  value:PIPELINE},
+    {propertyName:"dealstage",   operator:"EQ",  value:STAGE},
+    {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyMonths},
+    {propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},
+    {propertyName:"company_name__invoice_app_",    operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}
   ];
-  const filters = [
-    {propertyName:"pipeline",    operator:"EQ",     value:PIPELINE},
-    {propertyName:"dealstage",   operator:"EQ",     value:STAGE},
-    {propertyName:"invoice_booking_month__invoice_app_", operator:"IN", values:fyMonths},
-    {propertyName:"engagement_model__invoice_app_", operator:"NOT_IN", values:["Wallet","Special Engagement"]},
-    {propertyName:"company_name__invoice_app_",     operator:"NOT_IN", values:["InboxArmy","Uplers","Solomax"]}
-  ];
-
-  const fetched = []; let after = null;
-  do {
-    const body = {filterGroups:[{filters}], properties:props, limit:200,
+  const fetched=[];let after=null;
+  do{
+    const body={filterGroups:[{filters}],properties:props,limit:200,
       sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
-    if(after) body.after = after;
-    const res = await fetch("/api", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok) throw new Error("API " + res.status);
-    const data = await res.json();
-    (data.results || []).forEach(r => {
-      const bm = (r.properties?.invoice_booking_month__invoice_app_ || "").toLowerCase();
+    if(after)body.after=after;
+    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error("API "+res.status);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
       fetched.push({
-        id:         String(r.id),
-        dealname:   r.properties?.dealname || "",
-        amount:     parseFloat(r.properties?.amount_in_home_currency || 0) || 0,
-        owner_id:   String(r.properties?.hubspot_owner_id || ""),
-        closedate:  (r.properties?.closedate || "").split("T")[0],
-        createdate: (r.properties?.createdate || "").split("T")[0],
-        billing_id: r.properties?.zoho_billing_id__invoice_app_ || r.properties?.contact_name__invoice_app_ || "",
-        client:     r.properties?.zoho_display_name__invoice_app_ || r.properties?.contact_name__invoice_app_ || "",
-        month:      bm || "",
-        eng_model:  (r.properties?.engagement_model__invoice_app_ || "").trim(),
-        geo:        (r.properties?.geo__invoice_app_ || "").trim(),
-        company_name:(r.properties?.company_name__invoice_app_ || "").trim()
+        id:String(r.id),
+        dealname:r.properties?.dealname||"",
+        amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
+        owner_id:String(r.properties?.hubspot_owner_id||""),
+        closedate:(r.properties?.closedate||"").split("T")[0],
+        createdate:(r.properties?.createdate||"").split("T")[0],
+        billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",
+        client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
+        month:bm||"",
+        company_name:(r.properties?.company_name__invoice_app_||"").trim()
       });
     });
-    after = data.paging?.next?.after || null;
-  } while(after);
-
+    after=data.paging?.next?.after||null;
+  }while(after);
   return dedup(fetched);
 }
 
 async function fetchLineItems(deals) {
-  const svcMap = {};
-  for(let i = 0; i < deals.length; i += 500) {
-    const chunk = deals.slice(i, i + 500).map(d => d.id);
-    const res = await fetch("/lineItems", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
-    if(!res.ok) continue;
-    const data = await res.json();
-    const items = data.items || {};
-    Object.entries(items).forEach(([did, lis]) => {
-      svcMap[did] = (lis || []).map(li => {
-        const cls = classifyLineItem(li.name);
-        return {svc:cls?cls.svc:null, bu:cls?cls.bu:null, amount:li.amount||0, name:li.name||""};
-      }).filter(li => li.amount !== 0);
+  const svcMap={};
+  for(let i=0;i<deals.length;i+=500){
+    const chunk=deals.slice(i,i+500).map(d=>d.id);
+    const res=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+    if(!res.ok)continue;
+    const data=await res.json();
+    Object.entries(data.items||{}).forEach(([did,lis])=>{
+      svcMap[did]=(lis||[]).map(li=>{
+        const cls=classifyLineItem(li.name);
+        return{svc:cls?cls.svc:null,bu:cls?cls.bu:null,amount:li.amount||0,name:li.name||""};
+      }).filter(li=>li.amount!==0);
     });
   }
   return svcMap;
 }
 
 // ════ MAIN SYNC ════
-async function doSync(force = false) {
-  if(isSyncing && !force) return;
-  isSyncing = true;
-  $("sdot").style.background = "#006E5E";
-  $("stxt").textContent = "SYNCING...";
-  $("lo").classList.add("show");
-  $("rfbtn").disabled = true;
-  $("err-bar").style.display = "none";
-
-  try {
-    const fyMonths = getFYMonths();
-    $("stxt").textContent = "FETCHING DEALS...";
-
-    allDeals = await fetchAllFYDeals();
-
-    $("stxt").textContent = "FETCHING LINE ITEMS...";
-    dealServiceMap = await fetchLineItems(allDeals);
-
-    // Build and cache expandKeys map for every FY month
-    allFYMaps = {};
-    fyMonths.forEach(m => {
-      const monthDeals = allDeals.filter(d => d.month === m);
-      allFYMaps[m] = expandKeys(monthDeals);
+async function doSync(force=false) {
+  if(isSyncing&&!force)return;
+  isSyncing=true;
+  $("sdot").style.background="#006E5E";$("stxt").textContent="SYNCING...";
+  $("lo").classList.add("show");$("rfbtn").disabled=true;
+  $("err-bar").style.display="none";
+  try{
+    $("stxt").textContent="FETCHING DEALS...";
+    allDeals=await fetchAllFYDeals();
+    $("stxt").textContent="FETCHING LINE ITEMS...";
+    dealServiceMap=await fetchLineItems(allDeals);
+    // Build & cache expandKeys per FY month
+    allFYMaps={};
+    getFYMonths().forEach(m=>{
+      allFYMaps[m]=expandKeys(allDeals.filter(d=>d.month===m));
     });
-
     renderAll();
-
-    $("sdot").style.background = "#FFDA30";
-    $("stxt").textContent = `LIVE · ${allDeals.length} DEALS`;
-    $("last-sync").textContent = `Synced at ${new Date().toLocaleTimeString()}`;
-
-  } catch(e) {
+    $("sdot").style.background="#FFDA30";
+    $("stxt").textContent=`LIVE · ${allDeals.length} DEALS`;
+    $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
+  }catch(e){
     console.error(e);
-    $("err-msg").textContent = "Sync error: " + e.message;
-    $("err-bar").style.display = "block";
-    $("sdot").style.background = "#696969";
-    $("stxt").textContent = "SYNC FAILED";
-  } finally {
-    $("lo").classList.remove("show");
-    $("rfbtn").disabled = false;
-    isSyncing = false;
+    $("err-msg").textContent="Sync error: "+e.message;
+    $("err-bar").style.display="block";
+    $("sdot").style.background="#696969";$("stxt").textContent="SYNC FAILED";
+  }finally{
+    $("lo").classList.remove("show");$("rfbtn").disabled=false;isSyncing=false;
   }
 }
 
 // ════ AUTH ════
-function getAuthKey(head){ return head ? `nexus_auth_${head}` : "nexus_auth"; }
+function getAuthKey(head){return head?`nexus_auth_${head}`:"nexus_auth";}
 
-async function doLogin() {
-  const btn = $("login-btn"), err = $("login-err"), pw = $("pw-input").value.trim();
-  if(!pw){ err.textContent = "Please enter the access password."; return; }
-  btn.disabled = true; btn.textContent = "Verifying..."; err.textContent = "";
-  const head = (new URLSearchParams(location.search).get("head") || "").toLowerCase().trim();
-  try {
-    const res = await fetch("/radar-auth", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw, head})});
-    const data = await res.json();
-    if(data.success) {
-      localStorage.setItem(getAuthKey(head), "1");
-      $("login-overlay").style.display = "none";
+async function doLogin(){
+  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
+  if(!pw){err.textContent="Please enter the access password.";return;}
+  btn.disabled=true;btn.textContent="Verifying...";err.textContent="";
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  try{
+    const res=await fetch("/radar-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head})});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem(getAuthKey(head),"1");
+      $("login-overlay").style.display="none";
       doSync(true);
-    } else if(res.status === 500 || data.error) {
-      err.textContent = "Server config error. Contact Mayur.";
+    } else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
     } else {
-      err.textContent = "Incorrect password. Please try again.";
-      $("pw-input").value = ""; $("pw-input").focus();
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value="";$("pw-input").focus();
     }
-  } catch(e) {
-    err.textContent = "Connection error. Check your network.";
-  } finally { btn.disabled = false; btn.textContent = "Access Dashboard"; }
+  }catch(e){err.textContent="Connection error. Check your network.";}
+  finally{btn.disabled=false;btn.textContent="Access Dashboard";}
 }
 
-function checkSSO() {
-  const params = new URLSearchParams(location.search);
-  const head = (params.get("head") || "").toLowerCase().trim();
-  const tok  = (params.get("tok")  || "").toLowerCase().trim();
-
-  if(tok && head && tok === head) {
-    localStorage.setItem(getAuthKey(head), "1");
-    const clean = new URL(location.href);
-    clean.searchParams.delete("tok");
-    history.replaceState(null, "", clean.toString());
-    $("login-overlay").style.display = "none";
-    return true;
+function checkSSO(){
+  const params=new URLSearchParams(location.search);
+  const head=(params.get("head")||"").toLowerCase().trim();
+  const tok =(params.get("tok") ||"").toLowerCase().trim();
+  if(tok&&head&&tok===head){
+    localStorage.setItem(getAuthKey(head),"1");
+    const clean=new URL(location.href);clean.searchParams.delete("tok");
+    history.replaceState(null,"",clean.toString());
+    $("login-overlay").style.display="none";return true;
   }
-  if(head && localStorage.getItem(getAuthKey(head)) === "1") {
-    $("login-overlay").style.display = "none";
-    return true;
-  }
-  if(!head && localStorage.getItem("nexus_auth") === "1") {
-    $("login-overlay").style.display = "none";
-    return true;
-  }
+  if(head&&localStorage.getItem(getAuthKey(head))==="1"){$("login-overlay").style.display="none";return true;}
+  if(!head&&localStorage.getItem("nexus_auth")==="1"){$("login-overlay").style.display="none";return true;}
   return false;
 }
 
-function bootCloneMode() {
-  const head = (new URLSearchParams(location.search).get("head") || "").toLowerCase().trim();
-  if(!head) return;
-  const nexusLink = `/?head=${head}&tok=${head}`;
-  $("nexus-link").href     = nexusLink;
-  $("nexus-link-btn").href = nexusLink;
+function bootCloneMode(){
+  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!head)return;
+  const nexusLink=`/?head=${head}&tok=${head}`;
+  $("nexus-link").href=nexusLink;
+  $("nexus-link-btn").href=nexusLink;
 }
 
 // ════ BOOT ════
-window.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("DOMContentLoaded",function(){
+  buildGeoList();buildHeadList();buildSvcList();buildOwnerList();
   bootCloneMode();
-  const authed = checkSSO();
-  if(authed) doSync(true);
+  const authed=checkSSO();
+  if(authed)doSync(true);
 });
 </script>
 </body>
