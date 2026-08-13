@@ -2643,51 +2643,59 @@ function renderRRA() {
   //   fall back to engGroup(d.eng_model) — contributes full d.amount.
   // This mirrors engTypesLi() exactly so RRA Total Recurring === Revenue Pulse Recurring KPI.
 
-  function isRecurringDeal(d) {
-    if ((d.dealname || "").startsWith("ON")) return false; // Layer 1: ON-prefix always P2P
-    return engGroupFromLi(d) === "Recurring";              // Layer 2+3: LI majority or eng_model
-  }
-  const mRec  = mDeals.filter(isRecurringDeal);
-  const m1Rec = m1Deals.filter(isRecurringDeal);
-
-  // ── Build billing_id + svc keys for each month ──
-  // Each key = one client·service pair. Amount = sum of all Recurring LI amounts for that pair
-  // across all deals in the month (mirrors engTypesLi accumulation — not deal-level amount).
-  // Fallback: deal has no LIs or no Recurring-classified LIs → use d.eng_model path,
-  //   contribute d.amount under svc = "Unknown" (same as engTypesLi fallback).
+  // ── expandKeys — mirrors engTypesLi() exactly ──
+  // Walk EVERY deal (no majority-wins pre-filter). For each deal:
+  //   Layer 1: ON-prefix → skip entirely (always P2P, management rule)
+  //   Layer 2: classify each LI individually via engGroupFromLiName; accumulate Recurring li.amount per billing_id+svc key
+  //   Layer 3: no LIs or no classifiable LI names → fall back to engGroup(d.eng_model); contribute d.amount if Recurring
+  // This exactly mirrors engTypesLi() so RRA Total Recurring === Revenue Pulse Recurring KPI.
   function expandKeys(dealList) {
-    const map = {}; // key → {billing_id, svc, client, owner_id, amount, closedate}
+    const map = {};
     dealList.forEach(d => {
+      // Layer 1: ON-prefix always P2P — skip
+      if ((d.dealname || "").startsWith("ON")) return;
+
       const lis = dealServiceMap[d.id] || [];
 
-      // Classify each LI individually — keep only Recurring ones (Layer 2)
-      const recurLis = lis.filter(li => engGroupFromLiName(li.name) === "Recurring");
-
-      if (recurLis.length) {
-        // Accumulate li.amount per svc — matches engTypesLi LI-level accumulation
+      if (lis.length) {
+        // Layer 2: LIs exist — classify each individually by name prefix (same as engTypesLi)
+        let classified = false;
         const svcAmounts = {};
-        recurLis.forEach(li => {
-          const svc = li.svc || "Unknown";
-          svcAmounts[svc] = (svcAmounts[svc] || 0) + li.amount;
+        lis.forEach(li => {
+          const eg = engGroupFromLiName(li.name);
+          if (eg === "Recurring") {
+            const svc = li.svc || "Unknown";
+            svcAmounts[svc] = (svcAmounts[svc] || 0) + li.amount;
+            classified = true;
+          } else if (eg === "P2P") {
+            classified = true; // P2P — marks as classified, not accumulated
+          }
         });
+        if (!classified) {
+          // LIs exist but none matched any known prefix — fall back to eng_model (same as engTypesLi)
+          const eg = engGroup(d.eng_model);
+          if (eg !== "Recurring") return;
+          const svc = "Unknown";
+          const key = `${d.billing_id}||${svc}`;
+          if (!map[key]) map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
+          map[key].amount += d.amount;
+          if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
+          return;
+        }
+        // Accumulate Recurring LI amounts per svc key
         Object.entries(svcAmounts).forEach(([svc, amt]) => {
           const key = `${d.billing_id}||${svc}`;
-          if (!map[key]) {
-            map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
-          }
+          if (!map[key]) map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
           map[key].amount += amt;
-          // Keep most recent closedate for this key within the month
           if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
         });
       } else {
-        // Layer 3 fallback: no LIs or no Recurring LI names — use eng_model with d.amount
+        // Layer 3: no LIs at all — fall back to eng_model with d.amount (same as engTypesLi fallback)
         const eg = engGroup(d.eng_model);
-        if (eg !== "Recurring") return; // eng_model not Recurring either — skip
+        if (eg !== "Recurring") return;
         const svc = "Unknown";
         const key = `${d.billing_id}||${svc}`;
-        if (!map[key]) {
-          map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
-        }
+        if (!map[key]) map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
         map[key].amount += d.amount;
         if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
       }
@@ -2695,8 +2703,8 @@ function renderRRA() {
     return map;
   }
 
-  const mMap  = expandKeys(mRec);
-  const m1Map = expandKeys(m1Rec);
+  const mMap  = expandKeys(mDeals);
+  const m1Map = expandKeys(m1Deals);
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
 
