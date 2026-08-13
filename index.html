@@ -224,6 +224,9 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .rra-kpi-sub{font-size:10px;font-weight:600;color:#696969}
 .rra-tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden}
 .rra-tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:#FAFAFA}
+.radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
+.radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
+.radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
 .rra-tcard-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
 .rra-tcard-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
 .rra-table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
@@ -752,30 +755,33 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
           <div class="rra-tcard-sub" id="rra-table-meta"></div>
         </div>
+        <button class="radar-toggle" id="rra-toggle-btn" onclick="toggleRRATable()">Show Deals ▾</button>
       </div>
-      <div class="twrap">
-        <table class="rra-table">
-          <thead>
-            <tr>
-              <th style="width:36px">#</th>
-              <th>Client</th>
-              <th>Service</th>
-              <th>Owner</th>
-              <th class="num">Last Deal Amount</th>
-              <th>Close Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="rra-tbody">
-            <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Select Engagement = Recurring to load analysis.</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="rra-pagination" id="rra-pagination" style="display:none">
-        <div class="rra-page-info" id="rra-page-info"></div>
-        <div class="rra-page-btns">
-          <button class="rra-page-btn" id="rra-prev" onclick="rraPage(-1)">← Prev</button>
-          <button class="rra-page-btn" id="rra-next" onclick="rraPage(1)">Next →</button>
+      <div id="rra-table-body" style="display:none">
+        <div class="twrap">
+          <table class="rra-table">
+            <thead>
+              <tr>
+                <th style="width:36px">#</th>
+                <th>Client</th>
+                <th>Service</th>
+                <th>Owner</th>
+                <th class="num">Last Deal Amount</th>
+                <th>Close Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="rra-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Select Engagement = Recurring to load analysis.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rra-pagination" id="rra-pagination" style="display:none">
+          <div class="rra-page-info" id="rra-page-info"></div>
+          <div class="rra-page-btns">
+            <button class="rra-page-btn" id="rra-prev" onclick="rraPage(-1)">← Prev</button>
+            <button class="rra-page-btn" id="rra-next" onclick="rraPage(1)">Next →</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1749,7 +1755,7 @@ async function doFYSync(force=false){
       const data=await res.json();
       (data.results||[]).forEach(r=>{
         fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
-          billing_id:r.properties?.contact_name__invoice_app_||r.properties?.zoho_billing_id__invoice_app_||"",
+          billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           month:(()=>{
             // Normalise to lowercase — HubSpot API filter is case-insensitive but our JS includes() is not.
@@ -2522,8 +2528,19 @@ function renderTrends(months,src){
 const RRA_PAGE_SIZE = 15;
 let rraPage_current = 1;
 let rraRows = []; // full sorted row set, re-used by pagination
+let rraTableOpen = false;
 
 const RRA_STATUS_ORDER = { lost: 0, atrisk: 1, retained: 2, new: 3 };
+
+function toggleRRATable() {
+  rraTableOpen = !rraTableOpen;
+  const btn = $("rra-toggle-btn"), body = $("rra-table-body");
+  if (!btn || !body) return;
+  btn.textContent = rraTableOpen ? "Hide Deals ▴" : "Show Deals ▾";
+  btn.classList.toggle("open", rraTableOpen);
+  body.style.display = rraTableOpen ? "" : "none";
+  if (rraTableOpen) renderRRATable();
+}
 
 function renderRRA() {
   const itypeVal = $("itype-sel")?.value || "";
@@ -2561,36 +2578,62 @@ function renderRRA() {
   const mDeals   = view(allDeals.filter(d => d.month === mMonth), dealServiceMap);
   const m1Deals  = view(allDeals.filter(d => d.month === mPlusOne), dealServiceMap);
 
-  // Filter to Recurring engagement only
-  const isRecurring = d => engGroupFromLi(d) === "Recurring";
-  const mRec  = mDeals.filter(isRecurring);
-  const m1Rec = m1Deals.filter(isRecurring);
+  // ── Filter to Recurring — exact same three-layer logic as engTypesLi() / Revenue Pulse ──
+  // Layer 1 (gate): ON-prefix deals are always P2P — management rule, skip entirely.
+  // Layer 2 (primary): classify each LI individually by name prefix via engGroupFromLiName.
+  //   Accumulate li.amount per svc for Recurring LIs only.
+  // Layer 3 (fallback): if deal has no LIs or no LI matches any known prefix,
+  //   fall back to engGroup(d.eng_model) — contributes full d.amount.
+  // This mirrors engTypesLi() exactly so RRA Total Recurring === Revenue Pulse Recurring KPI.
+
+  function isRecurringDeal(d) {
+    if ((d.dealname || "").startsWith("ON")) return false; // Layer 1: ON-prefix always P2P
+    return engGroupFromLi(d) === "Recurring";              // Layer 2+3: LI majority or eng_model
+  }
+  const mRec  = mDeals.filter(isRecurringDeal);
+  const m1Rec = m1Deals.filter(isRecurringDeal);
 
   // ── Build billing_id + svc keys for each month ──
-  // A deal can have multiple services — expand into one row per billing_id+svc pair.
+  // Each key = one client·service pair. Amount = sum of all Recurring LI amounts for that pair
+  // across all deals in the month (mirrors engTypesLi accumulation — not deal-level amount).
+  // Fallback: deal has no LIs or no Recurring-classified LIs → use d.eng_model path,
+  //   contribute d.amount under svc = "Unknown" (same as engTypesLi fallback).
   function expandKeys(dealList) {
     const map = {}; // key → {billing_id, svc, client, owner_id, amount, closedate}
     dealList.forEach(d => {
       const lis = dealServiceMap[d.id] || [];
-      const svcs = lis.length
-        ? [...new Set(lis.filter(li => isRecurring(d)).map(li => li.svc).filter(Boolean))]
-        : [];
-      // If no classified LIs, use deal-level with svc = "Unknown"
-      const svcList = svcs.length ? svcs : ["Unknown"];
-      svcList.forEach(svc => {
+
+      // Classify each LI individually — keep only Recurring ones (Layer 2)
+      const recurLis = lis.filter(li => engGroupFromLiName(li.name) === "Recurring");
+
+      if (recurLis.length) {
+        // Accumulate li.amount per svc — matches engTypesLi LI-level accumulation
+        const svcAmounts = {};
+        recurLis.forEach(li => {
+          const svc = li.svc || "Unknown";
+          svcAmounts[svc] = (svcAmounts[svc] || 0) + li.amount;
+        });
+        Object.entries(svcAmounts).forEach(([svc, amt]) => {
+          const key = `${d.billing_id}||${svc}`;
+          if (!map[key]) {
+            map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
+          }
+          map[key].amount += amt;
+          // Keep most recent closedate for this key within the month
+          if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
+        });
+      } else {
+        // Layer 3 fallback: no LIs or no Recurring LI names — use eng_model with d.amount
+        const eg = engGroup(d.eng_model);
+        if (eg !== "Recurring") return; // eng_model not Recurring either — skip
+        const svc = "Unknown";
         const key = `${d.billing_id}||${svc}`;
-        if (!map[key] || d.amount > map[key].amount) {
-          // Keep highest-amount deal for this key (dedup within month)
-          map[key] = {
-            billing_id: d.billing_id,
-            svc,
-            client: d.client || d.billing_id,
-            owner_id: d.owner_id,
-            amount: d.amount,
-            closedate: d.closedate
-          };
+        if (!map[key]) {
+          map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
         }
-      });
+        map[key].amount += d.amount;
+        if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
+      }
     });
     return map;
   }
@@ -2661,7 +2704,9 @@ function renderRRA() {
   $("rra-k-lost-sub").textContent  = `${lost.length} lost · ${atrisk.length} at risk (${fmtUSD(atrisk.reduce((s,r)=>s+r.amount,0))})`;
   $("rra-k-new").textContent       = fmtUSD(newRows.reduce((s, r) => s + r.amount, 0));
 
-  renderRRATable();
+  // Always update the table meta count; only render rows if table is open
+  $("rra-table-meta").textContent = `${rows.length} client · service pairs`;
+  if (rraTableOpen) renderRRATable();
 }
 
 function renderRRATable() {
@@ -2699,7 +2744,7 @@ function renderRRATable() {
   $("rra-tbody").innerHTML = html ||
     `<tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">No recurring data for this filter combination.</td></tr>`;
 
-  $("rra-table-meta").textContent = `${total} client · service pairs · ${rraPage_current === 1 && total <= RRA_PAGE_SIZE ? "all shown" : `page ${safePage} of ${totalPages}`}`;
+  $("rra-table-meta").textContent = `${total} client · service pairs · ${total <= RRA_PAGE_SIZE ? "all shown" : `page ${safePage} of ${totalPages}`}`;
 
   // Pagination
   const pagDiv = $("rra-pagination");
