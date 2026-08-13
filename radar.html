@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{overflow-x:hidden}
@@ -49,7 +50,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 
-/* ── Filter bar ── */
+/* ── Filter bar — row 1 (period) ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
 .fbar-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap}
@@ -57,6 +58,15 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
+
+/* ── Filter bar — row 2 (slice filters) ── */
+.fbar2{background:#2A2A2A;border-top:1px solid rgba(255,255,255,.05);padding:8px 28px}
+.fbar2-in{max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fsel2{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.75);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:600;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;transition:all .2s}
+.fsel2:hover,.fsel2:focus{border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1);color:#fff}
+.fsel2 option{background:#2A2A2A;color:#fff}
+.fsel2.active{background:rgba(255,218,48,.12);border-color:rgba(255,218,48,.4);color:#FFDA30}
+
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
 /* ── Loader ── */
@@ -71,16 +81,31 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Main layout ── */
 .main{max-width:1440px;margin:0 auto;padding:18px 28px 48px}
 .sec{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#473400;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #FFDA30}
+.sec-row{display:flex;align-items:center;justify-content:space-between}
 
-/* ── RRA KPI strip ── */
-.rra-kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+/* ── Trend chart card ── */
+.trend-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:20px}
+.trend-card-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:#FAFAFA}
+.trend-card-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
+.trend-card-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
+.trend-chart-wrap{padding:18px 20px;height:220px;position:relative}
+
+/* ── RRA KPI strip — 5 cards ── */
+.rra-kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
 .rra-kpi{background:#fff;border-radius:12px;padding:18px 20px 14px;border:1px solid #E2E2E2;border-top:4px solid #E2E2E2}
+.rra-kpi.rra-total{border-top-color:#473400}
 .rra-kpi.rra-retained{border-top-color:#006E5E}
+.rra-kpi.rra-atrisk{border-top-color:#FFDA30}
 .rra-kpi.rra-lost{border-top-color:#EF2D56}
 .rra-kpi.rra-new{border-top-color:#0CCE6B}
+.rra-kpi.rra-nrr{border-top-color:#3B3561}
 .rra-kpi-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#696969;margin-bottom:8px}
-.rra-kpi-val{font-size:clamp(20px,1.8vw,28px);font-weight:800;color:#434343;line-height:1;margin-bottom:4px}
+.rra-kpi-val{font-size:clamp(18px,1.6vw,26px);font-weight:800;color:#434343;line-height:1;margin-bottom:4px}
 .rra-kpi-sub{font-size:10px;font-weight:600;color:#696969}
+.nrr-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.nrr-green{background:#E6F4F1;color:#006E5E}
+.nrr-amber{background:#FFFBEA;color:#A07A00}
+.nrr-red{background:#FEE8EC;color:#C0143C}
 
 /* ── RRA table card ── */
 .rra-tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
@@ -116,6 +141,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Footer ── */
 .footer{text-align:center;font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#9A9A9A;padding:28px 0 12px;margin-top:12px}
 
+@media(max-width:1100px){.rra-kpi-strip{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:900px){.rra-kpi-strip{grid-template-columns:repeat(2,1fr)}.main{padding:16px 18px 40px}}
 </style>
 </head>
@@ -176,22 +202,45 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <div class="yellow-rule"></div>
 </div>
 
-<!-- FILTER BAR -->
+<!-- FILTER BAR ROW 1: Period -->
 <div class="fbar">
   <div class="fbar-in">
     <span class="fl">Period</span>
-    <select class="fsel" id="period-sel" onchange="onPeriodChange()">
+    <select class="fsel" id="period-sel" onchange="onFilterChange()">
       <option value="this-month" selected>This Month</option>
       <option value="last-month">Last Month</option>
-      <option value="this-quarter">This Quarter (FY)</option>
-      <option value="last-quarter">Last Quarter (FY)</option>
-      <option value="this-fy">This FY</option>
+      <option value="2-months-ago">2 Months Ago</option>
+      <option value="3-months-ago">3 Months Ago</option>
+    </select>
+  </div>
+</div>
+
+<!-- FILTER BAR ROW 2: Slice filters -->
+<div class="fbar2">
+  <div class="fbar2-in">
+    <span class="fl" style="color:rgba(255,255,255,.55)">Slice</span>
+    <select class="fsel2" id="f-bu" onchange="onFilterChange()">
+      <option value="">All BUs</option>
+      <option value="MarTech">MarTech</option>
+      <option value="Digital">Digital</option>
     </select>
     <div class="vdiv"></div>
-    <span class="fl">Compare</span>
-    <select class="fsel" id="compare-sel" onchange="onPeriodChange()">
-      <option value="prev-month" selected>vs Previous Month</option>
-      <option value="prev-year">vs Same Month Last Year</option>
+    <select class="fsel2" id="f-head" onchange="onFilterChange()">
+      <option value="">All Heads</option>
+      <option value="Jaydeep">Jaydeep</option>
+      <option value="Jiggyasa">Jiggyasa</option>
+      <option value="Tanuj UK">Tanuj UK</option>
+      <option value="Tanuj US">Tanuj US</option>
+      <option value="Nevilson">Nevilson</option>
+    </select>
+    <div class="vdiv"></div>
+    <select class="fsel2" id="f-svc" onchange="onFilterChange()">
+      <option value="">All Services</option>
+      <option value="Campaign">Campaign</option>
+      <option value="Email">Email</option>
+      <option value="Design">Design</option>
+      <option value="Search">Search</option>
+      <option value="Web">Web</option>
     </select>
   </div>
 </div>
@@ -200,16 +249,31 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <!-- MAIN -->
 <div class="main">
-  <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
+
+  <!-- Section header -->
+  <div class="sec sec-row">
     <span>Recurring Radar
       <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none" id="rra-period-lbl"></span>
     </span>
     <span id="rra-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
   </div>
 
-  <!-- KPI Strip -->
+  <!-- Retention Trend Chart -->
+  <div class="trend-card">
+    <div class="trend-card-hdr">
+      <div>
+        <div class="trend-card-ttl">Retention Trend · FY 2026</div>
+        <div class="trend-card-sub" id="trend-sub">Recurring revenue by status — full financial year</div>
+      </div>
+    </div>
+    <div class="trend-chart-wrap">
+      <canvas id="trend-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- KPI Strip — 5 cards -->
   <div class="rra-kpi-strip">
-    <div class="rra-kpi">
+    <div class="rra-kpi rra-total">
       <div class="rra-kpi-lbl">Total Recurring</div>
       <div class="rra-kpi-val" id="rra-k-total">—</div>
       <div class="rra-kpi-sub" id="rra-k-total-sub">current month</div>
@@ -217,7 +281,12 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <div class="rra-kpi rra-retained">
       <div class="rra-kpi-lbl">Retained</div>
       <div class="rra-kpi-val" id="rra-k-retained">—</div>
-      <div class="rra-kpi-sub" id="rra-k-retained-sub">carried from last month</div>
+      <div class="rra-kpi-sub" id="rra-k-retained-sub">carried from prev month</div>
+    </div>
+    <div class="rra-kpi rra-atrisk">
+      <div class="rra-kpi-lbl">At Risk</div>
+      <div class="rra-kpi-val" id="rra-k-atrisk">—</div>
+      <div class="rra-kpi-sub" id="rra-k-atrisk-sub">within grace period</div>
     </div>
     <div class="rra-kpi rra-lost">
       <div class="rra-kpi-lbl">Lost</div>
@@ -227,8 +296,18 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <div class="rra-kpi rra-new">
       <div class="rra-kpi-lbl">New</div>
       <div class="rra-kpi-val" id="rra-k-new">—</div>
-      <div class="rra-kpi-sub">not in previous month</div>
+      <div class="rra-kpi-sub" id="rra-k-new-sub">not in prev month</div>
     </div>
+  </div>
+
+  <!-- NRR card (full width) -->
+  <div class="rra-kpi rra-nrr" style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div class="rra-kpi-lbl">Net Retention Rate (NRR)</div>
+      <div class="rra-kpi-val" id="rra-k-nrr">—</div>
+      <div class="rra-kpi-sub" id="rra-k-nrr-sub">Retained ÷ Previous Month Recurring</div>
+    </div>
+    <div id="rra-nrr-pill"></div>
   </div>
 
   <!-- Detail Table -->
@@ -277,312 +356,395 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 const PIPELINE = "115832232", STAGE = "205348626", PORTAL = "2700725";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const FY_FLOOR = new Date(2026, 3, 1); // Apr 1 2026 — absolute minimum
 
 // ════ OWNER REGISTRY ════
 const ALL_OWNERS = [
-  {id:"107178262",name:"Chintan Doshi"},
-  {id:"17738843", name:"Jaydeep Salla"},
-  {id:"34140174", name:"Mrugesh Dabhi"},
-  {id:"467997340",name:"Karan Doshi"},
-  {id:"82911376", name:"Divya S"},
-  {id:"82030736", name:"Sakshi Bissa"},
-  {id:"93107638", name:"Ayush Dhupar"},
-  {id:"46153051", name:"Ayush Rathi"},
-  {id:"86147905", name:"Preeti Thapliyal"},
-  {id:"85767516", name:"Rupali Sindhu"},
-  {id:"89530815", name:"Vinita Raidu"},
-  {id:"916030451",name:"Kamesh Biniwale"},
-  {id:"41490632", name:"Mukund Basita"},
-  {id:"17739548", name:"Darshan Modi"},
-  {id:"79217713", name:"Krunal Bakraniya"},
-  {id:"17739173", name:"Tanuj Gupta"},
-  {id:"131779647",name:"Jiggyasa Agrawal"},
-  {id:"78831011", name:"Kunal Gohil"},
-  {id:"94746500", name:"Manvi Choumal"},
-  {id:"176516495",name:"Prachi Porwal"},
-  {id:"263464861",name:"Saquib Khan"},
-  {id:"46156316", name:"Flintoff Mehta"},
-  {id:"37344296", name:"Kalgi Shah"},
-  {id:"24817892", name:"Sheldon Fernandes"},
-  {id:"31730801", name:"Vikram Sahi"},
-  {id:"38568120", name:"Baspin Thomas"},
-  {id:"42663191", name:"Dhaval Damania"},
-  {id:"240935328",name:"Hammad Bhaldar"},
-  {id:"19799470", name:"Jebin Joy"},
-  {id:"34558123", name:"Kaustubh Agrawal"},
-  {id:"284770744",name:"Sourya Ghosh"},
-  {id:"557894666",name:"Sudarshan Damani"},
-  {id:"86813698", name:"Aman Acharya"},
-  {id:"255830830",name:"Devanshu Kumar"},
-  {id:"37762663", name:"Malav Modi"},
-  {id:"82663745", name:"Prativa Dubey"}
+  {id:"107178262",name:"Chintan Doshi",     bu:"MarTech", head:"Jaydeep"},
+  {id:"17738843", name:"Jaydeep Salla",     bu:"MarTech", head:"Jaydeep"},
+  {id:"34140174", name:"Mrugesh Dabhi",     bu:"MarTech", head:"Jaydeep"},
+  {id:"467997340",name:"Karan Doshi",       bu:"MarTech", head:"Jaydeep"},
+  {id:"82911376", name:"Divya S",           bu:"MarTech", head:"Jaydeep"},
+  {id:"82030736", name:"Sakshi Bissa",      bu:"MarTech", head:"Jaydeep"},
+  {id:"93107638", name:"Ayush Dhupar",      bu:"MarTech", head:"Jaydeep"},
+  {id:"46153051", name:"Ayush Rathi",       bu:"MarTech", head:"Jaydeep"},
+  {id:"86147905", name:"Preeti Thapliyal", bu:"MarTech", head:"Jaydeep"},
+  {id:"85767516", name:"Rupali Sindhu",     bu:"MarTech", head:"Jaydeep"},
+  {id:"89530815", name:"Vinita Raidu",      bu:"MarTech", head:"Jaydeep"},
+  {id:"916030451",name:"Kamesh Biniwale",   bu:"MarTech", head:"Jaydeep"},
+  {id:"41490632", name:"Mukund Basita",     bu:"MarTech", head:"Jaydeep"},
+  {id:"17739548", name:"Darshan Modi",      bu:"Digital", head:""},
+  {id:"79217713", name:"Krunal Bakraniya",  bu:"Digital", head:""},
+  {id:"17739173", name:"Tanuj Gupta",       bu:"Digital", head:""},
+  {id:"131779647",name:"Jiggyasa Agrawal",  bu:"Digital", head:"Jiggyasa"},
+  {id:"78831011", name:"Kunal Gohil",       bu:"Digital", head:"Jiggyasa"},
+  {id:"94746500", name:"Manvi Choumal",     bu:"Digital", head:"Jiggyasa"},
+  {id:"176516495",name:"Prachi Porwal",     bu:"Digital", head:"Jiggyasa"},
+  {id:"263464861",name:"Saquib Khan",       bu:"Digital", head:"Jiggyasa"},
+  {id:"46156316", name:"Flintoff Mehta",    bu:"Digital", head:"Tanuj UK"},
+  {id:"37344296", name:"Kalgi Shah",        bu:"Digital", head:"Tanuj UK"},
+  {id:"24817892", name:"Sheldon Fernandes", bu:"Digital", head:"Tanuj UK"},
+  {id:"31730801", name:"Vikram Sahi",       bu:"Digital", head:"Tanuj UK"},
+  {id:"38568120", name:"Baspin Thomas",     bu:"Digital", head:"Tanuj US"},
+  {id:"42663191", name:"Dhaval Damania",    bu:"Digital", head:"Tanuj US"},
+  {id:"240935328",name:"Hammad Bhaldar",    bu:"Digital", head:"Tanuj US"},
+  {id:"19799470", name:"Jebin Joy",         bu:"Digital", head:"Tanuj US"},
+  {id:"34558123", name:"Kaustubh Agrawal",  bu:"Digital", head:"Tanuj US"},
+  {id:"284770744",name:"Sourya Ghosh",      bu:"Digital", head:"Tanuj US"},
+  {id:"557894666",name:"Sudarshan Damani",  bu:"Digital", head:"Tanuj US"},
+  {id:"86813698", name:"Aman Acharya",      bu:"Digital", head:"Nevilson"},
+  {id:"255830830",name:"Devanshu Kumar",    bu:"Digital", head:"Nevilson"},
+  {id:"37762663", name:"Malav Modi",        bu:"Digital", head:"Nevilson"},
+  {id:"82663745", name:"Prativa Dubey",     bu:"Digital", head:""}
 ];
-const OWN = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.name]));
+const OWN     = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.name]));
+const OWN_BU  = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.bu]));
+const OWN_HD  = Object.fromEntries(ALL_OWNERS.map(o => [o.id, o.head]));
 const ownerName = id => OWN[String(id)] || ("Mbr-" + String(id).slice(-4));
+const ownerBU   = id => OWN_BU[String(id)] || "";
+const ownerHead = id => OWN_HD[String(id)] || "";
 
 // ════ HELPERS ════
 const $ = id => document.getElementById(id);
-const fmtUSD = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2}).format(n);
-const fmtDate = d => { if(!d)return""; try{return new Date(d+"T00:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric"});}catch(e){return d;} };
+const fmtUSD = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
+const fmtUSDfull = n => new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2}).format(n);
 const monthVal = d => `${MFULL[d.getMonth()]}-${d.getFullYear()}`;
 
 // ════ STATE ════
-let isSyncing = false;
-let dealServiceMap = {};
-let rraRows = [];
+let isSyncing    = false;
+let allDeals     = [];       // all FY deals fetched
+let dealServiceMap = {};     // dealId → [{svc,bu,amount,name}]
+let allFYMaps    = {};       // monthStr → expandKeys() result — cached per month
+let rraRows      = [];
 let rraPage_current = 1;
 let rraTableOpen = true;
-const RRA_PAGE_SIZE = 15;
+const RRA_PAGE_SIZE  = 15;
 const RRA_STATUS_ORDER = { lost:0, atrisk:1, retained:2, new:3 };
+let trendChart = null;
 
-// ════ MONTH HELPERS ════
+// ════ FY MONTHS ════
 function getFYMonths() {
   const now = new Date(), cy = now.getFullYear(), cm = now.getMonth();
   const fyStartYear = cm < 3 ? cy - 1 : cy;
   const months = [];
   for(let m = 3; m <= 11; m++) {
-    if(fyStartYear < cy || (fyStartYear === cy && m <= cm)) months.push(`${MFULL[m]}-${fyStartYear}`);
+    if(fyStartYear < cy || (fyStartYear === cy && m <= cm))
+      months.push(`${MFULL[m]}-${fyStartYear}`);
   }
   for(let m = 0; m <= 2; m++) {
     const yr = fyStartYear + 1;
-    if(yr < cy || (yr === cy && m <= cm)) months.push(`${MFULL[m]}-${yr}`);
+    if(yr < cy || (yr === cy && m <= cm))
+      months.push(`${MFULL[m]}-${yr}`);
   }
   return months;
 }
 
-// Derive M+1 (current/selected) and M (previous) month pair from period selector
-function getMonthPair() {
+// ════ PERIOD SELECTOR → selected month + previous month ════
+function getSelectedMonthPair() {
   const now = new Date(), cy = now.getFullYear(), cm = now.getMonth();
   const p = $("period-sel").value;
+  let offset = 0;
+  if(p === "last-month")    offset = 1;
+  if(p === "2-months-ago")  offset = 2;
+  if(p === "3-months-ago")  offset = 3;
 
-  let m1Date; // M+1 = the selected period's last month
-  if(p === "this-month") {
-    m1Date = new Date(cy, cm, 1);
-  } else if(p === "last-month") {
-    m1Date = new Date(cy, cm - 1, 1);
-  } else if(p === "this-quarter" || p === "last-quarter" || p === "this-fy") {
-    // For multi-month periods, use the last month of the period as M+1
-    const fyMonths = getFYMonths();
-    if(!fyMonths.length) return null;
-    let periodMonths;
-    if(p === "this-fy") {
-      periodMonths = fyMonths;
-    } else {
-      // quarter — find current or last quarter months from FY list
-      const qIdx = Math.floor((cm < 3 ? cm + 9 : cm - 3) / 3); // 0=Q1,1=Q2,2=Q3,3=Q4
-      const qStart = [3,6,9,0][p === "this-quarter" ? qIdx : (qIdx + 3) % 4];
-      const qYear = qStart === 0 ? cy + (cm < 3 ? 0 : 1) : (qStart > cm ? cy - 1 : cy);
-      periodMonths = fyMonths.filter(m => {
-        const [mn, yr] = m.split("-");
-        const mi = MFULL.indexOf(mn), y = parseInt(yr);
-        return mi >= qStart && mi < qStart + 3 && y === qYear;
-      });
-      if(!periodMonths.length) periodMonths = fyMonths;
-    }
-    const last = periodMonths[periodMonths.length - 1];
-    const [mn, yr] = last.split("-");
-    m1Date = new Date(parseInt(yr), MFULL.indexOf(mn), 1);
-  } else {
-    m1Date = new Date(cy, cm, 1);
-  }
-
-  // Clamp to FY_FLOOR
-  if(m1Date < FY_FLOOR) m1Date = new Date(FY_FLOOR);
-  const m1Month = monthVal(m1Date);
-
-  // M = one month before M+1 (always, regardless of compare selector for now)
-  const mDate = new Date(m1Date.getFullYear(), m1Date.getMonth() - 1, 1);
-  const mMonth = monthVal(mDate);
-
-  return { mMonth, m1Month };
+  const m1Date = new Date(cy, cm - offset, 1);      // selected (current) month
+  const mDate  = new Date(cy, cm - offset - 1, 1);  // previous month (for comparison)
+  return { mMonth: monthVal(mDate), m1Month: monthVal(m1Date) };
 }
 
-// ════ CLASSIFICATION FUNCTIONS ════
-function classifyLineItem(name) {
-  if(!name) return null;
-  const n = name.toLowerCase();
-  if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
-    return {svc:"Campaign",bu:"MarTech"};
-  if(n.includes("design - asset")||n.includes("design - digital"))
-    return {svc:"Web",bu:"Digital"};
-  if(n.includes("design - "))
-    return {svc:"Design",bu:"MarTech"};
-  if(n.includes("development - email")||n.includes("email coding"))
-    return {svc:"Email",bu:"MarTech"};
-  if(n.includes("email design and coding"))
-    return {svc:"Design",bu:"MarTech"};
-  if(n.includes("development - web")||n.includes("development - lp/hub")||
-     n.includes("development - mobile app")||n.includes("ai & automation - web")||
-     n.includes("dot-net development")||n.includes("operational service - data entry")||
-     n.includes("landing page coding and design")||n.includes("landing page coding")||
-     n.includes("landing page only coding"))
-    return {svc:"Web",bu:"Digital"};
-  if(n.includes("search -")||n.includes("consultancy fees"))
-    return {svc:"Search",bu:"Digital"};
-  return null;
-}
-
-function engGroup(val) {
-  if(!val) return null;
-  if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring") return "Recurring";
-  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time") return "P2P";
-  return null;
-}
-
+// ════ CLASSIFICATION ════
+// LI name prefix → engagement group. Exact prefixes only. No deal-level fallback.
 function engGroupFromLiName(name) {
   if(!name) return null;
   const n = name.toLowerCase();
-  if(n.startsWith("dedicated fte")) return "Recurring";
-  if(n.startsWith("dedicated pte")) return "Recurring";
-  if(n.startsWith("recurring"))     return "Recurring";
-  if(n.startsWith("multiple"))      return "Recurring";
-  if(n.startsWith("p2p"))           return "P2P";
-  if(n.startsWith("time and material")||n.startsWith("t&m")) return "P2P";
-  if(n.includes("email coding"))    return "P2P";
+  if(n.startsWith("dedicated fte"))     return "Recurring";
+  if(n.startsWith("dedicated pte"))     return "Recurring";
+  if(n.startsWith("recurring services"))return "Recurring";
+  if(n.startsWith("p2p"))               return "P2P";
+  if(n.startsWith("time and material")) return "P2P";
+  if(n.startsWith("t&m"))               return "P2P";
+  if(n.includes("email coding"))        return "P2P";
   return null;
 }
 
-// ════ expandKeys — mirrors engTypesLi() exactly ════
-// Walk every deal. Layer 1: ON-prefix → skip. Layer 2: per-LI name classification.
-// Layer 3: no LIs or none classifiable → eng_model fallback with d.amount.
+// LI name → service classification
+function classifyLineItem(name) {
+  if(!name) return null;
+  const n = name.toLowerCase();
+  if(n.includes("campaign -") || n.includes("campaign manager") ||
+     n.includes("campaign operation specialist") || n.includes("sfmc"))
+    return {svc:"Campaign", bu:"MarTech"};
+  if(n.includes("design - asset") || n.includes("design - digital"))
+    return {svc:"Web", bu:"Digital"};
+  if(n.includes("design - "))
+    return {svc:"Design", bu:"MarTech"};
+  if(n.includes("development - email") || n.includes("email coding"))
+    return {svc:"Email", bu:"MarTech"};
+  if(n.includes("email design and coding"))
+    return {svc:"Design", bu:"MarTech"};
+  if(n.includes("development - web") || n.includes("development - lp/hub") ||
+     n.includes("development - mobile app") || n.includes("ai & automation - web") ||
+     n.includes("dot-net development") || n.includes("operational service - data entry") ||
+     n.includes("landing page coding"))
+    return {svc:"Web", bu:"Digital"};
+  if(n.includes("search -") || n.includes("consultancy fees"))
+    return {svc:"Search", bu:"Digital"};
+  return null;
+}
+
+// ════ expandKeys — LI-only, no eng_model fallback ════
+// Layer 1: ON-prefix → skip (always P2P)
+// Layer 2: classify each LI by name prefix, accumulate Recurring LI amounts only
+// No Layer 3 — eng_model is never used
 function expandKeys(dealList) {
   const map = {};
   dealList.forEach(d => {
-    if((d.dealname || "").startsWith("ON")) return; // Layer 1: always P2P
+    // Layer 1: ON-prefix deals are always P2P — skip entirely
+    if((d.dealname || "").startsWith("ON")) return;
+
     const lis = dealServiceMap[d.id] || [];
-    if(lis.length) {
-      // Layer 2: classify each LI individually
-      let classified = false;
-      const svcAmounts = {};
-      lis.forEach(li => {
-        const eg = engGroupFromLiName(li.name);
-        if(eg === "Recurring") {
-          const svc = li.svc || "Unknown";
-          svcAmounts[svc] = (svcAmounts[svc] || 0) + li.amount;
-          classified = true;
-        } else if(eg === "P2P") {
-          classified = true;
-        }
-      });
-      if(!classified) {
-        // LIs exist but none matched any prefix — fall back to eng_model
-        const eg = engGroup(d.eng_model);
-        if(eg !== "Recurring") return;
-        const key = `${d.billing_id}||Unknown`;
-        if(!map[key]) map[key] = {billing_id:d.billing_id,svc:"Unknown",client:d.client||d.billing_id,owner_id:d.owner_id,amount:0,closedate:d.closedate};
-        map[key].amount += d.amount;
-        if(!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
-        return;
+    lis.forEach(li => {
+      const eg = engGroupFromLiName(li.name);
+      if(eg !== "Recurring") return; // only Recurring LIs flow into Radar
+
+      const svc = li.svc || "Unknown";
+      const key = `${d.billing_id}||${svc}`;
+      if(!map[key]) {
+        map[key] = {
+          billing_id: d.billing_id,
+          svc,
+          bu:       li.bu || ownerBU(d.owner_id),
+          head:     ownerHead(d.owner_id),
+          client:   d.client || d.billing_id,
+          owner_id: d.owner_id,
+          amount:   0,
+          closedate:d.closedate
+        };
       }
-      Object.entries(svcAmounts).forEach(([svc, amt]) => {
-        const key = `${d.billing_id}||${svc}`;
-        if(!map[key]) map[key] = {billing_id:d.billing_id,svc,client:d.client||d.billing_id,owner_id:d.owner_id,amount:0,closedate:d.closedate};
-        map[key].amount += amt;
-        if(!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
-      });
-    } else {
-      // Layer 3: no LIs → eng_model fallback
-      const eg = engGroup(d.eng_model);
-      if(eg !== "Recurring") return;
-      const key = `${d.billing_id}||Unknown`;
-      if(!map[key]) map[key] = {billing_id:d.billing_id,svc:"Unknown",client:d.client||d.billing_id,owner_id:d.owner_id,amount:0,closedate:d.closedate};
-      map[key].amount += d.amount;
-      if(!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
-    }
+      map[key].amount += li.amount;
+      if(!map[key].closedate || d.closedate > map[key].closedate)
+        map[key].closedate = d.closedate;
+    });
   });
   return map;
 }
 
-// ════ RENDER ════
-function renderRRA(mDeals, m1Deals, mMonth, m1Month) {
-  const mMap  = expandKeys(mDeals);
-  const m1Map = expandKeys(m1Deals);
+// ════ DEDUP ════
+function dedup(deals) {
+  const seen = {}, out = [];
+  deals.forEach(d => {
+    const key = d.dealname + "|" + d.amount + "|" + d.month;
+    if(!seen[key]) { seen[key] = true; out.push(d); }
+  });
+  return out;
+}
 
+// ════ FILTERS ════
+function activeFilters() {
+  return {
+    bu:   $("f-bu").value,
+    head: $("f-head").value,
+    svc:  $("f-svc").value
+  };
+}
+
+function applyFilters(map) {
+  const {bu, head, svc} = activeFilters();
+  if(!bu && !head && !svc) return map;
+  const out = {};
+  Object.entries(map).forEach(([key, rec]) => {
+    if(bu   && rec.bu   !== bu)   return;
+    if(head && rec.head !== head) return;
+    if(svc  && rec.svc  !== svc)  return;
+    out[key] = rec;
+  });
+  return out;
+}
+
+// Update filter select active styling
+function updateFilterStyles() {
+  ["f-bu","f-head","f-svc"].forEach(id => {
+    const el = $(id);
+    el.classList.toggle("active", el.value !== "");
+  });
+}
+
+// ════ BUILD ROWS from two maps ════
+function buildRows(mMap, m1Map) {
   const today = new Date(); today.setHours(0,0,0,0);
   const rows = [];
 
-  // Retained / At Risk / Lost — keys that existed in M
   Object.entries(mMap).forEach(([key, rec]) => {
     if(m1Map[key]) {
       const m1rec = m1Map[key];
       rows.push({...m1rec, status:"retained", m_amount:rec.amount, m_closedate:rec.closedate});
     } else {
-      const cd = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
+      const cd    = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
       const grace = cd ? new Date(cd.getTime() + 2 * 86400000) : null;
       const status = (!grace || today > grace) ? "lost" : "atrisk";
       rows.push({...rec, status});
     }
   });
 
-  // New — keys in M+1 not in M
   Object.entries(m1Map).forEach(([key, rec]) => {
     if(!mMap[key]) rows.push({...rec, status:"new"});
   });
 
-  rows.sort((a, b) => {
+  rows.sort((a,b) => {
     const so = RRA_STATUS_ORDER[a.status] - RRA_STATUS_ORDER[b.status];
     return so !== 0 ? so : b.amount - a.amount;
   });
-  rraRows = rows;
-  rraPage_current = 1;
+  return rows;
+}
 
+// ════ RENDER KPI STRIP ════
+function renderKPIs(rows, m1Map, mMap, mLbl, m1Lbl, m1Year) {
   const retained = rows.filter(r => r.status === "retained");
   const lost     = rows.filter(r => r.status === "lost");
   const atrisk   = rows.filter(r => r.status === "atrisk");
   const newRows  = rows.filter(r => r.status === "new");
-  const m1Total  = Object.values(m1Map).reduce((s, r) => s + r.amount, 0);
+  const m1Total  = Object.values(m1Map).reduce((s,r) => s + r.amount, 0);
+  const mTotal   = Object.values(mMap).reduce((s,r) => s + r.amount, 0);
 
-  const [mpM] = mMonth.split("-");
-  const [m1M, m1Y] = m1Month.split("-");
-  const mLbl  = MSHRT[MFULL.indexOf(mpM)];
-  const m1Lbl = MSHRT[MFULL.indexOf(m1M)];
+  const retainedAmt = retained.reduce((s,r) => s + r.amount, 0);
+  const nrr = mTotal > 0 ? (retainedAmt / mTotal * 100) : null;
 
-  $("rra-period-lbl").textContent     = `· ${mLbl} vs ${m1Lbl} ${m1Y}`;
+  $("rra-period-lbl").textContent     = `· ${m1Lbl} ${m1Year} vs ${mLbl}`;
   $("rra-k-total").textContent        = fmtUSD(m1Total);
-  $("rra-k-total-sub").textContent    = `${Object.keys(m1Map).length} client·service pairs`;
-  $("rra-k-retained").textContent     = fmtUSD(retained.reduce((s,r) => s+r.amount, 0));
+  $("rra-k-total-sub").textContent    = `${Object.keys(m1Map).length} client · service pairs`;
+  $("rra-k-retained").textContent     = fmtUSD(retainedAmt);
   $("rra-k-retained-sub").textContent = `${retained.length} pairs from ${mLbl}`;
-  $("rra-k-lost").textContent         = fmtUSD(lost.reduce((s,r) => s+r.amount, 0));
-  $("rra-k-lost-sub").textContent     = `${lost.length} lost · ${atrisk.length} at risk (${fmtUSD(atrisk.reduce((s,r)=>s+r.amount,0))})`;
-  $("rra-k-new").textContent          = fmtUSD(newRows.reduce((s,r) => s+r.amount, 0));
-  $("rra-table-meta").textContent     = `${rows.length} client · service pairs`;
-  if(rraTableOpen) renderRRATable();
+  $("rra-k-atrisk").textContent       = fmtUSD(atrisk.reduce((s,r) => s + r.amount, 0));
+  $("rra-k-atrisk-sub").textContent   = `${atrisk.length} pairs · 2-day grace`;
+  $("rra-k-lost").textContent         = fmtUSD(lost.reduce((s,r) => s + r.amount, 0));
+  $("rra-k-lost-sub").textContent     = `${lost.length} pairs gone`;
+  $("rra-k-new").textContent          = fmtUSD(newRows.reduce((s,r) => s + r.amount, 0));
+  $("rra-k-new-sub").textContent      = `${newRows.length} new pairs`;
+
+  // NRR
+  if(nrr !== null) {
+    $("rra-k-nrr").textContent     = nrr.toFixed(1) + "%";
+    $("rra-k-nrr-sub").textContent = `Retained ${fmtUSD(retainedAmt)} ÷ Prev Month ${fmtUSD(mTotal)}`;
+    const pillCls = nrr >= 90 ? "nrr-green" : nrr >= 75 ? "nrr-amber" : "nrr-red";
+    const pillLbl = nrr >= 90 ? "Healthy" : nrr >= 75 ? "Watch" : "Critical";
+    $("rra-nrr-pill").innerHTML = `<span class="nrr-pill ${pillCls}">${pillLbl}</span>`;
+  } else {
+    $("rra-k-nrr").textContent     = "—";
+    $("rra-k-nrr-sub").textContent = "No previous month data";
+    $("rra-nrr-pill").innerHTML    = "";
+  }
+
+  $("rra-table-meta").textContent = `${rows.length} client · service pairs`;
 }
 
+// ════ RENDER TREND CHART ════
+function renderTrendChart(fyMonths) {
+  const retained = [], newArr = [], atrisk = [], lost = [], labels = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Need at least 2 months for a comparison
+  for(let i = 1; i < fyMonths.length; i++) {
+    const mMonth  = fyMonths[i - 1];
+    const m1Month = fyMonths[i];
+
+    // Use cached maps — apply NO slice filters for the chart (always full FY view)
+    const mMap  = allFYMaps[mMonth]  || {};
+    const m1Map = allFYMaps[m1Month] || {};
+
+    let ret = 0, nw = 0, ar = 0, ls = 0;
+
+    Object.entries(mMap).forEach(([key, rec]) => {
+      if(m1Map[key]) {
+        ret += m1Map[key].amount;
+      } else {
+        const cd    = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
+        const grace = cd ? new Date(cd.getTime() + 2 * 86400000) : null;
+        if(!grace || today > grace) ls += rec.amount;
+        else                        ar += rec.amount;
+      }
+    });
+    Object.entries(m1Map).forEach(([key, rec]) => {
+      if(!mMap[key]) nw += rec.amount;
+    });
+
+    const [mn, yr] = m1Month.split("-");
+    labels.push(MSHRT[MFULL.indexOf(mn)] + " " + yr.slice(2));
+    retained.push(Math.round(ret));
+    newArr.push(Math.round(nw));
+    atrisk.push(Math.round(ar));
+    lost.push(Math.round(ls));
+  }
+
+  const ctx = $("trend-chart").getContext("2d");
+  if(trendChart) trendChart.destroy();
+
+  trendChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {label:"Retained",     data:retained, backgroundColor:"#006E5E", stack:"s"},
+        {label:"New",          data:newArr,   backgroundColor:"#0CCE6B", stack:"s"},
+        {label:"At Risk",      data:atrisk,   backgroundColor:"#FFDA30", stack:"s"},
+        {label:"Lost",         data:lost,     backgroundColor:"#EF2D56", stack:"s"}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{
+          position:"bottom",
+          labels:{font:{family:"Montserrat",size:9},color:"#696969",boxWidth:10,padding:12}
+        },
+        tooltip:{
+          callbacks:{
+            label: c => `${c.dataset.label}: ${fmtUSD(c.parsed.y)}`
+          },
+          bodyFont:{family:"Montserrat",size:11}
+        }
+      },
+      scales:{
+        x:{stacked:true, grid:{display:false}, ticks:{font:{family:"Montserrat",size:9},color:"#696969"}},
+        y:{stacked:true, grid:{color:"#F0F0F0"},
+           ticks:{font:{family:"Montserrat",size:9},color:"#696969",
+                  callback: v => "$" + (v>=1000 ? (v/1000).toFixed(0)+"k" : v)}}
+      }
+    }
+  });
+}
+
+// ════ RENDER TABLE ════
 function renderRRATable() {
   const rows = rraRows;
   const total = rows.length;
   const totalPages = Math.max(1, Math.ceil(total / RRA_PAGE_SIZE));
-  const safePage = Math.min(rraPage_current, totalPages);
-  rraPage_current = safePage;
+  const safePage   = Math.min(rraPage_current, totalPages);
+  rraPage_current  = safePage;
   const start = (safePage - 1) * RRA_PAGE_SIZE;
   const slice = rows.slice(start, start + RRA_PAGE_SIZE);
 
   const STATUS_CFG = {
-    retained: {cls:"rra-s-retained", label:"Retained"},
-    atrisk:   {cls:"rra-s-atrisk",   label:"At Risk"},
-    lost:     {cls:"rra-s-lost",      label:"Lost"},
-    new:      {cls:"rra-s-new",       label:"New"}
+    retained:{cls:"rra-s-retained",label:"Retained"},
+    atrisk:  {cls:"rra-s-atrisk",  label:"At Risk"},
+    lost:    {cls:"rra-s-lost",    label:"Lost"},
+    new:     {cls:"rra-s-new",     label:"New"}
   };
 
   const html = slice.map((r, i) => {
     const sc = STATUS_CFG[r.status];
-    const ownerLbl = ownerName(r.owner_id);
-    const cd = r.closedate || "—";
-    const rowNum = start + i + 1;
     return `<tr>
-      <td class="muted" style="font-size:10px">${rowNum}</td>
+      <td class="muted" style="font-size:10px">${start + i + 1}</td>
       <td style="font-weight:700">${r.client || "—"}</td>
       <td class="muted">${r.svc || "—"}</td>
-      <td class="muted">${ownerLbl}</td>
-      <td class="num">${fmtUSD(r.amount)}</td>
-      <td class="muted">${cd}</td>
+      <td class="muted">${ownerName(r.owner_id)}</td>
+      <td class="num">${fmtUSDfull(r.amount)}</td>
+      <td class="muted">${r.closedate || "—"}</td>
       <td><span class="rra-status ${sc.cls}">${sc.label}</span></td>
     </tr>`;
   }).join("");
 
-  $("rra-tbody").innerHTML = html || `<tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">No data</td></tr>`;
+  $("rra-tbody").innerHTML = html ||
+    `<tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">No data for current filters</td></tr>`;
 
   const pagDiv = $("rra-pagination");
   if(total > RRA_PAGE_SIZE) {
@@ -593,13 +755,13 @@ function renderRRATable() {
   } else {
     pagDiv.style.display = "none";
   }
-  $("rra-table-meta").textContent = `${total} client · service pairs${total > RRA_PAGE_SIZE ? ` · page ${safePage} of ${totalPages}` : ""}`;
+  $("rra-table-meta").textContent =
+    `${total} client · service pairs${total > RRA_PAGE_SIZE ? ` · page ${safePage} of ${totalPages}` : ""}`;
 }
 
 function toggleRRATable() {
   rraTableOpen = !rraTableOpen;
   const btn = $("rra-toggle-btn"), body = $("rra-table-body");
-  if(!btn || !body) return;
   btn.textContent = rraTableOpen ? "Hide Deals ▴" : "Show Deals ▾";
   btn.classList.toggle("open", rraTableOpen);
   body.style.display = rraTableOpen ? "" : "none";
@@ -612,31 +774,71 @@ function rraPageNav(dir) {
   $("rra-table-body").scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
+// ════ RENDER ALL — driven by period + slice filters ════
+function renderAll() {
+  const fyMonths = getFYMonths();
+  const {mMonth, m1Month} = getSelectedMonthPair();
+
+  // Ensure selected months are within FY data
+  const rawMMap  = allFYMaps[mMonth]  || {};
+  const rawM1Map = allFYMaps[m1Month] || {};
+
+  // Apply slice filters to both maps
+  const mMap  = applyFilters(rawMMap);
+  const m1Map = applyFilters(rawM1Map);
+
+  const [m1M, m1Y] = m1Month.split("-");
+  const [mM]       = mMonth.split("-");
+  const m1Lbl = MSHRT[MFULL.indexOf(m1M)];
+  const mLbl  = MSHRT[MFULL.indexOf(mM)];
+
+  const rows = buildRows(mMap, m1Map);
+  rraRows = rows;
+  rraPage_current = 1;
+
+  renderKPIs(rows, m1Map, mMap, mLbl, m1Lbl, m1Y);
+  if(rraTableOpen) renderRRATable();
+
+  // Chart always uses full unfiltered FY maps
+  if(fyMonths.length >= 2) renderTrendChart(fyMonths);
+}
+
+// ════ FILTER CHANGE — client-side only, no re-fetch ════
+function onFilterChange() {
+  updateFilterStyles();
+  renderAll();
+}
+
 // ════ DATA FETCH ════
-async function fetchDealsForMonth(monthStr) {
-  const deals = [];
-  let after = null;
-  const props = ["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id",
-    "closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_",
+async function fetchAllFYDeals() {
+  const fyMonths = getFYMonths();
+  const props = [
+    "dealname","amount_in_home_currency","hubspot_owner_id",
+    "closedate","createdate",
+    "contact_name__invoice_app_","zoho_display_name__invoice_app_",
     "zoho_billing_id__invoice_app_","invoice_booking_month__invoice_app_",
     "engagement_model__invoice_app_","order_type","company_name__invoice_app_",
-    "geo__invoice_app_","geo_head__invoice_app_"];
+    "geo__invoice_app_","geo_head__invoice_app_"
+  ];
   const filters = [
     {propertyName:"pipeline",    operator:"EQ",     value:PIPELINE},
     {propertyName:"dealstage",   operator:"EQ",     value:STAGE},
-    {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ", value:monthStr},
+    {propertyName:"invoice_booking_month__invoice_app_", operator:"IN", values:fyMonths},
     {propertyName:"engagement_model__invoice_app_", operator:"NOT_IN", values:["Wallet","Special Engagement"]},
     {propertyName:"company_name__invoice_app_",     operator:"NOT_IN", values:["InboxArmy","Uplers","Solomax"]}
   ];
+
+  const fetched = []; let after = null;
   do {
-    const body = {filterGroups:[{filters}], properties:props, limit:200};
+    const body = {filterGroups:[{filters}], properties:props, limit:200,
+      sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
     if(after) body.after = after;
     const res = await fetch("/api", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
     if(!res.ok) throw new Error("API " + res.status);
     const data = await res.json();
     (data.results || []).forEach(r => {
       const bm = (r.properties?.invoice_booking_month__invoice_app_ || "").toLowerCase();
-      deals.push({
+      fetched.push({
         id:         String(r.id),
         dealname:   r.properties?.dealname || "",
         amount:     parseFloat(r.properties?.amount_in_home_currency || 0) || 0,
@@ -645,17 +847,16 @@ async function fetchDealsForMonth(monthStr) {
         createdate: (r.properties?.createdate || "").split("T")[0],
         billing_id: r.properties?.zoho_billing_id__invoice_app_ || r.properties?.contact_name__invoice_app_ || "",
         client:     r.properties?.zoho_display_name__invoice_app_ || r.properties?.contact_name__invoice_app_ || "",
-        month:      bm || monthStr,
+        month:      bm || "",
         eng_model:  (r.properties?.engagement_model__invoice_app_ || "").trim(),
-        order_type: r.properties?.order_type || "",
         geo:        (r.properties?.geo__invoice_app_ || "").trim(),
-        geo_head:   (r.properties?.geo_head__invoice_app_ || "").trim(),
         company_name:(r.properties?.company_name__invoice_app_ || "").trim()
       });
     });
     after = data.paging?.next?.after || null;
   } while(after);
-  return deals;
+
+  return dedup(fetched);
 }
 
 async function fetchLineItems(deals) {
@@ -676,16 +877,6 @@ async function fetchLineItems(deals) {
   return svcMap;
 }
 
-// Dedup within a month: same dealname+amount+month = duplicate, keep first
-function dedup(deals) {
-  const seen = {}, out = [];
-  deals.forEach(d => {
-    const key = d.dealname + "|" + d.amount + "|" + d.month;
-    if(!seen[key]) { seen[key] = true; out.push(d); }
-  });
-  return out;
-}
-
 // ════ MAIN SYNC ════
 async function doSync(force = false) {
   if(isSyncing && !force) return;
@@ -697,30 +888,25 @@ async function doSync(force = false) {
   $("err-bar").style.display = "none";
 
   try {
-    const pair = getMonthPair();
-    if(!pair) throw new Error("Could not determine month pair from period selector");
-    const {mMonth, m1Month} = pair;
-
-    $("rra-period-lbl").textContent = `· loading...`;
+    const fyMonths = getFYMonths();
     $("stxt").textContent = "FETCHING DEALS...";
 
-    // Fetch both months in parallel
-    const [mRaw, m1Raw] = await Promise.all([
-      fetchDealsForMonth(mMonth),
-      fetchDealsForMonth(m1Month)
-    ]);
-
-    const mDeals  = dedup(mRaw);
-    const m1Deals = dedup(m1Raw);
-    const allDeals = [...mDeals, ...m1Deals];
+    allDeals = await fetchAllFYDeals();
 
     $("stxt").textContent = "FETCHING LINE ITEMS...";
     dealServiceMap = await fetchLineItems(allDeals);
 
-    renderRRA(mDeals, m1Deals, mMonth, m1Month);
+    // Build and cache expandKeys map for every FY month
+    allFYMaps = {};
+    fyMonths.forEach(m => {
+      const monthDeals = allDeals.filter(d => d.month === m);
+      allFYMaps[m] = expandKeys(monthDeals);
+    });
+
+    renderAll();
 
     $("sdot").style.background = "#FFDA30";
-    $("stxt").textContent = `LIVE · ${m1Deals.length} DEALS`;
+    $("stxt").textContent = `LIVE · ${allDeals.length} DEALS`;
     $("last-sync").textContent = `Synced at ${new Date().toLocaleTimeString()}`;
 
   } catch(e) {
@@ -735,8 +921,6 @@ async function doSync(force = false) {
     isSyncing = false;
   }
 }
-
-function onPeriodChange() { doSync(true); }
 
 // ════ AUTH ════
 function getAuthKey(head){ return head ? `nexus_auth_${head}` : "nexus_auth"; }
