@@ -167,14 +167,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .rra-page-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
 .rra-page-btn:disabled{opacity:.35;cursor:default}
 
-/* ── Main detail table card ── */
-.rra-tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:24px}
-.rra-tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:#FAFAFA}
-.rra-tcard-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
-.rra-tcard-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
-.radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
-.radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
-.radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
+
 
 /* ── Footer — verbatim from Revenue Pulse ── */
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
@@ -359,19 +352,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <span id="rra-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
     </div>
 
-    <!-- Retention Trend Chart -->
-    <div class="trend-card">
-      <div class="trend-card-hdr">
-        <div>
-          <div class="trend-card-ttl">Retention Trend · FY 2026</div>
-          <div class="trend-card-sub">Recurring revenue by status — full financial year</div>
-        </div>
-      </div>
-      <div class="trend-chart-wrap">
-        <canvas id="trend-chart"></canvas>
-      </div>
-    </div>
-
     <!-- KPI Strip — 6 cards -->
     <div class="rra-kpi-strip">
       <div class="rra-kpi rra-total" id="kpi-total" onclick="toggleKPIDrill('total')">
@@ -448,41 +428,16 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
 
-    <!-- Full Detail Table -->
-    <div class="rra-tcard">
-      <div class="rra-tcard-hdr">
+    <!-- Retention Trend Chart -->
+    <div class="trend-card">
+      <div class="trend-card-hdr">
         <div>
-          <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
-          <div class="rra-tcard-sub" id="rra-table-meta"></div>
+          <div class="trend-card-ttl">Retention Trend · FY 2026</div>
+          <div class="trend-card-sub">Recurring revenue by status — full financial year · filter-responsive</div>
         </div>
-        <button class="radar-toggle open" id="rra-toggle-btn" onclick="toggleRRATable()">Hide Deals ▴</button>
       </div>
-      <div id="rra-table-body">
-        <div class="twrap">
-          <table class="rra-table">
-            <thead>
-              <tr>
-                <th style="width:32px">#</th>
-                <th>Client</th>
-                <th>Service</th>
-                <th>Owner</th>
-                <th class="num">Recurring Amount</th>
-                <th>Close Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="rra-tbody">
-              <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="rra-pagination" id="rra-pagination" style="display:none">
-          <div class="rra-page-info" id="rra-page-info"></div>
-          <div class="rra-page-btns">
-            <button class="rra-page-btn" id="rra-prev" onclick="rraPageNav(-1)">← Prev</button>
-            <button class="rra-page-btn" id="rra-next" onclick="rraPageNav(1)">Next →</button>
-          </div>
-        </div>
+      <div class="trend-chart-wrap">
+        <canvas id="trend-chart"></canvas>
       </div>
     </div>
 
@@ -555,14 +510,11 @@ let isSyncing = false;
 let allDeals  = [];
 let dealServiceMap = {};
 let allFYMaps = {};       // monthStr → expandKeys() map (unfiltered)
-let rraRows   = [];       // full filtered rows for main table
-let rraPage_current = 1;
-let rraTableOpen    = true;
+let rraRows   = [];       // full filtered rows (used by drill panels)
 let activeDrillStatus = null;  // which KPI card is open
 let drillRows         = [];
 let drillPage_current = 1;
 let trendChart = null;
-const RRA_PAGE_SIZE   = 15;
 const DRILL_PAGE_SIZE = 15;
 const RRA_STATUS_ORDER = {lost:0,atrisk:1,retained:2,new:3};
 
@@ -841,12 +793,12 @@ function drillPageNav(dir){
 }
 
 // ════ TREND CHART ════
-function renderTrendChart(fyMonths) {
+// filteredPairs: array of {mMap, m1Map, label} — already filter-applied per month pair
+function renderTrendChart(filteredPairs) {
   const retained=[],newArr=[],atrisk=[],lost=[],labels=[];
   const today=new Date();today.setHours(0,0,0,0);
-  for(let i=1;i<fyMonths.length;i++){
-    const mMap =allFYMaps[fyMonths[i-1]]||{};
-    const m1Map=allFYMaps[fyMonths[i]]  ||{};
+  for(let i=0;i<filteredPairs.length;i++){
+    const{mMap,m1Map,label}=filteredPairs[i];
     let ret=0,nw=0,ar=0,ls=0;
     Object.entries(mMap).forEach(([key,rec])=>{
       if(m1Map[key]){ret+=m1Map[key].amount;}
@@ -857,8 +809,7 @@ function renderTrendChart(fyMonths) {
       }
     });
     Object.entries(m1Map).forEach(([key,rec])=>{if(!mMap[key])nw+=rec.amount;});
-    const[mn,yr]=fyMonths[i].split("-");
-    labels.push(MSHRT[MFULL.indexOf(mn)]+" "+yr.slice(2));
+    labels.push(label);
     retained.push(Math.round(ret));newArr.push(Math.round(nw));
     atrisk.push(Math.round(ar));lost.push(Math.round(ls));
   }
@@ -887,77 +838,41 @@ function renderTrendChart(fyMonths) {
   });
 }
 
-// ════ MAIN TABLE ════
-function renderRRATable() {
-  const rows=rraRows,total=rows.length;
-  const totalPages=Math.max(1,Math.ceil(total/RRA_PAGE_SIZE));
-  const safePage=Math.min(rraPage_current,totalPages);
-  rraPage_current=safePage;
-  const start=(safePage-1)*RRA_PAGE_SIZE;
-  const slice=rows.slice(start,start+RRA_PAGE_SIZE);
-  const html=slice.map((r,i)=>{
-    const sc=STATUS_CFG[r.status];
-    return`<tr>
-      <td class="muted" style="font-size:10px">${start+i+1}</td>
-      <td style="font-weight:700">${r.client||"—"}</td>
-      <td class="muted">${r.svc||"—"}</td>
-      <td class="muted">${ownerName(r.owner_id)}</td>
-      <td class="num">${fmtUSDfull(r.amount)}</td>
-      <td class="muted">${r.closedate||"—"}</td>
-      <td><span class="rra-status ${sc.cls}">${sc.label}</span></td>
-    </tr>`;
-  }).join("");
-  $("rra-tbody").innerHTML=html||
-    `<tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">No data for current filters</td></tr>`;
-  const pagDiv=$("rra-pagination");
-  if(total>RRA_PAGE_SIZE){
-    pagDiv.style.display="";
-    $("rra-page-info").textContent=`${total} pairs · page ${safePage} of ${totalPages}`;
-    $("rra-prev").disabled=safePage<=1;
-    $("rra-next").disabled=safePage>=totalPages;
-  } else {pagDiv.style.display="none";}
-  $("rra-table-meta").textContent=`${total} client · service pairs${total>RRA_PAGE_SIZE?` · page ${safePage} of ${Math.ceil(total/RRA_PAGE_SIZE)}`:""}`;
-}
-
-function toggleRRATable(){
-  rraTableOpen=!rraTableOpen;
-  const btn=$("rra-toggle-btn"),body=$("rra-table-body");
-  btn.textContent=rraTableOpen?"Hide Deals ▴":"Show Deals ▾";
-  btn.classList.toggle("open",rraTableOpen);
-  body.style.display=rraTableOpen?"":"none";
-  if(rraTableOpen&&rraRows.length)renderRRATable();
-}
-
-function rraPageNav(dir){
-  rraPage_current+=dir;
-  renderRRATable();
-  $("rra-table-body").scrollIntoView({behavior:"smooth",block:"nearest"});
-}
-
 // ════ RENDER ALL ════
 function renderAll() {
   const fyMonths=getFYMonths();
   const{mMonth,m1Month}=getSelectedMonthPair();
-  const rawMMap =allFYMaps[mMonth] ||{};
-  const rawM1Map=allFYMaps[m1Month]||{};
-  const mMap =applyFilters(rawMMap);
-  const m1Map=applyFilters(rawM1Map);
+
+  // KPI strip + drill — filtered maps for selected period
+  const mMap =applyFilters(allFYMaps[mMonth] ||{});
+  const m1Map=applyFilters(allFYMaps[m1Month]||{});
   const[m1M,m1Y]=m1Month.split("-");
-  const[mM]=mMonth.split("-");
+  const[mM]     =mMonth.split("-");
   const m1Lbl=MSHRT[MFULL.indexOf(m1M)];
   const mLbl =MSHRT[MFULL.indexOf(mM)];
   const rows=buildRows(mMap,m1Map);
-  rraRows=rows;rraPage_current=1;
+  rraRows=rows;
   renderKPIs(rows,m1Map,mMap,mLbl,m1Lbl,m1Y);
-  if(rraTableOpen)renderRRATable();
-  // Re-render open drill if any
+
+  // Re-render open drill if any, respecting new filters
   if(activeDrillStatus){
     const filtered=activeDrillStatus==="total"?[...rraRows]:rraRows.filter(r=>r.status===activeDrillStatus);
-    drillRows=filtered;drillPage_current=1;
+    drillRows=filtered; drillPage_current=1;
     $("drill-sub").textContent=`${filtered.length} client · service pairs`;
     renderDrillTable();
   }
-  if(fyMonths.length>=2)renderTrendChart(fyMonths);
+
+  // Trend chart — build filtered pairs for every consecutive FY month pair
+  if(fyMonths.length>=2){
+    const filteredPairs=[];
+    for(let i=1;i<fyMonths.length;i++){
+      const pMMap =applyFilters(allFYMaps[fyMonths[i-1]]||{});
+      const pM1Map=applyFilters(allFYMaps[fyMonths[i]]  ||{});
+      const[mn,yr]=fyMonths[i].split("-");
+      filteredPairs.push({mMap:pMMap,m1Map:pM1Map,label:MSHRT[MFULL.indexOf(mn)]+" "+yr.slice(2)});
+    }
+    renderTrendChart(filteredPairs);
+  }
 }
 
 function onFilterChange(){renderAll();}
