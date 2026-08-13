@@ -186,6 +186,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* Table */
 .tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
 .tcard-hdr{padding:11px 16px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
+.radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
+.radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
 .tcard-ttl h3{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
 .tcard-ttl p{font-size:10px;color:#9A9A9A;margin-top:2px;font-weight:500}
 .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -212,43 +215,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .pg-ellipsis{display:flex;align-items:center;justify-content:center;width:20px;height:27px;color:#9A9A9A;font-size:12px;user-select:none}
 
 /* Footer */
-/* ── Recurring Revenue Analysis ── */
-.rra-kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.rra-kpi{background:#fff;border-radius:12px;padding:18px 20px 14px;border:1px solid #E2E2E2;border-top:4px solid #E2E2E2}
-.rra-kpi.rra-retained{border-top-color:#006E5E}
-.rra-kpi.rra-atrisk{border-top-color:#FFDA30}
-.rra-kpi.rra-lost{border-top-color:#EF2D56}
-.rra-kpi.rra-new{border-top-color:#0CCE6B}
-.rra-kpi-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#696969;margin-bottom:8px}
-.rra-kpi-val{font-size:clamp(20px,1.8vw,28px);font-weight:800;color:#434343;line-height:1;margin-bottom:4px}
-.rra-kpi-sub{font-size:10px;font-weight:600;color:#696969}
-.rra-tcard{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden}
-.rra-tcard-hdr{padding:12px 18px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;background:#FAFAFA}
-.radar-toggle{padding:6px 14px;border:1px solid #E2E2E2;background:#F7F7F7;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#696969;transition:all .2s;white-space:nowrap}
-.radar-toggle:hover{background:#FFFBEA;border-color:#FFDA30;color:#434343}
-.radar-toggle.open{background:#FFDA30;border-color:#FFDA30;color:#111}
-.rra-tcard-ttl{font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em}
-.rra-tcard-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
-.rra-table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
-.rra-table thead th{padding:9px 14px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
-.rra-table thead th.num{text-align:right}
-.rra-table tbody td{padding:9px 14px;border-bottom:1px solid #F5F5F5;white-space:nowrap;color:#434343;font-weight:600}
-.rra-table tbody td.num{text-align:right;font-weight:700}
-.rra-table tbody td.muted{color:#696969;font-weight:500}
-.rra-table tbody tr:hover td{background:#FFFBEA}
-.rra-table tbody tr:last-child td{border-bottom:none}
-.rra-status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:10px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.rra-s-retained{background:#E6F4F1;color:#006E5E}
-.rra-s-atrisk{background:#FFFBEA;color:#A07A00}
-.rra-s-lost{background:#FEE8EC;color:#C0143C}
-.rra-s-new{background:#E8FFF3;color:#0CCE6B}
-.rra-pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid #F2F2F2;background:#FAFAFA}
-.rra-page-info{font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em}
-.rra-page-btns{display:flex;gap:6px}
-.rra-page-btn{font-size:9px;font-weight:800;padding:4px 12px;border-radius:5px;border:1px solid #E0E0E0;background:#fff;color:#434343;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.04em;transition:all .15s}
-.rra-page-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
-.rra-page-btn:disabled{opacity:.35;cursor:default}
-@media(max-width:900px){.rra-kpi-strip{grid-template-columns:repeat(2,1fr)}}
 
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
@@ -372,8 +338,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 /* ── Weekly Sprint ── */
 .weekly-layout{display:none;flex:1;min-width:0}
 .weekly-main{max-width:1440px;padding:18px 28px 48px}
-.rra-layout{display:none;flex:1;min-width:0}
-.rra-main{max-width:1440px;padding:18px 28px 48px}
 .funnel-layout{display:none;flex:1;min-width:0}
 .funnel-main{max-width:1440px;padding:18px 28px 48px}
 /* Tiles */
@@ -452,7 +416,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="nav-in">
       <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue Pulse</button>
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
-      <button class="nav-tab" data-screen="rra" onclick="setScreen('rra')">Recurring Radar</button>
+      <a class="nav-tab nav-tab-ext" id="radar-link" href="/radar" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Recurring Radar ↗</a>
       <a class="nav-tab nav-tab-ext" id="funnel-link" href="/funnel" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Funnel Desk ↗</a>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
       <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
@@ -800,82 +764,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 </div><!-- /weekly-layout -->
 
 <!-- ════ RECURRING RADAR — inside app-layout, shares the sidebar ════ -->
-<div class="rra-layout" id="rra-layout" style="display:none">
-  <div class="rra-main">
-
-    <div class="sec" style="display:flex;align-items:center;justify-content:space-between">
-      <span>Recurring Radar
-        <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none" id="rra-period-lbl"></span>
-      </span>
-      <span id="rra-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
-    </div>
-
-    <!-- KPI Strip -->
-    <div class="rra-kpi-strip">
-      <div class="rra-kpi">
-        <div class="rra-kpi-lbl">Total Recurring</div>
-        <div class="rra-kpi-val" id="rra-k-total">—</div>
-        <div class="rra-kpi-sub" id="rra-k-total-sub">current month</div>
-      </div>
-      <div class="rra-kpi rra-retained">
-        <div class="rra-kpi-lbl">Retained</div>
-        <div class="rra-kpi-val" id="rra-k-retained">—</div>
-        <div class="rra-kpi-sub" id="rra-k-retained-sub">carried from last month</div>
-      </div>
-      <div class="rra-kpi rra-lost">
-        <div class="rra-kpi-lbl">Lost</div>
-        <div class="rra-kpi-val" id="rra-k-lost">—</div>
-        <div class="rra-kpi-sub" id="rra-k-lost-sub">grace period expired</div>
-      </div>
-      <div class="rra-kpi rra-new">
-        <div class="rra-kpi-lbl">New</div>
-        <div class="rra-kpi-val" id="rra-k-new">—</div>
-        <div class="rra-kpi-sub">not in previous month</div>
-      </div>
-    </div>
-
-    <!-- Detail Table -->
-    <div class="rra-tcard">
-      <div class="rra-tcard-hdr">
-        <div>
-          <div class="rra-tcard-ttl">Recurring Client · Service Detail</div>
-          <div class="rra-tcard-sub" id="rra-table-meta"></div>
-        </div>
-        <button class="radar-toggle open" id="rra-toggle-btn" onclick="toggleRRATable()">Hide Deals ▴</button>
-      </div>
-      <div id="rra-table-body">
-        <div class="twrap">
-          <table class="rra-table">
-            <thead>
-              <tr>
-                <th style="width:36px">#</th>
-                <th>Client</th>
-                <th>Service</th>
-                <th>Owner</th>
-                <th class="num">Recurring Amount</th>
-                <th>Close Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="rra-tbody">
-              <tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="rra-pagination" id="rra-pagination" style="display:none">
-          <div class="rra-page-info" id="rra-page-info"></div>
-          <div class="rra-page-btns">
-            <button class="rra-page-btn" id="rra-prev" onclick="rraPage(-1)">← Prev</button>
-            <button class="rra-page-btn" id="rra-next" onclick="rraPage(1)">Next →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-  </div>
-</div><!-- /rra-layout -->
-
 <!-- ════ FUNNEL DESK — inside app-layout, shares the sidebar ════ -->
 <div class="funnel-layout" id="funnel-layout">
   <div class="funnel-main">
@@ -2582,252 +2470,6 @@ function renderTrends(months,src){
   });
 }
 
-// ════ RECURRING REVENUE ANALYSIS ════
-// Shown only when Engagement Model filter = Recurring.
-// Compares M (previous month) vs M+1 (current month period).
-// Match key: billing_id + service (svc from line items).
-// Grace period: close date of M deal + 2 days.
-// Status: Retained | At Risk | Lost | New.
-
-const RRA_PAGE_SIZE = 15;
-let rraPage_current = 1;
-let rraRows = []; // full sorted row set, re-used by pagination
-let rraTableOpen = true;
-
-const RRA_STATUS_ORDER = { lost: 0, atrisk: 1, retained: 2, new: 3 };
-
-function toggleRRATable() {
-  rraTableOpen = !rraTableOpen;
-  const btn = $("rra-toggle-btn"), body = $("rra-table-body");
-  if (!btn || !body) return;
-  btn.textContent = rraTableOpen ? "Hide Deals ▴" : "Show Deals ▾";
-  btn.classList.toggle("open", rraTableOpen);
-  body.style.display = rraTableOpen ? "" : "none";
-  if (rraTableOpen && rraRows.length) renderRRATable();
-}
-
-function renderRRA() {
-  // Only run when Recurring Radar tab is active
-  if (currentScreen !== 'rra') return;
-  if (!allDeals.length) return;
-
-  // ── Derive M and M+1 from current period ──
-  // M+1 = the last month in the selected period (current month for "This Month")
-  // M   = the month immediately before M+1
-  const periodMonths = getMonths(); // e.g. ["august-2026"]
-  if (!periodMonths.length) return;
-
-  // Sort period months chronologically — last one = M+1
-  const sortedPeriod = [...periodMonths].sort((a, b) => {
-    const [am, ay] = a.split("-"); const [bm, by] = b.split("-");
-    return (parseInt(ay) * 12 + MFULL.indexOf(am)) - (parseInt(by) * 12 + MFULL.indexOf(bm));
-  });
-
-  const mPlusOne = sortedPeriod[sortedPeriod.length - 1]; // e.g. "august-2026"
-  // Derive M by subtracting one month
-  const [mpMon, mpYr] = mPlusOne.split("-");
-  const mpDate = new Date(parseInt(mpYr), MFULL.indexOf(mpMon) - 1, 1);
-  const mMonth = monthVal(mpDate); // e.g. "july-2026"
-
-  // ── Get all recurring deals for M and M+1 from allDeals ──
-  // Apply all current view() filters EXCEPT the engagement filter (already known = Recurring)
-  // We do this by calling view() on allDeals filtered to M and M+1 months.
-  const mDeals   = view(allDeals.filter(d => d.month === mMonth), dealServiceMap);
-  const m1Deals  = view(allDeals.filter(d => d.month === mPlusOne), dealServiceMap);
-
-  // ── Filter to Recurring — exact same three-layer logic as engTypesLi() / Revenue Pulse ──
-  // Layer 1 (gate): ON-prefix deals are always P2P — management rule, skip entirely.
-  // Layer 2 (primary): classify each LI individually by name prefix via engGroupFromLiName.
-  //   Accumulate li.amount per svc for Recurring LIs only.
-  // Layer 3 (fallback): if deal has no LIs or no LI matches any known prefix,
-  //   fall back to engGroup(d.eng_model) — contributes full d.amount.
-  // This mirrors engTypesLi() exactly so RRA Total Recurring === Revenue Pulse Recurring KPI.
-
-  // ── expandKeys — mirrors engTypesLi() exactly ──
-  // Walk EVERY deal (no majority-wins pre-filter). For each deal:
-  //   Layer 1: ON-prefix → skip entirely (always P2P, management rule)
-  //   Layer 2: classify each LI individually via engGroupFromLiName; accumulate Recurring li.amount per billing_id+svc key
-  //   Layer 3: no LIs or no classifiable LI names → fall back to engGroup(d.eng_model); contribute d.amount if Recurring
-  // This exactly mirrors engTypesLi() so RRA Total Recurring === Revenue Pulse Recurring KPI.
-  function expandKeys(dealList) {
-    const map = {};
-    dealList.forEach(d => {
-      // Layer 1: ON-prefix always P2P — skip
-      if ((d.dealname || "").startsWith("ON")) return;
-
-      const lis = dealServiceMap[d.id] || [];
-
-      if (lis.length) {
-        // Layer 2: LIs exist — classify each individually by name prefix (same as engTypesLi)
-        let classified = false;
-        const svcAmounts = {};
-        lis.forEach(li => {
-          const eg = engGroupFromLiName(li.name);
-          if (eg === "Recurring") {
-            const svc = li.svc || "Unknown";
-            svcAmounts[svc] = (svcAmounts[svc] || 0) + li.amount;
-            classified = true;
-          } else if (eg === "P2P") {
-            classified = true; // P2P — marks as classified, not accumulated
-          }
-        });
-        if (!classified) {
-          // LIs exist but none matched any known prefix — fall back to eng_model (same as engTypesLi)
-          const eg = engGroup(d.eng_model);
-          if (eg !== "Recurring") return;
-          const svc = "Unknown";
-          const key = `${d.billing_id}||${svc}`;
-          if (!map[key]) map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
-          map[key].amount += d.amount;
-          if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
-          return;
-        }
-        // Accumulate Recurring LI amounts per svc key
-        Object.entries(svcAmounts).forEach(([svc, amt]) => {
-          const key = `${d.billing_id}||${svc}`;
-          if (!map[key]) map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
-          map[key].amount += amt;
-          if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
-        });
-      } else {
-        // Layer 3: no LIs at all — fall back to eng_model with d.amount (same as engTypesLi fallback)
-        const eg = engGroup(d.eng_model);
-        if (eg !== "Recurring") return;
-        const svc = "Unknown";
-        const key = `${d.billing_id}||${svc}`;
-        if (!map[key]) map[key] = { billing_id: d.billing_id, svc, client: d.client || d.billing_id, owner_id: d.owner_id, amount: 0, closedate: d.closedate };
-        map[key].amount += d.amount;
-        if (!map[key].closedate || d.closedate > map[key].closedate) map[key].closedate = d.closedate;
-      }
-    });
-    return map;
-  }
-
-  const mMap  = expandKeys(mDeals);
-  const m1Map = expandKeys(m1Deals);
-
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-
-  // ── Classify each key ──
-  const rows = [];
-
-  // All keys from M — Retained / At Risk / Lost
-  Object.entries(mMap).forEach(([key, rec]) => {
-    let status;
-    if (m1Map[key]) {
-      status = "retained";
-      // Retained: use M+1 data (current month amount + closedate) for correct KPI and table display
-      const m1rec = m1Map[key];
-      rows.push({ ...m1rec, status, m_amount: rec.amount, m_closedate: rec.closedate });
-    } else {
-      // Grace = M closedate + 2 days
-      const cd = rec.closedate ? new Date(rec.closedate + "T00:00:00") : null;
-      const grace = cd ? new Date(cd.getTime() + 2 * 86400000) : null;
-      status = (!grace || today > grace) ? "lost" : "atrisk";
-      rows.push({ ...rec, status });
-    }
-  });
-
-  // New keys in M+1 not in M
-  Object.entries(m1Map).forEach(([key, rec]) => {
-    if (!mMap[key]) {
-      rows.push({ ...rec, status: "new" });
-    }
-  });
-
-  // Sort: Lost → At Risk → Retained → New, then by amount desc
-  rows.sort((a, b) => {
-    const so = RRA_STATUS_ORDER[a.status] - RRA_STATUS_ORDER[b.status];
-    return so !== 0 ? so : b.amount - a.amount;
-  });
-
-  rraRows = rows;
-  rraPage_current = 1;
-
-  // ── KPI strip ──
-  // retained.amount = M+1 amount (correct — shows current month value of retained clients)
-  // lost.amount = M amount (what revenue was lost from last month)
-  // atrisk.amount = M amount (at risk of being lost)
-  // newRows.amount = M+1 amount (new recurring this month)
-  const retained = rows.filter(r => r.status === "retained");
-  const lost     = rows.filter(r => r.status === "lost");
-  const atrisk   = rows.filter(r => r.status === "atrisk");
-  const newRows  = rows.filter(r => r.status === "new");
-  const m1Total  = Object.values(m1Map).reduce((s, r) => s + r.amount, 0);
-
-  const [mpM, mpY] = mMonth.split("-");
-  const [m1M, m1Y] = mPlusOne.split("-");
-  const mLbl  = MSHRT[MFULL.indexOf(mpM)];
-  const m1Lbl = MSHRT[MFULL.indexOf(m1M)];
-
-  $("rra-period-lbl").textContent = `· ${mLbl} vs ${m1Lbl} ${m1Y}`;
-  $("rra-k-total").textContent    = fmtUSD(m1Total);
-  $("rra-k-total-sub").textContent = `${Object.keys(m1Map).length} client·service pairs`;
-  $("rra-k-retained").textContent  = fmtUSD(retained.reduce((s, r) => s + r.amount, 0));
-  $("rra-k-retained-sub").textContent = `${retained.length} pairs from ${mLbl}`;
-  $("rra-k-lost").textContent      = fmtUSD(lost.reduce((s, r) => s + r.amount, 0));
-  $("rra-k-lost-sub").textContent  = `${lost.length} lost · ${atrisk.length} at risk (${fmtUSD(atrisk.reduce((s,r)=>s+r.amount,0))})`;
-  $("rra-k-new").textContent       = fmtUSD(newRows.reduce((s, r) => s + r.amount, 0));
-
-  // Always update the table meta count; only render rows if table is open
-  $("rra-table-meta").textContent = `${rows.length} client · service pairs`;
-  if (rraTableOpen) renderRRATable();
-}
-
-function renderRRATable() {
-  const rows = rraRows;
-  const total = rows.length;
-  const totalPages = Math.max(1, Math.ceil(total / RRA_PAGE_SIZE));
-  const safePage = Math.min(rraPage_current, totalPages);
-  rraPage_current = safePage;
-  const start = (safePage - 1) * RRA_PAGE_SIZE;
-  const slice = rows.slice(start, start + RRA_PAGE_SIZE);
-
-  const STATUS_CFG = {
-    retained: { label: "Retained", cls: "rra-s-retained" },
-    atrisk:   { label: "At Risk",  cls: "rra-s-atrisk"  },
-    lost:     { label: "Lost",     cls: "rra-s-lost"     },
-    new:      { label: "New",      cls: "rra-s-new"      }
-  };
-
-  const html = slice.map((r, i) => {
-    const sc = STATUS_CFG[r.status];
-    const ownerLbl = ownerName(r.owner_id) || "—";
-    const cd = r.closedate || "—";
-    const rowNum = start + i + 1;
-    return `<tr>
-      <td class="muted" style="font-size:10px">${rowNum}</td>
-      <td style="font-weight:700">${r.client || "—"}</td>
-      <td class="muted">${r.svc || "—"}</td>
-      <td class="muted">${ownerLbl}</td>
-      <td class="num">${fmtUSD(r.amount)}</td>
-      <td class="muted">${cd}</td>
-      <td><span class="rra-status ${sc.cls}">${sc.label}</span></td>
-    </tr>`;
-  }).join("");
-
-  $("rra-tbody").innerHTML = html ||
-    `<tr><td colspan="7" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">No recurring data for this filter combination.</td></tr>`;
-
-  $("rra-table-meta").textContent = `${total} client · service pairs · ${total <= RRA_PAGE_SIZE ? "all shown" : `page ${safePage} of ${totalPages}`}`;
-
-  // Pagination
-  const pagDiv = $("rra-pagination");
-  if (total > RRA_PAGE_SIZE) {
-    pagDiv.style.display = "";
-    $("rra-page-info").textContent = `Page ${safePage} of ${totalPages} · ${total} pairs`;
-    $("rra-prev").disabled = safePage <= 1;
-    $("rra-next").disabled = safePage >= totalPages;
-  } else {
-    pagDiv.style.display = "none";
-  }
-}
-
-function rraPage(dir) {
-  rraPage_current += dir;
-  renderRRATable();
-  $("rra-section").scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
 
 function renderAll(){
   // ── Single source of truth: derive current period deals from unified FY dataset ──
@@ -2854,7 +2496,6 @@ function renderAll(){
   if(allDeals.length)renderTrends(getFY2026Months(),trendView());
   // Weekly Numbers — re-render if active (shares all filter state via trendView())
   if(currentScreen==='weekly'&&allDeals.length)renderWeekly();
-  if(currentScreen==='rra'&&allDeals.length)renderRRA();
   // Funnel Desk — re-render if active
   if(currentScreen==='funnel'&&allDeals.length)renderFunnel();
 }
@@ -3044,9 +2685,11 @@ function bootCloneMode(){
     return;
   }
 
-  // ── Portfolio Health + Pipeline Scout + Funnel Desk links carry ?head= param ──
+  // ── Portfolio Health + Pipeline Scout + Funnel Desk + Recurring Radar links carry ?head= param ──
   const portfolioLink=$("portfolio-link");
   if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}&tok=${param}`;
+  const radarLink=$("radar-link");
+  if(radarLink)radarLink.href=`/radar?head=${param}&tok=${param}`;
   const pipelineLink=$("pipeline-link");
   if(pipelineLink)pipelineLink.href=`/pipeline?head=${param}&tok=${param}`;
   // Funnel Desk — scoped tab + token for seamless SSO
@@ -3132,21 +2775,20 @@ function setScreen(name){
   currentScreen=name;
   const isRevenue=name==='revenue';
   const isWeekly=name==='weekly';
-  const isRRA=name==='rra';
   const isFunnel=name==='funnel';
   const isClubs=name==='clubs';
   document.querySelectorAll('.nav-tab').forEach(tab=>{
     tab.classList.toggle('active',tab.dataset.screen===name);
   });
-  // Swap Period inner — RRA shares Revenue period selector (M and M+1 derive from getMonths())
+  // Swap Period inner — one per screen (Funnel inherits Revenue period selector)
   const rpi=$('rev-period-inner');
   const wpi=$('weekly-period-inner');
   const cpi=$('clubs-period-inner');
-  if(rpi)rpi.style.display=(isRevenue||isFunnel||isRRA)?'flex':'none';
+  if(rpi)rpi.style.display=(isRevenue||isFunnel)?'flex':'none';
   if(wpi)wpi.style.display=isWeekly?'flex':'none';
   if(cpi)cpi.style.display=isClubs?'flex':'none';
   // Clear inactive custom ranges
-  if(!isRevenue&&!isFunnel&&!isRRA)$('custom-range')?.classList.remove('show');
+  if(!isRevenue&&!isFunnel)$('custom-range')?.classList.remove('show');
   if(!isClubs){$('clubs-custom-range')?.classList.remove('show');}
   else if($('clubs-period-sel')?.value==='custom')$('clubs-custom-range')?.classList.add('show');
   // Drill bar — Revenue only
@@ -3156,14 +2798,12 @@ function setScreen(name){
   const al=$('app-layout');if(al)al.style.display='flex';
   const rm=$('rev-main');if(rm)rm.style.display=isRevenue?'':'none';
   const wl=$('weekly-layout');if(wl)wl.style.display=isWeekly?'block':'none';
-  const rl=$('rra-layout');if(rl)rl.style.display=isRRA?'block':'none';
   const fl=$('funnel-layout');if(fl)fl.style.display=isFunnel?'block':'none';
   const cl=$('clubs-layout');if(cl)cl.style.display=isClubs?'block':'none';
   // Tier + Movement sections in shared sidebar — visible on Client Club only
   const scs=$('sidebar-clubs-section');if(scs)scs.style.display=isClubs?'':'none';
   // Re-render newly active screen
   if(isWeekly&&allDeals.length)renderWeekly();
-  if(isRRA&&allDeals.length)renderRRA();
   if(isFunnel&&allDeals.length)renderFunnel();
   if(isClubs&&allDeals.length){clubDataCache={};renderClubs();}
 }
