@@ -1568,24 +1568,50 @@ function view(src,liMap){
       if(!_selOwners.includes(String(d.owner_id)))return null;
     }
     // ── Engagement Model sidebar filter ──
-    // Exact replica of engTypesLi() logic — Pie chart and sidebar now share identical classification.
-    // Step 1: get line items, apply active service filter (same as Pie).
-    // Step 2: classify each li by engGroupFromLiName(li.name), accumulate amounts per group.
-    // Step 3: if no li classified by name → fall back to engGroup(d.eng_model) with d.amount.
-    // Step 4: if no line items at all → fall back to engGroup(d.eng_model) with d.amount.
-    // Step 5: return deal with amount = portion matching _itypeGroup only.
+    // Mirrors engTypesLi() exactly so Net Revenue KPI matches the pie chart number.
+    // Accumulates only the LI amounts classified as _itypeGroup for this deal.
+    // Fallback: no LIs or none classifiable → eng_model with d.amount (same as engTypesLi).
     if(_itype){
-      // Sidebar Engagement Model filter — uses same majority-by-amount logic as pie chart click
-      // (engGroupFromLi: largest line-item group wins; falls back to d.eng_model if no LIs)
-      // This ensures sidebar dropdown and pie chart produce identical numbers.
       const _itypeGroup=_itype==="One Time"?"P2P":_itype;
-      const eg=engGroupFromLi(d);
-      if(!eg||eg!==_itypeGroup)return null;
+      const _lis=liMap[d.id]||[];
+      if(_lis.length){
+        let classified=false;
+        let matchAmt=0;
+        _lis.forEach(li=>{
+          const eg=engGroupFromLiName(li.name);
+          if(eg){
+            classified=true;
+            if(eg===_itypeGroup)matchAmt+=li.amount;
+          }
+        });
+        if(!classified){
+          // No LI matched any known prefix — fall back to eng_model
+          const eg=engGroup(d.eng_model);
+          if(!eg||eg!==_itypeGroup)return null;
+          // contribute full d.amount — same as engTypesLi fallback
+        } else {
+          if(matchAmt===0)return null;
+          d=Object.assign({},d,{amount:matchAmt});
+        }
+      } else {
+        // No LIs — fall back to eng_model with d.amount
+        const eg=engGroup(d.eng_model);
+        if(!eg||eg!==_itypeGroup)return null;
+      }
     }
     if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
     if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
     if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
-    if(drill.eng_model){const eg=engGroupFromLi(d);if(!eg||eg!==drill.eng_model)return null;} // line-item majority — matches Pie Chart attribution
+    if(drill.eng_model){
+      const _drillGroup=drill.eng_model;
+      const _dlis=liMap[d.id]||[];
+      if(_dlis.length){
+        let classified=false,matchAmt=0;
+        _dlis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){classified=true;if(eg===_drillGroup)matchAmt+=li.amount;}});
+        if(!classified){const eg=engGroup(d.eng_model);if(!eg||eg!==_drillGroup)return null;}
+        else{if(matchAmt===0)return null;d=Object.assign({},d,{amount:matchAmt});}
+      }else{const eg=engGroup(d.eng_model);if(!eg||eg!==_drillGroup)return null;}
+    }
     if(_svcFiltered){
       const dSvc=liMap[d.id]||[];
       if(!dSvc.length)return null;
