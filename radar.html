@@ -49,6 +49,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .refresh-btn:disabled{opacity:.35;cursor:not-allowed}
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.reset-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.reset-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#fff}
+.reset-btn:disabled{opacity:.35;cursor:not-allowed}
 
 /* ── Filter bar — verbatim from Revenue Pulse ── */
 .fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
@@ -310,6 +313,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div id="svc-ms-list"></div>
       </div>
     </div>
+    <div class="vdiv"></div>
+    <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
   </div>
 </div>
 
@@ -367,7 +372,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="rra-kpi-hint">Click to explore ↓</div>
       </div>
       <div class="rra-kpi rra-atrisk" id="kpi-atrisk" onclick="toggleKPIDrill('atrisk')">
-        <div class="rra-kpi-lbl">At Risk</div>
+        <div class="rra-kpi-lbl">Pending</div>
         <div class="rra-kpi-val" id="rra-k-atrisk">—</div>
         <div class="rra-kpi-sub" id="rra-k-atrisk-sub">—</div>
         <div class="rra-kpi-hint">Click to explore ↓</div>
@@ -411,7 +416,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
                 <th>Service</th>
                 <th>Owner</th>
                 <th class="num">Amount</th>
-                <th>Close Date</th>
+                <th>Last Deal Close Date</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -683,7 +688,7 @@ function renderKPIs(rows,m1Map,mMap,mLbl,m1Lbl,m1Year) {
   $("rra-k-retained").textContent=fmtUSD(retAmt);
   $("rra-k-retained-sub").textContent=`${retained.length} pairs from ${mLbl}`;
   $("rra-k-atrisk").textContent  =fmtUSD(atrisk.reduce((s,r)=>s+r.amount,0));
-  $("rra-k-atrisk-sub").textContent=`${atrisk.length} pairs · 2-day grace`;
+  $("rra-k-atrisk-sub").textContent=`${atrisk.length} pairs · within grace`;
   $("rra-k-lost").textContent    =fmtUSD(lost.reduce((s,r)=>s+r.amount,0));
   $("rra-k-lost-sub").textContent=`${lost.length} pairs gone`;
   $("rra-k-new").textContent     =fmtUSD(newRows.reduce((s,r)=>s+r.amount,0));
@@ -705,13 +710,13 @@ function renderKPIs(rows,m1Map,mMap,mLbl,m1Lbl,m1Year) {
 // ════ KPI DRILL (clickable cards) ════
 const STATUS_CFG={
   retained:{cls:"rra-s-retained",label:"Retained"},
-  atrisk:  {cls:"rra-s-atrisk",  label:"At Risk"},
+  atrisk:  {cls:"rra-s-atrisk",  label:"Pending"},
   lost:    {cls:"rra-s-lost",    label:"Lost"},
   new:     {cls:"rra-s-new",     label:"New"},
   total:   {cls:"",              label:"All"}
 };
 const KPI_NAMES={
-  total:"Total Recurring",retained:"Retained",atrisk:"At Risk",lost:"Lost",new:"New"
+  total:"Total Recurring",retained:"Retained",atrisk:"Pending",lost:"Lost",new:"New"
 };
 
 function toggleKPIDrill(status) {
@@ -820,7 +825,7 @@ function renderTrendChart(filteredPairs) {
     data:{labels,datasets:[
       {label:"Retained",data:retained,backgroundColor:"#006E5E",stack:"s"},
       {label:"New",     data:newArr,  backgroundColor:"#0CCE6B",stack:"s"},
-      {label:"At Risk", data:atrisk,  backgroundColor:"#FFDA30",stack:"s"},
+      {label:"Pending", data:atrisk,  backgroundColor:"#FFDA30",stack:"s"},
       {label:"Lost",    data:lost,    backgroundColor:"#EF2D56",stack:"s"}
     ]},
     options:{
@@ -876,6 +881,17 @@ function renderAll() {
 }
 
 function onFilterChange(){renderAll();}
+
+function resetAll(){
+  const ps=$("period-sel");if(ps)ps.value="this-month";
+  const bs=$("bu-sel");if(bs)bs.value="";
+  ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();
+  ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();
+  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
+  ALL_OWNERS.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();
+  closeDrill();
+  renderAll();
+}
 
 // ════ MULTI-SELECT HELPERS — verbatim pattern from Revenue Pulse ════
 function buildGeoList(){
