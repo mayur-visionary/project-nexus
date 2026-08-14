@@ -432,10 +432,9 @@ function renderPanel(head, data) {
 // TABLE RENDER — all totals computed client-side
 // ════════════════════════════════════════════════════════════
 function renderTable(head, data, seg) {
-  // ── Select owner list + BU label based on segment ──
+  // Select owner list + BU label
   let rawOwners, buCls, buLabel;
   if (seg === 'martech') {
-    // Jaydeep — single MarTech block, no Inter BU
     rawOwners = data.digital.owners;
     buCls     = 'digital';
     buLabel   = '◆ MarTech BU';
@@ -448,13 +447,12 @@ function renderTable(head, data, seg) {
     buCls     = 'inter';
     buLabel   = '◆ Inter BU';
   } else {
-    // Both — sum Digital + Inter per owner position
     rawOwners = mergeOwners(data.digital.owners, data.inter.owners);
     buCls     = 'both';
     buLabel   = '◆ Digital + Inter BU';
   }
 
-  // ── Compute derived fields per owner ──
+  // Compute derived fields per owner
   const owners = rawOwners.map(o => {
     const recurringTotal = numVal(o.recurringTotal);
     const p2pTotal       = numVal(o.p2pTotal);
@@ -463,7 +461,7 @@ function renderTable(head, data, seg) {
     return { ...o, recurringTotal, p2pTotal, grandTotal, gap };
   });
 
-  // ── Compute Team Sum per field by summing all owners ──
+  // Team Sum
   const ALL_NUM = [
     'target','opening','predictedLoss','postPaid',
     'existingPipeline','openNewPipeline','openOldPipeline',
@@ -476,15 +474,13 @@ function renderTable(head, data, seg) {
     'grandTotal','gap'
   ];
   const teamSum = {};
-  for (const k of ALL_NUM) {
-    teamSum[k] = owners.reduce((s, o) => s + numVal(o[k]), 0);
-  }
+  for (const k of ALL_NUM) teamSum[k] = owners.reduce((s, o) => s + numVal(o[k]), 0);
 
-  const totCls   = seg === 'digital' || seg === 'martech' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
+  const totCls   = (seg === 'digital' || seg === 'martech') ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
   const ownerThs = owners.map(o => `<th class="num">${o.name}</th>`).join('');
   const totalTh  = `<th class="${totCls}">Team Sum</th>`;
 
-  // ── Row builders ──
+  // Row builders
   const numRow = (cls, label, key, negate, indent) => {
     const cells = owners.map(o => {
       const v = negate ? -numVal(o[key]) : numVal(o[key]);
@@ -500,7 +496,9 @@ function renderTable(head, data, seg) {
     const cells = owners.map(o =>
       `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${o[key] || '—'}</td>`
     ).join('');
-    const lblStyle = indent ? 'padding-left:24px;color:#5A5A5A;font-size:10px;font-weight:600' : 'color:#4A4A4A;font-size:10px;font-weight:600';
+    const lblStyle = indent
+      ? 'padding-left:24px;color:#5A5A5A;font-size:10px;font-weight:600'
+      : 'color:#4A4A4A;font-size:10px;font-weight:600';
     return `<tr><td class="lbl" style="${lblStyle}">${label}</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">—</td></tr>`;
   };
 
@@ -518,7 +516,6 @@ function renderTable(head, data, seg) {
   const secHdr = label =>
     `<tr class="sec-hdr"><td colspan="${owners.length + 2}">${label}</td></tr>`;
 
-  // ── Table body ──
   const tbody = [
     numRow('', 'Target', 'target', false, false),
 
@@ -528,11 +525,11 @@ function renderTable(head, data, seg) {
     numRow('', 'Post-Paid Invoices', 'postPaid',      false, false),
 
     secHdr('Open Pipeline'),
-    numRow('', 'Existing Pipeline',   'existingPipeline',   false, false),
-    numRow('', 'Open New Pipeline',   'openNewPipeline',    false, true),
-    numRow('', 'Open Old Pipeline',   'openOldPipeline',    false, true),
-    numRow('', 'Expected Closures',   'closureFromPipeline',false, false),
-    numRow('', 'Pipeline Won',        'pipelineWon',        false, false),
+    numRow('', 'Existing Pipeline', 'existingPipeline',    false, false),
+    numRow('', 'Open New Pipeline', 'openNewPipeline',     false, true),
+    numRow('', 'Open Old Pipeline', 'openOldPipeline',     false, true),
+    numRow('', 'Expected Closures', 'closureFromPipeline', false, false),
+    numRow('', 'Pipeline Won',      'pipelineWon',         false, false),
     pctRow('Anticipated Conversion (%)', 'pipelineConversion', false),
 
     secHdr('Open Opportunities'),
@@ -547,11 +544,11 @@ function renderTable(head, data, seg) {
     numRow('', 'Previous P2P Invoices (50% or 25% or EOM)', 'prevP2PInvoices', false, false),
 
     secHdr('P2P Fresh Pipeline (apart from 50% & EOM)'),
-    numRow('', 'P2P Fresh Pipeline',                 'p2pFreshPipeline',    false, false),
-    numRow('', 'P2P Deemed Customer Open Pipeline',  'p2pDeemedPipeline',   false, true),
+    numRow('', 'P2P Fresh Pipeline',                  'p2pFreshPipeline',    false, false),
+    numRow('', 'P2P Deemed Customer Open Pipeline',   'p2pDeemedPipeline',   false, true),
     numRow('', 'P2P Not Deemed Customer Open Pipeline','p2pNotDeemedPipeline',false, true),
-    numRow('', 'Expected Closures',                  'p2pClosurePipeline',  false, false),
-    numRow('', 'Pipeline Won',                       'p2pPipelineWon',      false, false),
+    numRow('', 'Expected Closures',                   'p2pClosurePipeline',  false, false),
+    numRow('', 'Pipeline Won',                        'p2pPipelineWon',      false, false),
     pctRow('Anticipated Conversion (%)', 'p2pPipelineConv', false),
 
     secHdr('P2P Open Opportunities'),
@@ -666,7 +663,7 @@ async function doLogin() {
       const owner = tab ? (TAB_OWNER[tab] || null) : null;
       // Clear all other tokens — strict isolation
       ["nexus_auth","nexus_auth_jiggyasa","nexus_auth_jaydeep","nexus_auth_tanuj",
-       "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu","nexus_auth_jaydeep"].forEach(k=>{
+       "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu"].forEach(k=>{
         if(k!==authKey(owner))localStorage.removeItem(k);
       });
       localStorage.setItem(authKey(owner), '1');
