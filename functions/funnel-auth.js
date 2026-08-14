@@ -14,6 +14,7 @@ export async function onRequestPost(context) {
       jiggyasa : "jiggyasa",
       tanuj_uk  : "tanuj",
       tanuj_us  : "tanuj",
+      jaydeep   : "jaydeep",   // ← added
     };
     const CLONE_VAR_MAP = {
       jiggyasa : "NEXUS_PASSWORD_JIGGYASA",
@@ -31,8 +32,6 @@ export async function onRequestPost(context) {
       return json({ error: `${envVarName} not configured` }, 500);
 
     // ── Token mode: carry-through from Revenue Pulse ──
-    // tok = clone key stored by index.html on login (e.g. "tanuj", "jiggyasa")
-    // Valid only if tok === the owner of the requested tab
     if (tok !== undefined) {
       const valid = key !== null && key === tok;
       return json({ success: valid }, valid ? 200 : 403);
