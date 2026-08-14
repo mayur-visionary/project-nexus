@@ -1600,7 +1600,7 @@ function onPGeoChange(){
 }
 function updatePGeoLabel(){
   const sel=[...activeRegions];
-  $("p-geo-label").textContent=sel.length===ALL_REGIONS_P.length?"All Regions":sel.length===0?"None":sel.join(" · ");
+  $("p-geo-label").textContent=sel.length===ALL_REGIONS_P.length?"All Regions":sel.length===0?"None":`${sel.length} Region${sel.length>1?"s":""}`;
 }
 function selectAllPGeo(){ALL_REGIONS_P.forEach(r=>{const el=$(`pgeo-${r}`);if(el)el.checked=true;});activeRegions=new Set(ALL_REGIONS_P);updatePGeoLabel();reRender();}
 function deselectAllPGeo(){ALL_REGIONS_P.forEach(r=>{const el=$(`pgeo-${r}`);if(el)el.checked=false;});activeRegions=new Set();updatePGeoLabel();reRender();}
