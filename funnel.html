@@ -245,6 +245,7 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
         <button class="nav-tab" id="tab-jiggyasa" onclick="switchTab('jiggyasa')">Jiggyasa AU</button>
         <button class="nav-tab" id="tab-tanuj_uk" onclick="switchTab('tanuj_uk')">Tanuj UK</button>
         <button class="nav-tab" id="tab-tanuj_us" onclick="switchTab('tanuj_us')">Tanuj US</button>
+        <button class="nav-tab" id="tab-jaydeep"  onclick="switchTab('jaydeep')">Jaydeep · MarTech</button>
       </div>
     </div>
   </div>
@@ -274,6 +275,12 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
     </div>
   </div>
 
+  <div class="head-panel" id="panel-jaydeep">
+    <div id="content-jaydeep">
+      <div class="state-msg"><span class="icon">📊</span>Loading Jaydeep · MarTech...<div class="sub">Connecting to Google Sheets</div></div>
+    </div>
+  </div>
+
   <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
@@ -281,15 +288,16 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
 // ════════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════════
-const HEADS = ['jiggyasa', 'tanuj_uk', 'tanuj_us'];
+const HEADS = ['jiggyasa', 'tanuj_uk', 'tanuj_us', 'jaydeep'];
 const HEAD_LABELS = {
   jiggyasa : 'Jiggyasa Agrawal · AU',
   tanuj_uk : 'Tanuj Gupta · UK',
-  tanuj_us : 'Tanuj Gupta · US'
+  tanuj_us : 'Tanuj Gupta · US',
+  jaydeep  : 'Jaydeep Salla · MarTech'
 };
 
 // Per-head active segment selection: 'digital' | 'inter' | 'both'
-const segState = { jiggyasa: 'digital', tanuj_uk: 'digital', tanuj_us: 'digital' };
+const segState = { jiggyasa: 'digital', tanuj_uk: 'digital', tanuj_us: 'digital', jaydeep: 'martech' };
 
 const cache = {};
 let activeHead = null;
@@ -390,8 +398,15 @@ function refreshActive() {
 // ════════════════════════════════════════════════════════════
 function renderPanel(head, data) {
   const label = HEAD_LABELS[head] || head;
-  const seg   = segState[head];
 
+  // Jaydeep (MarTech) — no segment control, single block
+  if (data.noInter) {
+    $('content-' + head).innerHTML = `<div id="table-area-${head}"></div>`;
+    renderTable(head, data, 'martech');
+    return;
+  }
+
+  const seg = segState[head];
   const shellHTML = `
     <div class="seg-wrap">
       <span class="seg-label">View</span>
@@ -417,31 +432,32 @@ function renderPanel(head, data) {
 // TABLE RENDER — all totals computed client-side
 // ════════════════════════════════════════════════════════════
 function renderTable(head, data, seg) {
-  const { digital, inter } = data;
-
-  // ── Select owner list based on segment ──
+  // ── Select owner list + BU label based on segment ──
   let rawOwners, buCls, buLabel;
-  if (seg === 'digital') {
-    rawOwners = digital.owners;
+  if (seg === 'martech') {
+    // Jaydeep — single MarTech block, no Inter BU
+    rawOwners = data.digital.owners;
+    buCls     = 'digital';
+    buLabel   = '◆ MarTech BU';
+  } else if (seg === 'digital') {
+    rawOwners = data.digital.owners;
     buCls     = 'digital';
     buLabel   = '◆ Digital BU';
   } else if (seg === 'inter') {
-    rawOwners = inter.owners;
+    rawOwners = data.inter.owners;
     buCls     = 'inter';
     buLabel   = '◆ Inter BU';
   } else {
     // Both — sum Digital + Inter per owner position
-    rawOwners = mergeOwners(digital.owners, inter.owners);
+    rawOwners = mergeOwners(data.digital.owners, data.inter.owners);
     buCls     = 'both';
     buLabel   = '◆ Digital + Inter BU';
   }
 
   // ── Compute derived fields per owner ──
-  // recurringTotal and p2pTotal come directly from the Sheet (their formulas are complex)
-  // grandTotal, gap, and all Team Sums are computed by us
   const owners = rawOwners.map(o => {
-    const recurringTotal = numVal(o.recurringTotal);  // from Sheet
-    const p2pTotal       = numVal(o.p2pTotal);        // from Sheet
+    const recurringTotal = numVal(o.recurringTotal);
+    const p2pTotal       = numVal(o.p2pTotal);
     const grandTotal     = recurringTotal + p2pTotal;
     const gap            = numVal(o.target) - grandTotal;
     return { ...o, recurringTotal, p2pTotal, grandTotal, gap };
@@ -450,10 +466,12 @@ function renderTable(head, data, seg) {
   // ── Compute Team Sum per field by summing all owners ──
   const ALL_NUM = [
     'target','opening','predictedLoss','postPaid',
-    'existingPipeline','closureFromPipeline','pipelineWon',
+    'existingPipeline','openNewPipeline','openOldPipeline',
+    'closureFromPipeline','pipelineWon',
     'existingOpp','closureFromOpp','recurringTotal',
     'currentBooking','prevP2PInvoices',
-    'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
+    'p2pFreshPipeline','p2pDeemedPipeline','p2pNotDeemedPipeline',
+    'p2pClosurePipeline','p2pPipelineWon',
     'p2pOpportunities','p2pClosureOpp','p2pTotal',
     'grandTotal','gap'
   ];
@@ -462,29 +480,28 @@ function renderTable(head, data, seg) {
     teamSum[k] = owners.reduce((s, o) => s + numVal(o[k]), 0);
   }
 
-  const totCls   = seg === 'digital' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
+  const totCls   = seg === 'digital' || seg === 'martech' ? 'tot' : seg === 'inter' ? 'tot-inter' : 'tot-both';
   const ownerThs = owners.map(o => `<th class="num">${o.name}</th>`).join('');
   const totalTh  = `<th class="${totCls}">Team Sum</th>`;
 
   // ── Row builders ──
-  const numRow = (cls, label, key, negate) => {
+  const numRow = (cls, label, key, negate, indent) => {
     const cells = owners.map(o => {
       const v = negate ? -numVal(o[key]) : numVal(o[key]);
       return `<td class="num${nc(v)}">${fm(v)}</td>`;
     }).join('');
     const tv = negate ? -numVal(teamSum[key]) : numVal(teamSum[key]);
-    // No sign class on team sum for highlighted rows — their intentional bg+text colours
-    // must not be overridden by .neg/.pos (e.g. white text on teal, gold text on dark brown)
     const totSignCls = cls ? '' : nc(tv);
-    return `<tr class="${cls}"><td class="lbl">${label}</td>${cells}<td class="${totCls}${totSignCls}">${fm(tv)}</td></tr>`;
+    const lblStyle = indent ? ' style="padding-left:24px;color:#5A5A5A;font-size:10px"' : '';
+    return `<tr class="${cls}"><td class="lbl"${lblStyle}>${label}</td>${cells}<td class="${totCls}${totSignCls}">${fm(tv)}</td></tr>`;
   };
 
-  const pctRow = (label, key) => {
+  const pctRow = (label, key, indent) => {
     const cells = owners.map(o =>
       `<td class="num" style="color:#4A4A4A;font-size:10px;font-weight:600">${o[key] || '—'}</td>`
     ).join('');
-    // Team Sum for % rows is blank — can't sum percentages
-    return `<tr><td class="lbl" style="color:#4A4A4A;font-size:10px;font-weight:600">${label}</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">—</td></tr>`;
+    const lblStyle = indent ? 'padding-left:24px;color:#5A5A5A;font-size:10px;font-weight:600' : 'color:#4A4A4A;font-size:10px;font-weight:600';
+    return `<tr><td class="lbl" style="${lblStyle}">${label}</td>${cells}<td class="${totCls}" style="color:#4A4A4A;font-size:10px;font-weight:600">—</td></tr>`;
   };
 
   const gapPctRow = () => {
@@ -503,44 +520,48 @@ function renderTable(head, data, seg) {
 
   // ── Table body ──
   const tbody = [
-    numRow('', 'Target', 'target', false),
+    numRow('', 'Target', 'target', false, false),
 
     secHdr('Recurring'),
-    numRow('', 'Pre-Paid Invoices',  'opening',       false),
-    numRow('', 'Predicted Loss',     'predictedLoss', true),
-    numRow('', 'Post-Paid Invoices', 'postPaid',      false),
+    numRow('', 'Pre-Paid Invoices',  'opening',       false, false),
+    numRow('', 'Predicted Loss',     'predictedLoss', true,  false),
+    numRow('', 'Post-Paid Invoices', 'postPaid',      false, false),
 
     secHdr('Open Pipeline'),
-    numRow('', 'Open Pipeline',     'existingPipeline',    false),
-    numRow('', 'Expected Closures', 'closureFromPipeline', false),
-    numRow('', 'Pipeline Won',      'pipelineWon',         false),
-    pctRow('Anticipated Conversion (%)', 'pipelineConversion'),
+    numRow('', 'Existing Pipeline',   'existingPipeline',   false, false),
+    numRow('', 'Open New Pipeline',   'openNewPipeline',    false, true),
+    numRow('', 'Open Old Pipeline',   'openOldPipeline',    false, true),
+    numRow('', 'Expected Closures',   'closureFromPipeline',false, false),
+    numRow('', 'Pipeline Won',        'pipelineWon',        false, false),
+    pctRow('Anticipated Conversion (%)', 'pipelineConversion', false),
 
     secHdr('Open Opportunities'),
-    numRow('', 'Open Opportunities', 'existingOpp',   false),
-    numRow('', 'Expected Closures',  'closureFromOpp', false),
-    pctRow('Anticipated Conversion (%)', 'oppConversion'),
+    numRow('', 'Open Opportunities', 'existingOpp',    false, false),
+    numRow('', 'Expected Closures',  'closureFromOpp', false, false),
+    pctRow('Anticipated Conversion (%)', 'oppConversion', false),
 
-    numRow('row-recurring-total', 'Recurring Total', 'recurringTotal', false),
+    numRow('row-recurring-total', 'Recurring Total', 'recurringTotal', false, false),
 
     secHdr('P2P'),
-    numRow('', 'Current Booking',                           'currentBooking',   false),
-    numRow('', 'Previous P2P Invoices (50% or 25% or EOM)', 'prevP2PInvoices',  false),
+    numRow('', 'Current Booking',                            'currentBooking',  false, false),
+    numRow('', 'Previous P2P Invoices (50% or 25% or EOM)', 'prevP2PInvoices', false, false),
 
     secHdr('P2P Fresh Pipeline (apart from 50% & EOM)'),
-    numRow('', 'P2P Fresh Pipeline',  'p2pFreshPipeline',   false),
-    numRow('', 'Expected Closures',   'p2pClosurePipeline', false),
-    numRow('', 'Pipeline Won',        'p2pPipelineWon',     false),
-    pctRow('Anticipated Conversion (%)', 'p2pPipelineConv'),
+    numRow('', 'P2P Fresh Pipeline',                 'p2pFreshPipeline',    false, false),
+    numRow('', 'P2P Deemed Customer Open Pipeline',  'p2pDeemedPipeline',   false, true),
+    numRow('', 'P2P Not Deemed Customer Open Pipeline','p2pNotDeemedPipeline',false, true),
+    numRow('', 'Expected Closures',                  'p2pClosurePipeline',  false, false),
+    numRow('', 'Pipeline Won',                       'p2pPipelineWon',      false, false),
+    pctRow('Anticipated Conversion (%)', 'p2pPipelineConv', false),
 
     secHdr('P2P Open Opportunities'),
-    numRow('', 'Open Opportunities', 'p2pOpportunities', false),
-    numRow('', 'Expected Closures',  'p2pClosureOpp',    false),
-    pctRow('Anticipated Conversion (%)', 'p2pOppConv'),
+    numRow('', 'Open Opportunities', 'p2pOpportunities', false, false),
+    numRow('', 'Expected Closures',  'p2pClosureOpp',    false, false),
+    pctRow('Anticipated Conversion (%)', 'p2pOppConv', false),
 
-    numRow('row-p2p-total',   'P2P Total',   'p2pTotal',   false),
-    numRow('row-grand-total', 'Grand Total', 'grandTotal', false),
-    numRow('row-gap',         'GAP',         'gap',        false),
+    numRow('row-p2p-total',   'P2P Total',   'p2pTotal',   false, false),
+    numRow('row-grand-total', 'Grand Total', 'grandTotal', false, false),
+    numRow('row-gap',         'GAP',         'gap',        false, false),
     gapPctRow(),
   ].join('');
 
@@ -585,10 +606,12 @@ function numVal(v) {
 function mergeOwners(dOwners, iOwners) {
   const RAW_KEYS = [
     'target','opening','predictedLoss','postPaid',
-    'existingPipeline','closureFromPipeline','pipelineWon',
+    'existingPipeline','openNewPipeline','openOldPipeline',
+    'closureFromPipeline','pipelineWon',
     'existingOpp','closureFromOpp','recurringTotal',
     'currentBooking','prevP2PInvoices',
-    'p2pFreshPipeline','p2pClosurePipeline','p2pPipelineWon',
+    'p2pFreshPipeline','p2pDeemedPipeline','p2pNotDeemedPipeline',
+    'p2pClosurePipeline','p2pPipelineWon',
     'p2pOpportunities','p2pClosureOpp','p2pTotal'
   ];
   const PCT_KEYS = ['pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv'];
@@ -611,13 +634,14 @@ function mergeOwners(dOwners, iOwners) {
 // ════════════════════════════════════════════════════════════
 
 // Tab → owner key mapping (used for token ownership check)
-const TAB_OWNER = { jiggyasa:'jiggyasa', tanuj_uk:'tanuj', tanuj_us:'tanuj' };
+const TAB_OWNER = { jiggyasa:'jiggyasa', tanuj_uk:'tanuj', tanuj_us:'tanuj', jaydeep:'jaydeep' };
 
 // Tab groups — which tabs are visible per entry point
 const TAB_GROUPS = {
   jiggyasa : ['jiggyasa'],
   tanuj_uk : ['tanuj_uk','tanuj_us'],
   tanuj_us : ['tanuj_uk','tanuj_us'],
+  jaydeep  : ['jaydeep'],
 };
 
 // localStorage key for a given owner
@@ -642,7 +666,7 @@ async function doLogin() {
       const owner = tab ? (TAB_OWNER[tab] || null) : null;
       // Clear all other tokens — strict isolation
       ["nexus_auth","nexus_auth_jiggyasa","nexus_auth_jaydeep","nexus_auth_tanuj",
-       "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu"].forEach(k=>{
+       "nexus_auth_nevilson","nexus_auth_digital","nexus_auth_interbu","nexus_auth_jaydeep"].forEach(k=>{
         if(k!==authKey(owner))localStorage.removeItem(k);
       });
       localStorage.setItem(authKey(owner), '1');
@@ -725,7 +749,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ── 3. No token, no stored auth — show password gate ──
-  const OWNER_LABELS = { jiggyasa:'Jiggyasa · AU', tanuj:'Tanuj · UK & US' };
+  const OWNER_LABELS = { jiggyasa:'Jiggyasa · AU', tanuj:'Tanuj · UK & US', jaydeep:'Jaydeep · MarTech' };
   const eyebrow = $('login-eyebrow');
   if(eyebrow){
     if(isMasterAccess) eyebrow.textContent = 'Mavlers · Sales-Ops';
