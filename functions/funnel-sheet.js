@@ -1,25 +1,24 @@
 // functions/funnel-sheet.js
-// Funnel Desk v3 — Master Sheet proxy (updated for new template structure)
+// Funnel Desk v3 — Master Sheet proxy
 // POST { head: "jiggyasa" | "tanuj_uk" | "tanuj_us" | "jaydeep" }
 //
-// Reads from a single Master Google Sheet (IMPORTRANGE-aggregated).
-// Structure verified against new proxy templates (44 rows Digital, 46 rows Inter):
-//   Digital BU block : header at idx 0, data rows per R{} map below
-//   Inter BU block   : header at idx 46, every data row = Digital idx + 46
-//   Jiggyasa         : owner cols 1-5, Team Sum col 6
-//   Tanuj UK         : owner cols 1-3, Team Sum col 4 (Sheldon excluded)
-//   Tanuj US         : owner cols 1-5, Team Sum col 6
-//   Jaydeep (MarTech): owner cols 1-9, Team Sum col 10, NO Inter BU block
+// Row indices verified against actual live proxy CSVs (August 2026).
 //
-// Grand Total / GAP are computed client-side by funnel.html — NOT read from Sheet.
-// Auth: Google Service Account JWT → OAuth2 access token → Sheets API v4
+// Jiggyasa / Tanuj UK / Tanuj US:
+//   Digital BU  : header idx 1, data per R{} below
+//   Inter BU    : header idx 47, every data row = Digital idx + 46
+//   ownerCols / sumCol per CFG
+//
+// Jaydeep (MarTech):
+//   Single block: header idx 0, data per RJ{} below
+//   noInter: true — no Inter BU block
+//
+// Grand Total / GAP computed client-side. Auth: Service Account JWT → OAuth2.
 
 export async function onRequestPost(context) {
   try {
     const { head } = await context.request.json();
 
-    // Tab name + column config per head
-    // noInter: true = single block (MarTech), no Inter BU section
     const CFG = {
       jiggyasa : { tab: "Jiggyasa", ownerCols: [1,2,3,4,5], sumCol: 6,  noInter: false },
       tanuj_uk  : { tab: "Tanuj UK", ownerCols: [1,2,3],     sumCol: 4,  noInter: false },
@@ -34,7 +33,7 @@ export async function onRequestPost(context) {
     const SA_EMAIL = context.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const SA_KEY   = context.env.GOOGLE_PRIVATE_KEY;
     if (!SHEET_ID || !SA_EMAIL || !SA_KEY)
-      return resp({ error: "Missing env: FUNNEL_MASTER_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY" }, 500);
+      return resp({ error: "Missing env vars" }, 500);
 
     const token = await getAccessToken(SA_EMAIL, SA_KEY);
     const url   = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(cfg.tab)}`;
@@ -49,31 +48,54 @@ export async function onRequestPost(context) {
   } catch (e) { return resp({ error: e.message }, 500); }
 }
 
-// ── Row index map (0-indexed, matching new 44-row template) ──
-// Digital block: rows 0-43.
-// Inter block  : header at idx 46, each data row = Digital idx + 46.
-//
-// New rows added vs v2:
-//   openNewPipeline    : 10
-//   openOldPipeline    : 11
-//   p2pDeemedPipeline  : 28
-//   p2pNotDeemedPipeline: 29
-//
-// All rows from closureFromPipeline onward shifted accordingly.
+// ── Row index map — Jiggyasa / Tanuj UK / Tanuj US (0-indexed) ──
+// Digital block: header idx 1. Inter block: same keys + INTER_OFFSET (46).
+// Verified against live proxy CSVs Aug 2026.
 const R = {
+  target               :  2,
+  opening              :  6,   // Pre-Paid Invoices
+  predictedLoss        :  7,
+  postPaid             :  8,
+  existingPipeline     : 10,
+  openNewPipeline      : 11,
+  openOldPipeline      : 12,
+  closureFromPipeline  : 13,
+  pipelineWon          : 14,
+  pipelineConversion   : 15,   // %
+  existingOpp          : 17,
+  closureFromOpp       : 18,
+  oppConversion        : 19,   // %
+  recurringTotal       : 21,
+  currentBooking       : 25,
+  prevP2PInvoices      : 26,
+  p2pFreshPipeline     : 28,
+  p2pDeemedPipeline    : 29,
+  p2pNotDeemedPipeline : 30,
+  p2pClosurePipeline   : 31,
+  p2pPipelineWon       : 32,
+  p2pPipelineConv      : 33,   // %
+  p2pOpportunities     : 35,
+  p2pClosureOpp        : 36,
+  p2pOppConv           : 37,   // %
+  p2pTotal             : 39,
+};
+
+// ── Row index map — Jaydeep / MarTech (0-indexed, single block) ──
+// Header idx 0 (no "Digital BU" section header row).
+const RJ = {
   target               :  1,
   opening              :  5,   // Pre-Paid Invoices
   predictedLoss        :  6,
-  postPaid             :  7,   // Post-Paid Invoices
+  postPaid             :  7,
   existingPipeline     :  9,
   openNewPipeline      : 10,
   openOldPipeline      : 11,
   closureFromPipeline  : 12,
   pipelineWon          : 13,
-  pipelineConversion   : 14,   // % string
+  pipelineConversion   : 14,   // %
   existingOpp          : 16,
   closureFromOpp       : 17,
-  oppConversion        : 18,   // % string
+  oppConversion        : 18,   // %
   recurringTotal       : 20,
   currentBooking       : 24,
   prevP2PInvoices      : 25,
@@ -82,10 +104,10 @@ const R = {
   p2pNotDeemedPipeline : 29,
   p2pClosurePipeline   : 30,
   p2pPipelineWon       : 31,
-  p2pPipelineConv      : 32,   // % string
+  p2pPipelineConv      : 32,   // %
   p2pOpportunities     : 34,
   p2pClosureOpp        : 35,
-  p2pOppConv           : 36,   // % string
+  p2pOppConv           : 36,   // %
   p2pTotal             : 38,
 };
 
@@ -93,27 +115,27 @@ const PCT = new Set([
   'pipelineConversion','oppConversion','p2pPipelineConv','p2pOppConv'
 ]);
 
-// Inter BU header at idx 46 (Digital block is 44 rows + 2 spacer rows)
+// Inter BU header at idx 47; data = Digital idx + 46
 const INTER_OFFSET = 46;
 
 function parse(rows, head, cfg) {
-  const digHeader   = rows[0] ?? [];
-  const interHeader = cfg.noInter ? [] : (rows[46] ?? []);
+  const rowMap = cfg.noInter ? RJ : R;
 
-  function buildBlock(header, baseOffset) {
+  function buildBlock(headerIdx, offset) {
+    const header = rows[headerIdx] ?? [];
     const owners = cfg.ownerCols.map(c => {
       const name = (header[c] ?? "").toString().trim();
       const o = { name };
-      for (const [key, digIdx] of Object.entries(R)) {
-        const rowIdx = digIdx + baseOffset;
-        o[key] = PCT.has(key) ? pctVal(rows, rowIdx, c) : numVal(rows, rowIdx, c);
+      for (const [key, baseIdx] of Object.entries(rowMap)) {
+        const idx = baseIdx + offset;
+        o[key] = PCT.has(key) ? pctVal(rows, idx, c) : numVal(rows, idx, c);
       }
       return o;
     });
     const teamSum = { name: "Team Sum" };
-    for (const [key, digIdx] of Object.entries(R)) {
-      const rowIdx = digIdx + baseOffset;
-      teamSum[key] = PCT.has(key) ? pctVal(rows, rowIdx, cfg.sumCol) : numVal(rows, rowIdx, cfg.sumCol);
+    for (const [key, baseIdx] of Object.entries(rowMap)) {
+      const idx = baseIdx + offset;
+      teamSum[key] = PCT.has(key) ? pctVal(rows, idx, cfg.sumCol) : numVal(rows, idx, cfg.sumCol);
     }
     return { owners, teamSum };
   }
@@ -123,13 +145,19 @@ function parse(rows, head, cfg) {
   });
 
   const result = { head, tab: cfg.tab, month, noInter: cfg.noInter };
-  result.digital = buildBlock(digHeader, 0);
-  if (!cfg.noInter) result.inter = buildBlock(interHeader, INTER_OFFSET);
+
+  if (cfg.noInter) {
+    // Jaydeep: single block, header at idx 0, no offset
+    result.digital = buildBlock(0, 0);
+  } else {
+    // Digital header idx 1, Inter header idx 47 (offset 46)
+    result.digital = buildBlock(1, 0);
+    result.inter   = buildBlock(47, INTER_OFFSET);
+  }
 
   return result;
 }
 
-// ── Value helpers ──
 function numVal(rows, idx, col) {
   const raw = (rows[idx]?.[col] ?? "").toString().replace(/[$,]/g, "").trim();
   if (!raw || raw.startsWith("#") || raw === "-") return 0;
@@ -144,7 +172,6 @@ function pctVal(rows, idx, col) {
   return isNaN(n) ? "" : (n * 100).toFixed(2) + "%";
 }
 
-// ── Google Service Account JWT → OAuth2 token ──
 async function getAccessToken(email, rawKey) {
   const pem = rawKey.replace(/\\n/g, "\n");
   const b64 = pem
@@ -170,9 +197,7 @@ async function getAccessToken(email, rawKey) {
   const jwt = `${header}.${payload}.${b64uRaw(sig)}`;
   const tok = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: jwt
-    })
+    body: new URLSearchParams({ grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: jwt })
   });
   if (!tok.ok) throw new Error(`OAuth ${tok.status}: ${await tok.text()}`);
   return (await tok.json()).access_token;
