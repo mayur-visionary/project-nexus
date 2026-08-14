@@ -100,7 +100,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sb-ms-btn .ms-arrow{color:#9A9A9A}
 .sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
 /* Sidebar owner dropdown — inherit dark ms-dropdown styles from Revenue Pulse */
-.sidebar .ms-dropdown{min-width:180px;left:0}
+/* Sidebar owner dropdown — verbatim from Revenue Pulse */
+.sidebar .ms-dropdown{min-width:100%}
 
 /* ── Main content ── */
 .main{flex:1;min-width:0;padding:18px 28px 48px}
@@ -449,7 +450,7 @@ const PIPELINE = "115832232", STAGE = "205348626";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const ALL_REGIONS = ["US","UK","AU"];
-const ALL_HEADS   = ["Jaydeep","Jiggyasa","Tanuj UK","Tanuj US","Nevilson"];
+const ALL_HEADS   = ["Jaydeep","Jiggyasa","Nevilson","Tanuj"];
 const ALL_SERVICES= ["Campaign","Email","Design","Search","Web"];
 
 // ════ OWNER REGISTRY ════
@@ -475,17 +476,17 @@ const ALL_OWNERS = [
   {id:"94746500", name:"Manvi Choumal",    bu:"Digital",head:"Jiggyasa", region:"AU"},
   {id:"176516495",name:"Prachi Porwal",    bu:"Digital",head:"Jiggyasa", region:"AU"},
   {id:"263464861",name:"Saquib Khan",      bu:"Digital",head:"Jiggyasa", region:"AU"},
-  {id:"46156316", name:"Flintoff Mehta",   bu:"Digital",head:"Tanuj UK", region:"UK"},
-  {id:"37344296", name:"Kalgi Shah",       bu:"Digital",head:"Tanuj UK", region:"UK"},
-  {id:"24817892", name:"Sheldon Fernandes",bu:"Digital",head:"Tanuj UK", region:"UK"},
-  {id:"31730801", name:"Vikram Sahi",      bu:"Digital",head:"Tanuj UK", region:"UK"},
-  {id:"38568120", name:"Baspin Thomas",    bu:"Digital",head:"Tanuj US", region:"US"},
-  {id:"42663191", name:"Dhaval Damania",   bu:"Digital",head:"Tanuj US", region:"US"},
-  {id:"240935328",name:"Hammad Bhaldar",   bu:"Digital",head:"Tanuj US", region:"US"},
-  {id:"19799470", name:"Jebin Joy",        bu:"Digital",head:"Tanuj US", region:"US"},
-  {id:"34558123", name:"Kaustubh Agrawal", bu:"Digital",head:"Tanuj US", region:"US"},
-  {id:"284770744",name:"Sourya Ghosh",     bu:"Digital",head:"Tanuj US", region:"US"},
-  {id:"557894666",name:"Sudarshan Damani", bu:"Digital",head:"Tanuj US", region:"US"},
+  {id:"46156316", name:"Flintoff Mehta",   bu:"Digital",head:"Tanuj", region:"UK"},
+  {id:"37344296", name:"Kalgi Shah",       bu:"Digital",head:"Tanuj", region:"UK"},
+  {id:"24817892", name:"Sheldon Fernandes",bu:"Digital",head:"Tanuj", region:"UK"},
+  {id:"31730801", name:"Vikram Sahi",      bu:"Digital",head:"Tanuj", region:"UK"},
+  {id:"38568120", name:"Baspin Thomas",    bu:"Digital",head:"Tanuj", region:"US"},
+  {id:"42663191", name:"Dhaval Damania",   bu:"Digital",head:"Tanuj", region:"US"},
+  {id:"240935328",name:"Hammad Bhaldar",   bu:"Digital",head:"Tanuj", region:"US"},
+  {id:"19799470", name:"Jebin Joy",        bu:"Digital",head:"Tanuj", region:"US"},
+  {id:"34558123", name:"Kaustubh Agrawal", bu:"Digital",head:"Tanuj", region:"US"},
+  {id:"284770744",name:"Sourya Ghosh",     bu:"Digital",head:"Tanuj", region:"US"},
+  {id:"557894666",name:"Sudarshan Damani", bu:"Digital",head:"Tanuj", region:"US"},
   {id:"86813698", name:"Aman Acharya",     bu:"Digital",head:"Nevilson", region:"AU"},
   {id:"255830830",name:"Devanshu Kumar",   bu:"Digital",head:"Nevilson", region:"UK"},
   {id:"37762663", name:"Malav Modi",       bu:"Digital",head:"Nevilson", region:"US"},
@@ -883,17 +884,6 @@ function renderAll() {
 
 function onFilterChange(){renderAll();}
 
-function resetAll(){
-  const ps=$("period-sel");if(ps)ps.value="this-month";
-  const bs=$("bu-sel");if(bs)bs.value="";
-  ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();
-  ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();
-  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
-  ALL_OWNERS.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();
-  closeDrill();
-  renderAll();
-}
-
 // ════ MULTI-SELECT HELPERS — verbatim pattern from Revenue Pulse ════
 function buildGeoList(){
   $("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>
@@ -1095,15 +1085,93 @@ function checkSSO(){
   return false;
 }
 
+// Clone config — head param → locked head name, locked regions, locked BU
+const CLONE_CFG = {
+  jaydeep:  {head:"Jaydeep",  regions:[],          bu:"MarTech"},
+  jiggyasa: {head:"Jiggyasa", regions:["AU"],       bu:"Digital"},
+  tanuj:    {head:"Tanuj",    regions:["UK","US"],  bu:"Digital"},
+  nevilson: {head:"Nevilson", regions:[],           bu:"Digital"}
+};
+
+let cloneHead = null; // set by bootCloneMode
+
 function bootCloneMode(){
-  const head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
-  if(!head)return;
-  const nexusLink=`/?head=${head}&tok=${head}`;
-  $("nexus-link").href=nexusLink;
-  $("nexus-link-btn").href=nexusLink;
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param)return;
+  const cfg=CLONE_CFG[param];
+  if(!cfg){console.warn(`[Radar] Unknown ?head= param: "${param}"`);return;}
+  cloneHead=cfg.head;
+  const firstName=cfg.head.split(" ")[0];
+
+  // Browser tab
+  document.title=`${firstName} · Recurring Radar · Mavlers`;
+  // Login screen
+  const le=$("login-eyebrow");if(le)le.textContent=`Mavlers · ${firstName}'s Dashboard`;
+  // Header links
+  const nexusLink=`/?head=${param}&tok=${param}`;
+  const nl=$("nexus-link");if(nl)nl.href=nexusLink;
+  const nb=$("nexus-link-btn");if(nb)nb.href=nexusLink;
+  document.body.setAttribute("data-clone",param);
+
+  // Lock Head filter — check only this head, uncheck others
+  ALL_HEADS.forEach(h=>{
+    const el=$("head-"+h.replace(/\s/g,"_"));
+    if(el)el.checked=(h===cfg.head);
+  });
+  updateHeadLabel();
+  // Hide Head filter UI from filter bar
+  const hw=$("head-ms-wrap");if(hw)hw.style.display="none";
+  const hl=hw&&hw.previousElementSibling;if(hl&&hl.classList.contains("fl"))hl.style.display="none";
+  const hd=$("head-ms-wrap")&&$("head-ms-wrap").previousElementSibling;
+
+  // Lock Region filter if specified
+  if(cfg.regions.length){
+    ALL_REGIONS.forEach(r=>{
+      const el=$("geo-"+r);
+      if(el)el.checked=cfg.regions.includes(r);
+    });
+    updateGeoLabel();
+    // Hide Region filter UI
+    const gw=$("geo-ms-wrap");if(gw)gw.style.display="none";
+    const gl=gw&&gw.previousElementSibling;if(gl&&gl.classList.contains("fl"))gl.style.display="none";
+  }
+
+  // Lock BU if single-BU head
+  if(cfg.bu){
+    const buSel=$("bu-sel");
+    if(buSel)buSel.value=cfg.bu;
+    // Hide BU filter
+    const bl=buSel&&buSel.previousElementSibling;if(bl&&bl.classList.contains("fl"))bl.style.display="none";
+    if(buSel)buSel.style.display="none";
+  }
+
+  // Lock Owners sidebar to only this head's owners
+  ALL_OWNERS.forEach(o=>{
+    const el=$("ow-"+o.id);
+    if(el)el.checked=(o.head===cfg.head);
+  });
+  updateOwnerLabel();
+  // Hide sidebar owner controls (All/None) — read-only in clone mode
+  const mc=$("ms-ctrl-clone");
+  const mctrl=document.querySelector("#ms-dropdown .ms-ctrl");
+  if(mctrl)mctrl.style.display="none";
+
+  console.log(`[Radar] Clone mode → ${cfg.head}`);
 }
 
-// ════ BOOT ════
+// ════ RESET ALL — respects clone locks ════
+function resetAll(){
+  const ps=$("period-sel");if(ps)ps.value="this-month";
+  if(!cloneHead){
+    const bs=$("bu-sel");if(bs)bs.value="";
+    ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();
+    ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();
+    ALL_OWNERS.forEach(o=>{const e=$("ow-"+o.id);if(e)e.checked=true;});updateOwnerLabel();
+  }
+  ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
+  closeDrill();
+  renderAll();
+}
 window.addEventListener("DOMContentLoaded",function(){
   buildGeoList();buildHeadList();buildSvcList();buildOwnerList();
   bootCloneMode();
