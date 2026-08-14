@@ -370,6 +370,12 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="rra-kpi-sub" id="rra-k-retained-sub">—</div>
         <div class="rra-kpi-hint">Click to explore ↓</div>
       </div>
+      <div class="rra-kpi rra-new" id="kpi-new" onclick="toggleKPIDrill('new')">
+        <div class="rra-kpi-lbl">New</div>
+        <div class="rra-kpi-val" id="rra-k-new">—</div>
+        <div class="rra-kpi-sub" id="rra-k-new-sub">—</div>
+        <div class="rra-kpi-hint">Click to explore ↓</div>
+      </div>
       <div class="rra-kpi rra-atrisk" id="kpi-atrisk" onclick="toggleKPIDrill('atrisk')">
         <div class="rra-kpi-lbl">Pending</div>
         <div class="rra-kpi-val" id="rra-k-atrisk">—</div>
@@ -380,12 +386,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="rra-kpi-lbl">Lost</div>
         <div class="rra-kpi-val" id="rra-k-lost">—</div>
         <div class="rra-kpi-sub" id="rra-k-lost-sub">—</div>
-        <div class="rra-kpi-hint">Click to explore ↓</div>
-      </div>
-      <div class="rra-kpi rra-new" id="kpi-new" onclick="toggleKPIDrill('new')">
-        <div class="rra-kpi-lbl">New</div>
-        <div class="rra-kpi-val" id="rra-k-new">—</div>
-        <div class="rra-kpi-sub" id="rra-k-new-sub">—</div>
         <div class="rra-kpi-hint">Click to explore ↓</div>
       </div>
       <div class="rra-kpi rra-nrr">
@@ -520,7 +520,6 @@ let drillRows         = [];
 let drillPage_current = 1;
 let trendChart = null;
 const DRILL_PAGE_SIZE = 15;
-const RRA_STATUS_ORDER = {lost:0,atrisk:1,retained:2,new:3};
 
 // ════ FY MONTHS ════
 function getFYMonths() {
@@ -656,16 +655,24 @@ function buildRows(mMap,m1Map) {
       rows.push({...m1Map[key],status:"retained",m_amount:rec.amount});
     } else {
       const cd=rec.closedate?new Date(rec.closedate+"T00:00:00"):null;
-      const grace=cd?new Date(cd.getTime()+2*86400000):null;
+      // Pending until: closedate + 1 month + 2 days
+      let grace=null;
+      if(cd){
+        grace=new Date(cd);
+        grace.setMonth(grace.getMonth()+1);
+        grace.setDate(grace.getDate()+2);
+      }
       rows.push({...rec,status:(!grace||today>grace)?"lost":"atrisk"});
     }
   });
   Object.entries(m1Map).forEach(([key,rec])=>{
     if(!mMap[key]) rows.push({...rec,status:"new"});
   });
+  // Sort by closedate descending (most recent first) within each group
   rows.sort((a,b)=>{
-    const so=RRA_STATUS_ORDER[a.status]-RRA_STATUS_ORDER[b.status];
-    return so!==0?so:b.amount-a.amount;
+    const cd_a=a.closedate||"";
+    const cd_b=b.closedate||"";
+    return cd_b.localeCompare(cd_a);
   });
   return rows;
 }
@@ -808,7 +815,8 @@ function renderTrendChart(filteredPairs) {
       if(m1Map[key]){ret+=m1Map[key].amount;}
       else{
         const cd=rec.closedate?new Date(rec.closedate+"T00:00:00"):null;
-        const grace=cd?new Date(cd.getTime()+2*86400000):null;
+        let grace=null;
+        if(cd){grace=new Date(cd);grace.setMonth(grace.getMonth()+1);grace.setDate(grace.getDate()+2);}
         if(!grace||today>grace)ls+=rec.amount;else ar+=rec.amount;
       }
     });
