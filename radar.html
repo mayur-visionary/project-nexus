@@ -234,8 +234,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
+        <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
-        <a class="nexus-btn" id="nexus-link-btn" href="/">← Revenue Pulse</a>
+        <a class="nexus-btn" id="nexus-link-btn" href="/">↗ Revenue Pulse</a>
       </div>
     </div>
   </div>
@@ -313,8 +314,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div id="svc-ms-list"></div>
       </div>
     </div>
-    <div class="vdiv"></div>
-    <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
   </div>
 </div>
 
@@ -902,7 +901,7 @@ function buildGeoList(){
 function onGeoChange(){updateGeoLabel();onFilterChange();}
 function updateGeoLabel(){
   const sel=ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return e&&e.checked;});
-  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.join(", ");
+  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":`${sel.length} Region${sel.length>1?"s":""}`;
 }
 function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");closeOthers("geo-ms-dropdown");}
 function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onFilterChange();}
@@ -916,7 +915,7 @@ function buildHeadList(){
 function onHeadChange(){updateHeadLabel();onFilterChange();}
 function updateHeadLabel(){
   const sel=ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return e&&e.checked;});
-  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.join(", ");
+  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":`${sel.length} Head${sel.length>1?"s":""}`;
 }
 function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");closeOthers("head-ms-dropdown");}
 function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();onFilterChange();}
@@ -930,7 +929,7 @@ function buildSvcList(){
 function onSvcChange(){updateSvcLabel();onFilterChange();}
 function updateSvcLabel(){
   const sel=ALL_SERVICES.filter(s=>{const e=$("svc-"+s);return e&&e.checked;});
-  $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":sel.join(", ");
+  $("svc-ms-label").textContent=sel.length===ALL_SERVICES.length?"All Services":sel.length===0?"None":`${sel.length} Service${sel.length>1?"s":""}`;
 }
 function toggleSvcMS(e){e.stopPropagation();$("svc-ms-dropdown").classList.toggle("open");closeOthers("svc-ms-dropdown");}
 function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onFilterChange();}
@@ -1043,7 +1042,7 @@ async function doSync(force=false) {
     renderAll();
     $("sdot").style.background="#FFDA30";
     $("stxt").textContent=`LIVE · ${allDeals.length} DEALS`;
-    $("last-sync").textContent=`Synced at ${new Date().toLocaleTimeString()}`;
+    $("last-sync").textContent=`Synced ${new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})} · ${new Date().toLocaleTimeString()}`;
   }catch(e){
     console.error(e);
     $("err-msg").textContent="Sync error: "+e.message;
