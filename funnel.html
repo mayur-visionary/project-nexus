@@ -95,7 +95,7 @@ col.num-col{width:100px}
 col.tot-col{width:110px}
 
 /* Head — Premier colours: Space Indigo bg, Gold text */
-thead th{padding:9px 12px;background:#3B3561;text-align:left;font-size:9px;font-weight:800;color:#FFDA30;text-transform:uppercase;letter-spacing:.1em;border-bottom:none;white-space:nowrap}
+thead th{padding:9px 12px;background:#3B3561;text-align:left;font-size:11px;font-weight:800;color:#FFDA30;text-transform:uppercase;letter-spacing:.06em;border-bottom:none;white-space:nowrap}
 thead th.num{text-align:right}
 thead th.tot{text-align:right;background:#2E2850;color:#FFDA30;border-left:1px solid rgba(255,218,48,.2)}
 thead th.tot-inter{text-align:right;background:#2E2850;color:#FFDA30;border-left:1px solid rgba(255,218,48,.2)}
@@ -126,26 +126,26 @@ tbody tr.sec-hdr:hover td{background:#F7F7F7!important}
 /* ── Highlighted result rows ── */
 
 /* Recurring Total — warm gold tint, team sum solid gold */
-tbody tr.row-recurring-total td{background:#FFFBEA;font-weight:800;color:#2E2E2E;border-top:1px solid #FFE870;font-size:11.5px}
+tbody tr.row-recurring-total td{background:#FFFBEA;font-weight:800;color:#2E2E2E;border-top:1px solid #FFE870;font-size:13px}
 tbody tr.row-recurring-total td.tot,
 tbody tr.row-recurring-total td.tot-inter,
 tbody tr.row-recurring-total td.tot-both{background:#FFDA30;color:#2E2000;border-left:1px solid #E0C000}
 
 /* P2P Total — teal tint, team sum solid teal with white text */
-tbody tr.row-p2p-total td{background:#E8F7F4;font-weight:800;color:#2E2E2E;border-top:1px solid #B8E8E0;font-size:11.5px}
+tbody tr.row-p2p-total td{background:#E8F7F4;font-weight:800;color:#2E2E2E;border-top:1px solid #B8E8E0;font-size:13px}
 tbody tr.row-p2p-total td.tot,
 tbody tr.row-p2p-total td.tot-inter,
 tbody tr.row-p2p-total td.tot-both{background:#006E5E;color:#FFFFFF;border-left:1px solid #005548}
 
 /* Grand Total — deep dark brown, gold text throughout */
-tbody tr.row-grand-total td{background:#473400!important;font-weight:800;color:#FFDA30!important;font-size:11px;border-top:2px solid #FFDA30}
+tbody tr.row-grand-total td{background:#473400!important;font-weight:800;color:#FFDA30!important;font-size:13px;border-top:2px solid #FFDA30}
 tbody tr.row-grand-total td.tot,
 tbody tr.row-grand-total td.tot-inter,
 tbody tr.row-grand-total td.tot-both{background:#2E2000!important;color:#FFDA30!important;border-left:1px solid #FFDA30}
 
 /* GAP rows — subtle warm tint */
 tbody tr.row-gap td{background:#FAFAFA;font-weight:700;color:#434343;border-top:1px solid #F0F0F0}
-tbody tr.row-gap-pct td{background:#FAFAFA;font-weight:700;color:#9A9A9A;font-size:10px;border-bottom:2px solid #E8E8E8}
+tbody tr.row-gap-pct td{background:#FAFAFA;font-weight:700;color:#9A9A9A;font-size:12px;border-bottom:2px solid #E8E8E8}
 
 /* Hover overrides for special rows */
 tbody tr.row-grand-total:hover td{background:#5A4200!important}
@@ -242,10 +242,12 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
 
     <div class="nav-tabs-bar">
       <div class="nav-in">
-        <button class="nav-tab" id="tab-jiggyasa" onclick="switchTab('jiggyasa')">Jiggyasa AU</button>
+        <span class="nav-tab-ext" style="color:rgba(255,255,255,.35);cursor:default;letter-spacing:.14em;font-size:9px;font-weight:800;text-transform:uppercase;padding:9px 16px 9px 0">Funnel Desk</span>
+        <div class="nav-divider"></div>
+        <button class="nav-tab" id="tab-jaydeep"  onclick="switchTab('jaydeep')">Jaydeep</button>
+        <button class="nav-tab" id="tab-jiggyasa" onclick="switchTab('jiggyasa')">Jiggyasa</button>
         <button class="nav-tab" id="tab-tanuj_uk" onclick="switchTab('tanuj_uk')">Tanuj UK</button>
         <button class="nav-tab" id="tab-tanuj_us" onclick="switchTab('tanuj_us')">Tanuj US</button>
-        <button class="nav-tab" id="tab-jaydeep"  onclick="switchTab('jaydeep')">Jaydeep · MarTech</button>
       </div>
     </div>
   </div>
@@ -288,7 +290,7 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
 // ════════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════════
-const HEADS = ['jiggyasa', 'tanuj_uk', 'tanuj_us', 'jaydeep'];
+const HEADS = ['jaydeep', 'jiggyasa', 'tanuj_uk', 'tanuj_us'];
 const HEAD_LABELS = {
   jiggyasa : 'Jiggyasa Agrawal · AU',
   tanuj_uk : 'Tanuj Gupta · UK',
@@ -579,7 +581,7 @@ function renderTable(head, data, seg) {
             <col class="tot-col">
           </colgroup>
           <thead>
-            <tr><th>Current Month</th>${ownerThs}${totalTh}</tr>
+            <tr><th></th>${ownerThs}${totalTh}</tr>
           </thead>
           <tbody>${tbody}</tbody>
         </table>
