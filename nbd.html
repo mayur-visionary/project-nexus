@@ -531,15 +531,16 @@ const colLabel = mStr => {
 };
 
 // ════ STATE ════
-let isSyncing    = false;
-let currentFY    = "26-27";
-let activeStatus = "";   // "" | "new" | "up" | "flat" | "down"
-let allDeals     = [];
-let dealLIMap    = {};   // dealId → [{svc,bu,amount,name}]
-let nbdCohort    = {};   // companyName → {nbdOwnerId, nbdMonth}
-let tableRows    = [];
-let currentPage  = 1;
-const PAGE_SIZE  = 25;
+let isSyncing      = false;
+let currentFY      = "26-27";
+let activeStatus   = "";   // "" | "new" | "up" | "flat" | "down"
+let allDeals       = [];
+let dealLIMap      = {};   // dealId → [{svc,bu,amount,name}]
+let nbdCohort      = {};   // companyName → {nbdOwnerId, nbdMonth}
+let companyOwners  = {};   // companyName → hubspot_owner_id (from Companies object)
+let tableRows      = [];
+let currentPage    = 1;
+const PAGE_SIZE    = 25;
 
 // ════ FY MONTHS ════
 function getFYMonths(fy) {
@@ -627,7 +628,6 @@ function buildNBDRows() {
     const months = {};
     let ltv = 0;
     let latestMonthNum = 0;
-    let latestOwner = info.nbdOwnerId;
     let geoHead = "";
 
     allDeals.forEach(d => {
@@ -639,7 +639,7 @@ function buildNBDRows() {
       if(filteringHead && !selectedHeads.includes(d.geo_head)) return;
 
       const mn = monthNum(d.month);
-      if(mn > latestMonthNum) { latestMonthNum = mn; latestOwner = d.owner_id; geoHead = d.geo_head||""; }
+      if(mn > latestMonthNum) { latestMonthNum = mn; geoHead = d.geo_head||""; }
 
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
@@ -679,9 +679,10 @@ function buildNBDRows() {
         momentum = pct > 0.05 ? "up" : pct < -0.05 ? "down" : "flat";
       }
 
+      const growthOwnerId = companyOwners[company] || null;
       rows.push({
         company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth,
-        currentOwner: latestOwner, geoHead,
+        growthOwnerId, geoHead,
         months, ltv,
         streakDots, streakActive, streakTotal: eligibleMonths.length,
         momentum, momPct
@@ -836,9 +837,11 @@ function renderTablePage() {
 
   // tbody
   const bodyRows = slice.map((r,i) => {
-    const growthOwnerHtml = r.currentOwner === r.nbdOwner
-      ? '<span style="color:#9A9A9A;font-style:italic;font-size:9px">NBD</span>'
-      : ownerName(r.currentOwner);
+    const growthOwnerHtml = !r.growthOwnerId
+      ? '<span style="color:#D0D0D0;font-style:italic;font-size:9px">—</span>'
+      : r.growthOwnerId === r.nbdOwner
+        ? '<span style="color:#9A9A9A;font-style:italic;font-size:9px">NBD</span>'
+        : ownerName(r.growthOwnerId);
     const streakHtml = (r.streakDots||[]).map(d => d
       ? '<span style="color:#006E5E">&#9679;</span>'
       : '<span style="color:#E0E0E0">&#9675;</span>'
@@ -1062,6 +1065,22 @@ function updateSmartFilters() {
   }
 }
 
+// ════ COMPANY OWNER LOOKUP (from HubSpot Companies object) ════
+async function fetchCompanyOwners() {
+  const names = Object.keys(nbdCohort);
+  if (!names.length) return;
+  try {
+    const res = await fetch("/companies", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ names })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    companyOwners = data.owners || {};
+  } catch(e) { /* silent — Growth Owner will show as — */ }
+}
+
 // ════ DYNAMIC OWNER LOOKUP ════
 async function fetchOwners() {
   try {
@@ -1159,6 +1178,8 @@ async function doSync(force=false) {
     $("stxt").textContent="FETCHING LINE ITEMS...";
     dealLIMap = await fetchLineItems(allDeals);
     nbdCohort = identifyNBDCohort(allDeals);
+    $("stxt").textContent="FETCHING COMPANY OWNERS...";
+    await fetchCompanyOwners();
     buildOwnerFilter();
     renderAll();
     const cohortCount = Object.keys(nbdCohort).length;
