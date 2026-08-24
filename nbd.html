@@ -139,20 +139,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .st-growing{color:#006E5E;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .st-stable {color:#B88A00;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .st-risk   {color:#E84040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
-/* ── Status pill filter ── */
-.sp-group{display:flex;flex-direction:column;gap:5px}
-.sp-group-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.sp-group-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65)}
-.sp-group-acts{display:flex;gap:8px}
-.sp-group-act{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,218,48,.75);cursor:pointer}
-.sp-group-act:hover{color:#FFDA30;text-decoration:underline}
-.sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;min-width:148px}
-.sp{padding:5px 0;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s;font-family:'Montserrat',sans-serif;text-align:center;opacity:.38;user-select:none;color:#fff}
-.sp.active{opacity:1}
-.sp-new    {background:#8A8A8A}
-.sp-growing{background:#006E5E}
-.sp-stable {background:#B88A00}
-.sp-risk   {background:#E84040}
 
 .mom-bar{display:flex;align-items:center;gap:20px;padding:10px 18px;background:#fff;border-radius:10px;border:1px solid #E2E2E2;margin-bottom:16px;flex-wrap:wrap}
 .mom-item{display:flex;align-items:center;gap:7px}
@@ -162,6 +148,28 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .mom-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-top:2px}
 .mom-div{width:1px;height:28px;background:#E8E8E8;flex-shrink:0}
 .mom-bar-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-right:4px}
+
+/* ── Sidebar layout ── */
+.nbd-layout{display:flex;gap:20px;align-items:flex-start}
+.nbd-sidebar{width:210px;flex-shrink:0;background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;position:sticky;top:16px}
+.nbd-content{flex:1;min-width:0}
+.sb-section{padding:13px 14px;border-bottom:1px solid #F0F0F0}
+.sb-section:last-child{border-bottom:none}
+.sb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:7px}
+.sb-select{width:100%;padding:7px 10px;border:1px solid #E2E2E2;border-radius:6px;font-size:11px;font-weight:600;color:#434343;font-family:'Montserrat',sans-serif;background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A9A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.sb-select:focus{border-color:#FFDA30}
+/* Sidebar status pills */
+.sb-sp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sb-sp-acts{display:flex;gap:8px}
+.sb-sp-act{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#AAAAAA;cursor:pointer}
+.sb-sp-act:hover{color:#434343;text-decoration:underline}
+.sb-sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sp{padding:6px 0;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s;font-family:'Montserrat',sans-serif;text-align:center;opacity:.32;user-select:none;color:#fff}
+.sp.active{opacity:1}
+.sp-new    {background:#8A8A8A}
+.sp-growing{background:#006E5E}
+.sp-stable {background:#B88A00}
+.sp-risk   {background:#E84040}
 
 /* ── Head Distribution Cards ── */
 .head-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
@@ -189,6 +197,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   .nbd-kpi-strip{grid-template-columns:repeat(2,1fr)}
   .main{padding:16px 18px 40px}
   .fbar{padding:10px 18px}
+  .nbd-layout{flex-direction:column}
+  .nbd-sidebar{width:100%;position:static}
+  .sb-sp-grid{grid-template-columns:repeat(4,1fr)}
+  .head-cards{grid-template-columns:1fr}
 }
 @media(max-width:480px){.nbd-kpi-strip{grid-template-columns:1fr 1fr}}
 </style>
@@ -324,27 +336,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <option value="Recurring">Recurring</option>
       <option value="P2P">P2P</option>
     </select>
-    <div class="vdiv"></div>
-    <span class="fl">Owner</span>
-    <select class="fsel" id="owner-sel" onchange="onFilterChange()">
-      <option value="">All Owners</option>
-    </select>
-    <div class="vdiv"></div>
-    <div class="sp-group">
-      <div class="sp-group-hdr">
-        <span class="sp-group-lbl">Status</span>
-        <div class="sp-group-acts">
-          <span class="sp-group-act" onclick="setStatusFilter('')">All</span>
-          <span class="sp-group-act" onclick="setStatusFilter('__none__')">None</span>
-        </div>
-      </div>
-      <div class="sp-grid">
-        <span class="sp sp-new     active" id="sp-new"     onclick="toggleStatus('new')">New</span>
-        <span class="sp sp-growing active" id="sp-growing" onclick="toggleStatus('up')">Growing</span>
-        <span class="sp sp-stable  active" id="sp-stable"  onclick="toggleStatus('flat')">Stable</span>
-        <span class="sp sp-risk    active" id="sp-risk"    onclick="toggleStatus('down')">At Risk</span>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -357,6 +348,36 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <span>Growth Ledger <span id="nbd-period-lbl" style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none"></span></span>
     <span id="nbd-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
   </div>
+
+  <div class="nbd-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="nbd-sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <select class="sb-select" id="owner-sel" onchange="onFilterChange()">
+        <option value="">All Owners</option>
+      </select>
+    </div>
+    <div class="sb-section">
+      <div class="sb-sp-hdr">
+        <div class="sb-lbl" style="margin-bottom:0">Status</div>
+        <div class="sb-sp-acts">
+          <span class="sb-sp-act" onclick="setStatusFilter('')">All</span>
+          <span class="sb-sp-act" onclick="setStatusFilter('__none__')">None</span>
+        </div>
+      </div>
+      <div class="sb-sp-grid" style="margin-top:8px">
+        <span class="sp sp-new     active" id="sp-new"     onclick="toggleStatus('new')">New</span>
+        <span class="sp sp-growing active" id="sp-growing" onclick="toggleStatus('up')">Growing</span>
+        <span class="sp sp-stable  active" id="sp-stable"  onclick="toggleStatus('flat')">Stable</span>
+        <span class="sp sp-risk    active" id="sp-risk"    onclick="toggleStatus('down')">At Risk</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT CONTENT -->
+  <div class="nbd-content">
 
   <!-- Head Distribution Cards -->
   <div class="head-cards" id="head-cards" style="display:none"></div>
@@ -410,6 +431,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
   </div>
+
+  </div><!-- /nbd-content -->
+  </div><!-- /nbd-layout -->
 
   <div class="footer">PROJECT NEXUS &nbsp;&bull;&nbsp; BY MAYUR DADLANI &nbsp;&bull;&nbsp; A JAM-STACK APPLICATION</div>
 </div>
