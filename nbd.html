@@ -130,11 +130,15 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nbd-pg-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
 .nbd-pg-btn:disabled{opacity:.35;cursor:default}
 
-/* ── Momentum / Trend ── */
+/* ── Momentum / Trend / Status ── */
 .trend-up  {color:#006E5E;font-weight:800;font-size:10px;white-space:nowrap}
 .trend-dn  {color:#E84040;font-weight:800;font-size:10px;white-space:nowrap}
 .trend-flat{color:#B88A00;font-weight:800;font-size:10px;white-space:nowrap}
 .trend-new {color:#9A9A9A;font-weight:600;font-size:9px;font-style:italic}
+.st-new    {color:#9A9A9A;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.st-growing{color:#006E5E;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.st-stable {color:#B88A00;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.st-risk   {color:#E84040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .mom-bar{display:flex;align-items:center;gap:20px;padding:10px 18px;background:#fff;border-radius:10px;border:1px solid #E2E2E2;margin-bottom:16px;flex-wrap:wrap}
 .mom-item{display:flex;align-items:center;gap:7px}
 .mom-icon{font-size:15px;font-weight:800;line-height:1}
@@ -618,19 +622,20 @@ function renderTablePage() {
   // thead
   let th = "<tr>";
   th += '<th style="width:28px">#</th>';
-  th += '<th style="min-width:170px">Company</th>';
-  th += "<th>NBD Owner</th>";
-  th += "<th>A/C Owner</th>";
-  th += "<th>NBD Month</th>";
-  activePeriodMonths.forEach(m => { th += '<th class="num">'+colLabel(m)+"</th>"; });
+  th += '<th style="min-width:170px">Client</th>';
+  th += "<th>New Business Date</th>";
+  th += "<th>New Business Owner</th>";
+  th += "<th>Growth Owner</th>";
   th += '<th class="num" style="white-space:nowrap">Streak</th>';
   th += '<th class="num" style="white-space:nowrap">Trend</th>';
-  th += '<th class="num" style="background:#FFFBEA;color:#473400">Total LTV</th>';
+  th += '<th class="num" style="white-space:nowrap">Status</th>';
+  activePeriodMonths.forEach(m => { th += '<th class="num">'+colLabel(m)+"</th>"; });
+  th += '<th class="num" style="background:#FFFBEA;color:#473400">LTV</th>';
   th += "</tr>";
   $("nbd-thead").innerHTML = th;
 
   if(!slice.length) {
-    const span = 8 + activePeriodMonths.length;
+    const span = 9 + activePeriodMonths.length;
     $("nbd-tbody").innerHTML = '<tr><td colspan="'+span+'" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500;font-size:11px">No NBD clients found for the selected filters.</td></tr>';
     $("nbd-tfoot").innerHTML = "";
     $("nbd-pg").style.display = "none";
@@ -639,7 +644,7 @@ function renderTablePage() {
 
   // tbody
   const bodyRows = slice.map((r,i) => {
-    const acOwnerHtml = r.currentOwner === r.nbdOwner
+    const growthOwnerHtml = r.currentOwner === r.nbdOwner
       ? '<span style="color:#9A9A9A;font-style:italic;font-size:9px">NBD</span>'
       : ownerName(r.currentOwner);
     const streakHtml = (r.streakDots||[]).map(d => d
@@ -653,18 +658,23 @@ function renderTablePage() {
         : r.momentum === "flat"
           ? '<span class="trend-flat">&#8594; &#177;'+r.momPct+'%</span>'
           : '<span class="trend-new">&#9678; New</span>';
+    const statusHtml = r.momentum === "up"   ? '<span class="st-growing">Growing</span>'
+      : r.momentum === "down" ? '<span class="st-risk">At Risk</span>'
+      : r.momentum === "flat" ? '<span class="st-stable">Stable</span>'
+      :                         '<span class="st-new">New</span>';
     let tr = "<tr>";
     tr += '<td class="muted" style="font-size:10px">'+(start+i+1)+"</td>";
-    tr += '<td style="font-weight:700;max-width:220px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
-    tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
-    tr += '<td class="muted">'+acOwnerHtml+"</td>";
+    tr += '<td style="font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
     tr += '<td class="muted">'+colLabel(r.nbdMonth)+"</td>";
+    tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
+    tr += '<td class="muted">'+growthOwnerHtml+"</td>";
+    tr += '<td class="num" style="font-size:10px;line-height:1.6">'+streakHtml+"</td>";
+    tr += '<td class="num">'+trendHtml+"</td>";
+    tr += '<td class="num">'+statusHtml+"</td>";
     activePeriodMonths.forEach(m => {
       const amt = r.months[m];
       tr += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="blank">—</td>';
     });
-    tr += '<td class="num" style="font-size:10px;line-height:1.6">'+streakHtml+"</td>";
-    tr += '<td class="num">'+trendHtml+"</td>";
     tr += '<td class="num" style="font-weight:800;color:#473400">'+fmtUSD(r.ltv)+"</td>";
     tr += "</tr>";
     return tr;
@@ -681,12 +691,13 @@ function renderTablePage() {
   });
   let tf = "<tr>";
   tf += '<td colspan="5" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
+  tf += '<td></td>';
+  tf += '<td></td>';
+  tf += '<td></td>';
   activePeriodMonths.forEach(m => {
     const amt = grandMonths[m];
     tf += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="num" style="color:#D0D0D0;font-weight:400">—</td>';
   });
-  tf += '<td></td>';
-  tf += '<td></td>';
   tf += '<td class="num" style="font-size:12px">'+fmtUSD(grandTotal)+"</td>";
   tf += "</tr>";
   $("nbd-tfoot").innerHTML = tf;
@@ -848,6 +859,20 @@ function updateSmartFilters() {
   }
 }
 
+// ════ DYNAMIC OWNER LOOKUP ════
+async function fetchOwners() {
+  try {
+    const res = await fetch("/owners");
+    if(!res.ok) return;
+    const data = await res.json();
+    (data.results||[]).forEach(o => {
+      if(!o.id) return;
+      const name = [o.firstName, o.lastName].filter(Boolean).join(" ") || o.email || "";
+      if(name) OWNER_NAMES[String(o.id)] = name;
+    });
+  } catch(e) { /* silent — fallback to hardcoded map */ }
+}
+
 // ════ DATA FETCH ════
 function dedup(deals) {
   const seen = new Set(), out = [];
@@ -924,6 +949,8 @@ async function doSync(force=false) {
   $("lo").classList.add("show"); $("rfbtn").disabled=true;
   $("err-bar").style.display="none";
   try {
+    $("stxt").textContent="FETCHING OWNERS...";
+    await fetchOwners();
     $("stxt").textContent="FETCHING DEALS...";
     allDeals = await fetchAllFYDeals(currentFY);
     $("stxt").textContent="FETCHING LINE ITEMS...";
