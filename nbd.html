@@ -446,7 +446,7 @@ const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"
 
 // ── Static filter data (verbatim from Revenue Pulse) ──
 const ALL_REGIONS = ["US","UK","AU"];
-const ALL_HEADS   = ["Jaydeep Salla","Jiggyasa Agrawal","Nevilson Christan","Tanuj Gupta"];
+const ALL_HEADS   = ["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta"];
 const HEAD_BU_MAP = {
   "Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech",
   "Nevilson Christan":"Digital","Tanuj Gupta":"Digital"
@@ -652,6 +652,14 @@ function getFYMonths(fy) {
 }
 
 
+// ════ ENGAGEMENT HELPERS ════
+function engGroup(val){
+  if(!val)return null;
+  if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
+  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
+  return null;
+}
+
 // ════ LINE ITEM CLASSIFICATION (verbatim from radar.html) ════
 function engGroupFromLiName(name) {
   if(!name) return null;
@@ -689,6 +697,31 @@ function classifyLineItem(name) {
   return null;
 }
 
+// ── Ordered owner list for dropdown (Revenue Pulse display order) ──
+const ORDERED_OWNERS=[
+  {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},
+  {id:"34140174",name:"Mrugesh Dabhi"},{id:"467997340",name:"Karan Doshi"},
+  {id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},
+  {id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},
+  {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+  {id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},
+  {id:"41490632",name:"Mukund Basita"},
+  {id:"17739548",name:"Darshan Modi"},{id:"79217713",name:"Krunal Bakraniya"},
+  {id:"17739173",name:"Tanuj Gupta"},
+  {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+  {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
+  {id:"263464861",name:"Saquib Khan"},
+  {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+  {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"},
+  {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+  {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+  {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+  {id:"557894666",name:"Sudarshan Damani"},
+  {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
+  {id:"37762663",name:"Malav Modi"},
+  {id:"82663745",name:"Prativa Dubey"}
+];
+
 // ── Attribution helpers (verbatim from Revenue Pulse) ──
 function geoFromDeal(d){
   const g=d.geo||"";
@@ -706,7 +739,8 @@ function buFromDeal(d){
 }
 function headFromDeal(d){
   const gh=d.geo_head||"";
-  if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Nevilson Christan"||gh==="Jaydeep Salla")return gh;
+  // Nevilson is not a growth head — his-labelled deals roll up via group/geo fallback below
+  if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Jaydeep Salla")return gh;
   if(gh&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
   if(gh==="Sheldon Fernandes"){const geo=geoFromDeal(d);return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";}
   const oid=String(d.owner_id||"");
@@ -758,7 +792,8 @@ function buildNBDRows() {
   const rows   = [];
 
   Object.entries(nbdCohort).forEach(([company, info]) => {
-    if(activeOwner && info.nbdOwnerId !== activeOwner) return;
+    const growthOwnerId = companyOwners[company] || null;
+    if(activeOwner && growthOwnerId !== activeOwner) return;
 
     const months = {};
     let ltv = 0;
@@ -780,7 +815,11 @@ function buildNBDRows() {
         if(!li.amount) return;
         if(filteringSvc && (!li.svc || !selectedSvcs.includes(li.svc))) return;
         if(activeBU  && li.bu  !== activeBU)  return;
-        if(activeEng && engGroupFromLiName(li.name) !== activeEng) return;
+        if(activeEng) {
+          const liEng = engGroupFromLiName(li.name);
+          const eg = liEng !== null ? liEng : engGroup(d.eng_model);
+          if(eg !== activeEng) return;
+        }
         months[d.month] = (months[d.month]||0) + li.amount;
         ltv += li.amount;
         if(li.svc) svcSet.add(li.svc);
@@ -814,7 +853,6 @@ function buildNBDRows() {
         momentum = pct > 0.05 ? "up" : pct < -0.05 ? "down" : "flat";
       }
 
-      const growthOwnerId = companyOwners[company] || null;
       rows.push({
         company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth,
         growthOwnerId, geoHead,
@@ -1126,18 +1164,12 @@ function onPeriodChange() {
   doSync(true);
 }
 
-// ════ BUILD DYNAMIC DROPDOWNS ════
+// ════ BUILD DROPDOWNS ════
 function buildOwnerFilter() {
-  // Only owners who have an explicitly NBD-tagged deal (user_role_invoice_app = "NBD")
-  const owners = new Map();
-  allDeals.forEach(d => {
-    if(d.user_role === "NBD" && d.owner_id) {
-      if(!owners.has(d.owner_id)) owners.set(d.owner_id, ownerName(d.owner_id));
-    }
-  });
+  // All registered owners in Revenue Pulse display order (filter targets growth/account owner)
   const sel = $("owner-sel");
   sel.innerHTML = '<option value="">All Owners</option>';
-  [...owners.entries()].sort((a,b) => a[1].localeCompare(b[1])).forEach(([id,name]) => {
+  ORDERED_OWNERS.forEach(({ id, name }) => {
     const opt = document.createElement("option");
     opt.value = id; opt.textContent = name;
     sel.appendChild(opt);
@@ -1301,7 +1333,8 @@ async function fetchAllFYDeals(fy) {
         month:       bm,
         user_role:   role,
         geo:         (r.properties?.geo__invoice_app_||"").trim(),
-        geo_head:    (r.properties?.geo_head__invoice_app_||"").trim()
+        geo_head:    (r.properties?.geo_head__invoice_app_||"").trim(),
+        eng_model:   (r.properties?.engagement_model__invoice_app_||"").trim()
       });
     });
     after = data.paging?.next?.after||null;
