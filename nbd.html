@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NBD Client Growth · Mavlers</title>
+<title>Growth Ledger · Mavlers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -59,7 +59,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:160px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
+.fsel.sm{max-width:105px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
+.custom-range{display:none;align-items:center;gap:4px}
+.custom-range.show{display:flex}
 
 /* ── FY pill group ── */
 .fy-group{display:flex;border-radius:6px;overflow:hidden;border:1px solid rgba(255,218,48,.28)}
@@ -142,7 +145,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </svg>
     </div>
     <div class="login-eyebrow">Mavlers · Sales-Ops</div>
-    <div class="login-title">NBD Client Growth</div>
+    <div class="login-title">Growth Ledger</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
@@ -191,7 +194,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <!-- FILTER BAR -->
 <div class="fbar">
   <div class="fbar-in">
-    <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">NBD Client Growth</span>
+    <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Growth Ledger</span>
     <div class="vdiv"></div>
     <span class="fl">Financial Year</span>
     <div class="fy-group">
@@ -199,6 +202,37 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <button class="fy-opt" data-fy="25-26" onclick="selectFY('25-26')">FY 25-26</button>
       <button class="fy-opt active" data-fy="26-27" onclick="selectFY('26-27')">FY 26-27 &middot; Current</button>
     </div>
+    <div class="vdiv"></div>
+    <span class="fl">Period</span>
+    <select class="fsel" id="period-sel" onchange="onPeriodChange()">
+      <option value="this-fy" selected>This FY</option>
+      <option value="this-quarter">This Quarter</option>
+      <option value="this-month">This Month</option>
+      <option value="last-month">Last Month</option>
+      <option value="custom">Custom &#9662;</option>
+    </select>
+    <span class="custom-range" id="custom-range">
+      <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
+      <span class="fl" style="color:rgba(255,255,255,.4)">&#8594;</span>
+      <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
+    </span>
+    <div class="vdiv"></div>
+    <span class="fl">BU</span>
+    <select class="fsel" id="bu-sel" onchange="onFilterChange()">
+      <option value="">All BUs</option>
+      <option value="Digital">Digital</option>
+      <option value="MarTech">MarTech</option>
+    </select>
+    <div class="vdiv"></div>
+    <span class="fl">Geo</span>
+    <select class="fsel" id="geo-sel" onchange="onFilterChange()">
+      <option value="">All Geos</option>
+    </select>
+    <div class="vdiv"></div>
+    <span class="fl">Head</span>
+    <select class="fsel" id="head-sel" onchange="onFilterChange()">
+      <option value="">All Heads</option>
+    </select>
     <div class="vdiv"></div>
     <span class="fl">Service</span>
     <select class="fsel" id="svc-sel" onchange="onFilterChange()">
@@ -217,7 +251,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <option value="P2P">P2P</option>
     </select>
     <div class="vdiv"></div>
-    <span class="fl">NBD Owner</span>
+    <span class="fl">Owner</span>
     <select class="fsel" id="owner-sel" onchange="onFilterChange()">
       <option value="">All Owners</option>
     </select>
@@ -230,7 +264,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="main">
 
   <div class="sec">
-    <span>NBD Client Growth <span id="nbd-period-lbl" style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none"></span></span>
+    <span>Growth Ledger <span id="nbd-period-lbl" style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none"></span></span>
     <span id="nbd-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
   </div>
 
@@ -290,11 +324,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 const PIPELINE = "115832232", STAGE = "205348626";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const FY_QUARTERS = [
+  ["april","may","june"],
+  ["july","august","september"],
+  ["october","november","december"],
+  ["january","february","march"]
+];
 
 // Hardwired NBD owner IDs (designation = NBD)
 const NBD_OWNER_IDS = ["37762663","255830830","86813698","916030451"];
 
-// Owner name lookup — covers NBD reps + varied-role owners who appear via user_role
+// Owner name lookup
 const OWNER_NAMES = {
   "37762663" :"Malav Modi",
   "255830830":"Devanshu Kumar",
@@ -332,12 +372,12 @@ const colLabel = mStr => {
 };
 
 // ════ STATE ════
-let isSyncing  = false;
-let currentFY  = "26-27";
-let allDeals   = [];
-let dealLIMap  = {};  // dealId → [{svc,bu,amount,name}]
-let nbdCohort  = {};  // companyName → {nbdOwnerId, nbdMonth}
-let tableRows  = [];
+let isSyncing   = false;
+let currentFY   = "26-27";
+let allDeals    = [];
+let dealLIMap   = {};   // dealId → [{svc,bu,amount,name}]
+let nbdCohort   = {};   // companyName → {nbdOwnerId, nbdMonth}
+let tableRows   = [];
 let currentPage = 1;
 const PAGE_SIZE = 25;
 
@@ -352,6 +392,49 @@ function getFYMonths(fy) {
   const now = new Date();
   const nowNum = parseInt(now.getFullYear())*100 + now.getMonth() + 1;
   return months.filter(ms => monthNum(ms) <= nowNum);
+}
+
+// ════ ACTIVE PERIOD MONTHS ════
+function getActivePeriodMonths() {
+  const fyMonths = getFYMonths(currentFY);
+  const sel = $("period-sel");
+  const period = sel ? sel.value : "this-fy";
+  if(period === "this-fy") return fyMonths;
+
+  const now = new Date();
+  const cm  = MFULL[now.getMonth()];
+  const cy  = now.getFullYear();
+
+  if(period === "this-month") {
+    const key = cm+"-"+cy;
+    return fyMonths.filter(m => m === key);
+  }
+
+  if(period === "last-month") {
+    const li = now.getMonth() === 0 ? 11 : now.getMonth()-1;
+    const ly = now.getMonth() === 0 ? cy-1 : cy;
+    const key = MFULL[li]+"-"+ly;
+    return fyMonths.filter(m => m === key);
+  }
+
+  if(period === "this-quarter") {
+    const qi = FY_QUARTERS.findIndex(q => q.includes(cm));
+    if(qi < 0) return fyMonths;
+    const fyParts = currentFY.split("-");
+    const y1 = 2000+parseInt(fyParts[0]), y2 = y1+1;
+    const qMonths = qi <= 2
+      ? FY_QUARTERS[qi].map(m => m+"-"+y1)
+      : FY_QUARTERS[qi].map(m => m+"-"+y2);
+    return fyMonths.filter(m => qMonths.includes(m));
+  }
+
+  if(period === "custom") {
+    const from = $("from-sel")?.value, to = $("to-sel")?.value;
+    if(!from || !to) return fyMonths;
+    return fyMonths.filter(m => monthNum(m) >= monthNum(from) && monthNum(m) <= monthNum(to));
+  }
+
+  return fyMonths;
 }
 
 // ════ LINE ITEM CLASSIFICATION (verbatim from radar.html) ════
@@ -392,10 +475,6 @@ function classifyLineItem(name) {
 }
 
 // ════ NBD COHORT IDENTIFICATION ════
-// A company is NBD if any of its deals has:
-//   owner_id in the four hardwired NBD rep IDs  (pre-Apr 2026 coverage)
-//   OR user_role_invoice_app === "NBD"           (Apr 2026+ tagged deals)
-// nbdMonth = earliest booking month among the company's NBD-tagged deals
 function identifyNBDCohort(deals) {
   const info = {};
   deals.forEach(d => {
@@ -410,13 +489,14 @@ function identifyNBDCohort(deals) {
 }
 
 // ════ BUILD TABLE ROWS ════
-// Aggregates LTV for each NBD company: all their deals in the FY from nbdMonth onwards,
-// filtered by active service / engagement / owner selections.
 function buildNBDRows() {
-  const fyMonths    = getFYMonths(currentFY);
+  const activePeriodMonths = getActivePeriodMonths();
   const activeSvc   = $("svc-sel").value;
   const activeEng   = $("eng-sel").value;
   const activeOwner = $("owner-sel").value;
+  const activeBU    = $("bu-sel").value;
+  const activeGeo   = $("geo-sel").value;
+  const activeHead  = $("head-sel").value;
   const svcSet = new Set();
   const rows   = [];
 
@@ -429,12 +509,15 @@ function buildNBDRows() {
     allDeals.forEach(d => {
       if(d.company_name !== company) return;
       if((d.dealname||"").startsWith("ON")) return;
-      if(!fyMonths.includes(d.month)) return;
+      if(!activePeriodMonths.includes(d.month)) return;
       if(monthNum(d.month) < monthNum(info.nbdMonth)) return;
+      if(activeGeo  && d.geo      !== activeGeo)  return;
+      if(activeHead && d.geo_head !== activeHead)  return;
 
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
         if(activeSvc && li.svc !== activeSvc) return;
+        if(activeBU  && li.bu  !== activeBU)  return;
         if(activeEng && engGroupFromLiName(li.name) !== activeEng) return;
         months[d.month] = (months[d.month]||0) + li.amount;
         ltv += li.amount;
@@ -453,13 +536,13 @@ function buildNBDRows() {
 function renderKPIs(rows, svcCount) {
   const totalLTV = rows.reduce((s,r) => s+r.ltv, 0);
   const count    = rows.length;
-  $("kpi-ltv").textContent     = fmtUSD(totalLTV);
+  $("kpi-ltv").textContent      = fmtUSD(totalLTV);
   $("kpi-ltv-sub").textContent  = count+" compan"+(count===1?"y":"ies")+" in view";
-  $("kpi-count").textContent   = count;
+  $("kpi-count").textContent    = count;
   $("kpi-count-sub").textContent= "Acquired via NBD";
-  $("kpi-avg").textContent     = count > 0 ? fmtUSD(Math.round(totalLTV/count)) : "—";
+  $("kpi-avg").textContent      = count > 0 ? fmtUSD(Math.round(totalLTV/count)) : "—";
   $("kpi-avg-sub").textContent  = "Total ÷ Clients";
-  $("kpi-svc").textContent     = svcCount;
+  $("kpi-svc").textContent      = svcCount;
   $("kpi-svc-sub").textContent  = "Distinct service types";
 }
 
@@ -471,7 +554,7 @@ function renderTable(rows) {
 }
 
 function renderTablePage() {
-  const fyMonths   = getFYMonths(currentFY);
+  const activePeriodMonths = getActivePeriodMonths();
   const total      = tableRows.length;
   const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
   currentPage      = Math.min(currentPage, totalPages);
@@ -484,13 +567,13 @@ function renderTablePage() {
   th += '<th style="min-width:170px">Company</th>';
   th += "<th>NBD Owner</th>";
   th += "<th>NBD Month</th>";
-  fyMonths.forEach(m => { th += '<th class="num">'+colLabel(m)+"</th>"; });
+  activePeriodMonths.forEach(m => { th += '<th class="num">'+colLabel(m)+"</th>"; });
   th += '<th class="num" style="background:#FFFBEA;color:#473400">Total LTV</th>';
   th += "</tr>";
   $("nbd-thead").innerHTML = th;
 
   if(!slice.length) {
-    const span = 4 + fyMonths.length + 1;
+    const span = 4 + activePeriodMonths.length + 1;
     $("nbd-tbody").innerHTML = '<tr><td colspan="'+span+'" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500;font-size:11px">No NBD clients found for the selected filters.</td></tr>';
     $("nbd-tfoot").innerHTML = "";
     $("nbd-pg").style.display = "none";
@@ -504,7 +587,7 @@ function renderTablePage() {
     tr += '<td style="font-weight:700;max-width:220px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
     tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
     tr += '<td class="muted">'+colLabel(r.nbdMonth)+"</td>";
-    fyMonths.forEach(m => {
+    activePeriodMonths.forEach(m => {
       const amt = r.months[m];
       tr += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="blank">—</td>';
     });
@@ -514,17 +597,17 @@ function renderTablePage() {
   });
   $("nbd-tbody").innerHTML = bodyRows.join("");
 
-  // tfoot — grand total across all rows (not just current page)
+  // tfoot — grand total across ALL rows
   const grandMonths = {};
   let grandTotal = 0;
   tableRows.forEach(r => {
-    fyMonths.forEach(m => {
+    activePeriodMonths.forEach(m => {
       if(r.months[m]) { grandMonths[m]=(grandMonths[m]||0)+r.months[m]; grandTotal+=r.months[m]; }
     });
   });
   let tf = "<tr>";
   tf += '<td colspan="4" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
-  fyMonths.forEach(m => {
+  activePeriodMonths.forEach(m => {
     const amt = grandMonths[m];
     tf += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="num" style="color:#D0D0D0;font-weight:400">—</td>';
   });
@@ -548,9 +631,9 @@ function pageNav(dir) { currentPage += dir; renderTablePage(); }
 
 // ════ RENDER ALL ════
 function renderAll() {
-  const fyMonths = getFYMonths(currentFY);
+  const activePeriodMonths = getActivePeriodMonths();
   $("nbd-period-lbl").textContent = "· FY "+currentFY;
-  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+fyMonths.length+" month"+(fyMonths.length===1?"":"s");
+  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+activePeriodMonths.length+" month"+(activePeriodMonths.length===1?"":"s");
   const { rows, svcCount } = buildNBDRows();
   renderKPIs(rows, svcCount);
   renderTable(rows);
@@ -558,18 +641,72 @@ function renderAll() {
 
 function onFilterChange() { renderAll(); }
 
-// ════ BUILD OWNER DROPDOWN (post-sync, from actual cohort data) ════
+// ════ PERIOD SELECTOR ════
+function onPeriodChange() {
+  const period = $("period-sel").value;
+  const cr = $("custom-range");
+  if(period === "custom") {
+    cr.classList.add("show");
+    populateCustomRange();
+  } else {
+    cr.classList.remove("show");
+  }
+  renderAll();
+}
+
+function populateCustomRange() {
+  const fyMonths = getFYMonths(currentFY);
+  const fromSel = $("from-sel"), toSel = $("to-sel");
+  const prevFrom = fromSel.value, prevTo = toSel.value;
+  fromSel.innerHTML = ""; toSel.innerHTML = "";
+  fyMonths.forEach(m => {
+    const lbl = colLabel(m);
+    fromSel.add(new Option(lbl, m));
+    toSel.add(new Option(lbl, m));
+  });
+  if(prevFrom && fyMonths.includes(prevFrom)) fromSel.value = prevFrom;
+  if(prevTo && fyMonths.includes(prevTo)) toSel.value = prevTo;
+  else if(fyMonths.length) toSel.value = fyMonths[fyMonths.length-1];
+}
+
+// ════ BUILD DYNAMIC DROPDOWNS ════
 function buildOwnerFilter() {
+  // Only owners who have an explicitly NBD-tagged deal (user_role_invoice_app = "NBD")
   const owners = new Map();
-  Object.values(nbdCohort).forEach(info => {
-    const id = info.nbdOwnerId;
-    if(!owners.has(id)) owners.set(id, ownerName(id));
+  allDeals.forEach(d => {
+    if(d.user_role === "NBD" && d.owner_id) {
+      if(!owners.has(d.owner_id)) owners.set(d.owner_id, ownerName(d.owner_id));
+    }
   });
   const sel = $("owner-sel");
   sel.innerHTML = '<option value="">All Owners</option>';
   [...owners.entries()].sort((a,b) => a[1].localeCompare(b[1])).forEach(([id,name]) => {
     const opt = document.createElement("option");
     opt.value = id; opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+function buildGeoFilter() {
+  const geos = new Set();
+  allDeals.forEach(d => { if(d.geo) geos.add(d.geo); });
+  const sel = $("geo-sel");
+  sel.innerHTML = '<option value="">All Geos</option>';
+  [...geos].sort().forEach(g => {
+    const opt = document.createElement("option");
+    opt.value = g; opt.textContent = g;
+    sel.appendChild(opt);
+  });
+}
+
+function buildHeadFilter() {
+  const heads = new Set();
+  allDeals.forEach(d => { if(d.geo_head) heads.add(d.geo_head); });
+  const sel = $("head-sel");
+  sel.innerHTML = '<option value="">All Heads</option>';
+  [...heads].sort().forEach(h => {
+    const opt = document.createElement("option");
+    opt.value = h; opt.textContent = h;
     sel.appendChild(opt);
   });
 }
@@ -587,7 +724,7 @@ async function fetchAllFYDeals(fy) {
   const props = [
     "dealname","amount_in_home_currency","hubspot_owner_id","closedate",
     "invoice_booking_month__invoice_app_","engagement_model__invoice_app_",
-    "company_name__invoice_app_",
+    "company_name__invoice_app_","geo__invoice_app_","geo_head__invoice_app_",
     "user_role_invoice_app","user_role__invoice_app_"
   ];
   const filters = [
@@ -615,7 +752,9 @@ async function fetchAllFYDeals(fy) {
         closedate:   (r.properties?.closedate||"").split("T")[0],
         company_name:(r.properties?.company_name__invoice_app_||"").trim(),
         month:       bm,
-        user_role:   role
+        user_role:   role,
+        geo:         (r.properties?.geo__invoice_app_||"").trim(),
+        geo_head:    (r.properties?.geo_head__invoice_app_||"").trim()
       });
     });
     after = data.paging?.next?.after||null;
@@ -654,6 +793,8 @@ async function doSync(force=false) {
     dealLIMap = await fetchLineItems(allDeals);
     nbdCohort = identifyNBDCohort(allDeals);
     buildOwnerFilter();
+    buildGeoFilter();
+    buildHeadFilter();
     renderAll();
     const cohortCount = Object.keys(nbdCohort).length;
     $("sdot").style.background="#FFDA30";
@@ -677,12 +818,21 @@ function selectFY(fy) {
   document.querySelectorAll(".fy-opt").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.fy === fy);
   });
+  $("period-sel").value = "this-fy";
+  $("custom-range").classList.remove("show");
   $("owner-sel").innerHTML = '<option value="">All Owners</option>';
+  $("geo-sel").innerHTML   = '<option value="">All Geos</option>';
+  $("head-sel").innerHTML  = '<option value="">All Heads</option>';
   doSync(true);
 }
 
 // ════ RESET ALL ════
 function resetAll() {
+  $("period-sel").value = "this-fy";
+  $("custom-range").classList.remove("show");
+  $("bu-sel").value    = "";
+  $("geo-sel").value   = "";
+  $("head-sel").value  = "";
   $("svc-sel").value   = "";
   $("eng-sel").value   = "";
   $("owner-sel").value = "";
