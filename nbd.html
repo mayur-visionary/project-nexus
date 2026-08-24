@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -61,9 +62,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .fsel option{background:#333;color:#fff}
 .fsel.sm{max-width:105px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
-.custom-range{display:none;align-items:center;gap:4px}
-.custom-range.show{display:flex}
-
 /* ── Multi-select dropdowns ── */
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,218,48,.28);background:rgba(255,218,48,.1);color:#FFDA30;font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
@@ -81,12 +79,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-item input[type=checkbox]{accent-color:#FFDA30;width:13px;height:13px;cursor:pointer;flex-shrink:0}
 .ms-item label{font-size:10px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer;letter-spacing:.02em}
 
-/* ── FY pill group ── */
-.fy-group{display:flex;border-radius:6px;overflow:hidden;border:1px solid rgba(255,218,48,.28)}
-.fy-opt{padding:5px 12px;background:transparent;color:rgba(255,218,48,.6);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;border:none;border-right:1px solid rgba(255,218,48,.18);transition:all .15s;white-space:nowrap}
-.fy-opt:last-child{border-right:none}
-.fy-opt.active{background:rgba(255,218,48,.22);color:#FFDA30}
-.fy-opt:hover:not(.active){background:rgba(255,218,48,.1);color:#FFDA30}
 
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
@@ -121,23 +113,87 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .tbl-card-sub{font-size:10px;color:#9A9A9A;font-weight:500;margin-top:2px}
 .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .nbd-table{width:100%;border-collapse:collapse;font-size:11px;min-width:600px}
-.nbd-table thead th{padding:9px 12px;background:#F7F7F7;text-align:left;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap;vertical-align:bottom}
+.nbd-table thead th{padding:9px 12px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap;vertical-align:bottom}
 .nbd-table thead th.num{text-align:right}
 .nbd-table tbody td{padding:9px 12px;border-bottom:1px solid #F5F5F5;white-space:nowrap;color:#434343;font-weight:600;vertical-align:middle}
 .nbd-table tbody td.num{text-align:right;font-weight:600}
 .nbd-table tbody td.blank{text-align:right;color:#D0D0D0;font-weight:400}
 .nbd-table tbody td.muted{color:#696969;font-weight:500}
 .nbd-table tbody tr:hover td{background:#FFFBEA}
-.nbd-table tfoot td{padding:10px 12px;background:#FFFBEA;font-size:11px;font-weight:800;border-top:2px solid #FFDA30;white-space:nowrap}
-.nbd-table tfoot td.num{text-align:right;color:#473400}
+.nbd-table tfoot td{padding:10px 12px;background:#473400;color:#FFDA30;font-size:11px;font-weight:800;border-top:2px solid #FFDA30;white-space:nowrap}
+.nbd-table tfoot td.num{text-align:right;color:#FFDA30}
 
 /* ── Pagination ── */
 .nbd-pg{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid #F2F2F2;background:#FAFAFA}
 .nbd-pg-info{font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em}
 .nbd-pg-btns{display:flex;gap:6px}
-.nbd-pg-btn{font-size:9px;font-weight:800;padding:4px 12px;border-radius:5px;border:1px solid #E0E0E0;background:#fff;color:#434343;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.04em;transition:all .15s}
+.nbd-pg-btn{font-size:9px;font-weight:800;padding:4px 12px;border-radius:6px;border:1px solid #E0E0E0;background:#fff;color:#434343;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.04em;transition:all .15s}
 .nbd-pg-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
 .nbd-pg-btn:disabled{opacity:.35;cursor:default}
+
+/* ── Momentum / Trend / Status ── */
+.trend-up  {color:#006E5E;font-weight:800;font-size:10px;white-space:nowrap}
+.trend-dn  {color:#E84040;font-weight:800;font-size:10px;white-space:nowrap}
+.trend-flat{color:#A07A00;font-weight:800;font-size:10px;white-space:nowrap}
+.trend-new {color:#9A9A9A;font-weight:600;font-size:9px;font-style:italic}
+.st-new    {color:#9A9A9A;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.st-growing{color:#006E5E;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.st-stable {color:#A07A00;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.st-risk   {color:#E84040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+
+.mom-bar{display:flex;align-items:center;gap:20px;padding:10px 18px;background:#fff;border-radius:12px;border:1px solid #E2E2E2;margin-bottom:16px;flex-wrap:wrap}
+.mom-item{display:flex;align-items:center;gap:7px}
+.mom-icon{font-size:15px;font-weight:800;line-height:1}
+.mom-info{display:flex;flex-direction:column}
+.mom-count{font-size:17px;font-weight:800;color:#434343;line-height:1}
+.mom-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-top:2px}
+.mom-div{width:1px;height:28px;background:#E8E8E8;flex-shrink:0}
+.mom-bar-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-right:4px}
+
+/* ── Sidebar layout ── */
+.nbd-layout{display:flex;gap:20px;align-items:flex-start}
+.nbd-sidebar{width:210px;flex-shrink:0;background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;position:sticky;top:16px}
+.nbd-content{flex:1;min-width:0}
+.sb-section{padding:13px 14px;border-bottom:1px solid #F0F0F0}
+.sb-section:last-child{border-bottom:none}
+.sb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:7px}
+.sb-select{width:100%;padding:7px 10px;border:1px solid #E2E2E2;border-radius:6px;font-size:11px;font-weight:600;color:#434343;font-family:'Montserrat',sans-serif;background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A9A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.sb-select:focus{border-color:#FFDA30}
+/* Sidebar status pills */
+.sb-sp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.sb-sp-acts{display:flex;gap:8px}
+.sb-sp-act{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9A9A9A;cursor:pointer}
+.sb-sp-act:hover{color:#434343;text-decoration:underline}
+.sb-sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sp{padding:6px 0;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s;font-family:'Montserrat',sans-serif;text-align:center;opacity:.32;user-select:none;color:#fff}
+.sp.active{opacity:1}
+.sp-new    {background:#9A9A9A}
+.sp-growing{background:#006E5E}
+.sp-stable {background:#B88A00}
+.sp-risk   {background:#E84040}
+
+/* ── Head Distribution Cards ── */
+.head-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.head-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;display:flex;align-items:center;gap:18px}
+.head-donut-wrap{position:relative;flex-shrink:0;width:76px;height:76px}
+.head-donut-outer{width:76px;height:76px;border-radius:50%;transform:rotate(-90deg)}
+.head-donut-hole{position:absolute;inset:14px;background:#fff;border-radius:50%;pointer-events:none}
+.head-donut-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.head-donut-n{font-size:18px;font-weight:800;color:#434343;line-height:1}
+.head-donut-s{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-top:2px}
+.head-info{flex:1;min-width:0}
+.head-name{font-size:12px;font-weight:800;color:#434343;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head-bu-tag{display:inline-block;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:2px 7px;border-radius:4px;margin-bottom:10px}
+.head-bu-martech{background:#FFF5CC;color:#A07A00}
+.head-bu-digital{background:#E8F7F2;color:#006E5E}
+.head-legend{display:grid;grid-template-columns:1fr 1fr;row-gap:5px;column-gap:8px}
+.hleg{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:600;color:#696969;white-space:nowrap}
+.hleg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.hleg-num{margin-left:auto;font-size:10px;font-weight:800;color:#434343}
+
+/* ── Charts row ── */
+.charts-row{display:none;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:700px){.charts-row{grid-template-columns:1fr}}
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
@@ -146,6 +202,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   .nbd-kpi-strip{grid-template-columns:repeat(2,1fr)}
   .main{padding:16px 18px 40px}
   .fbar{padding:10px 18px}
+  .nbd-layout{flex-direction:column}
+  .nbd-sidebar{width:100%;position:static}
+  .sb-sp-grid{grid-template-columns:repeat(4,1fr)}
+  .head-cards{grid-template-columns:1fr}
 }
 @media(max-width:480px){.nbd-kpi-strip{grid-template-columns:1fr 1fr}}
 </style>
@@ -211,36 +271,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <!-- FILTER BAR -->
 <div class="fbar">
   <div class="fbar-in">
-    <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Growth Ledger</span>
-    <div class="vdiv"></div>
     <span class="fl">Financial Year</span>
-    <div class="fy-group">
-      <button class="fy-opt" data-fy="24-25" onclick="selectFY('24-25')">FY 24-25</button>
-      <button class="fy-opt" data-fy="25-26" onclick="selectFY('25-26')">FY 25-26</button>
-      <button class="fy-opt active" data-fy="26-27" onclick="selectFY('26-27')">FY 26-27 &middot; Current</button>
-    </div>
+    <select class="fsel" id="period-sel" onchange="onPeriodChange()"></select>
     <div class="vdiv"></div>
-    <span class="fl">Period</span>
-    <select class="fsel" id="period-sel" onchange="onPeriodChange()">
-      <option value="this-fy" selected>This FY</option>
-      <option value="this-quarter">This Quarter</option>
-      <option value="this-month">This Month</option>
-      <option value="last-month">Last Month</option>
-      <option value="custom">Custom &#9662;</option>
-    </select>
-    <span class="custom-range" id="custom-range">
-      <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
-      <span class="fl" style="color:rgba(255,255,255,.4)">&#8594;</span>
-      <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
-    </span>
-    <div class="vdiv"></div>
-    <span class="fl">BU</span>
+    <span class="fl">Business Unit</span>
     <select class="fsel" id="bu-sel" onchange="onFilterChange()">
       <option value="">All BUs</option>
       <option value="Digital">Digital</option>
       <option value="MarTech">MarTech</option>
     </select>
     <div class="vdiv"></div>
+    <span class="fl">Region</span>
     <div class="ms-wrap" id="geo-ms-wrap">
       <div class="ms-btn" id="geo-ms-btn" onclick="toggleGeoMS(event)">
         <span id="geo-ms-label">All Regions</span>
@@ -258,6 +299,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
     <div class="vdiv"></div>
+    <span class="fl">Head</span>
     <div class="ms-wrap" id="head-ms-wrap">
       <div class="ms-btn" id="head-ms-btn" onclick="toggleHeadMS(event)">
         <span id="head-ms-label">All Heads</span>
@@ -275,6 +317,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
     <div class="vdiv"></div>
+    <span class="fl">Service</span>
     <div class="ms-wrap" id="svc-ms-wrap">
       <div class="ms-btn" id="svc-ms-btn" onclick="toggleSvcMS(event)">
         <span id="svc-ms-label">All Services</span>
@@ -298,11 +341,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <option value="Recurring">Recurring</option>
       <option value="P2P">P2P</option>
     </select>
-    <div class="vdiv"></div>
-    <span class="fl">Owner</span>
-    <select class="fsel" id="owner-sel" onchange="onFilterChange()">
-      <option value="">All Owners</option>
-    </select>
   </div>
 </div>
 
@@ -315,6 +353,39 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <span>Growth Ledger <span id="nbd-period-lbl" style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none"></span></span>
     <span id="nbd-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></span>
   </div>
+
+  <div class="nbd-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="nbd-sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <select class="sb-select" id="owner-sel" onchange="onFilterChange()">
+        <option value="">All Owners</option>
+      </select>
+    </div>
+    <div class="sb-section">
+      <div class="sb-sp-hdr">
+        <div class="sb-lbl" style="margin-bottom:0">Status</div>
+        <div class="sb-sp-acts">
+          <span class="sb-sp-act" onclick="setStatusFilter('')">All</span>
+          <span class="sb-sp-act" onclick="setStatusFilter('__none__')">None</span>
+        </div>
+      </div>
+      <div class="sb-sp-grid" style="margin-top:8px">
+        <span class="sp sp-new     active" id="sp-new"     onclick="toggleStatus('new')">New</span>
+        <span class="sp sp-growing active" id="sp-growing" onclick="toggleStatus('up')">Growing</span>
+        <span class="sp sp-stable  active" id="sp-stable"  onclick="toggleStatus('flat')">Stable</span>
+        <span class="sp sp-risk    active" id="sp-risk"    onclick="toggleStatus('down')">At Risk</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT CONTENT -->
+  <div class="nbd-content">
+
+  <!-- Head Distribution Cards -->
+  <div class="head-cards" id="head-cards" style="display:none"></div>
 
   <!-- KPI Strip -->
   <div class="nbd-kpi-strip">
@@ -337,6 +408,34 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="nbd-kpi-lbl">Services Active</div>
       <div class="nbd-kpi-val" id="kpi-svc">&#8212;</div>
       <div class="nbd-kpi-sub" id="kpi-svc-sub">Distinct service types</div>
+    </div>
+  </div>
+
+  <div class="mom-bar" id="mom-bar" style="display:none"></div>
+
+  <!-- Charts Row -->
+  <div class="charts-row" id="charts-row">
+    <div class="tbl-card">
+      <div class="tbl-card-hdr">
+        <div>
+          <div class="tbl-card-ttl">Monthly Portfolio Revenue</div>
+          <div class="tbl-card-sub">Total NBD portfolio bookings by month</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;height:190px;position:relative">
+        <canvas id="chart-monthly"></canvas>
+      </div>
+    </div>
+    <div class="tbl-card">
+      <div class="tbl-card-hdr">
+        <div>
+          <div class="tbl-card-ttl">Service Mix</div>
+          <div class="tbl-card-sub">LTV split by service line</div>
+        </div>
+      </div>
+      <div style="padding:16px 18px;height:190px;position:relative">
+        <canvas id="chart-svcmix"></canvas>
+      </div>
     </div>
   </div>
 
@@ -364,6 +463,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </div>
   </div>
 
+  </div><!-- /nbd-content -->
+  </div><!-- /nbd-layout -->
+
   <div class="footer">PROJECT NEXUS &nbsp;&bull;&nbsp; BY MAYUR DADLANI &nbsp;&bull;&nbsp; A JAM-STACK APPLICATION</div>
 </div>
 
@@ -372,22 +474,97 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 const PIPELINE = "115832232", STAGE = "205348626";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const FY_QUARTERS = [
-  ["april","may","june"],
-  ["july","august","september"],
-  ["october","november","december"],
-  ["january","february","march"]
-];
+
+// ── Static filter data (verbatim from Revenue Pulse) ──
+const ALL_REGIONS = ["US","UK","AU"];
+const ALL_HEADS   = ["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta"];
+const HEAD_BU_MAP = {
+  "Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech",
+  "Nevilson Christan":"Digital","Tanuj Gupta":"Digital"
+};
+const HEAD_REGIONS = {
+  "Jiggyasa Agrawal":["AU"],
+  "Tanuj Gupta":["US","UK"],
+  "Nevilson Christan":["AU","UK","US"],
+  "Jaydeep Salla":["AU","UK","US"]
+};
 
 // Hardwired NBD owner IDs (designation = NBD)
 const NBD_OWNER_IDS = ["37762663","255830830","86813698","916030451"];
 
-// Owner name lookup
+// ── Attribution registry (verbatim from Revenue Pulse) ──
+const OWNER_GROUPS={
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},
+    {id:"17738843",name:"Jaydeep Salla"},{id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713",name:"Krunal Bakraniya"},{id:"34140174",name:"Mrugesh Dabhi"},
+    {id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}
+  ],
+  "Digital — US":[
+    {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
+  ],
+  "Digital — UK":[
+    {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
+  ],
+  "Digital — AU":[
+    {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+    {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
+    {id:"263464861",name:"Saquib Khan"}
+  ],
+  "Nevilson — Team":[
+    {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663",name:"Malav Modi"}
+  ],
+  "MarTech — US":[
+    {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
+    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815",name:"Vinita Raidu"}
+  ],
+  "MarTech — UK":[
+    {id:"82911376",name:"Divya S"},{id:"916030451",name:"Kamesh Biniwale"},
+    {id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
+  ],
+  "MarTech — AU":[{id:"467997340",name:"Karan Doshi"}],
+  "Reactivation":[{id:"41490632",name:"Mukund Basita"}],
+  "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
+};
+const OWNER_GEO={
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
+  "19799470":"US","557894666":"US",
+  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
+  "86813698":"AU","255830830":"UK","37762663":"US",
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  "82030736":"UK","82911376":"UK","916030451":"US",
+  "467997340":"AU"
+};
+const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+const OWNER_BU_MAP=(()=>{
+  const m={};
+  OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    if(g==="Leaders / Heads")return;
+    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  m["107178262"]="MarTech"; m["34140174"]="MarTech"; m["17738843"]="MarTech";
+  m["17739173"]="Digital";  m["86940863"]="Digital"; m["17739548"]="Digital";
+  m["79217713"]="Digital";  m["82663745"]="Digital";
+  return m;
+})();
+
+// Owner name lookup — hardcoded base; fetchOwners() merges live HubSpot data on top
 const OWNER_NAMES = {
+  // NBD team
   "37762663" :"Malav Modi",
   "255830830":"Devanshu Kumar",
   "86813698" :"Aman Acharya",
   "916030451":"Kamesh Biniwale",
+  // AM / CSM / Growth owners
   "107178262":"Chintan Doshi",
   "467997340":"Karan Doshi",
   "82911376" :"Divya S",
@@ -398,7 +575,69 @@ const OWNER_NAMES = {
   "176516495":"Prachi Porwal",
   "82663745" :"Prativa Dubey",
   "34140174" :"Mrugesh Dabhi",
-  "79217713" :"Krunal Bakraniya"
+  "79217713" :"Krunal Bakraniya",
+  // Extended team (sourced from HubSpot owners list)
+  "17739548" :"Darshan Modi",
+  "18144037" :"Kartik Gondalia",
+  "33929953" :"Parul Shukla",
+  "34558123" :"Kaustubh Agrawal",
+  "37344296" :"Kalgi Shah",
+  "38568120" :"Baspin Thomas",
+  "41593885" :"Pankaj Suryavanshi",
+  "42663191" :"Dhaval Damania",
+  "45776165" :"Hitaishi Bhogayata",
+  "46153051" :"Ayush Rathi",
+  "46156316" :"Flintoff Mehta",
+  "47704263" :"Jagdish Jethva",
+  "51769607" :"Rachana Pandya",
+  "60885644" :"Dhrupalsinh Barad",
+  "62592521" :"Harshvardhan Sharma",
+  "67180026" :"Nida Desai",
+  "67300236" :"Nayanshi Modi",
+  "75632095" :"Subhayan Chanda",
+  "76475216" :"Merin Ron",
+  "78831011" :"Kunal Gohil",
+  "79808823" :"Twara Pandya",
+  "80212657" :"Riya Khaitan",
+  "81010756" :"Mayur Dadlani",
+  "81185925" :"Namrata Shah",
+  "81655597" :"Aditya Gandrothu",
+  "82030736" :"Sakshi Bissa",
+  "82530825" :"Deepak Eswaran",
+  "82750709" :"Khushboo Thaker",
+  "82817592" :"Debanjali Sanyal",
+  "83323893" :"Preet Bhatia",
+  "85767516" :"Rupali Sindhu",
+  "86147905" :"Preeti Thapliyal",
+  "86940863" :"Nevilson Christian",
+  "86948265" :"Himanshu Gupta",
+  "88619758" :"Gaurang Mandhana",
+  "89530815" :"Vinita Raidu",
+  "90288386" :"Jerin George",
+  "90302019" :"Saket Pawar",
+  "90303055" :"Aishwarya Lagad",
+  "90736668" :"Matt Kelly",
+  "91416849" :"Kaustubh Nag",
+  "91863235" :"Shradha Shah",
+  "93107638" :"Ayush Dhupar",
+  "93938467" :"Chintan D",
+  "94360991" :"Ajeet Dhale",
+  "94361096" :"Riddhy Mehta",
+  "94746500" :"Manvi Choumal",
+  "96389686" :"Arvind Parimoo",
+  "96641706" :"Nital Shah",
+  "97348184" :"Gaurang Padhi",
+  "98232737" :"Mayurakshi Mishra",
+  "106678788":"Krishnakumar Gupta",
+  "180297368":"Nandini Bajpayi",
+  "184435896":"Nirish Sundarra",
+  "190210211":"Monika Upadhyay",
+  "225710488":"Tripti Gupta",
+  "240935328":"Hammad Bhaldar",
+  "263464861":"Saquib Khan",
+  "284770744":"Sourya Ghosh",
+  "424927611":"Keerthi VS",
+  "505070399":"Balaji Thiyagarajan"
 };
 const ownerName = id => OWNER_NAMES[String(id)] || ("Mbr-"+String(id).slice(-4));
 
@@ -420,14 +659,15 @@ const colLabel = mStr => {
 };
 
 // ════ STATE ════
-let isSyncing   = false;
-let currentFY   = "26-27";
-let allDeals    = [];
-let dealLIMap   = {};   // dealId → [{svc,bu,amount,name}]
-let nbdCohort   = {};   // companyName → {nbdOwnerId, nbdMonth}
-let tableRows   = [];
-let currentPage = 1;
-const PAGE_SIZE = 25;
+let isSyncing      = false;
+let currentFY      = "26-27";
+let allDeals       = [];
+let dealLIMap      = {};   // dealId → [{svc,bu,amount,name}]
+let nbdCohort      = {};   // companyName → {nbdOwnerId, nbdMonth}
+let companyOwners  = {};   // companyName → hubspot_owner_id (from Companies object)
+let tableRows      = [];
+let currentPage    = 1;
+const PAGE_SIZE    = 25;
 
 // ════ FY MONTHS ════
 function getFYMonths(fy) {
@@ -442,47 +682,13 @@ function getFYMonths(fy) {
   return months.filter(ms => monthNum(ms) <= nowNum);
 }
 
-// ════ ACTIVE PERIOD MONTHS ════
-function getActivePeriodMonths() {
-  const fyMonths = getFYMonths(currentFY);
-  const sel = $("period-sel");
-  const period = sel ? sel.value : "this-fy";
-  if(period === "this-fy") return fyMonths;
 
-  const now = new Date();
-  const cm  = MFULL[now.getMonth()];
-  const cy  = now.getFullYear();
-
-  if(period === "this-month") {
-    const key = cm+"-"+cy;
-    return fyMonths.filter(m => m === key);
-  }
-
-  if(period === "last-month") {
-    const li = now.getMonth() === 0 ? 11 : now.getMonth()-1;
-    const ly = now.getMonth() === 0 ? cy-1 : cy;
-    const key = MFULL[li]+"-"+ly;
-    return fyMonths.filter(m => m === key);
-  }
-
-  if(period === "this-quarter") {
-    const qi = FY_QUARTERS.findIndex(q => q.includes(cm));
-    if(qi < 0) return fyMonths;
-    const fyParts = currentFY.split("-");
-    const y1 = 2000+parseInt(fyParts[0]), y2 = y1+1;
-    const qMonths = qi <= 2
-      ? FY_QUARTERS[qi].map(m => m+"-"+y1)
-      : FY_QUARTERS[qi].map(m => m+"-"+y2);
-    return fyMonths.filter(m => qMonths.includes(m));
-  }
-
-  if(period === "custom") {
-    const from = $("from-sel")?.value, to = $("to-sel")?.value;
-    if(!from || !to) return fyMonths;
-    return fyMonths.filter(m => monthNum(m) >= monthNum(from) && monthNum(m) <= monthNum(to));
-  }
-
-  return fyMonths;
+// ════ ENGAGEMENT HELPERS ════
+function engGroup(val){
+  if(!val)return null;
+  if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
+  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
+  return null;
 }
 
 // ════ LINE ITEM CLASSIFICATION (verbatim from radar.html) ════
@@ -522,6 +728,71 @@ function classifyLineItem(name) {
   return null;
 }
 
+// ── Ordered owner list for dropdown (Revenue Pulse display order) ──
+const ORDERED_OWNERS=[
+  {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},
+  {id:"34140174",name:"Mrugesh Dabhi"},{id:"467997340",name:"Karan Doshi"},
+  {id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},
+  {id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},
+  {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+  {id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},
+  {id:"41490632",name:"Mukund Basita"},
+  {id:"17739548",name:"Darshan Modi"},{id:"79217713",name:"Krunal Bakraniya"},
+  {id:"17739173",name:"Tanuj Gupta"},
+  {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+  {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
+  {id:"263464861",name:"Saquib Khan"},
+  {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+  {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"},
+  {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+  {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+  {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+  {id:"557894666",name:"Sudarshan Damani"},
+  {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
+  {id:"37762663",name:"Malav Modi"},
+  {id:"82663745",name:"Prativa Dubey"}
+];
+
+// ── Attribution helpers (verbatim from Revenue Pulse) ──
+function geoFromDeal(d){
+  const g=d.geo||"";
+  if(g&&GEO_MAP[g]!==undefined){ if(GEO_MAP[g])return GEO_MAP[g]; }
+  const id=String(d.owner_id||"");
+  if(OWNER_GEO[id])return OWNER_GEO[id];
+  return null;
+}
+function buFromDeal(d){
+  const oid=String(d.owner_id||"");
+  if(OWNER_BU_MAP[oid])return OWNER_BU_MAP[oid];
+  const gh=d.geo_head||"";
+  if(HEAD_BU_MAP[gh])return HEAD_BU_MAP[gh];
+  return"Digital";
+}
+function headFromDeal(d){
+  const gh=d.geo_head||"";
+  // Nevilson is not a growth head — his-labelled deals roll up via group/geo fallback below
+  if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Jaydeep Salla")return gh;
+  if(gh&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
+  if(gh==="Sheldon Fernandes"){const geo=geoFromDeal(d);return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";}
+  const oid=String(d.owner_id||"");
+  for(const[grp,owners]of Object.entries(OWNER_GROUPS)){
+    if(owners.some(o=>o.id===oid)){
+      if(grp.startsWith("MarTech")||grp==="Reactivation")return"Jaydeep Salla";
+      if(grp.includes("AU"))return"Jiggyasa Agrawal";
+      return"Tanuj Gupta";
+    }
+  }
+  const geo=geoFromDeal(d);
+  if(geo==="AU")return"Jiggyasa Agrawal";
+  return"Tanuj Gupta";
+}
+function attributeDeals(arr){
+  arr.forEach(d=>{
+    d.region=geoFromDeal(d);
+    d.head=headFromDeal(d);
+  });
+}
+
 // ════ NBD COHORT IDENTIFICATION ════
 function identifyNBDCohort(deals) {
   const info = {};
@@ -538,7 +809,7 @@ function identifyNBDCohort(deals) {
 
 // ════ BUILD TABLE ROWS ════
 function buildNBDRows() {
-  const activePeriodMonths = getActivePeriodMonths();
+  const activePeriodMonths = getFYMonths(currentFY);
   const activeEng     = $("eng-sel").value;
   const activeOwner   = $("owner-sel").value;
   const activeBU      = $("bu-sel").value;
@@ -546,41 +817,86 @@ function buildNBDRows() {
   const selectedGeos  = getSelectedRegions();
   const selectedHeads = getSelectedHeads();
   const filteringSvc  = selectedSvcs.length  < ALL_SERVICES.length;
-  const filteringGeo  = selectedGeos.length  < ALL_REGIONS_NBD.length;
-  const filteringHead = selectedHeads.length < ALL_HEADS_NBD.length;
-  const svcSet = new Set();
-  const rows   = [];
+  const filteringGeo  = selectedGeos.length  < ALL_REGIONS.length;
+  const filteringHead = selectedHeads.length < ALL_HEADS.length;
+  const svcSet    = new Set();
+  const svcTotals = {};
+  const rows      = [];
 
   Object.entries(nbdCohort).forEach(([company, info]) => {
-    if(activeOwner && info.nbdOwnerId !== activeOwner) return;
+    const growthOwnerId = companyOwners[company] || null;
+    if(activeOwner && growthOwnerId !== activeOwner) return;
 
     const months = {};
     let ltv = 0;
+    let latestMonthNum = 0;
+    let geoHead = "";
 
     allDeals.forEach(d => {
       if(d.company_name !== company) return;
       if((d.dealname||"").startsWith("ON")) return;
       if(!activePeriodMonths.includes(d.month)) return;
       if(monthNum(d.month) < monthNum(info.nbdMonth)) return;
-      if(filteringGeo  && !selectedGeos.includes(d.geo))      return;
-      if(filteringHead && !selectedHeads.includes(d.geo_head)) return;
+      if(filteringGeo  && !selectedGeos.includes(d.region))  return;
+      if(filteringHead && !selectedHeads.includes(d.head))   return;
+
+      const mn = monthNum(d.month);
+      if(mn > latestMonthNum) { latestMonthNum = mn; geoHead = d.head||""; }
 
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
         if(filteringSvc && (!li.svc || !selectedSvcs.includes(li.svc))) return;
         if(activeBU  && li.bu  !== activeBU)  return;
-        if(activeEng && engGroupFromLiName(li.name) !== activeEng) return;
+        if(activeEng) {
+          const liEng = engGroupFromLiName(li.name);
+          const eg = liEng !== null ? liEng : engGroup(d.eng_model);
+          if(eg !== activeEng) return;
+        }
         months[d.month] = (months[d.month]||0) + li.amount;
         ltv += li.amount;
-        if(li.svc) svcSet.add(li.svc);
+        if(li.svc) { svcSet.add(li.svc); svcTotals[li.svc] = (svcTotals[li.svc]||0) + li.amount; }
       });
     });
 
-    if(ltv > 0) rows.push({ company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth, months, ltv });
+    if(ltv > 0) {
+      const eligibleMonths = activePeriodMonths.filter(m => monthNum(m) >= monthNum(info.nbdMonth));
+      // Compute momentum first so we can status-filter before pushing
+      const activeAmts0 = eligibleMonths.filter(m => months[m]).map(m => months[m]);
+      let momentum0 = "new";
+      if(activeAmts0.length >= 2) {
+        const mid0 = Math.ceil(activeAmts0.length/2);
+        const af0  = activeAmts0.slice(0,mid0).reduce((s,v)=>s+v,0)/mid0;
+        const al0  = activeAmts0.slice(-mid0).reduce((s,v)=>s+v,0)/mid0;
+        const pct0 = af0 > 0 ? (al0-af0)/af0 : 0;
+        momentum0  = pct0 > 0.05 ? "up" : pct0 < -0.05 ? "down" : "flat";
+      }
+      if(activeStatusSet.size < 4 && !activeStatusSet.has(momentum0)) return;
+      const streakDots   = eligibleMonths.map(m => !!months[m]);
+      const streakActive = streakDots.filter(Boolean).length;
+
+      const activeAmts = eligibleMonths.filter(m => months[m]).map(m => months[m]);
+      let momentum = "new", momPct = 0;
+      if(activeAmts.length >= 2) {
+        const mid      = Math.ceil(activeAmts.length / 2);
+        const avgFirst = activeAmts.slice(0, mid).reduce((s,v) => s+v, 0) / mid;
+        const avgLast  = activeAmts.slice(-mid).reduce((s,v) => s+v, 0) / mid;
+        const pct      = avgFirst > 0 ? (avgLast - avgFirst) / avgFirst : 0;
+        momPct   = Math.round(Math.abs(pct) * 100);
+        momentum = pct > 0.05 ? "up" : pct < -0.05 ? "down" : "flat";
+      }
+
+      rows.push({
+        company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth,
+        growthOwnerId, geoHead,
+        months, ltv,
+        streakDots, streakActive, streakTotal: eligibleMonths.length,
+        momentum, momPct
+      });
+    }
   });
 
   rows.sort((a,b) => b.ltv - a.ltv);
-  return { rows, svcCount: svcSet.size };
+  return { rows, svcCount: svcSet.size, svcTotals };
 }
 
 // ════ RENDER KPIs ════
@@ -595,6 +911,95 @@ function renderKPIs(rows, svcCount) {
   $("kpi-avg-sub").textContent  = "Total ÷ Clients";
   $("kpi-svc").textContent      = svcCount;
   $("kpi-svc-sub").textContent  = "Distinct service types";
+
+  const mb = $("mom-bar");
+  if(!mb) return;
+  if(!rows.length) { mb.style.display = "none"; return; }
+  const growing = rows.filter(r => r.momentum === "up").length;
+  const stable  = rows.filter(r => r.momentum === "flat").length;
+  const atRisk  = rows.filter(r => r.momentum === "down").length;
+  const isNew   = rows.filter(r => r.momentum === "new").length;
+  mb.style.display = "";
+  mb.innerHTML =
+    '<span class="mom-bar-title">Momentum</span>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#006E5E">&#8593;</span><div class="mom-info"><span class="mom-count">'+growing+'</span><span class="mom-lbl">Growing</span></div></div>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#A07A00">&#8594;</span><div class="mom-info"><span class="mom-count">'+stable+'</span><span class="mom-lbl">Stable</span></div></div>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#E84040">&#8595;</span><div class="mom-info"><span class="mom-count">'+atRisk+'</span><span class="mom-lbl">At Risk</span></div></div>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#9A9A9A">&#9678;</span><div class="mom-info"><span class="mom-count">'+isNew+'</span><span class="mom-lbl">New</span></div></div>';
+}
+
+// ════ HEAD DISTRIBUTION CARDS ════
+const HEAD_CARD_HEADS = [
+  { name: "Jaydeep Salla",    bu: "MarTech", buClass: "head-bu-martech" },
+  { name: "Jiggyasa Agrawal", bu: "Digital", buClass: "head-bu-digital" },
+  { name: "Tanuj Gupta",      bu: "Digital", buClass: "head-bu-digital" }
+];
+const STATUS_COLORS = { growing:"#006E5E", stable:"#A07A00", atRisk:"#E84040", isNew:"#C0C0C0" };
+
+function makeConic(growing, stable, atRisk, isNew) {
+  const total = growing + stable + atRisk + isNew;
+  if(total === 0) return "#F0F0F0";
+  const toDeg = n => Math.round(n / total * 360);
+  const stops = []; let deg = 0;
+  const segs = [
+    [growing, STATUS_COLORS.growing],
+    [stable,  STATUS_COLORS.stable],
+    [atRisk,  STATUS_COLORS.atRisk],
+    [isNew,   STATUS_COLORS.isNew]
+  ];
+  segs.forEach(([n, col]) => {
+    if(!n) return;
+    const d = toDeg(n);
+    stops.push(`${col} ${deg}deg ${deg+d}deg`);
+    deg += d;
+  });
+  if(deg < 360) stops.push(`${STATUS_COLORS.isNew} ${deg}deg 360deg`);
+  return `conic-gradient(${stops.join(",")})`;
+}
+
+function renderHeadCards(rows) {
+  const container = $("head-cards");
+  if(!container) return;
+  if(!rows.length) { container.style.display = "none"; return; }
+
+  const cards = HEAD_CARD_HEADS.map(h => {
+    const hRows = rows.filter(r => r.geoHead === h.name);
+    const growing = hRows.filter(r => r.momentum === "up").length;
+    const stable  = hRows.filter(r => r.momentum === "flat").length;
+    const atRisk  = hRows.filter(r => r.momentum === "down").length;
+    const isNew   = hRows.filter(r => r.momentum === "new").length;
+    const total   = hRows.length;
+    const donutBg = makeConic(growing, stable, atRisk, isNew);
+    const firstName = h.name.split(" ")[0];
+
+    return `<div class="head-card">
+      <div class="head-donut-wrap">
+        <div class="head-donut-outer" style="background:${donutBg}"></div>
+        <div class="head-donut-hole"></div>
+        <div class="head-donut-lbl">
+          <span class="head-donut-n">${total}</span>
+          <span class="head-donut-s">Clients</span>
+        </div>
+      </div>
+      <div class="head-info">
+        <div class="head-name" title="${h.name}">${firstName}</div>
+        <span class="head-bu-tag ${h.buClass}">${h.bu}</span>
+        <div class="head-legend">
+          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.growing}"></span>Growing<span class="hleg-num">${growing}</span></div>
+          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.stable}"></span>Stable<span class="hleg-num">${stable}</span></div>
+          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.atRisk}"></span>At Risk<span class="hleg-num">${atRisk}</span></div>
+          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.isNew}"></span>New<span class="hleg-num">${isNew}</span></div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = cards.join("");
+  container.style.display = "";
 }
 
 // ════ RENDER TABLE ════
@@ -605,7 +1010,7 @@ function renderTable(rows) {
 }
 
 function renderTablePage() {
-  const activePeriodMonths = getActivePeriodMonths();
+  const activePeriodMonths = getFYMonths(currentFY);
   const total      = tableRows.length;
   const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
   currentPage      = Math.min(currentPage, totalPages);
@@ -615,16 +1020,20 @@ function renderTablePage() {
   // thead
   let th = "<tr>";
   th += '<th style="width:28px">#</th>';
-  th += '<th style="min-width:170px">Company</th>';
-  th += "<th>NBD Owner</th>";
-  th += "<th>NBD Month</th>";
+  th += '<th style="min-width:170px">Client</th>';
+  th += "<th>New Business Date</th>";
+  th += "<th>New Business Owner</th>";
+  th += "<th>Growth Owner</th>";
+  th += '<th class="num" style="white-space:nowrap">Streak</th>';
+  th += '<th class="num" style="white-space:nowrap">Trend</th>';
+  th += '<th class="num" style="white-space:nowrap">Status</th>';
   activePeriodMonths.forEach(m => { th += '<th class="num">'+colLabel(m)+"</th>"; });
-  th += '<th class="num" style="background:#FFFBEA;color:#473400">Total LTV</th>';
+  th += '<th class="num" style="background:#473400;color:#FFDA30">LTV</th>';
   th += "</tr>";
   $("nbd-thead").innerHTML = th;
 
   if(!slice.length) {
-    const span = 4 + activePeriodMonths.length + 1;
+    const span = 9 + activePeriodMonths.length;
     $("nbd-tbody").innerHTML = '<tr><td colspan="'+span+'" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500;font-size:11px">No NBD clients found for the selected filters.</td></tr>';
     $("nbd-tfoot").innerHTML = "";
     $("nbd-pg").style.display = "none";
@@ -633,11 +1042,35 @@ function renderTablePage() {
 
   // tbody
   const bodyRows = slice.map((r,i) => {
+    const growthOwnerHtml = !r.growthOwnerId
+      ? '<span style="color:#D0D0D0;font-style:italic;font-size:9px">—</span>'
+      : r.growthOwnerId === r.nbdOwner
+        ? '<span style="color:#9A9A9A;font-style:italic;font-size:9px">NBD</span>'
+        : ownerName(r.growthOwnerId);
+    const streakHtml = (r.streakDots||[]).map(d => d
+      ? '<span style="color:#006E5E">&#9679;</span>'
+      : '<span style="color:#E0E0E0">&#9675;</span>'
+    ).join('') + '<br><span style="color:#9A9A9A;font-size:8px">'+(r.streakActive||0)+'/'+r.streakTotal+'</span>';
+    const trendHtml = r.momentum === "up"
+      ? '<span class="trend-up">&#8593; +'+r.momPct+'%</span>'
+      : r.momentum === "down"
+        ? '<span class="trend-dn">&#8595; &minus;'+r.momPct+'%</span>'
+        : r.momentum === "flat"
+          ? '<span class="trend-flat">&#8594; &#177;'+r.momPct+'%</span>'
+          : '<span class="trend-new">&#9678; New</span>';
+    const statusHtml = r.momentum === "up"   ? '<span class="st-growing">Growing</span>'
+      : r.momentum === "down" ? '<span class="st-risk">At Risk</span>'
+      : r.momentum === "flat" ? '<span class="st-stable">Stable</span>'
+      :                         '<span class="st-new">New</span>';
     let tr = "<tr>";
     tr += '<td class="muted" style="font-size:10px">'+(start+i+1)+"</td>";
-    tr += '<td style="font-weight:700;max-width:220px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
-    tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
+    tr += '<td style="font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
     tr += '<td class="muted">'+colLabel(r.nbdMonth)+"</td>";
+    tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
+    tr += '<td class="muted">'+growthOwnerHtml+"</td>";
+    tr += '<td class="num" style="font-size:10px;line-height:1.6">'+streakHtml+"</td>";
+    tr += '<td class="num">'+trendHtml+"</td>";
+    tr += '<td class="num">'+statusHtml+"</td>";
     activePeriodMonths.forEach(m => {
       const amt = r.months[m];
       tr += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="blank">—</td>';
@@ -657,10 +1090,13 @@ function renderTablePage() {
     });
   });
   let tf = "<tr>";
-  tf += '<td colspan="4" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
+  tf += '<td colspan="5" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#FFDA30">Grand Total</td>';
+  tf += '<td></td>';
+  tf += '<td></td>';
+  tf += '<td></td>';
   activePeriodMonths.forEach(m => {
     const amt = grandMonths[m];
-    tf += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="num" style="color:#D0D0D0;font-weight:400">—</td>';
+    tf += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="num" style="color:rgba(255,218,48,.25);font-weight:400">—</td>';
   });
   tf += '<td class="num" style="font-size:12px">'+fmtUSD(grandTotal)+"</td>";
   tf += "</tr>";
@@ -680,65 +1116,185 @@ function renderTablePage() {
 
 function pageNav(dir) { currentPage += dir; renderTablePage(); }
 
+// ════ CHART RENDERING ════
+let chartMonthly = null, chartSvcMix = null;
+const SVC_COLORS = {
+  Campaign:"#3B3561", Email:"#006E5E", Design:"#FFDA30", Search:"#EF2D56", Web:"#473400"
+};
+
+function renderCharts(rows, svcTotals) {
+  const chartsRow = $("charts-row");
+  if(!chartsRow) return;
+  if(!rows.length) { chartsRow.style.display = "none"; return; }
+  chartsRow.style.display = "grid";
+
+  const fyMonths = getFYMonths(currentFY);
+  const monthLabels  = fyMonths.map(m => colLabel(m));
+  const monthAmounts = fyMonths.map(m => rows.reduce((s,r) => s+(r.months[m]||0), 0));
+
+  // Chart A — Monthly Portfolio Revenue
+  if(chartMonthly) { chartMonthly.destroy(); chartMonthly = null; }
+  const ctxA = document.getElementById("chart-monthly")?.getContext("2d");
+  if(ctxA) {
+    chartMonthly = new Chart(ctxA, {
+      type: "bar",
+      data: {
+        labels: monthLabels,
+        datasets: [{
+          data: monthAmounts,
+          backgroundColor: "rgba(255,218,48,.25)",
+          borderColor: "#FFDA30",
+          borderWidth: 2,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: {
+          callbacks: { label: ctx => fmtUSD(ctx.parsed.y) }
+        }},
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { family:"'Montserrat'", size:9 }, color:"#9A9A9A" } },
+          y: { grid: { color:"#F0F0F0" }, ticks: {
+            font: { family:"'Montserrat'", size:9 }, color:"#9A9A9A",
+            callback: v => "$"+( v >= 1000 ? Math.round(v/1000)+"k" : v)
+          }}
+        }
+      }
+    });
+  }
+
+  // Chart B — Service Mix Donut
+  if(chartSvcMix) { chartSvcMix.destroy(); chartSvcMix = null; }
+  const ctxB = document.getElementById("chart-svcmix")?.getContext("2d");
+  if(ctxB) {
+    const svcs = ALL_SERVICES.filter(s => svcTotals[s] > 0);
+    if(svcs.length) {
+      chartSvcMix = new Chart(ctxB, {
+        type: "doughnut",
+        data: {
+          labels: svcs,
+          datasets: [{
+            data: svcs.map(s => svcTotals[s]||0),
+            backgroundColor: svcs.map(s => SVC_COLORS[s]||"#C0C0C0"),
+            borderWidth: 2,
+            borderColor: "#fff",
+            hoverBorderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: "65%",
+          plugins: {
+            legend: {
+              position: "right",
+              labels: { font: { family:"'Montserrat'", size:9 }, color:"#434343", padding: 12, boxWidth: 10 }
+            },
+            tooltip: {
+              callbacks: { label: ctx => ctx.label+": "+fmtUSD(ctx.parsed) }
+            }
+          }
+        }
+      });
+    }
+  }
+}
+
 // ════ RENDER ALL ════
 function renderAll() {
-  const activePeriodMonths = getActivePeriodMonths();
+  const fyMonths = getFYMonths(currentFY);
   $("nbd-period-lbl").textContent = "· FY "+currentFY;
-  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+activePeriodMonths.length+" month"+(activePeriodMonths.length===1?"":"s");
-  const { rows, svcCount } = buildNBDRows();
+  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+fyMonths.length+" month"+(fyMonths.length===1?"":"s");
+  const { rows, svcCount, svcTotals } = buildNBDRows();
+  renderHeadCards(rows);
   renderKPIs(rows, svcCount);
+  renderCharts(rows, svcTotals);
   renderTable(rows);
 }
 
 function onFilterChange() { renderAll(); }
 
-// ════ PERIOD SELECTOR ════
-function onPeriodChange() {
-  const period = $("period-sel").value;
-  const cr = $("custom-range");
-  if(period === "custom") {
-    cr.classList.add("show");
-    populateCustomRange();
+// ════ STATUS PILL FILTER ════
+// activeStatus: Set of momentum values currently shown; empty Set = show all
+let activeStatusSet = new Set(["new","up","flat","down"]);
+const SP_VAL_MAP = { "new":"sp-new", "up":"sp-growing", "flat":"sp-stable", "down":"sp-risk" };
+
+function syncStatusPills() {
+  const allActive = activeStatusSet.size === 4;
+  Object.entries(SP_VAL_MAP).forEach(([v, id]) => {
+    const el = $(id);
+    if(el) el.classList.toggle("active", allActive || activeStatusSet.has(v));
+  });
+}
+
+function toggleStatus(val) {
+  if(activeStatusSet.size === 4) {
+    // All currently shown — click isolates to just this one
+    activeStatusSet = new Set([val]);
+  } else if(activeStatusSet.has(val) && activeStatusSet.size === 1) {
+    // Last active — reset to all
+    activeStatusSet = new Set(["new","up","flat","down"]);
+  } else if(activeStatusSet.has(val)) {
+    activeStatusSet.delete(val);
   } else {
-    cr.classList.remove("show");
+    activeStatusSet.add(val);
   }
+  syncStatusPills();
   renderAll();
 }
 
-function populateCustomRange() {
-  const fyMonths = getFYMonths(currentFY);
-  const fromSel = $("from-sel"), toSel = $("to-sel");
-  const prevFrom = fromSel.value, prevTo = toSel.value;
-  fromSel.innerHTML = ""; toSel.innerHTML = "";
-  fyMonths.forEach(m => {
-    const lbl = colLabel(m);
-    fromSel.add(new Option(lbl, m));
-    toSel.add(new Option(lbl, m));
-  });
-  if(prevFrom && fyMonths.includes(prevFrom)) fromSel.value = prevFrom;
-  if(prevTo && fyMonths.includes(prevTo)) toSel.value = prevTo;
-  else if(fyMonths.length) toSel.value = fyMonths[fyMonths.length-1];
+function setStatusFilter(val) {
+  if(val === "__none__") {
+    activeStatusSet = new Set();
+  } else {
+    activeStatusSet = new Set(["new","up","flat","down"]);
+  }
+  syncStatusPills();
+  renderAll();
 }
 
-// ════ BUILD DYNAMIC DROPDOWNS ════
+// ════ FY SELECTOR (Period dropdown) ════
+function getAvailableFYs() {
+  const now = new Date();
+  const calMonth = now.getMonth(); // 0-indexed; FY starts April = month 3
+  const fyStartYear = calMonth >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const baseFYStart = 2026; // FY 26-27 is the first tracked year
+  const fys = [];
+  for(let y = baseFYStart; y <= fyStartYear; y++) {
+    fys.push(String(y).slice(2) + "-" + String(y+1).slice(2));
+  }
+  return fys;
+}
+
+function initPeriodDropdown() {
+  const sel = $("period-sel");
+  const fys = getAvailableFYs();
+  sel.innerHTML = fys.map(fy => `<option value="${fy}">FY ${fy}</option>`).join("");
+  // Default to current (last in list)
+  if(fys.length) { sel.value = fys[fys.length-1]; currentFY = fys[fys.length-1]; }
+}
+
+function onPeriodChange() {
+  const newFY = $("period-sel").value;
+  if(newFY === currentFY && allDeals.length > 0 && !isSyncing) return;
+  currentFY = newFY;
+  doSync(true);
+}
+
+// ════ BUILD DROPDOWNS ════
 function buildOwnerFilter() {
-  // Only owners who have an explicitly NBD-tagged deal (user_role_invoice_app = "NBD")
-  const owners = new Map();
-  allDeals.forEach(d => {
-    if(d.user_role === "NBD" && d.owner_id) {
-      if(!owners.has(d.owner_id)) owners.set(d.owner_id, ownerName(d.owner_id));
-    }
-  });
+  // All registered owners in Revenue Pulse display order (filter targets growth/account owner)
   const sel = $("owner-sel");
   sel.innerHTML = '<option value="">All Owners</option>';
-  [...owners.entries()].sort((a,b) => a[1].localeCompare(b[1])).forEach(([id,name]) => {
+  ORDERED_OWNERS.forEach(({ id, name }) => {
     const opt = document.createElement("option");
     opt.value = id; opt.textContent = name;
     sel.appendChild(opt);
   });
 }
 
-// ════ SERVICE MULTI-SELECT ════
+// ════ SERVICE MULTI-SELECT (verbatim from Revenue Pulse) ════
 const ALL_SERVICES = ["Campaign","Email","Design","Search","Web"];
 function initServiceFilter() {
   $("svc-ms-list").innerHTML = ALL_SERVICES.map(s =>
@@ -754,49 +1310,103 @@ function updateSvcLabel(){
 }
 function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();renderAll();}
 function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
-function onSvcChange(){updateSvcLabel();renderAll();}
+function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(renderAll,100);}
 
-// ════ GEO MULTI-SELECT ════
-let ALL_REGIONS_NBD = [];
-function buildGeoFilter() {
-  const geos = new Set();
-  allDeals.forEach(d => { if(d.geo) geos.add(d.geo); });
-  ALL_REGIONS_NBD = [...geos].sort();
-  $("geo-ms-list").innerHTML = ALL_REGIONS_NBD.map(r =>
+// ════ GEO MULTI-SELECT (verbatim from Revenue Pulse) ════
+function initRegionFilter() {
+  $("geo-ms-list").innerHTML = ALL_REGIONS.map(r =>
     `<div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="onGeoMSChange()"><label for="geo-${r}">${r}</label></div>`
   ).join("");
   updateGeoLabel();
 }
 function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");}
-function getSelectedRegions(){return ALL_REGIONS_NBD.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
+function getSelectedRegions(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
 function updateGeoLabel(){
   const sel=getSelectedRegions();
-  $("geo-ms-label").textContent=sel.length===ALL_REGIONS_NBD.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
+  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
 }
-function selectAllGeo(){ALL_REGIONS_NBD.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();renderAll();}
-function deselectAllGeo(){ALL_REGIONS_NBD.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
-function onGeoMSChange(){updateGeoLabel();renderAll();}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();renderAll();}
+function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
+function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(renderAll,100);}
 
-// ════ HEAD MULTI-SELECT ════
-let ALL_HEADS_NBD = [];
-function buildHeadFilter() {
-  const heads = new Set();
-  allDeals.forEach(d => { if(d.geo_head) heads.add(d.geo_head); });
-  ALL_HEADS_NBD = [...heads].sort();
-  $("head-ms-list").innerHTML = ALL_HEADS_NBD.map(h =>
-    `<div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadMSChange()"><label for="head-${h.replace(/\s/g,'_')}">${h}</label></div>`
+// ════ HEAD MULTI-SELECT (verbatim from Revenue Pulse) ════
+function initHeadFilter() {
+  $("head-ms-list").innerHTML = ALL_HEADS.map(h =>
+    `<div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h.split(" ")[0]}</label></div>`
   ).join("");
   updateHeadLabel();
 }
 function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");}
-function getSelectedHeads(){return ALL_HEADS_NBD.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
+function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
 function updateHeadLabel(){
   const sel=getSelectedHeads();
-  $("head-ms-label").textContent=sel.length===ALL_HEADS_NBD.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Heads";
+  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:sel.length+" Heads";
 }
-function selectAllHeads(){ALL_HEADS_NBD.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();renderAll();}
-function deselectAllHeads(){ALL_HEADS_NBD.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
-function onHeadMSChange(){updateHeadLabel();renderAll();}
+function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();renderAll();}
+function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
+function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(renderAll,100);}
+
+// ════ SMART FILTERS — Head → BU + Head → Region cascade (verbatim from Revenue Pulse) ════
+let debTimer;
+function updateSmartFilters() {
+  const sel = getSelectedHeads();
+  const buSel = $("bu-sel");
+  const allSelected = sel.length === 0 || sel.length === ALL_HEADS.length;
+
+  if(buSel) {
+    if(allSelected) {
+      Array.from(buSel.options).forEach(o => o.style.display = "");
+    } else {
+      const validBUs = new Set(sel.map(h => HEAD_BU_MAP[h]).filter(Boolean));
+      Array.from(buSel.options).forEach(opt => {
+        if(!opt.value){opt.style.display="";return;}
+        opt.style.display = validBUs.has(opt.value) ? "" : "none";
+      });
+      if(buSel.value && !validBUs.has(buSel.value)) buSel.value = "";
+      if(validBUs.size === 1 && !buSel.value) [...validBUs].forEach(v => buSel.value = v);
+    }
+  }
+
+  if(!allSelected) {
+    const validRegions = new Set();
+    sel.forEach(h => (HEAD_REGIONS[h]||[]).forEach(r => validRegions.add(r)));
+    ALL_REGIONS.forEach(r => {
+      const e = $("geo-"+r);
+      if(e && !validRegions.has(r)) e.checked = false;
+    });
+    updateGeoLabel();
+  }
+}
+
+// ════ COMPANY OWNER LOOKUP (from HubSpot Companies object) ════
+async function fetchCompanyOwners() {
+  const names = Object.keys(nbdCohort);
+  if (!names.length) return;
+  try {
+    const res = await fetch("/companies", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ names })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    companyOwners = data.owners || {};
+  } catch(e) { /* silent — Growth Owner will show as — */ }
+}
+
+// ════ DYNAMIC OWNER LOOKUP ════
+async function fetchOwners() {
+  try {
+    const res = await fetch("/owners");
+    if(!res.ok) return;
+    const data = await res.json();
+    (data.results||[]).forEach(o => {
+      if(!o.id) return;
+      const name = [o.firstName, o.lastName].filter(Boolean).join(" ") || o.email || "";
+      if(name) OWNER_NAMES[String(o.id)] = name;
+    });
+  } catch(e) { /* silent — fallback to hardcoded map */ }
+}
 
 // ════ DATA FETCH ════
 function dedup(deals) {
@@ -841,7 +1451,8 @@ async function fetchAllFYDeals(fy) {
         month:       bm,
         user_role:   role,
         geo:         (r.properties?.geo__invoice_app_||"").trim(),
-        geo_head:    (r.properties?.geo_head__invoice_app_||"").trim()
+        geo_head:    (r.properties?.geo_head__invoice_app_||"").trim(),
+        eng_model:   (r.properties?.engagement_model__invoice_app_||"").trim()
       });
     });
     after = data.paging?.next?.after||null;
@@ -874,14 +1485,17 @@ async function doSync(force=false) {
   $("lo").classList.add("show"); $("rfbtn").disabled=true;
   $("err-bar").style.display="none";
   try {
+    $("stxt").textContent="FETCHING OWNERS...";
+    await fetchOwners();
     $("stxt").textContent="FETCHING DEALS...";
     allDeals = await fetchAllFYDeals(currentFY);
     $("stxt").textContent="FETCHING LINE ITEMS...";
     dealLIMap = await fetchLineItems(allDeals);
+    attributeDeals(allDeals);
     nbdCohort = identifyNBDCohort(allDeals);
+    $("stxt").textContent="FETCHING COMPANY OWNERS...";
+    await fetchCompanyOwners();
     buildOwnerFilter();
-    buildGeoFilter();
-    buildHeadFilter();
     renderAll();
     const cohortCount = Object.keys(nbdCohort).length;
     $("sdot").style.background="#FFDA30";
@@ -898,32 +1512,22 @@ async function doSync(force=false) {
   }
 }
 
-// ════ FY SELECTOR ════
-function selectFY(fy) {
-  if(fy === currentFY && allDeals.length > 0 && !isSyncing) return;
-  currentFY = fy;
-  document.querySelectorAll(".fy-opt").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.fy === fy);
-  });
-  $("period-sel").value = "this-fy";
-  $("custom-range").classList.remove("show");
-  $("owner-sel").innerHTML = '<option value="">All Owners</option>';
-  doSync(true);
-}
 
 // ════ RESET ALL ════
 function resetAll() {
-  $("period-sel").value = "this-fy";
-  $("custom-range").classList.remove("show");
+  initPeriodDropdown();
   $("bu-sel").value    = "";
   $("eng-sel").value   = "";
   $("owner-sel").value = "";
-  ALL_REGIONS_NBD.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
+  ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
   updateGeoLabel();
-  ALL_HEADS_NBD.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
+  ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
   updateHeadLabel();
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});
   updateSvcLabel();
+  activeStatusSet = new Set(["new","up","flat","down"]);
+  syncStatusPills();
+  updateSmartFilters();
   renderAll();
 }
 
@@ -964,6 +1568,9 @@ document.addEventListener("click", e => {
 });
 
 window.addEventListener("DOMContentLoaded",function(){
+  initPeriodDropdown();
+  initRegionFilter();
+  initHeadFilter();
   initServiceFilter();
   if(checkAuth()) doSync(true);
 });
