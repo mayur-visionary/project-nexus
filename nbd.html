@@ -130,6 +130,20 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nbd-pg-btn:hover:not(:disabled){background:#F2FEDC;border-color:#FFDA30}
 .nbd-pg-btn:disabled{opacity:.35;cursor:default}
 
+/* ── Momentum / Trend ── */
+.trend-up  {color:#006E5E;font-weight:800;font-size:10px;white-space:nowrap}
+.trend-dn  {color:#E84040;font-weight:800;font-size:10px;white-space:nowrap}
+.trend-flat{color:#B88A00;font-weight:800;font-size:10px;white-space:nowrap}
+.trend-new {color:#9A9A9A;font-weight:600;font-size:9px;font-style:italic}
+.mom-bar{display:flex;align-items:center;gap:20px;padding:10px 18px;background:#fff;border-radius:10px;border:1px solid #E2E2E2;margin-bottom:16px;flex-wrap:wrap}
+.mom-item{display:flex;align-items:center;gap:7px}
+.mom-icon{font-size:15px;font-weight:800;line-height:1}
+.mom-info{display:flex;flex-direction:column}
+.mom-count{font-size:17px;font-weight:800;color:#434343;line-height:1}
+.mom-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-top:2px}
+.mom-div{width:1px;height:28px;background:#E8E8E8;flex-shrink:0}
+.mom-bar-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-right:4px}
+
 /* ── Footer ── */
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
@@ -310,6 +324,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="nbd-kpi-sub" id="kpi-svc-sub">Distinct service types</div>
     </div>
   </div>
+
+  <div class="mom-bar" id="mom-bar" style="display:none"></div>
 
   <!-- Table card -->
   <div class="tbl-card">
@@ -493,6 +509,8 @@ function buildNBDRows() {
 
     const months = {};
     let ltv = 0;
+    let latestMonthNum = 0;
+    let latestOwner = info.nbdOwnerId;
 
     allDeals.forEach(d => {
       if(d.company_name !== company) return;
@@ -501,6 +519,9 @@ function buildNBDRows() {
       if(monthNum(d.month) < monthNum(info.nbdMonth)) return;
       if(filteringGeo  && !selectedGeos.includes(d.geo))      return;
       if(filteringHead && !selectedHeads.includes(d.geo_head)) return;
+
+      const mn = monthNum(d.month);
+      if(mn > latestMonthNum) { latestMonthNum = mn; latestOwner = d.owner_id; }
 
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
@@ -513,7 +534,30 @@ function buildNBDRows() {
       });
     });
 
-    if(ltv > 0) rows.push({ company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth, months, ltv });
+    if(ltv > 0) {
+      const eligibleMonths = activePeriodMonths.filter(m => monthNum(m) >= monthNum(info.nbdMonth));
+      const streakDots   = eligibleMonths.map(m => !!months[m]);
+      const streakActive = streakDots.filter(Boolean).length;
+
+      const activeAmts = eligibleMonths.filter(m => months[m]).map(m => months[m]);
+      let momentum = "new", momPct = 0;
+      if(activeAmts.length >= 2) {
+        const mid      = Math.ceil(activeAmts.length / 2);
+        const avgFirst = activeAmts.slice(0, mid).reduce((s,v) => s+v, 0) / mid;
+        const avgLast  = activeAmts.slice(-mid).reduce((s,v) => s+v, 0) / mid;
+        const pct      = avgFirst > 0 ? (avgLast - avgFirst) / avgFirst : 0;
+        momPct   = Math.round(Math.abs(pct) * 100);
+        momentum = pct > 0.05 ? "up" : pct < -0.05 ? "down" : "flat";
+      }
+
+      rows.push({
+        company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth,
+        currentOwner: latestOwner,
+        months, ltv,
+        streakDots, streakActive, streakTotal: eligibleMonths.length,
+        momentum, momPct
+      });
+    }
   });
 
   rows.sort((a,b) => b.ltv - a.ltv);
@@ -532,6 +576,25 @@ function renderKPIs(rows, svcCount) {
   $("kpi-avg-sub").textContent  = "Total ÷ Clients";
   $("kpi-svc").textContent      = svcCount;
   $("kpi-svc-sub").textContent  = "Distinct service types";
+
+  const mb = $("mom-bar");
+  if(!mb) return;
+  if(!rows.length) { mb.style.display = "none"; return; }
+  const growing = rows.filter(r => r.momentum === "up").length;
+  const stable  = rows.filter(r => r.momentum === "flat").length;
+  const atRisk  = rows.filter(r => r.momentum === "down").length;
+  const isNew   = rows.filter(r => r.momentum === "new").length;
+  mb.style.display = "";
+  mb.innerHTML =
+    '<span class="mom-bar-title">Momentum</span>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#006E5E">&#8593;</span><div class="mom-info"><span class="mom-count">'+growing+'</span><span class="mom-lbl">Growing</span></div></div>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#B88A00">&#8594;</span><div class="mom-info"><span class="mom-count">'+stable+'</span><span class="mom-lbl">Stable</span></div></div>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#E84040">&#8595;</span><div class="mom-info"><span class="mom-count">'+atRisk+'</span><span class="mom-lbl">At Risk</span></div></div>'+
+    '<div class="mom-div"></div>'+
+    '<div class="mom-item"><span class="mom-icon" style="color:#9A9A9A">&#9678;</span><div class="mom-info"><span class="mom-count">'+isNew+'</span><span class="mom-lbl">New</span></div></div>';
 }
 
 // ════ RENDER TABLE ════
@@ -554,14 +617,17 @@ function renderTablePage() {
   th += '<th style="width:28px">#</th>';
   th += '<th style="min-width:170px">Company</th>';
   th += "<th>NBD Owner</th>";
+  th += "<th>A/C Owner</th>";
   th += "<th>NBD Month</th>";
   activePeriodMonths.forEach(m => { th += '<th class="num">'+colLabel(m)+"</th>"; });
+  th += '<th class="num" style="white-space:nowrap">Streak</th>';
+  th += '<th class="num" style="white-space:nowrap">Trend</th>';
   th += '<th class="num" style="background:#FFFBEA;color:#473400">Total LTV</th>';
   th += "</tr>";
   $("nbd-thead").innerHTML = th;
 
   if(!slice.length) {
-    const span = 4 + activePeriodMonths.length + 1;
+    const span = 8 + activePeriodMonths.length;
     $("nbd-tbody").innerHTML = '<tr><td colspan="'+span+'" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500;font-size:11px">No NBD clients found for the selected filters.</td></tr>';
     $("nbd-tfoot").innerHTML = "";
     $("nbd-pg").style.display = "none";
@@ -570,15 +636,32 @@ function renderTablePage() {
 
   // tbody
   const bodyRows = slice.map((r,i) => {
+    const acOwnerHtml = r.currentOwner === r.nbdOwner
+      ? '<span style="color:#9A9A9A;font-style:italic;font-size:9px">NBD</span>'
+      : ownerName(r.currentOwner);
+    const streakHtml = (r.streakDots||[]).map(d => d
+      ? '<span style="color:#006E5E">&#9679;</span>'
+      : '<span style="color:#E0E0E0">&#9675;</span>'
+    ).join('') + '<br><span style="color:#9A9A9A;font-size:8px">'+(r.streakActive||0)+'/'+r.streakTotal+'</span>';
+    const trendHtml = r.momentum === "up"
+      ? '<span class="trend-up">&#8593; +'+r.momPct+'%</span>'
+      : r.momentum === "down"
+        ? '<span class="trend-dn">&#8595; &minus;'+r.momPct+'%</span>'
+        : r.momentum === "flat"
+          ? '<span class="trend-flat">&#8594; &#177;'+r.momPct+'%</span>'
+          : '<span class="trend-new">&#9678; New</span>';
     let tr = "<tr>";
     tr += '<td class="muted" style="font-size:10px">'+(start+i+1)+"</td>";
     tr += '<td style="font-weight:700;max-width:220px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
     tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
+    tr += '<td class="muted">'+acOwnerHtml+"</td>";
     tr += '<td class="muted">'+colLabel(r.nbdMonth)+"</td>";
     activePeriodMonths.forEach(m => {
       const amt = r.months[m];
       tr += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="blank">—</td>';
     });
+    tr += '<td class="num" style="font-size:10px;line-height:1.6">'+streakHtml+"</td>";
+    tr += '<td class="num">'+trendHtml+"</td>";
     tr += '<td class="num" style="font-weight:800;color:#473400">'+fmtUSD(r.ltv)+"</td>";
     tr += "</tr>";
     return tr;
@@ -594,11 +677,13 @@ function renderTablePage() {
     });
   });
   let tf = "<tr>";
-  tf += '<td colspan="4" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
+  tf += '<td colspan="5" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
   activePeriodMonths.forEach(m => {
     const amt = grandMonths[m];
     tf += amt ? '<td class="num">'+fmtUSD(amt)+"</td>" : '<td class="num" style="color:#D0D0D0;font-weight:400">—</td>';
   });
+  tf += '<td></td>';
+  tf += '<td></td>';
   tf += '<td class="num" style="font-size:12px">'+fmtUSD(grandTotal)+"</td>";
   tf += "</tr>";
   $("nbd-tfoot").innerHTML = tf;
