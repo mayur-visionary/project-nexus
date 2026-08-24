@@ -461,6 +461,71 @@ const HEAD_REGIONS = {
 // Hardwired NBD owner IDs (designation = NBD)
 const NBD_OWNER_IDS = ["37762663","255830830","86813698","916030451"];
 
+// ── Attribution registry (verbatim from Revenue Pulse) ──
+const OWNER_GROUPS={
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},
+    {id:"17738843",name:"Jaydeep Salla"},{id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713",name:"Krunal Bakraniya"},{id:"34140174",name:"Mrugesh Dabhi"},
+    {id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}
+  ],
+  "Digital — US":[
+    {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
+    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
+  ],
+  "Digital — UK":[
+    {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
+  ],
+  "Digital — AU":[
+    {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+    {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
+    {id:"263464861",name:"Saquib Khan"}
+  ],
+  "Nevilson — Team":[
+    {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663",name:"Malav Modi"}
+  ],
+  "MarTech — US":[
+    {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
+    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815",name:"Vinita Raidu"}
+  ],
+  "MarTech — UK":[
+    {id:"82911376",name:"Divya S"},{id:"916030451",name:"Kamesh Biniwale"},
+    {id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
+  ],
+  "MarTech — AU":[{id:"467997340",name:"Karan Doshi"}],
+  "Reactivation":[{id:"41490632",name:"Mukund Basita"}],
+  "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
+};
+const OWNER_GEO={
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
+  "19799470":"US","557894666":"US",
+  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
+  "86813698":"AU","255830830":"UK","37762663":"US",
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  "82030736":"UK","82911376":"UK","916030451":"US",
+  "467997340":"AU"
+};
+const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+const OWNER_BU_MAP=(()=>{
+  const m={};
+  OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
+  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
+    if(g==="Leaders / Heads")return;
+    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
+    owners.forEach(o=>{m[o.id]=bu;});
+  });
+  m["107178262"]="MarTech"; m["34140174"]="MarTech"; m["17738843"]="MarTech";
+  m["17739173"]="Digital";  m["86940863"]="Digital"; m["17739548"]="Digital";
+  m["79217713"]="Digital";  m["82663745"]="Digital";
+  return m;
+})();
+
 // Owner name lookup — hardcoded base; fetchOwners() merges live HubSpot data on top
 const OWNER_NAMES = {
   // NBD team
@@ -624,6 +689,45 @@ function classifyLineItem(name) {
   return null;
 }
 
+// ── Attribution helpers (verbatim from Revenue Pulse) ──
+function geoFromDeal(d){
+  const g=d.geo||"";
+  if(g&&GEO_MAP[g]!==undefined){ if(GEO_MAP[g])return GEO_MAP[g]; }
+  const id=String(d.owner_id||"");
+  if(OWNER_GEO[id])return OWNER_GEO[id];
+  return null;
+}
+function buFromDeal(d){
+  const oid=String(d.owner_id||"");
+  if(OWNER_BU_MAP[oid])return OWNER_BU_MAP[oid];
+  const gh=d.geo_head||"";
+  if(HEAD_BU_MAP[gh])return HEAD_BU_MAP[gh];
+  return"Digital";
+}
+function headFromDeal(d){
+  const gh=d.geo_head||"";
+  if(gh==="Tanuj Gupta"||gh==="Jiggyasa Agrawal"||gh==="Nevilson Christan"||gh==="Jaydeep Salla")return gh;
+  if(gh&&gh!=="-"&&gh.toLowerCase().includes("mrugesh"))return"Jaydeep Salla";
+  if(gh==="Sheldon Fernandes"){const geo=geoFromDeal(d);return geo==="AU"?"Jiggyasa Agrawal":"Tanuj Gupta";}
+  const oid=String(d.owner_id||"");
+  for(const[grp,owners]of Object.entries(OWNER_GROUPS)){
+    if(owners.some(o=>o.id===oid)){
+      if(grp.startsWith("MarTech")||grp==="Reactivation")return"Jaydeep Salla";
+      if(grp.includes("AU"))return"Jiggyasa Agrawal";
+      return"Tanuj Gupta";
+    }
+  }
+  const geo=geoFromDeal(d);
+  if(geo==="AU")return"Jiggyasa Agrawal";
+  return"Tanuj Gupta";
+}
+function attributeDeals(arr){
+  arr.forEach(d=>{
+    d.region=geoFromDeal(d);
+    d.head=headFromDeal(d);
+  });
+}
+
 // ════ NBD COHORT IDENTIFICATION ════
 function identifyNBDCohort(deals) {
   const info = {};
@@ -666,11 +770,11 @@ function buildNBDRows() {
       if((d.dealname||"").startsWith("ON")) return;
       if(!activePeriodMonths.includes(d.month)) return;
       if(monthNum(d.month) < monthNum(info.nbdMonth)) return;
-      if(filteringGeo  && !selectedGeos.includes(d.geo))      return;
-      if(filteringHead && !selectedHeads.includes(d.geo_head)) return;
+      if(filteringGeo  && !selectedGeos.includes(d.region))  return;
+      if(filteringHead && !selectedHeads.includes(d.head))   return;
 
       const mn = monthNum(d.month);
-      if(mn > latestMonthNum) { latestMonthNum = mn; geoHead = d.geo_head||""; }
+      if(mn > latestMonthNum) { latestMonthNum = mn; geoHead = d.head||""; }
 
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
@@ -1236,6 +1340,7 @@ async function doSync(force=false) {
     allDeals = await fetchAllFYDeals(currentFY);
     $("stxt").textContent="FETCHING LINE ITEMS...";
     dealLIMap = await fetchLineItems(allDeals);
+    attributeDeals(allDeals);
     nbdCohort = identifyNBDCohort(allDeals);
     $("stxt").textContent="FETCHING COMPANY OWNERS...";
     await fetchCompanyOwners();
