@@ -61,9 +61,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .fsel option{background:#333;color:#fff}
 .fsel.sm{max-width:105px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
-.custom-range{display:none;align-items:center;gap:4px}
-.custom-range.show{display:flex}
-
 /* ── Multi-select dropdowns ── */
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,218,48,.28);background:rgba(255,218,48,.1);color:#FFDA30;font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
@@ -81,12 +78,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-item input[type=checkbox]{accent-color:#FFDA30;width:13px;height:13px;cursor:pointer;flex-shrink:0}
 .ms-item label{font-size:10px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer;letter-spacing:.02em}
 
-/* ── FY pill group ── */
-.fy-group{display:flex;border-radius:6px;overflow:hidden;border:1px solid rgba(255,218,48,.28)}
-.fy-opt{padding:5px 12px;background:transparent;color:rgba(255,218,48,.6);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;border:none;border-right:1px solid rgba(255,218,48,.18);transition:all .15s;white-space:nowrap}
-.fy-opt:last-child{border-right:none}
-.fy-opt.active{background:rgba(255,218,48,.22);color:#FFDA30}
-.fy-opt:hover:not(.active){background:rgba(255,218,48,.1);color:#FFDA30}
 
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
@@ -211,28 +202,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <!-- FILTER BAR -->
 <div class="fbar">
   <div class="fbar-in">
-    <span class="fl" style="color:rgba(255,255,255,.55);font-size:10px;font-weight:700;letter-spacing:.02em">Growth Ledger</span>
-    <div class="vdiv"></div>
     <span class="fl">Financial Year</span>
-    <div class="fy-group">
-      <button class="fy-opt" data-fy="24-25" onclick="selectFY('24-25')">FY 24-25</button>
-      <button class="fy-opt" data-fy="25-26" onclick="selectFY('25-26')">FY 25-26</button>
-      <button class="fy-opt active" data-fy="26-27" onclick="selectFY('26-27')">FY 26-27 &middot; Current</button>
-    </div>
-    <div class="vdiv"></div>
-    <span class="fl">Period</span>
-    <select class="fsel" id="period-sel" onchange="onPeriodChange()">
-      <option value="this-fy" selected>This FY</option>
-      <option value="this-quarter">This Quarter</option>
-      <option value="this-month">This Month</option>
-      <option value="last-month">Last Month</option>
-      <option value="custom">Custom &#9662;</option>
-    </select>
-    <span class="custom-range" id="custom-range">
-      <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
-      <span class="fl" style="color:rgba(255,255,255,.4)">&#8594;</span>
-      <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
-    </span>
+    <select class="fsel" id="period-sel" onchange="onPeriodChange()"></select>
     <div class="vdiv"></div>
     <span class="fl">BU</span>
     <select class="fsel" id="bu-sel" onchange="onFilterChange()">
@@ -372,12 +343,20 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 const PIPELINE = "115832232", STAGE = "205348626";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const FY_QUARTERS = [
-  ["april","may","june"],
-  ["july","august","september"],
-  ["october","november","december"],
-  ["january","february","march"]
-];
+
+// ── Static filter data (verbatim from Revenue Pulse) ──
+const ALL_REGIONS = ["US","UK","AU"];
+const ALL_HEADS   = ["Jaydeep Salla","Jiggyasa Agrawal","Nevilson Christan","Tanuj Gupta"];
+const HEAD_BU_MAP = {
+  "Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech",
+  "Nevilson Christan":"Digital","Tanuj Gupta":"Digital"
+};
+const HEAD_REGIONS = {
+  "Jiggyasa Agrawal":["AU"],
+  "Tanuj Gupta":["US","UK"],
+  "Nevilson Christan":["AU","UK","US"],
+  "Jaydeep Salla":["AU","UK","US"]
+};
 
 // Hardwired NBD owner IDs (designation = NBD)
 const NBD_OWNER_IDS = ["37762663","255830830","86813698","916030451"];
@@ -442,48 +421,6 @@ function getFYMonths(fy) {
   return months.filter(ms => monthNum(ms) <= nowNum);
 }
 
-// ════ ACTIVE PERIOD MONTHS ════
-function getActivePeriodMonths() {
-  const fyMonths = getFYMonths(currentFY);
-  const sel = $("period-sel");
-  const period = sel ? sel.value : "this-fy";
-  if(period === "this-fy") return fyMonths;
-
-  const now = new Date();
-  const cm  = MFULL[now.getMonth()];
-  const cy  = now.getFullYear();
-
-  if(period === "this-month") {
-    const key = cm+"-"+cy;
-    return fyMonths.filter(m => m === key);
-  }
-
-  if(period === "last-month") {
-    const li = now.getMonth() === 0 ? 11 : now.getMonth()-1;
-    const ly = now.getMonth() === 0 ? cy-1 : cy;
-    const key = MFULL[li]+"-"+ly;
-    return fyMonths.filter(m => m === key);
-  }
-
-  if(period === "this-quarter") {
-    const qi = FY_QUARTERS.findIndex(q => q.includes(cm));
-    if(qi < 0) return fyMonths;
-    const fyParts = currentFY.split("-");
-    const y1 = 2000+parseInt(fyParts[0]), y2 = y1+1;
-    const qMonths = qi <= 2
-      ? FY_QUARTERS[qi].map(m => m+"-"+y1)
-      : FY_QUARTERS[qi].map(m => m+"-"+y2);
-    return fyMonths.filter(m => qMonths.includes(m));
-  }
-
-  if(period === "custom") {
-    const from = $("from-sel")?.value, to = $("to-sel")?.value;
-    if(!from || !to) return fyMonths;
-    return fyMonths.filter(m => monthNum(m) >= monthNum(from) && monthNum(m) <= monthNum(to));
-  }
-
-  return fyMonths;
-}
 
 // ════ LINE ITEM CLASSIFICATION (verbatim from radar.html) ════
 function engGroupFromLiName(name) {
@@ -538,7 +475,7 @@ function identifyNBDCohort(deals) {
 
 // ════ BUILD TABLE ROWS ════
 function buildNBDRows() {
-  const activePeriodMonths = getActivePeriodMonths();
+  const activePeriodMonths = getFYMonths(currentFY);
   const activeEng     = $("eng-sel").value;
   const activeOwner   = $("owner-sel").value;
   const activeBU      = $("bu-sel").value;
@@ -546,8 +483,8 @@ function buildNBDRows() {
   const selectedGeos  = getSelectedRegions();
   const selectedHeads = getSelectedHeads();
   const filteringSvc  = selectedSvcs.length  < ALL_SERVICES.length;
-  const filteringGeo  = selectedGeos.length  < ALL_REGIONS_NBD.length;
-  const filteringHead = selectedHeads.length < ALL_HEADS_NBD.length;
+  const filteringGeo  = selectedGeos.length  < ALL_REGIONS.length;
+  const filteringHead = selectedHeads.length < ALL_HEADS.length;
   const svcSet = new Set();
   const rows   = [];
 
@@ -605,7 +542,7 @@ function renderTable(rows) {
 }
 
 function renderTablePage() {
-  const activePeriodMonths = getActivePeriodMonths();
+  const activePeriodMonths = getFYMonths(currentFY);
   const total      = tableRows.length;
   const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
   currentPage      = Math.min(currentPage, totalPages);
@@ -682,9 +619,10 @@ function pageNav(dir) { currentPage += dir; renderTablePage(); }
 
 // ════ RENDER ALL ════
 function renderAll() {
-  const activePeriodMonths = getActivePeriodMonths();
+  const activePeriodMonths = getFYMonths(currentFY);
+  const fyMonths = getFYMonths(currentFY);
   $("nbd-period-lbl").textContent = "· FY "+currentFY;
-  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+activePeriodMonths.length+" month"+(activePeriodMonths.length===1?"":"s");
+  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+fyMonths.length+" month"+(fyMonths.length===1?"":"s");
   const { rows, svcCount } = buildNBDRows();
   renderKPIs(rows, svcCount);
   renderTable(rows);
@@ -692,32 +630,32 @@ function renderAll() {
 
 function onFilterChange() { renderAll(); }
 
-// ════ PERIOD SELECTOR ════
-function onPeriodChange() {
-  const period = $("period-sel").value;
-  const cr = $("custom-range");
-  if(period === "custom") {
-    cr.classList.add("show");
-    populateCustomRange();
-  } else {
-    cr.classList.remove("show");
+// ════ FY SELECTOR (Period dropdown) ════
+function getAvailableFYs() {
+  const now = new Date();
+  const calMonth = now.getMonth(); // 0-indexed; FY starts April = month 3
+  const fyStartYear = calMonth >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const baseFYStart = 2026; // FY 26-27 is the first tracked year
+  const fys = [];
+  for(let y = baseFYStart; y <= fyStartYear; y++) {
+    fys.push(String(y).slice(2) + "-" + String(y+1).slice(2));
   }
-  renderAll();
+  return fys;
 }
 
-function populateCustomRange() {
-  const fyMonths = getFYMonths(currentFY);
-  const fromSel = $("from-sel"), toSel = $("to-sel");
-  const prevFrom = fromSel.value, prevTo = toSel.value;
-  fromSel.innerHTML = ""; toSel.innerHTML = "";
-  fyMonths.forEach(m => {
-    const lbl = colLabel(m);
-    fromSel.add(new Option(lbl, m));
-    toSel.add(new Option(lbl, m));
-  });
-  if(prevFrom && fyMonths.includes(prevFrom)) fromSel.value = prevFrom;
-  if(prevTo && fyMonths.includes(prevTo)) toSel.value = prevTo;
-  else if(fyMonths.length) toSel.value = fyMonths[fyMonths.length-1];
+function initPeriodDropdown() {
+  const sel = $("period-sel");
+  const fys = getAvailableFYs();
+  sel.innerHTML = fys.map(fy => `<option value="${fy}">FY ${fy}</option>`).join("");
+  // Default to current (last in list)
+  if(fys.length) { sel.value = fys[fys.length-1]; currentFY = fys[fys.length-1]; }
+}
+
+function onPeriodChange() {
+  const newFY = $("period-sel").value;
+  if(newFY === currentFY && allDeals.length > 0 && !isSyncing) return;
+  currentFY = newFY;
+  doSync(true);
 }
 
 // ════ BUILD DYNAMIC DROPDOWNS ════
@@ -738,7 +676,7 @@ function buildOwnerFilter() {
   });
 }
 
-// ════ SERVICE MULTI-SELECT ════
+// ════ SERVICE MULTI-SELECT (verbatim from Revenue Pulse) ════
 const ALL_SERVICES = ["Campaign","Email","Design","Search","Web"];
 function initServiceFilter() {
   $("svc-ms-list").innerHTML = ALL_SERVICES.map(s =>
@@ -754,49 +692,73 @@ function updateSvcLabel(){
 }
 function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();renderAll();}
 function deselectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
-function onSvcChange(){updateSvcLabel();renderAll();}
+function onSvcChange(){updateSvcLabel();clearTimeout(debTimer);debTimer=setTimeout(renderAll,100);}
 
-// ════ GEO MULTI-SELECT ════
-let ALL_REGIONS_NBD = [];
-function buildGeoFilter() {
-  const geos = new Set();
-  allDeals.forEach(d => { if(d.geo) geos.add(d.geo); });
-  ALL_REGIONS_NBD = [...geos].sort();
-  $("geo-ms-list").innerHTML = ALL_REGIONS_NBD.map(r =>
+// ════ GEO MULTI-SELECT (verbatim from Revenue Pulse) ════
+function initRegionFilter() {
+  $("geo-ms-list").innerHTML = ALL_REGIONS.map(r =>
     `<div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="onGeoMSChange()"><label for="geo-${r}">${r}</label></div>`
   ).join("");
   updateGeoLabel();
 }
 function toggleGeoMS(e){e.stopPropagation();$("geo-ms-dropdown").classList.toggle("open");}
-function getSelectedRegions(){return ALL_REGIONS_NBD.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
+function getSelectedRegions(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return !e||e.checked;});}
 function updateGeoLabel(){
   const sel=getSelectedRegions();
-  $("geo-ms-label").textContent=sel.length===ALL_REGIONS_NBD.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
+  $("geo-ms-label").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Regions";
 }
-function selectAllGeo(){ALL_REGIONS_NBD.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();renderAll();}
-function deselectAllGeo(){ALL_REGIONS_NBD.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
-function onGeoMSChange(){updateGeoLabel();renderAll();}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();renderAll();}
+function deselectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
+function onGeoMSChange(){updateGeoLabel();clearTimeout(debTimer);debTimer=setTimeout(renderAll,100);}
 
-// ════ HEAD MULTI-SELECT ════
-let ALL_HEADS_NBD = [];
-function buildHeadFilter() {
-  const heads = new Set();
-  allDeals.forEach(d => { if(d.geo_head) heads.add(d.geo_head); });
-  ALL_HEADS_NBD = [...heads].sort();
-  $("head-ms-list").innerHTML = ALL_HEADS_NBD.map(h =>
-    `<div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadMSChange()"><label for="head-${h.replace(/\s/g,'_')}">${h}</label></div>`
+// ════ HEAD MULTI-SELECT (verbatim from Revenue Pulse) ════
+function initHeadFilter() {
+  $("head-ms-list").innerHTML = ALL_HEADS.map(h =>
+    `<div class="ms-item"><input type="checkbox" id="head-${h.replace(/\s/g,'_')}" checked onchange="onHeadChange()"><label for="head-${h.replace(/\s/g,'_')}">${h.split(" ")[0]}</label></div>`
   ).join("");
   updateHeadLabel();
 }
 function toggleHeadMS(e){e.stopPropagation();$("head-ms-dropdown").classList.toggle("open");}
-function getSelectedHeads(){return ALL_HEADS_NBD.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
+function getSelectedHeads(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/\s/g,"_"));return !e||e.checked;});}
 function updateHeadLabel(){
   const sel=getSelectedHeads();
-  $("head-ms-label").textContent=sel.length===ALL_HEADS_NBD.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Heads";
+  $("head-ms-label").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0].split(" ")[0]:sel.length+" Heads";
 }
-function selectAllHeads(){ALL_HEADS_NBD.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();renderAll();}
-function deselectAllHeads(){ALL_HEADS_NBD.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
-function onHeadMSChange(){updateHeadLabel();renderAll();}
+function selectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();renderAll();}
+function deselectAllHeads(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=false;});updateHeadLabel();}
+function onHeadChange(){updateHeadLabel();updateSmartFilters();clearTimeout(debTimer);debTimer=setTimeout(renderAll,100);}
+
+// ════ SMART FILTERS — Head → BU + Head → Region cascade (verbatim from Revenue Pulse) ════
+let debTimer;
+function updateSmartFilters() {
+  const sel = getSelectedHeads();
+  const buSel = $("bu-sel");
+  const allSelected = sel.length === 0 || sel.length === ALL_HEADS.length;
+
+  if(buSel) {
+    if(allSelected) {
+      Array.from(buSel.options).forEach(o => o.style.display = "");
+    } else {
+      const validBUs = new Set(sel.map(h => HEAD_BU_MAP[h]).filter(Boolean));
+      Array.from(buSel.options).forEach(opt => {
+        if(!opt.value){opt.style.display="";return;}
+        opt.style.display = validBUs.has(opt.value) ? "" : "none";
+      });
+      if(buSel.value && !validBUs.has(buSel.value)) buSel.value = "";
+      if(validBUs.size === 1 && !buSel.value) [...validBUs].forEach(v => buSel.value = v);
+    }
+  }
+
+  if(!allSelected) {
+    const validRegions = new Set();
+    sel.forEach(h => (HEAD_REGIONS[h]||[]).forEach(r => validRegions.add(r)));
+    ALL_REGIONS.forEach(r => {
+      const e = $("geo-"+r);
+      if(e && !validRegions.has(r)) e.checked = false;
+    });
+    updateGeoLabel();
+  }
+}
 
 // ════ DATA FETCH ════
 function dedup(deals) {
@@ -880,8 +842,6 @@ async function doSync(force=false) {
     dealLIMap = await fetchLineItems(allDeals);
     nbdCohort = identifyNBDCohort(allDeals);
     buildOwnerFilter();
-    buildGeoFilter();
-    buildHeadFilter();
     renderAll();
     const cohortCount = Object.keys(nbdCohort).length;
     $("sdot").style.background="#FFDA30";
@@ -898,32 +858,20 @@ async function doSync(force=false) {
   }
 }
 
-// ════ FY SELECTOR ════
-function selectFY(fy) {
-  if(fy === currentFY && allDeals.length > 0 && !isSyncing) return;
-  currentFY = fy;
-  document.querySelectorAll(".fy-opt").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.fy === fy);
-  });
-  $("period-sel").value = "this-fy";
-  $("custom-range").classList.remove("show");
-  $("owner-sel").innerHTML = '<option value="">All Owners</option>';
-  doSync(true);
-}
 
 // ════ RESET ALL ════
 function resetAll() {
-  $("period-sel").value = "this-fy";
-  $("custom-range").classList.remove("show");
+  initPeriodDropdown();
   $("bu-sel").value    = "";
   $("eng-sel").value   = "";
   $("owner-sel").value = "";
-  ALL_REGIONS_NBD.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
+  ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
   updateGeoLabel();
-  ALL_HEADS_NBD.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
+  ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
   updateHeadLabel();
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});
   updateSvcLabel();
+  updateSmartFilters();
   renderAll();
 }
 
@@ -964,6 +912,9 @@ document.addEventListener("click", e => {
 });
 
 window.addEventListener("DOMContentLoaded",function(){
+  initPeriodDropdown();
+  initRegionFilter();
+  initHeadFilter();
   initServiceFilter();
   if(checkAuth()) doSync(true);
 });
