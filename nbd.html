@@ -159,6 +159,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:7px}
 .sb-select{width:100%;padding:7px 10px;border:1px solid #E2E2E2;border-radius:6px;font-size:11px;font-weight:600;color:#434343;font-family:'Montserrat',sans-serif;background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A9A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 .sb-select:focus{border-color:#FFDA30}
+.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
+.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.nbd-sidebar .ms-dropdown{min-width:100%}
 /* Sidebar status pills */
 .sb-sp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .sb-sp-acts{display:flex;gap:8px}
@@ -360,9 +363,22 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <div class="nbd-sidebar">
     <div class="sb-section">
       <div class="sb-lbl">Owners</div>
-      <select class="sb-select" id="owner-sel" onchange="onFilterChange()">
-        <option value="">All Owners</option>
-      </select>
+      <div class="ms-wrap" id="owner-ms-wrap">
+        <div class="ms-btn sb-ms-btn" id="owner-ms-btn" onclick="toggleOwnerMS(event)">
+          <span id="owner-ms-label">All Owners</span>
+          <span class="ms-arrow">&#9662;</span>
+        </div>
+        <div class="ms-dropdown" id="owner-ms-dropdown">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Growth Owner</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllOwners()">ALL</span>
+              <span class="ms-act" onclick="deselectAllOwners()">NONE</span>
+            </div>
+          </div>
+          <div id="owner-ms-list"></div>
+        </div>
+      </div>
     </div>
     <div class="sb-section">
       <div class="sb-sp-hdr">
@@ -797,7 +813,7 @@ function attributeDeals(arr){
 function identifyNBDCohort(deals) {
   const info = {};
   deals.forEach(d => {
-    if(!d.company_name || !d.month) return;
+    if(!d.company_name || d.company_name === "(blank)" || !d.month) return;
     const isNBD = NBD_OWNER_IDS.includes(d.owner_id) || d.user_role === "NBD";
     if(!isNBD) return;
     if(!info[d.company_name] || monthNum(d.month) < monthNum(info[d.company_name].nbdMonth)) {
@@ -810,9 +826,10 @@ function identifyNBDCohort(deals) {
 // ════ BUILD TABLE ROWS ════
 function buildNBDRows() {
   const activePeriodMonths = getFYMonths(currentFY);
-  const activeEng     = $("eng-sel").value;
-  const activeOwner   = $("owner-sel").value;
-  const activeBU      = $("bu-sel").value;
+  const activeEng        = $("eng-sel").value;
+  const activeBU         = $("bu-sel").value;
+  const activeOwners     = new Set(getSelectedOwners());
+  const allOwnersSelected = activeOwners.size === ORDERED_OWNERS.length;
   const selectedSvcs  = getSelectedServices();
   const selectedGeos  = getSelectedRegions();
   const selectedHeads = getSelectedHeads();
@@ -825,7 +842,7 @@ function buildNBDRows() {
 
   Object.entries(nbdCohort).forEach(([company, info]) => {
     const growthOwnerId = companyOwners[company] || null;
-    if(activeOwner && growthOwnerId !== activeOwner) return;
+    if(!allOwnersSelected && !activeOwners.has(growthOwnerId || "")) return;
 
     const months = {};
     let ltv = 0;
@@ -1282,17 +1299,31 @@ function onPeriodChange() {
   doSync(true);
 }
 
-// ════ BUILD DROPDOWNS ════
-function buildOwnerFilter() {
-  // All registered owners in Revenue Pulse display order (filter targets growth/account owner)
-  const sel = $("owner-sel");
-  sel.innerHTML = '<option value="">All Owners</option>';
+// ════ OWNER MULTI-SELECT ════
+function initOwnerFilter() {
+  const list = $("owner-ms-list");
+  list.innerHTML = "";
   ORDERED_OWNERS.forEach(({ id, name }) => {
-    const opt = document.createElement("option");
-    opt.value = id; opt.textContent = name;
-    sel.appendChild(opt);
+    const row = document.createElement("div");
+    row.className = "ms-item";
+    row.innerHTML = `<label class="ms-item-lbl"><input type="checkbox" id="ow-${id}" value="${id}" checked onchange="onOwnerChange()"> ${name}</label>`;
+    list.appendChild(row);
   });
+  updateOwnerLabel();
 }
+function getSelectedOwners() {
+  return ORDERED_OWNERS.map(o => o.id).filter(id => { const e = $("ow-"+id); return !e || e.checked; });
+}
+function updateOwnerLabel() {
+  const sel = getSelectedOwners(), total = ORDERED_OWNERS.length;
+  $("owner-ms-label").textContent = sel.length === total ? "All Owners" : sel.length === 0 ? "No Owners" : sel.length + " Selected";
+}
+function toggleOwnerMS(e) { e.stopPropagation(); $("owner-ms-dropdown").classList.toggle("open"); }
+function selectAllOwners()   { ORDERED_OWNERS.forEach(o => { const e=$("ow-"+o.id); if(e) e.checked=true;  }); updateOwnerLabel(); onFilterChange(); }
+function deselectAllOwners() { ORDERED_OWNERS.forEach(o => { const e=$("ow-"+o.id); if(e) e.checked=false; }); updateOwnerLabel(); onFilterChange(); }
+function onOwnerChange() { updateOwnerLabel(); onFilterChange(); }
+
+// ════ BUILD DROPDOWNS ════
 
 // ════ SERVICE MULTI-SELECT (verbatim from Revenue Pulse) ════
 const ALL_SERVICES = ["Campaign","Email","Design","Search","Web"];
@@ -1495,7 +1526,7 @@ async function doSync(force=false) {
     nbdCohort = identifyNBDCohort(allDeals);
     $("stxt").textContent="FETCHING COMPANY OWNERS...";
     await fetchCompanyOwners();
-    buildOwnerFilter();
+    initOwnerFilter();
     renderAll();
     const cohortCount = Object.keys(nbdCohort).length;
     $("sdot").style.background="#FFDA30";
@@ -1518,7 +1549,7 @@ function resetAll() {
   initPeriodDropdown();
   $("bu-sel").value    = "";
   $("eng-sel").value   = "";
-  $("owner-sel").value = "";
+  selectAllOwners();
   ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
   updateGeoLabel();
   ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
@@ -1562,9 +1593,10 @@ function checkAuth(){
 }
 
 document.addEventListener("click", e => {
-  if(!$("geo-ms-wrap")?.contains(e.target))  $("geo-ms-dropdown")?.classList.remove("open");
-  if(!$("head-ms-wrap")?.contains(e.target)) $("head-ms-dropdown")?.classList.remove("open");
-  if(!$("svc-ms-wrap")?.contains(e.target))  $("svc-ms-dropdown")?.classList.remove("open");
+  if(!$("geo-ms-wrap")?.contains(e.target))   $("geo-ms-dropdown")?.classList.remove("open");
+  if(!$("head-ms-wrap")?.contains(e.target))  $("head-ms-dropdown")?.classList.remove("open");
+  if(!$("svc-ms-wrap")?.contains(e.target))   $("svc-ms-dropdown")?.classList.remove("open");
+  if(!$("owner-ms-wrap")?.contains(e.target)) $("owner-ms-dropdown")?.classList.remove("open");
 });
 
 window.addEventListener("DOMContentLoaded",function(){
