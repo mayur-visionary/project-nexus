@@ -303,7 +303,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
       <div class="ms-dropdown" id="geo-ms-dropdown">
         <div class="ms-ctrl">
-          <span class="ms-ctrl-lbl">Geo</span>
+          <span class="ms-ctrl-lbl">Region</span>
           <div class="ms-actions">
             <span class="ms-act" onclick="selectAllGeo()">All</span>
             <span class="ms-act" onclick="deselectAllGeo()">None</span>
@@ -1234,6 +1234,11 @@ function setStatusFilter(val) {
 
 // ════ NEW BUSINESS MONTH FILTER ════
 function nbmId(m) { return "nbm-"+m.replace(/[^a-zA-Z0-9]/g,"_"); }
+function fmtNBM(m) {
+  const parts = m.split("-");
+  if(parts.length < 2) return m;
+  return parts[0].charAt(0).toUpperCase()+parts[0].slice(1)+" "+parts[1];
+}
 
 function initNBMFilter() {
   const months = [...new Set(Object.values(nbdCohort).map(i => i.nbdMonth))]
@@ -1241,7 +1246,7 @@ function initNBMFilter() {
   nbmMonths = months;
   const list = $("nbm-ms-list");
   list.innerHTML = months.map(m =>
-    `<div class="ms-item"><input type="checkbox" id="${nbmId(m)}" value="${m}" checked onchange="onNBMChange()"><label for="${nbmId(m)}">${m}</label></div>`
+    `<div class="ms-item"><input type="checkbox" id="${nbmId(m)}" value="${m}" checked onchange="onNBMChange()"><label for="${nbmId(m)}">${fmtNBM(m)}</label></div>`
   ).join("");
   updateNBMLabel();
 }
