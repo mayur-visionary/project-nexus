@@ -379,11 +379,11 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="sb-sp-hdr">
         <div class="sb-lbl" style="margin-bottom:0">Status</div>
         <div class="sb-sp-acts">
-          <span class="sb-sp-act" onclick="setStatusFilter('')">All</span>
+          <span class="sb-sp-act" style="color:#006E5E" onclick="setStatusFilter('')">All</span>
           <span class="sb-sp-act" onclick="setStatusFilter('__none__')">None</span>
         </div>
       </div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px">
         <span class="sp sp-new     active" id="sp-new"     onclick="toggleStatus('new')">New</span>
         <span class="sp sp-growing active" id="sp-growing" onclick="toggleStatus('up')">Growing</span>
         <span class="sp sp-stable  active" id="sp-stable"  onclick="toggleStatus('flat')">Stable</span>
@@ -394,7 +394,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="sb-sp-hdr">
         <div class="sb-lbl" style="margin-bottom:0">Category</div>
         <div class="sb-sp-acts">
-          <span class="sb-sp-act" onclick="setCategoryFilter('')">All</span>
+          <span class="sb-sp-act" style="color:#006E5E" onclick="setCategoryFilter('')">All</span>
           <span class="sb-sp-act" onclick="setCategoryFilter('__none__')">None</span>
         </div>
       </div>
