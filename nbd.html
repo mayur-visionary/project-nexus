@@ -269,8 +269,23 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <!-- FILTER BAR -->
 <div class="fbar">
   <div class="fbar-in">
-    <span class="fl">Financial Year</span>
-    <select class="fsel" id="period-sel" onchange="onPeriodChange()"></select>
+    <span class="fl">New Business Month</span>
+    <div class="ms-wrap" id="nbm-ms-wrap">
+      <div class="ms-btn" id="nbm-ms-btn" onclick="toggleNBMMS(event)">
+        <span id="nbm-ms-label">All Months</span>
+        <span class="ms-arrow">&#9662;</span>
+      </div>
+      <div class="ms-dropdown" id="nbm-ms-dropdown">
+        <div class="ms-ctrl">
+          <span class="ms-ctrl-lbl">New Business Month</span>
+          <div class="ms-actions">
+            <span class="ms-act" onclick="selectAllNBM()">All</span>
+            <span class="ms-act" onclick="deselectAllNBM()">None</span>
+          </div>
+        </div>
+        <div id="nbm-ms-list"></div>
+      </div>
+    </div>
     <div class="vdiv"></div>
     <span class="fl">Business Unit</span>
     <select class="fsel" id="bu-sel" onchange="onFilterChange()">
@@ -660,6 +675,7 @@ const colLabel = mStr => {
 // ════ STATE ════
 let isSyncing      = false;
 let currentFY      = "26-27";
+let nbmMonths      = []; // sorted unique acquisition months from cohort
 let allDeals       = [];
 let dealLIMap      = {};   // dealId → [{svc,bu,amount,name}]
 let nbdCohort      = {};   // companyName → {nbdOwnerId, nbdMonth}
@@ -847,7 +863,11 @@ function buildNBDRows() {
   const svcSet = new Set();
   const rows   = [];
 
+  const selectedNBM      = new Set(getSelectedNBM());
+  const allNBMSelected   = selectedNBM.size === nbmMonths.length;
+
   Object.entries(nbdCohort).forEach(([company, info]) => {
+    if(!allNBMSelected && !selectedNBM.has(info.nbdMonth)) return;
     const NBD_IS_GROWTH = new Set(["467997340","82911376"]);
     const companyOwner  = companyOwners[company] || null;
     let growthOwnerId;
@@ -1158,8 +1178,10 @@ function pageNav(dir) { currentPage += dir; renderTablePage(); }
 // ════ RENDER ALL ════
 function renderAll() {
   const fyMonths = getFYMonths(currentFY);
-  $("nbd-period-lbl").textContent = "· FY "+currentFY;
-  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · FY "+currentFY+" · "+fyMonths.length+" month"+(fyMonths.length===1?"":"s");
+  const selNBM   = getSelectedNBM();
+  const nbmLbl   = selNBM.length === nbmMonths.length ? "FY "+currentFY : selNBM.length === 0 ? "No Months" : selNBM.join(", ");
+  $("nbd-period-lbl").textContent = "· "+nbmLbl;
+  $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · "+nbmLbl+" · "+fyMonths.length+" month"+(fyMonths.length===1?"":"s");
   const { rows, svcCount } = buildNBDRows();
   renderHeadCards(rows);
   renderKPIs(rows, svcCount);
@@ -1207,33 +1229,33 @@ function setStatusFilter(val) {
   renderAll();
 }
 
-// ════ FY SELECTOR (Period dropdown) ════
-function getAvailableFYs() {
-  const now = new Date();
-  const calMonth = now.getMonth(); // 0-indexed; FY starts April = month 3
-  const fyStartYear = calMonth >= 3 ? now.getFullYear() : now.getFullYear() - 1;
-  const baseFYStart = 2026; // FY 26-27 is the first tracked year
-  const fys = [];
-  for(let y = baseFYStart; y <= fyStartYear; y++) {
-    fys.push(String(y).slice(2) + "-" + String(y+1).slice(2));
-  }
-  return fys;
+// ════ NEW BUSINESS MONTH FILTER ════
+function nbmId(m) { return "nbm-"+m.replace(/[^a-zA-Z0-9]/g,"_"); }
+
+function initNBMFilter() {
+  const months = [...new Set(Object.values(nbdCohort).map(i => i.nbdMonth))]
+    .sort((a,b) => monthNum(a) - monthNum(b));
+  nbmMonths = months;
+  const list = $("nbm-ms-list");
+  list.innerHTML = months.map(m =>
+    `<div class="ms-item"><input type="checkbox" id="${nbmId(m)}" value="${m}" checked onchange="onNBMChange()"><label for="${nbmId(m)}">${m}</label></div>`
+  ).join("");
+  updateNBMLabel();
 }
 
-function initPeriodDropdown() {
-  const sel = $("period-sel");
-  const fys = getAvailableFYs();
-  sel.innerHTML = fys.map(fy => `<option value="${fy}">FY ${fy}</option>`).join("");
-  // Default to current (last in list)
-  if(fys.length) { sel.value = fys[fys.length-1]; currentFY = fys[fys.length-1]; }
+function getSelectedNBM() {
+  return nbmMonths.filter(m => { const e=$(nbmId(m)); return !e||e.checked; });
 }
 
-function onPeriodChange() {
-  const newFY = $("period-sel").value;
-  if(newFY === currentFY && allDeals.length > 0 && !isSyncing) return;
-  currentFY = newFY;
-  doSync(true);
+function updateNBMLabel() {
+  const sel=getSelectedNBM(), total=nbmMonths.length;
+  $("nbm-ms-label").textContent = sel.length===total ? "All Months" : sel.length===0 ? "No Months" : sel.length+" Month"+(sel.length===1?"":"s");
 }
+
+function toggleNBMMS(e) { e.stopPropagation(); $("nbm-ms-dropdown").classList.toggle("open"); }
+function selectAllNBM()   { nbmMonths.forEach(m=>{const e=$(nbmId(m));if(e)e.checked=true; }); updateNBMLabel(); onFilterChange(); }
+function deselectAllNBM() { nbmMonths.forEach(m=>{const e=$(nbmId(m));if(e)e.checked=false;}); updateNBMLabel(); onFilterChange(); }
+function onNBMChange()    { updateNBMLabel(); onFilterChange(); }
 
 // ════ BUILD DROPDOWNS ════
 function initOwnerFilter() {
@@ -1475,6 +1497,7 @@ async function doSync(force=false) {
     dealLIMap = await fetchLineItems(allDeals);
     attributeDeals(allDeals);
     nbdCohort = identifyNBDCohort(allDeals);
+    initNBMFilter();
     $("stxt").textContent="FETCHING COMPANY OWNERS...";
     await fetchCompanyOwners();
     initOwnerFilter();
@@ -1497,7 +1520,7 @@ async function doSync(force=false) {
 
 // ════ RESET ALL ════
 function resetAll() {
-  initPeriodDropdown();
+  selectAllNBM();
   $("bu-sel").value    = "";
   $("eng-sel").value   = "";
   selectAllOwners();
@@ -1545,6 +1568,7 @@ function checkAuth(){
 }
 
 document.addEventListener("click", e => {
+  if(!$("nbm-ms-wrap")?.contains(e.target))   $("nbm-ms-dropdown")?.classList.remove("open");
   if(!$("geo-ms-wrap")?.contains(e.target))   $("geo-ms-dropdown")?.classList.remove("open");
   if(!$("head-ms-wrap")?.contains(e.target))  $("head-ms-dropdown")?.classList.remove("open");
   if(!$("svc-ms-wrap")?.contains(e.target))   $("svc-ms-dropdown")?.classList.remove("open");
@@ -1552,7 +1576,6 @@ document.addEventListener("click", e => {
 });
 
 window.addEventListener("DOMContentLoaded",function(){
-  initPeriodDropdown();
   initRegionFilter();
   initHeadFilter();
   initServiceFilter();
