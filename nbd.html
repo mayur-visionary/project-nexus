@@ -837,9 +837,16 @@ function buildNBDRows() {
 
   Object.entries(nbdCohort).forEach(([company, info]) => {
     const NBD_IS_GROWTH = new Set(["467997340","82911376"]);
-    const growthOwnerId = NBD_IS_GROWTH.has(info.nbdOwnerId)
-      ? info.nbdOwnerId
-      : companyOwners[company] || null;
+    const companyOwner  = companyOwners[company] || null;
+    let growthOwnerId;
+    if (NBD_IS_GROWTH.has(info.nbdOwnerId)) {
+      // Karan D / Divya S: use company owner only if it has been reassigned to someone else
+      growthOwnerId = (companyOwner && !NBD_IS_GROWTH.has(companyOwner))
+        ? companyOwner
+        : info.nbdOwnerId;
+    } else {
+      growthOwnerId = companyOwner;
+    }
     if(!allOwnersSelected && !activeOwners.has(growthOwnerId || "")) return;
 
     const geoHead = headFromOwnerId(growthOwnerId);
