@@ -772,6 +772,17 @@ function headFromDeal(d){
   if(geo==="AU")return"Jiggyasa Agrawal";
   return"Tanuj Gupta";
 }
+function headFromOwnerId(oid) {
+  if (!oid) return "";
+  for (const [grp, owners] of Object.entries(OWNER_GROUPS)) {
+    if (owners.some(o => o.id === oid)) {
+      if (grp.startsWith("MarTech") || grp === "Reactivation") return "Jaydeep Salla";
+      if (grp.includes("AU")) return "Jiggyasa Agrawal";
+      return "Tanuj Gupta";
+    }
+  }
+  return "Tanuj Gupta";
+}
 function attributeDeals(arr){
   arr.forEach(d=>{
     d.region=geoFromDeal(d);
@@ -813,21 +824,18 @@ function buildNBDRows() {
     const growthOwnerId = companyOwners[company] || null;
     if(!allOwnersSelected && !activeOwners.has(growthOwnerId || "")) return;
 
+    const geoHead = headFromOwnerId(growthOwnerId);
+    if(filteringHead && !selectedHeads.includes(geoHead)) return;
+
     const months = {};
     let ltv = 0;
-    let latestMonthNum = 0;
-    let geoHead = "";
 
     allDeals.forEach(d => {
       if(d.company_name !== company) return;
       if((d.dealname||"").startsWith("ON")) return;
       if(!activePeriodMonths.includes(d.month)) return;
       if(monthNum(d.month) < monthNum(info.nbdMonth)) return;
-      if(filteringGeo  && !selectedGeos.includes(d.region))  return;
-      if(filteringHead && !selectedHeads.includes(d.head))   return;
-
-      const mn = monthNum(d.month);
-      if(mn > latestMonthNum) { latestMonthNum = mn; geoHead = d.head||""; }
+      if(filteringGeo && !selectedGeos.includes(d.region)) return;
 
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
