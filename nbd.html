@@ -836,7 +836,10 @@ function buildNBDRows() {
   const rows   = [];
 
   Object.entries(nbdCohort).forEach(([company, info]) => {
-    const growthOwnerId = companyOwners[company] || null;
+    const NBD_IS_GROWTH = new Set(["467997340","82911376"]);
+    const growthOwnerId = NBD_IS_GROWTH.has(info.nbdOwnerId)
+      ? info.nbdOwnerId
+      : companyOwners[company] || null;
     if(!allOwnersSelected && !activeOwners.has(growthOwnerId || "")) return;
 
     const geoHead = headFromOwnerId(growthOwnerId);
