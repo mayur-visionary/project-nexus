@@ -818,7 +818,7 @@ function identifyNBDCohort(deals) {
     const isNBD = NBD_OWNER_IDS.includes(d.owner_id) || d.user_role === "NBD";
     if(!isNBD) return;
     if(!info[d.company_name] || monthNum(d.month) < monthNum(info[d.company_name].nbdMonth)) {
-      info[d.company_name] = { nbdOwnerId: d.owner_id, nbdMonth: d.month };
+      info[d.company_name] = { nbdOwnerId: d.owner_id, nbdMonth: d.month, dealId: d.id };
     }
   });
   return info;
@@ -1410,19 +1410,31 @@ function updateSmartFilters() {
   }
 }
 
-// ════ COMPANY OWNER LOOKUP (from HubSpot Companies object) ════
+// ════ COMPANY OWNER LOOKUP (via HubSpot Associations: deal → company → owner) ════
 async function fetchCompanyOwners() {
-  const names = Object.keys(nbdCohort);
-  if (!names.length) return;
+  const entries = Object.entries(nbdCohort);
+  if (!entries.length) return;
+  // Build dealId → companyName index so we can reconstruct name→owner after the fetch
+  const dealIdToName = {};
+  const dealIds = [];
+  entries.forEach(([name, cohort]) => {
+    if (cohort.dealId) { dealIdToName[cohort.dealId] = name; dealIds.push(cohort.dealId); }
+  });
+  if (!dealIds.length) return;
   try {
     const res = await fetch("/companies", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ names })
+      body: JSON.stringify({ dealIds })
     });
     if (!res.ok) return;
     const data = await res.json();
-    companyOwners = data.owners || {};
+    // data.owners = { dealId → ownerId }  — map back to companyName → ownerId
+    companyOwners = {};
+    Object.entries(data.owners || {}).forEach(([dealId, ownerId]) => {
+      const name = dealIdToName[dealId];
+      if (name && ownerId) companyOwners[name] = ownerId;
+    });
   } catch(e) { /* silent — Growth Owner will show as — */ }
 }
 
