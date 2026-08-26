@@ -1342,7 +1342,10 @@ async function fetchCompanyOwners() {
     });
     Object.entries(data.categories || {}).forEach(([dealId, cat]) => {
       const name = dealIdToName[dealId];
-      if (name && cat) companyCategories[name] = cat === "Direct Client" ? "direct" : "agency";
+      if (name && cat) {
+        const mapped = cat.includes("Direct Client") ? "direct" : cat.includes("Agency") ? "agency" : "";
+        if (mapped) companyCategories[name] = mapped;
+      }
     });
   } catch(e) { /* silent — Growth Owner / Category will show as — */ }
 }
