@@ -50,9 +50,10 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ── Step 2: company IDs → owners + category via batch read ──
+    // ── Step 2: company IDs → owners + category + name via batch read ──
     const companyOwners   = {}; // companyId → ownerId
     const companyIndustry = {}; // companyId → agency___dc_master_com
+    const companyNames    = {}; // companyId → name
     const companyIds = [...new Set(Object.values(dealToCompany))];
     const COMPANY_BATCH = 100;
 
@@ -61,7 +62,7 @@ export async function onRequestPost(context) {
       const res = await fetch("https://api.hubapi.com/crm/v3/objects/companies/batch/read", {
         method: "POST",
         headers: hdrs,
-        body: JSON.stringify({ inputs: batch.map(id => ({ id })), properties: ["hubspot_owner_id", "agency___dc_master_com"] })
+        body: JSON.stringify({ inputs: batch.map(id => ({ id })), properties: ["hubspot_owner_id", "agency___dc_master_com", "name"] })
       });
       if (!res.ok) continue;
       const data = await res.json();
@@ -69,22 +70,27 @@ export async function onRequestPost(context) {
         const companyId = String(r.id || "");
         const ownerId   = String(r.properties?.hubspot_owner_id || "");
         const industry  = String(r.properties?.agency___dc_master_com || "");
-        if (companyId && ownerId)  companyOwners[companyId]   = ownerId;
-        if (companyId && industry) companyIndustry[companyId] = industry;
+        const realName  = String(r.properties?.name || "");
+        if (companyId && ownerId)   companyOwners[companyId]   = ownerId;
+        if (companyId && industry)  companyIndustry[companyId] = industry;
+        if (companyId && realName)  companyNames[companyId]    = realName;
       });
     }
 
-    // ── Build dealId → ownerId / category result ──
+    // ── Build dealId → ownerId / category / name result ──
     const owners     = {};
     const categories = {};
+    const names      = {};
     Object.entries(dealToCompany).forEach(([dealId, companyId]) => {
       const ownerId  = companyOwners[companyId];
       const industry = companyIndustry[companyId];
+      const realName = companyNames[companyId];
       if (ownerId)  owners[dealId]     = ownerId;
       if (industry) categories[dealId] = industry;
+      if (realName) names[dealId]      = realName;
     });
 
-    return new Response(JSON.stringify({ owners, categories }), {
+    return new Response(JSON.stringify({ owners, categories, names }), {
       status: 200, headers: { "Content-Type": "application/json" }
     });
 

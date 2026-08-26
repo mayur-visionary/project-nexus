@@ -1344,6 +1344,22 @@ async function fetchCompanyOwners() {
     });
     if (!res.ok) return;
     const data = await res.json();
+
+    // Fix placeholder company names (e.g. "(blank)") using the real name from HubSpot Companies
+    Object.entries(data.names || {}).forEach(([dealId, realName]) => {
+      const oldName = dealIdToName[dealId];
+      if (!oldName || !realName || oldName === realName) return;
+      if (oldName !== "(blank)") return; // only correct known placeholder
+      if (nbdCohort[realName]) return;   // avoid collision if real name already exists
+      // Rename in nbdCohort
+      nbdCohort[realName] = nbdCohort[oldName];
+      delete nbdCohort[oldName];
+      // Update dealIdToName so owner/category are stored under the real name
+      dealIdToName[dealId] = realName;
+      // Rename in allDeals so revenue lookup matches
+      allDeals.forEach(d => { if (d.company_name === oldName) d.company_name = realName; });
+    });
+
     companyOwners = {};
     companyCategories = {};
     Object.entries(data.owners || {}).forEach(([dealId, ownerId]) => {
