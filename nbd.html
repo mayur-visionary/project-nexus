@@ -134,8 +134,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .trend-up  {color:#006E5E;font-weight:800;font-size:10px;white-space:nowrap}
 .trend-dn  {color:#E84040;font-weight:800;font-size:10px;white-space:nowrap}
 .trend-flat{color:#B88A00;font-weight:800;font-size:10px;white-space:nowrap}
-.trend-new {color:#9A9A9A;font-weight:600;font-size:9px;font-style:italic}
-.st-new    {color:#9A9A9A;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.trend-undef{color:#9A9A9A;font-weight:600;font-size:9px;font-style:italic}
+.st-undef  {color:#9A9A9A;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .st-growing{color:#006E5E;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .st-stable {color:#B88A00;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .st-risk   {color:#E84040;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
@@ -168,10 +168,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sb-sp-act:hover{color:#434343;text-decoration:underline}
 .sp{padding:6px 0;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s;font-family:'Montserrat',sans-serif;text-align:center;opacity:.32;user-select:none;color:#fff;flex:1}
 .sp.active{opacity:1}
-.sp-new    {background:#0CCE6B;color:#111}
 .sp-growing{background:#006E5E}
 .sp-stable {background:#FFDA30;color:#111}
 .sp-risk   {background:#EF2D56}
+.sp-undef  {background:#E8E8E8;color:#696969}
 .sp-agency {background:#3B3561;color:#FFDA30}
 .sp-direct {background:#FFDA30;color:#111}
 
@@ -399,10 +399,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px">
-        <span class="sp sp-new     active" id="sp-new"     onclick="toggleStatus('new')">New</span>
         <span class="sp sp-growing active" id="sp-growing" onclick="toggleStatus('up')">Growing</span>
         <span class="sp sp-stable  active" id="sp-stable"  onclick="toggleStatus('flat')">Stable</span>
-        <span class="sp sp-risk    active" id="sp-risk"    onclick="toggleStatus('down')">At Risk</span>
+        <span class="sp sp-risk    active" id="sp-risk"    style="grid-column:1/-1" onclick="toggleStatus('down')">At Risk</span>
+        <span class="sp sp-undef   active" id="sp-undef"   style="grid-column:1/-1" onclick="toggleStatus('undef')">Undefined</span>
       </div>
     </div>
     <div class="sb-section">
@@ -917,7 +917,7 @@ function buildNBDRows() {
       const eligibleMonths = activePeriodMonths.filter(m => monthNum(m) >= monthNum(info.nbdMonth));
       // Compute momentum first so we can status-filter before pushing
       const activeAmts0 = eligibleMonths.filter(m => months[m]).map(m => months[m]);
-      let momentum0 = "new";
+      let momentum0 = "undef";
       if(activeAmts0.length >= 2) {
         const mid0 = Math.ceil(activeAmts0.length/2);
         const af0  = activeAmts0.slice(0,mid0).reduce((s,v)=>s+v,0)/mid0;
@@ -930,7 +930,7 @@ function buildNBDRows() {
       const streakActive = streakDots.filter(Boolean).length;
 
       const activeAmts = eligibleMonths.filter(m => months[m]).map(m => months[m]);
-      let momentum = "new", momPct = 0;
+      let momentum = "undef", momPct = 0;
       if(activeAmts.length >= 2) {
         const mid      = Math.ceil(activeAmts.length / 2);
         const avgFirst = activeAmts.slice(0, mid).reduce((s,v) => s+v, 0) / mid;
@@ -973,7 +973,7 @@ function renderKPIs(rows, svcCount) {
   const growing = rows.filter(r => r.momentum === "up").length;
   const stable  = rows.filter(r => r.momentum === "flat").length;
   const atRisk  = rows.filter(r => r.momentum === "down").length;
-  const isNew   = rows.filter(r => r.momentum === "new").length;
+  const isNew   = rows.filter(r => r.momentum === "undef").length;
   mb.style.display = "";
   mb.innerHTML =
     '<span class="mom-bar-title">Momentum</span>'+
@@ -984,7 +984,7 @@ function renderKPIs(rows, svcCount) {
     '<div class="mom-div"></div>'+
     '<div class="mom-item"><span class="mom-icon" style="color:#E84040">&#8595;</span><div class="mom-info"><span class="mom-count">'+atRisk+'</span><span class="mom-lbl">At Risk</span></div></div>'+
     '<div class="mom-div"></div>'+
-    '<div class="mom-item"><span class="mom-icon" style="color:#9A9A9A">&#9678;</span><div class="mom-info"><span class="mom-count">'+isNew+'</span><span class="mom-lbl">New</span></div></div>';
+    '<div class="mom-item"><span class="mom-icon" style="color:#9A9A9A">&#9472;</span><div class="mom-info"><span class="mom-count">'+isNew+'</span><span class="mom-lbl">Undefined</span></div></div>';
 }
 
 // ════ HEAD DISTRIBUTION CARDS ════
@@ -1026,7 +1026,7 @@ function renderHeadCards(rows) {
     const growing = hRows.filter(r => r.momentum === "up").length;
     const stable  = hRows.filter(r => r.momentum === "flat").length;
     const atRisk  = hRows.filter(r => r.momentum === "down").length;
-    const isNew   = hRows.filter(r => r.momentum === "new").length;
+    const isNew   = hRows.filter(r => r.momentum === "undef").length;
     const total   = hRows.length;
     const donutBg = makeConic(growing, stable, atRisk, isNew);
     const firstName = h.name.split(" ")[0];
@@ -1047,7 +1047,7 @@ function renderHeadCards(rows) {
           <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.growing}"></span>Growing<span class="hleg-num">${growing}</span></div>
           <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.stable}"></span>Stable<span class="hleg-num">${stable}</span></div>
           <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.atRisk}"></span>At Risk<span class="hleg-num">${atRisk}</span></div>
-          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.isNew}"></span>New<span class="hleg-num">${isNew}</span></div>
+          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.isNew}"></span>Undefined<span class="hleg-num">${isNew}</span></div>
         </div>
       </div>
     </div>`;
@@ -1113,11 +1113,11 @@ function renderTablePage() {
         ? '<span class="trend-dn">&#8595; &minus;'+r.momPct+'%</span>'
         : r.momentum === "flat"
           ? '<span class="trend-flat">&#8594; &#177;'+r.momPct+'%</span>'
-          : '<span class="trend-new">&#9678; New</span>';
+          : '<span class="trend-undef">&#9472; Undefined</span>';
     const statusHtml = r.momentum === "up"   ? '<span class="st-growing">Growing</span>'
       : r.momentum === "down" ? '<span class="st-risk">At Risk</span>'
       : r.momentum === "flat" ? '<span class="st-stable">Stable</span>'
-      :                         '<span class="st-new">New</span>';
+      :                         '<span class="st-undef">Undefined</span>';
     let tr = "<tr>";
     tr += '<td class="muted" style="font-size:10px">'+(start+i+1)+"</td>";
     tr += '<td style="font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
@@ -1192,8 +1192,8 @@ function onFilterChange() { renderAll(); }
 
 // ════ STATUS PILL FILTER ════
 // activeStatus: Set of momentum values currently shown; empty Set = show all
-let activeStatusSet = new Set(["new","up","flat","down"]);
-const SP_VAL_MAP = { "new":"sp-new", "up":"sp-growing", "flat":"sp-stable", "down":"sp-risk" };
+let activeStatusSet = new Set(["undef","up","flat","down"]);
+const SP_VAL_MAP = { "undef":"sp-undef", "up":"sp-growing", "flat":"sp-stable", "down":"sp-risk" };
 
 function syncStatusPills() {
   const allActive = activeStatusSet.size === 4;
@@ -1209,7 +1209,7 @@ function toggleStatus(val) {
     activeStatusSet = new Set([val]);
   } else if(activeStatusSet.has(val) && activeStatusSet.size === 1) {
     // Last active — reset to all
-    activeStatusSet = new Set(["new","up","flat","down"]);
+    activeStatusSet = new Set(["undef","up","flat","down"]);
   } else if(activeStatusSet.has(val)) {
     activeStatusSet.delete(val);
   } else {
@@ -1223,7 +1223,7 @@ function setStatusFilter(val) {
   if(val === "__none__") {
     activeStatusSet = new Set();
   } else {
-    activeStatusSet = new Set(["new","up","flat","down"]);
+    activeStatusSet = new Set(["undef","up","flat","down"]);
   }
   syncStatusPills();
   renderAll();
@@ -1531,7 +1531,7 @@ function resetAll() {
   updateHeadLabel();
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});
   updateSvcLabel();
-  activeStatusSet = new Set(["new","up","flat","down"]);
+  activeStatusSet = new Set(["undef","up","flat","down"]);
   syncStatusPills();
   updateSmartFilters();
   renderAll();
