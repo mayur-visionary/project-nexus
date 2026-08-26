@@ -1,11 +1,11 @@
 // functions/companies.js
-// Cloudflare Pages Function — resolves Growth Owner for NBD deals via HubSpot Associations.
+// Cloudflare Pages Function — resolves Growth Owner + Category for NBD deals via HubSpot Associations.
 //
 // Input:  { dealIds: string[] }
-// Output: { owners: { "<dealId>": "<hubspot_owner_id>" } }
+// Output: { owners: { "<dealId>": "<hubspot_owner_id>" }, categories: { "<dealId>": "<uplers_industry>" } }
 //
 // Step 1: Batch resolve deal → company via /crm/v4/associations/deals/companies/batch/read
-// Step 2: Batch fetch company owners via /crm/v3/objects/companies/batch/read
+// Step 2: Batch fetch company owners + industry via /crm/v3/objects/companies/batch/read
 // No name matching — the association graph is the authoritative link.
 
 export async function onRequestPost(context) {
@@ -20,7 +20,7 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const dealIds = (body.dealIds || []).filter(Boolean);
     if (!dealIds.length) {
-      return new Response(JSON.stringify({ owners: {} }), {
+      return new Response(JSON.stringify({ owners: {}, categories: {} }), {
         status: 200, headers: { "Content-Type": "application/json" }
       });
     }
@@ -50,8 +50,9 @@ export async function onRequestPost(context) {
       });
     }
 
-    // ── Step 2: company IDs → owners via batch read ──
-    const companyOwners = {}; // companyId → ownerId
+    // ── Step 2: company IDs → owners + industry via batch read ──
+    const companyOwners   = {}; // companyId → ownerId
+    const companyIndustry = {}; // companyId → uplers_industry
     const companyIds = [...new Set(Object.values(dealToCompany))];
     const COMPANY_BATCH = 100;
 
@@ -60,25 +61,30 @@ export async function onRequestPost(context) {
       const res = await fetch("https://api.hubapi.com/crm/v3/objects/companies/batch/read", {
         method: "POST",
         headers: hdrs,
-        body: JSON.stringify({ inputs: batch.map(id => ({ id })), properties: ["hubspot_owner_id"] })
+        body: JSON.stringify({ inputs: batch.map(id => ({ id })), properties: ["hubspot_owner_id", "uplers_industry"] })
       });
       if (!res.ok) continue;
       const data = await res.json();
       (data.results || []).forEach(r => {
         const companyId = String(r.id || "");
         const ownerId   = String(r.properties?.hubspot_owner_id || "");
-        if (companyId && ownerId) companyOwners[companyId] = ownerId;
+        const industry  = String(r.properties?.uplers_industry  || "");
+        if (companyId && ownerId)  companyOwners[companyId]   = ownerId;
+        if (companyId && industry) companyIndustry[companyId] = industry;
       });
     }
 
-    // ── Build dealId → ownerId result ──
-    const owners = {};
+    // ── Build dealId → ownerId / category result ──
+    const owners     = {};
+    const categories = {};
     Object.entries(dealToCompany).forEach(([dealId, companyId]) => {
-      const ownerId = companyOwners[companyId];
-      if (ownerId) owners[dealId] = ownerId;
+      const ownerId  = companyOwners[companyId];
+      const industry = companyIndustry[companyId];
+      if (ownerId)  owners[dealId]     = ownerId;
+      if (industry) categories[dealId] = industry;
     });
 
-    return new Response(JSON.stringify({ owners }), {
+    return new Response(JSON.stringify({ owners, categories }), {
       status: 200, headers: { "Content-Type": "application/json" }
     });
 

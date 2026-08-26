@@ -158,21 +158,19 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sb-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:7px}
 .sb-select{width:100%;padding:7px 10px;border:1px solid #E2E2E2;border-radius:6px;font-size:11px;font-weight:600;color:#434343;font-family:'Montserrat',sans-serif;background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239A9A9A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 .sb-select:focus{border-color:#FFDA30}
-.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
-.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
-.nbd-sidebar .ms-dropdown{min-width:100%}
 /* Sidebar status pills */
 .sb-sp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
 .sb-sp-acts{display:flex;gap:8px}
 .sb-sp-act{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#AAAAAA;cursor:pointer}
 .sb-sp-act:hover{color:#434343;text-decoration:underline}
-.sb-sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.sp{padding:6px 0;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s;font-family:'Montserrat',sans-serif;text-align:center;opacity:.32;user-select:none;color:#fff}
+.sp{padding:6px 0;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:opacity .15s;font-family:'Montserrat',sans-serif;text-align:center;opacity:.32;user-select:none;color:#fff;flex:1}
 .sp.active{opacity:1}
-.sp-new    {background:#8A8A8A}
+.sp-new    {background:#0CCE6B;color:#111}
 .sp-growing{background:#006E5E}
-.sp-stable {background:#B88A00}
-.sp-risk   {background:#E84040}
+.sp-stable {background:#FFDA30;color:#111}
+.sp-risk   {background:#EF2D56}
+.sp-agency {background:#3B3561;color:#FFDA30}
+.sp-direct {background:#FFDA30;color:#111}
 
 /* ── Head Distribution Cards ── */
 .head-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
@@ -202,7 +200,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   .fbar{padding:10px 18px}
   .nbd-layout{flex-direction:column}
   .nbd-sidebar{width:100%;position:static}
-  .sb-sp-grid{grid-template-columns:repeat(4,1fr)}
   .head-cards{grid-template-columns:1fr}
 }
 @media(max-width:480px){.nbd-kpi-strip{grid-template-columns:1fr 1fr}}
@@ -357,23 +354,14 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <!-- LEFT SIDEBAR -->
   <div class="nbd-sidebar">
     <div class="sb-section">
-      <div class="sb-lbl">Owners</div>
-      <div class="ms-wrap" id="owner-ms-wrap">
-        <div class="ms-btn sb-ms-btn" id="owner-ms-btn" onclick="toggleOwnerMS(event)">
-          <span id="owner-ms-label">All Owners</span>
-          <span class="ms-arrow">&#9662;</span>
-        </div>
-        <div class="ms-dropdown" id="owner-ms-dropdown">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Growth Owner</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllOwners()">ALL</span>
-              <span class="ms-act" onclick="deselectAllOwners()">NONE</span>
-            </div>
-          </div>
-          <div id="owner-ms-list"></div>
+      <div class="sb-sp-hdr">
+        <div class="sb-lbl" style="margin-bottom:0">Growth Owner</div>
+        <div class="sb-sp-acts">
+          <span class="sb-sp-act" onclick="selectAllOwners()">ALL</span>
+          <span class="sb-sp-act" onclick="deselectAllOwners()">NONE</span>
         </div>
       </div>
+      <div id="owner-ms-list" style="margin-top:6px;max-height:220px;overflow-y:auto"></div>
     </div>
     <div class="sb-section">
       <div class="sb-sp-hdr">
@@ -383,11 +371,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <span class="sb-sp-act" onclick="setStatusFilter('__none__')">None</span>
         </div>
       </div>
-      <div class="sb-sp-grid" style="margin-top:8px">
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
         <span class="sp sp-new     active" id="sp-new"     onclick="toggleStatus('new')">New</span>
         <span class="sp sp-growing active" id="sp-growing" onclick="toggleStatus('up')">Growing</span>
         <span class="sp sp-stable  active" id="sp-stable"  onclick="toggleStatus('flat')">Stable</span>
         <span class="sp sp-risk    active" id="sp-risk"    onclick="toggleStatus('down')">At Risk</span>
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-sp-hdr">
+        <div class="sb-lbl" style="margin-bottom:0">Category</div>
+        <div class="sb-sp-acts">
+          <span class="sb-sp-act" onclick="setCategoryFilter('')">All</span>
+          <span class="sb-sp-act" onclick="setCategoryFilter('__none__')">None</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px">
+        <span class="sp sp-agency active" id="sp-agency" onclick="toggleCategory('agency')">Agency</span>
+        <span class="sp sp-direct active" id="sp-direct" onclick="toggleCategory('direct')">Direct Client</span>
       </div>
     </div>
   </div>
@@ -650,7 +651,9 @@ let currentFY      = "26-27";
 let allDeals       = [];
 let dealLIMap      = {};   // dealId → [{svc,bu,amount,name}]
 let nbdCohort      = {};   // companyName → {nbdOwnerId, nbdMonth}
-let companyOwners  = {};   // companyName → hubspot_owner_id (from Companies object)
+let companyOwners      = {};   // companyName → hubspot_owner_id (from Companies object)
+let companyCategories  = {};   // companyName → "agency" | "direct"
+let activeCategoryFilters = new Set(["agency","direct"]);
 let tableRows      = [];
 let currentPage    = 1;
 const PAGE_SIZE    = 25;
@@ -783,6 +786,18 @@ function headFromOwnerId(oid) {
   }
   return "Tanuj Gupta";
 }
+function getCategory(company) { return companyCategories[company] || ""; }
+function toggleCategory(cat) {
+  if(activeCategoryFilters.has(cat)) activeCategoryFilters.delete(cat);
+  else activeCategoryFilters.add(cat);
+  $("sp-"+cat)?.classList.toggle("active", activeCategoryFilters.has(cat));
+  onFilterChange();
+}
+function setCategoryFilter(v) {
+  activeCategoryFilters = v === '' ? new Set(["agency","direct"]) : new Set();
+  ["agency","direct"].forEach(c => $("sp-"+c)?.classList.toggle("active", activeCategoryFilters.has(c)));
+  onFilterChange();
+}
 function attributeDeals(arr){
   arr.forEach(d=>{
     d.region=geoFromDeal(d);
@@ -826,6 +841,10 @@ function buildNBDRows() {
 
     const geoHead = headFromOwnerId(growthOwnerId);
     if(filteringHead && !selectedHeads.includes(geoHead)) return;
+
+    const cat = getCategory(company);
+    const allCatsSelected = activeCategoryFilters.size >= 2;
+    if(!allCatsSelected && cat && !activeCategoryFilters.has(cat)) return;
 
     const months = {};
     let ltv = 0;
@@ -881,7 +900,7 @@ function buildNBDRows() {
 
       rows.push({
         company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth,
-        growthOwnerId, geoHead,
+        growthOwnerId, geoHead, cat,
         months, ltv,
         streakDots, streakActive, streakTotal: eligibleMonths.length,
         momentum, momPct
@@ -1015,6 +1034,7 @@ function renderTablePage() {
   let th = "<tr>";
   th += '<th style="width:28px">#</th>';
   th += '<th style="min-width:170px">Client</th>';
+  th += '<th>Category</th>';
   th += "<th>New Business Date</th>";
   th += "<th>New Business Owner</th>";
   th += "<th>Growth Owner</th>";
@@ -1027,7 +1047,7 @@ function renderTablePage() {
   $("nbd-thead").innerHTML = th;
 
   if(!slice.length) {
-    const span = 9 + activePeriodMonths.length;
+    const span = 10 + activePeriodMonths.length;
     $("nbd-tbody").innerHTML = '<tr><td colspan="'+span+'" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500;font-size:11px">No NBD clients found for the selected filters.</td></tr>';
     $("nbd-tfoot").innerHTML = "";
     $("nbd-pg").style.display = "none";
@@ -1059,6 +1079,9 @@ function renderTablePage() {
     let tr = "<tr>";
     tr += '<td class="muted" style="font-size:10px">'+(start+i+1)+"</td>";
     tr += '<td style="font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis" title="'+r.company+'">'+r.company+"</td>";
+    const catLabel = r.cat === "agency" ? "Agency" : r.cat === "direct" ? "Direct Client" : "—";
+    const catColor = r.cat === "agency" ? "#3B3561" : r.cat === "direct" ? "#B88A00" : "#D0D0D0";
+    tr += '<td class="muted" style="font-size:9px;font-weight:700;color:'+catColor+'">'+catLabel+"</td>";
     tr += '<td class="muted">'+colLabel(r.nbdMonth)+"</td>";
     tr += '<td class="muted">'+ownerName(r.nbdOwner)+"</td>";
     tr += '<td class="muted">'+growthOwnerHtml+"</td>";
@@ -1084,7 +1107,7 @@ function renderTablePage() {
     });
   });
   let tf = "<tr>";
-  tf += '<td colspan="5" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
+  tf += '<td colspan="6" style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#473400">Grand Total</td>';
   tf += '<td></td>';
   tf += '<td></td>';
   tf += '<td></td>';
@@ -1200,19 +1223,13 @@ function initOwnerFilter() {
     row.innerHTML = `<label class="ms-item-lbl"><input type="checkbox" id="ow-${id}" value="${id}" checked onchange="onOwnerChange()"> ${name}</label>`;
     list.appendChild(row);
   });
-  updateOwnerLabel();
 }
 function getSelectedOwners() {
   return ORDERED_OWNERS.map(o => o.id).filter(id => { const e = $("ow-"+id); return !e || e.checked; });
 }
-function updateOwnerLabel() {
-  const sel = getSelectedOwners(), total = ORDERED_OWNERS.length;
-  $("owner-ms-label").textContent = sel.length === total ? "All Owners" : sel.length === 0 ? "No Owners" : sel.length + " Selected";
-}
-function toggleOwnerMS(e) { e.stopPropagation(); $("owner-ms-dropdown").classList.toggle("open"); }
-function selectAllOwners()   { ORDERED_OWNERS.forEach(o => { const e = $("ow-"+o.id); if(e) e.checked = true;  }); updateOwnerLabel(); onFilterChange(); }
-function deselectAllOwners() { ORDERED_OWNERS.forEach(o => { const e = $("ow-"+o.id); if(e) e.checked = false; }); updateOwnerLabel(); onFilterChange(); }
-function onOwnerChange() { updateOwnerLabel(); onFilterChange(); }
+function selectAllOwners()   { ORDERED_OWNERS.forEach(o => { const e = $("ow-"+o.id); if(e) e.checked = true;  }); onFilterChange(); }
+function deselectAllOwners() { ORDERED_OWNERS.forEach(o => { const e = $("ow-"+o.id); if(e) e.checked = false; }); onFilterChange(); }
+function onOwnerChange() { onFilterChange(); }
 
 // ════ SERVICE MULTI-SELECT (verbatim from Revenue Pulse) ════
 const ALL_SERVICES = ["Campaign","Email","Design","Search","Web"];
@@ -1318,11 +1335,16 @@ async function fetchCompanyOwners() {
     if (!res.ok) return;
     const data = await res.json();
     companyOwners = {};
+    companyCategories = {};
     Object.entries(data.owners || {}).forEach(([dealId, ownerId]) => {
       const name = dealIdToName[dealId];
       if (name && ownerId) companyOwners[name] = ownerId;
     });
-  } catch(e) { /* silent — Growth Owner will show as — */ }
+    Object.entries(data.categories || {}).forEach(([dealId, cat]) => {
+      const name = dealIdToName[dealId];
+      if (name && cat) companyCategories[name] = cat === "Direct Client" ? "direct" : "agency";
+    });
+  } catch(e) { /* silent — Growth Owner / Category will show as — */ }
 }
 
 // ════ DYNAMIC OWNER LOOKUP ════
@@ -1450,6 +1472,7 @@ function resetAll() {
   $("bu-sel").value    = "";
   $("eng-sel").value   = "";
   selectAllOwners();
+  setCategoryFilter('');
   ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
   updateGeoLabel();
   ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
@@ -1493,10 +1516,9 @@ function checkAuth(){
 }
 
 document.addEventListener("click", e => {
-  if(!$("geo-ms-wrap")?.contains(e.target))   $("geo-ms-dropdown")?.classList.remove("open");
-  if(!$("head-ms-wrap")?.contains(e.target))  $("head-ms-dropdown")?.classList.remove("open");
-  if(!$("svc-ms-wrap")?.contains(e.target))   $("svc-ms-dropdown")?.classList.remove("open");
-  if(!$("owner-ms-wrap")?.contains(e.target)) $("owner-ms-dropdown")?.classList.remove("open");
+  if(!$("geo-ms-wrap")?.contains(e.target))  $("geo-ms-dropdown")?.classList.remove("open");
+  if(!$("head-ms-wrap")?.contains(e.target)) $("head-ms-dropdown")?.classList.remove("open");
+  if(!$("svc-ms-wrap")?.contains(e.target))  $("svc-ms-dropdown")?.classList.remove("open");
 });
 
 window.addEventListener("DOMContentLoaded",function(){
