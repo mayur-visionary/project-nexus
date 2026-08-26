@@ -783,7 +783,7 @@ function attributeDeals(arr){
 function identifyNBDCohort(deals) {
   const info = {};
   deals.forEach(d => {
-    if(!d.company_name || d.company_name === "(blank)" || !d.month) return;
+    if(!d.company_name || !d.month) return;
     const isNBD = NBD_OWNER_IDS.includes(d.owner_id) || d.user_role === "NBD";
     if(!isNBD) return;
     if(!info[d.company_name] || monthNum(d.month) < monthNum(info[d.company_name].nbdMonth)) {
