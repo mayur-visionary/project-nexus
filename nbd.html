@@ -942,6 +942,7 @@ function buildNBDRows() {
     if(!allOwnersSelected && !activeOwners.has(growthOwnerId || "")) return;
 
     const geoHead = headFromOwnerId(growthOwnerId);
+    if(activeBU && HEAD_BU_MAP[geoHead] !== activeBU) return;
     if(filteringHead && !selectedHeads.includes(geoHead)) return;
 
     const cat = getCategory(company);
@@ -962,7 +963,6 @@ function buildNBDRows() {
       (dealLIMap[d.id] || []).forEach(li => {
         if(!li.amount) return;
         if(filteringSvc && (!li.svc || !selectedSvcs.includes(li.svc))) return;
-        if(activeBU  && li.bu  !== activeBU)  return;
         if(activeEng) {
           const liEng = engGroupFromLiName(li.name);
           const eg = liEng !== null ? liEng : engGroup(d.eng_model);
