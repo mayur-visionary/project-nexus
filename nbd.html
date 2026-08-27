@@ -192,43 +192,34 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sp-agency {background:#3B3561;color:#FFDA30}
 .sp-direct {background:#FFDA30;color:#111}
 
-/* ── Performance Matrix ── */
-.perf-matrix{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.pm-panel{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;display:flex;flex-direction:column}
-.pm-panel-hdr{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;padding:12px 16px 10px;border-bottom:1px solid #F0F0F0;flex-shrink:0}
-.pm-scroll{overflow-y:auto;max-height:260px}
-.pm-tbl{width:100%;border-collapse:collapse;font-family:'Montserrat',sans-serif}
-.pm-tbl th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#AAAAAA;padding:7px 10px;text-align:right;border-bottom:1px solid #F0F0F0;position:sticky;top:0;background:#fff;z-index:1}
-.pm-tbl th:first-child{text-align:left}
-.pm-tbl td{font-size:10px;font-weight:600;color:#434343;padding:7px 10px;text-align:right;border-bottom:1px solid #F8F8F8}
-.pm-tbl td:first-child{text-align:left}
-.pm-tbl tr:last-child td{border-bottom:none}
-.pm-grp-row td{background:#F5F5F5;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#696969;padding:5px 10px}
-.pm-badge{display:inline-block;min-width:20px;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:800;text-align:center}
-.pm-g{background:#E8F5F2;color:#006E5E}
-.pm-s{background:#FFF9E0;color:#B88A00}
-.pm-r{background:#FFF0F3;color:#E84040}
-.pm-n{background:#F5F5F5;color:#9A9A9A}
-.pm-nil{color:#D8D8D8}
-
-/* ── Head Distribution Cards ── */
-.head-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-.head-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:18px 20px;display:flex;align-items:center;gap:18px}
-.head-donut-wrap{position:relative;flex-shrink:0;width:76px;height:76px}
-.head-donut-outer{width:76px;height:76px;border-radius:50%;transform:rotate(-90deg)}
-.head-donut-hole{position:absolute;inset:14px;background:#fff;border-radius:50%;pointer-events:none}
-.head-donut-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-.head-donut-n{font-size:18px;font-weight:800;color:#434343;line-height:1}
-.head-donut-s{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-top:2px}
-.head-info{flex:1;min-width:0}
-.head-name{font-size:12px;font-weight:800;color:#434343;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.head-bu-tag{display:inline-block;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:2px 7px;border-radius:4px;margin-bottom:10px}
-.head-bu-martech{background:#FFF5CC;color:#B88A00}
-.head-bu-digital{background:#E8F7F2;color:#006E5E}
-.head-legend{display:grid;grid-template-columns:1fr 1fr;row-gap:5px;column-gap:8px}
-.hleg{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:600;color:#696969;white-space:nowrap}
-.hleg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.hleg-num{margin-left:auto;font-size:10px;font-weight:800;color:#434343}
+/* ── Head Health Donuts ── */
+.donut-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:24px}
+.donut-card{background:#fff;border-radius:18px;border:1px solid #E8E8E8;border-left:5px solid #E2E2E2;padding:28px 24px 22px;text-align:center;position:relative;overflow:hidden;transition:transform .28s cubic-bezier(.34,1.2,.64,1),box-shadow .28s ease;cursor:default}
+.donut-card::after{content:'';position:absolute;inset:0;border-radius:18px;background:radial-gradient(ellipse at 50% 0%,rgba(255,218,48,.06),transparent 65%);pointer-events:none;opacity:0;transition:opacity .3s}
+.donut-card:hover{transform:translateY(-6px) scale(1.012);box-shadow:0 20px 48px rgba(67,67,67,.14)}
+.donut-card:hover::after{opacity:1}
+.donut-card[data-head="jaydeep"]{border-left-color:#3B3561}
+.donut-card[data-head="jiggyasa"]{border-left-color:#FFDA30}
+.donut-card[data-head="tanuj"]{border-left-color:#006E5E}
+.donut-head-lbl{display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.07em;margin-bottom:18px}
+.donut-head-badge{display:inline-block;font-size:8px;font-weight:800;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em}
+.donut-wrap{position:relative;width:164px;height:164px;margin:0 auto 22px}
+.donut-wrap svg{transform:rotate(-90deg);display:block}
+.donut-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-score{font-size:30px;font-weight:800;line-height:1;transition:color .4s}
+.donut-score-lbl{font-size:8.5px;font-weight:800;color:#696969;text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+.donut-kitty-count{font-size:9.5px;font-weight:700;color:#434343;margin-top:5px}
+.donut-legend{display:flex;flex-direction:column;gap:2px;text-align:left}
+.donut-legend-row{display:grid;grid-template-columns:10px 1fr auto auto;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;transition:background .15s}
+.donut-legend-row:hover{background:#F7F7F7}
+.donut-legend-row.seg-highlight{background:#F0FAF7}
+.donut-seg-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.donut-seg-lbl{font-size:10px;font-weight:600;color:#696969}
+.donut-seg-cnt{font-size:10px;font-weight:800;color:#434343;text-align:right}
+.donut-seg-pct{font-size:9px;font-weight:600;color:#9A9A9A;text-align:right;min-width:36px}
+.donut-arc-group{cursor:pointer}
+@media(max-width:1000px){.donut-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.donut-grid{grid-template-columns:1fr}}
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
@@ -239,7 +230,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   .fbar{padding:10px 18px}
   .nbd-layout{flex-direction:column}
   .nbd-sidebar{width:100%;position:static}
-  .head-cards{grid-template-columns:1fr}
+  .donut-grid{grid-template-columns:1fr}
 }
 @media(max-width:480px){.nbd-kpi-strip{grid-template-columns:1fr 1fr}}
 </style>
@@ -460,26 +451,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <!-- RIGHT CONTENT -->
   <div class="nbd-content">
 
-  <!-- Head Distribution Cards -->
-  <div class="head-cards" id="head-cards" style="display:none"></div>
-
-  <!-- Performance Matrix -->
-  <div class="perf-matrix" id="perf-matrix" style="display:none">
-    <div class="pm-panel">
-      <div class="pm-panel-hdr">Head Performance</div>
-      <div class="pm-scroll"><table class="pm-tbl">
-        <thead><tr><th>Head</th><th>Co.</th><th>Growing</th><th>Stable</th><th>At Risk</th><th>New</th><th>LTV</th></tr></thead>
-        <tbody id="pm-head-body"></tbody>
-      </table></div>
-    </div>
-    <div class="pm-panel">
-      <div class="pm-panel-hdr">Owner Performance</div>
-      <div class="pm-scroll"><table class="pm-tbl">
-        <thead><tr><th>Owner</th><th>Co.</th><th>Growing</th><th>Stable</th><th>At Risk</th><th>New</th><th>LTV</th></tr></thead>
-        <tbody id="pm-owner-body"></tbody>
-      </table></div>
-    </div>
-  </div>
+  <!-- Head Health Donuts -->
+  <div class="donut-grid" id="nbd-donut-grid"></div>
 
   <!-- KPI Strip -->
   <div class="nbd-kpi-strip">
@@ -898,7 +871,7 @@ function attributeDeals(arr){
 function identifyNBDCohort(deals) {
   const info = {};
   deals.forEach(d => {
-    if(!d.company_name || !d.month) return;
+    if(!d.company_name || d.company_name === "(blank)" || !d.month) return;
     const isNBD = NBD_OWNER_IDS.includes(d.owner_id) || d.user_role === "NBD";
     if(!isNBD) return;
     if(!info[d.company_name] || monthNum(d.month) < monthNum(info[d.company_name].nbdMonth)) {
@@ -1017,76 +990,6 @@ function buildNBDRows() {
 const OWNER_NAME_MAP = Object.fromEntries(ORDERED_OWNERS.map(o => [o.id, o.name]));
 const HEAD_ORDER = ["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta"];
 
-function renderPerformanceMatrix(rows) {
-  const el = $("perf-matrix");
-  if(!rows.length) { el.style.display = "none"; return; }
-  el.style.display = "";
-
-  const headMap = {};
-  HEAD_ORDER.forEach(h => { headMap[h] = {count:0,growing:0,stable:0,atRisk:0,isNew:0,ltv:0}; });
-
-  const ownerMap = {};
-  rows.forEach(r => {
-    const h = r.geoHead;
-    if(headMap[h]) {
-      headMap[h].count++;
-      headMap[h].ltv += r.ltv;
-      if(r.momentum==="up") headMap[h].growing++;
-      else if(r.momentum==="flat") headMap[h].stable++;
-      else if(r.momentum==="down") headMap[h].atRisk++;
-      else headMap[h].isNew++;
-    }
-    const oid = r.growthOwnerId;
-    if(!oid) return;
-    if(!ownerMap[oid]) ownerMap[oid] = {name:OWNER_NAME_MAP[oid]||"Unknown",head:h,count:0,growing:0,stable:0,atRisk:0,isNew:0,ltv:0};
-    ownerMap[oid].count++;
-    ownerMap[oid].ltv += r.ltv;
-    if(r.momentum==="up") ownerMap[oid].growing++;
-    else if(r.momentum==="flat") ownerMap[oid].stable++;
-    else if(r.momentum==="down") ownerMap[oid].atRisk++;
-    else ownerMap[oid].isNew++;
-  });
-
-  const badge = (v, cls) => v ? `<span class="pm-badge ${cls}">${v}</span>` : '<span class="pm-nil">—</span>';
-  const ltv   = v => v ? `<span style="font-size:9px;color:#696969">${fmtUSD(v)}</span>` : '<span class="pm-nil">—</span>';
-
-  $("pm-head-body").innerHTML = HEAD_ORDER.map(h => {
-    const s = headMap[h];
-    return `<tr>
-      <td style="font-weight:700">${h.split(" ")[0]}</td>
-      <td style="font-weight:800">${s.count||'<span class="pm-nil">0</span>'}</td>
-      <td>${badge(s.growing,"pm-g")}</td>
-      <td>${badge(s.stable,"pm-s")}</td>
-      <td>${badge(s.atRisk,"pm-r")}</td>
-      <td>${badge(s.isNew,"pm-n")}</td>
-      <td>${ltv(s.ltv)}</td>
-    </tr>`;
-  }).join("");
-
-  const ownersByHead = {};
-  HEAD_ORDER.forEach(h => { ownersByHead[h] = []; });
-  Object.values(ownerMap).forEach(o => { if(ownersByHead[o.head]) ownersByHead[o.head].push(o); });
-  HEAD_ORDER.forEach(h => { ownersByHead[h].sort((a,b) => b.ltv - a.ltv); });
-
-  let html = "";
-  HEAD_ORDER.forEach(h => {
-    const owners = ownersByHead[h];
-    if(!owners.length) return;
-    html += `<tr class="pm-grp-row"><td colspan="7">&#9656; ${h.split(" ")[0].toUpperCase()}</td></tr>`;
-    owners.forEach(o => {
-      html += `<tr>
-        <td style="padding-left:18px;font-weight:600">${o.name}</td>
-        <td style="font-weight:800">${o.count}</td>
-        <td>${badge(o.growing,"pm-g")}</td>
-        <td>${badge(o.stable,"pm-s")}</td>
-        <td>${badge(o.atRisk,"pm-r")}</td>
-        <td>${badge(o.isNew,"pm-n")}</td>
-        <td>${ltv(o.ltv)}</td>
-      </tr>`;
-    });
-  });
-  $("pm-owner-body").innerHTML = html;
-}
 
 // ════ RENDER KPIs ════
 function renderKPIs(rows, svcCount) {
@@ -1121,74 +1024,149 @@ function renderKPIs(rows, svcCount) {
     '<div class="mom-item"><span class="mom-icon" style="color:#9A9A9A">&#9678;</span><div class="mom-info"><span class="mom-count">'+isNew+'</span><span class="mom-lbl">New</span></div></div>';
 }
 
-// ════ HEAD DISTRIBUTION CARDS ════
-const HEAD_CARD_HEADS = [
-  { name: "Jaydeep Salla",    bu: "MarTech", buClass: "head-bu-martech" },
-  { name: "Jiggyasa Agrawal", bu: "Digital", buClass: "head-bu-digital" },
-  { name: "Tanuj Gupta",      bu: "Digital", buClass: "head-bu-digital" }
+// ════ HEAD HEALTH DONUTS ════
+const NBD_HEADS_CFG = [
+  {name:"Jaydeep Salla",   id:"jaydeep",  bu:"MarTech"},
+  {name:"Jiggyasa Agrawal",id:"jiggyasa", bu:"Digital"},
+  {name:"Tanuj Gupta",     id:"tanuj",    bu:"Digital"}
 ];
-const STATUS_COLORS = { growing:"#006E5E", stable:"#B88A00", atRisk:"#E84040", isNew:"#C8C8C8" };
+const NBD_DONUT_COLORS = {up:"#006E5E", flat:"#FFDA30", down:"#EF2D56", new:"#9A9A9A"};
+const NBD_MOM_LABEL    = {up:"Growing",  flat:"Stable",  down:"At Risk", new:"New"};
+const NBD_MOM_ORDER    = ["up","flat","down","new"];
+const NBD_HEAD_BADGE   = {
+  jaydeep: {bg:"#EEE8FF",color:"#3B3561"},
+  jiggyasa:{bg:"#FFFBEA",color:"#A07A00"},
+  tanuj:   {bg:"#E6F4F1",color:"#006E5E"}
+};
 
-function makeConic(growing, stable, atRisk, isNew) {
-  const total = growing + stable + atRisk + isNew;
-  if(total === 0) return "#F0F0F0";
-  const toDeg = n => Math.round(n / total * 360);
-  const stops = []; let deg = 0;
-  const segs = [
-    [growing, STATUS_COLORS.growing],
-    [stable,  STATUS_COLORS.stable],
-    [atRisk,  STATUS_COLORS.atRisk],
-    [isNew,   STATUS_COLORS.isNew]
-  ];
-  segs.forEach(([n, col]) => {
-    if(!n) return;
-    const d = toDeg(n);
-    stops.push(`${col} ${deg}deg ${deg+d}deg`);
-    deg += d;
-  });
-  if(deg < 360) stops.push(`${STATUS_COLORS.isNew} ${deg}deg 360deg`);
-  return `conic-gradient(${stops.join(",")})`;
+function scoreColor(pct) {
+  if(pct>=75) return "#006E5E";
+  if(pct>=50) return "#FFDA30";
+  if(pct>=25) return "#EF2D56";
+  return "#696969";
 }
 
-function renderHeadCards(rows) {
-  const container = $("head-cards");
-  if(!container) return;
-  if(!rows.length) { container.style.display = "none"; return; }
+function renderNBDHealthDonuts(rows) {
+  const grid = $("nbd-donut-grid");
+  if(!grid) return;
+  if(!rows.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-size:11px;font-weight:500">No data for selected filters.</div>';
+    return;
+  }
 
-  const cards = HEAD_CARD_HEADS.map(h => {
-    const hRows = rows.filter(r => r.geoHead === h.name);
-    const growing = hRows.filter(r => r.momentum === "up").length;
-    const stable  = hRows.filter(r => r.momentum === "flat").length;
-    const atRisk  = hRows.filter(r => r.momentum === "down").length;
-    const isNew   = hRows.filter(r => r.momentum === "new").length;
-    const total   = hRows.length;
-    const donutBg = makeConic(growing, stable, atRisk, isNew);
-    const firstName = h.name.split(" ")[0];
+  const R=66, CX=82, CY=82, SW=9;
+  const CIRC = 2*Math.PI*R;
+  const GAP  = 1.5;
+  const VIEWBOX = `0 0 ${CX*2} ${CY*2}`;
 
-    return `<div class="head-card">
-      <div class="head-donut-wrap">
-        <div class="head-donut-outer" style="background:${donutBg}"></div>
-        <div class="head-donut-hole"></div>
-        <div class="head-donut-lbl">
-          <span class="head-donut-n">${total}</span>
-          <span class="head-donut-s">Clients</span>
+  const cards = NBD_HEADS_CFG.map(hcfg => {
+    const hRows = rows.filter(r => r.geoHead === hcfg.name);
+    const total  = hRows.length;
+    if(!total) return null;
+
+    const counts = {
+      up:   hRows.filter(r => r.momentum==="up").length,
+      flat: hRows.filter(r => r.momentum==="flat").length,
+      down: hRows.filter(r => r.momentum==="down").length,
+      new:  hRows.filter(r => r.momentum==="new").length
+    };
+    const ltv   = hRows.reduce((s,r) => s+r.ltv, 0);
+    const score = Math.round(((counts.up*4)+(counts.flat*3)+(counts.new*2)+(counts.down*1))/(total*4)*100);
+    const badge  = NBD_HEAD_BADGE[hcfg.id] || {bg:"#F2F2F2",color:"#696969"};
+    const sColor = scoreColor(score);
+
+    let arcOffset = 0;
+    const arcsSVG = NBD_MOM_ORDER.map(key => {
+      const count = counts[key];
+      if(!count) return "";
+      const frac  = count/total;
+      const len   = Math.max(0,(frac*CIRC)-GAP);
+      const dOff  = (-arcOffset).toFixed(2);
+      arcOffset  += frac*CIRC;
+      return `<circle
+        id="narc-${hcfg.id}-${key}"
+        cx="${CX}" cy="${CY}" r="${R}"
+        fill="none" stroke="${NBD_DONUT_COLORS[key]}" stroke-width="${SW}"
+        stroke-dasharray="${len.toFixed(2)} ${CIRC.toFixed(2)}"
+        stroke-dashoffset="${dOff}"
+        stroke-linecap="butt"
+        class="donut-arc-group"
+        onclick="nbdDonutSegClick('${hcfg.id}','${key}',this)"
+        style="cursor:pointer;transition:opacity .2s,stroke-width .2s"/>`;
+    }).join("");
+
+    const legendRows = NBD_MOM_ORDER.filter(k => counts[k]>0).map(key => {
+      const pct = ((counts[key]/total)*100).toFixed(1);
+      return `<div class="donut-legend-row" id="nleg-${hcfg.id}-${key}"
+        onclick="nbdDonutSegClick('${hcfg.id}','${key}',null)"
+        title="Click to highlight ${NBD_MOM_LABEL[key]}">
+        <div class="donut-seg-dot" style="background:${NBD_DONUT_COLORS[key]}"></div>
+        <span class="donut-seg-lbl">${NBD_MOM_LABEL[key]}</span>
+        <span class="donut-seg-cnt">${counts[key]}</span>
+        <span class="donut-seg-pct">${pct}%</span>
+      </div>`;
+    }).join("");
+
+    return `<div class="donut-card" data-head="${hcfg.id}" id="ndcard-${hcfg.id}">
+      <div class="donut-head-lbl">
+        <span>${hcfg.name.split(" ")[0]}</span>
+        <span class="donut-head-badge" style="background:${badge.bg};color:${badge.color}">${hcfg.bu}</span>
+      </div>
+      <div class="donut-wrap">
+        <svg width="${CX*2}" height="${CY*2}" viewBox="${VIEWBOX}" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#F0F0F0" stroke-width="${SW}"/>
+          ${arcsSVG}
+        </svg>
+        <div class="donut-centre">
+          <div class="donut-score" id="ndscore-${hcfg.id}" style="color:${sColor}" data-target="${score}">0%</div>
+          <div class="donut-score-lbl">Health</div>
+          <div class="donut-kitty-count">${fmtUSD(ltv)}</div>
         </div>
       </div>
-      <div class="head-info">
-        <div class="head-name" title="${h.name}">${firstName}</div>
-        <span class="head-bu-tag ${h.buClass}">${h.bu}</span>
-        <div class="head-legend">
-          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.growing}"></span>Growing<span class="hleg-num">${growing}</span></div>
-          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.stable}"></span>Stable<span class="hleg-num">${stable}</span></div>
-          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.atRisk}"></span>At Risk<span class="hleg-num">${atRisk}</span></div>
-          <div class="hleg"><span class="hleg-dot" style="background:${STATUS_COLORS.isNew}"></span>New<span class="hleg-num">${isNew}</span></div>
-        </div>
-      </div>
+      <div class="donut-legend">${legendRows}</div>
     </div>`;
-  });
+  }).filter(Boolean);
 
-  container.innerHTML = cards.join("");
-  container.style.display = "";
+  grid.innerHTML = cards.join("") ||
+    '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-size:11px;font-weight:500">No data for selected filters.</div>';
+
+  requestAnimationFrame(() => nbdAnimateScores());
+}
+
+function nbdAnimateScores() {
+  document.querySelectorAll("#nbd-donut-grid .donut-score[data-target]").forEach(el => {
+    const target = parseInt(el.getAttribute("data-target"), 10);
+    let current  = 0;
+    const step   = Math.max(1, Math.ceil(target/30));
+    el.textContent = "0%";
+    const timer = setInterval(() => {
+      current = Math.min(current+step, target);
+      el.textContent = current+"%";
+      if(current >= target) clearInterval(timer);
+    }, 22);
+  });
+}
+
+const _nbdDonutActiveSegs = {};
+function nbdDonutSegClick(headId, key, arcEl) {
+  const card = $(`ndcard-${headId}`);
+  if(!card) return;
+  const prev = _nbdDonutActiveSegs[headId];
+  if(prev === key) {
+    delete _nbdDonutActiveSegs[headId];
+    card.querySelectorAll(".donut-arc-group").forEach(c => { c.style.opacity="1"; c.style.strokeWidth=""; });
+    card.querySelectorAll(".donut-legend-row").forEach(r => r.classList.remove("seg-highlight"));
+    return;
+  }
+  _nbdDonutActiveSegs[headId] = key;
+  card.querySelectorAll(".donut-arc-group").forEach(c => {
+    const isSel = c.id === `narc-${headId}-${key}`;
+    c.style.opacity     = isSel ? "1" : "0.22";
+    c.style.strokeWidth = isSel ? String(parseFloat(c.getAttribute("stroke-width")||9)+2) : "";
+  });
+  card.querySelectorAll(".donut-legend-row").forEach(r => {
+    r.classList.toggle("seg-highlight", r.id === `nleg-${headId}-${key}`);
+  });
 }
 
 // ════ RENDER TABLE ════
@@ -1398,8 +1376,7 @@ function renderAll() {
   $("nbd-period-lbl").textContent = "· "+nbmLbl;
   $("tbl-sub").textContent = "LTV from NBD acquisition month onwards · "+nbmLbl+" · "+fyMonths.length+" month"+(fyMonths.length===1?"":"s");
   const { rows, svcCount } = buildNBDRows();
-  renderHeadCards(rows);
-  renderPerformanceMatrix(rows);
+  renderNBDHealthDonuts(rows);
   renderOwnerBarChart(rows);
   renderKPIs(rows, svcCount);
   renderTable(rows);
