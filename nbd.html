@@ -274,7 +274,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         </div>
         <button class="reset-btn" id="resetbtn" onclick="resetAll()">&#8855; Reset All</button>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">&#10227; Refresh</button>
-        <a class="nexus-btn" href="/">&#8599; Revenue Pulse</a>
+        <a class="nexus-btn" id="nexus-btn" href="/">&#8599; Revenue Pulse</a>
       </div>
     </div>
   </div>
@@ -1651,8 +1651,10 @@ function resetAll() {
   setCategoryFilter('');
   ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});
   updateGeoLabel();
-  ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
-  updateHeadLabel();
+  if(!document.body.getAttribute("data-clone")){
+    ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});
+    updateHeadLabel();
+  }
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});
   updateSvcLabel();
   activeStatusSet = new Set(["new","up","flat","down"]);
@@ -1662,15 +1664,21 @@ function resetAll() {
 }
 
 // ════ AUTH ════
+function getAuthKey(head){return head?"nexus_nbd_auth_"+head:"nexus_nbd_auth";}
+
 async function doLogin() {
   const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
   if(!pw){err.textContent="Please enter the access password.";return;}
   btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
+  const _head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
   try {
     const res = await fetch("/nbd-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
     const data = await res.json();
     if(data.success){
-      localStorage.setItem("nexus_nbd_auth","1");
+      Object.keys(localStorage).filter(k=>k.startsWith("nexus_nbd_auth")).forEach(k=>{
+        if(k!==getAuthKey(_head))localStorage.removeItem(k);
+      });
+      localStorage.setItem(getAuthKey(_head),"1");
       $("login-overlay").style.display="none";
       doSync(true);
     } else if(res.status===500||data.error){
@@ -1683,12 +1691,51 @@ async function doLogin() {
   finally{ btn.disabled=false; btn.textContent="Access Dashboard"; }
 }
 
-function checkAuth(){
-  if(localStorage.getItem("nexus_nbd_auth")==="1"){
+function checkSSO(){
+  const params=new URLSearchParams(location.search);
+  const head=(params.get("head")||"").toLowerCase().trim();
+  const tok=(params.get("tok")||"").toLowerCase().trim();
+  if(tok && head && tok===head){
+    localStorage.setItem(getAuthKey(head),"1");
+    const clean=new URL(location.href);
+    clean.searchParams.delete("tok");
+    history.replaceState(null,"",clean.toString());
+    $("login-overlay").style.display="none";
+    return true;
+  }
+  if(localStorage.getItem(getAuthKey(head))==="1"){
     $("login-overlay").style.display="none";
     return true;
   }
   return false;
+}
+
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param)return;
+  const cfg=NBD_HEADS_CFG.find(h=>h.id===param);
+  if(!cfg){console.warn(`[Growth Ledger] Unknown ?head= param: "${param}"`);return;}
+  const firstName=cfg.name.split(" ")[0];
+  document.title=`${firstName} · Growth Ledger · Mavlers`;
+  $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Dashboard`;
+  const nb=$("nexus-btn");if(nb)nb.href=`/?head=${param}`;
+  document.body.setAttribute("data-clone",param);
+  ALL_HEADS.forEach(h=>{
+    const el=$("head-"+h.replace(/\s/g,"_"));
+    if(el)el.checked=(h===cfg.name);
+  });
+  updateHeadLabel();
+  const headWrap=$("head-ms-wrap");
+  if(headWrap){
+    headWrap.style.display="none";
+    document.querySelectorAll(".vdiv").forEach(d=>{
+      if(d.nextElementSibling===headWrap||d.previousElementSibling===headWrap)
+        d.style.display="none";
+    });
+    const headLabel=headWrap.previousElementSibling;
+    if(headLabel&&headLabel.classList.contains("fl"))headLabel.style.display="none";
+  }
+  console.log(`[Growth Ledger] Clone mode: ${cfg.name} (${param})`);
 }
 
 document.addEventListener("click", e => {
@@ -1703,7 +1750,8 @@ window.addEventListener("DOMContentLoaded",function(){
   initRegionFilter();
   initHeadFilter();
   initServiceFilter();
-  if(checkAuth()) doSync(true);
+  bootCloneMode();
+  if(checkSSO()) doSync(true);
 });
 </script>
 </body>
