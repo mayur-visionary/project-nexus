@@ -543,6 +543,8 @@ const HEAD_REGIONS = {
 
 // Hardwired NBD owner IDs (designation = NBD)
 const NBD_OWNER_IDS = ["37762663","255830830","86813698","916030451"];
+// NBD owners who also serve as growth owners (Karan Doshi, Divya S)
+const NBD_IS_GROWTH = new Set(["467997340","82911376"]);
 
 // ── Attribution registry (verbatim from Revenue Pulse) ──
 const OWNER_GROUPS={
@@ -907,7 +909,6 @@ function buildNBDRows() {
 
   Object.entries(nbdCohort).forEach(([company, info]) => {
     if(!allNBMSelected && !selectedNBM.has(info.nbdMonth)) return;
-    const NBD_IS_GROWTH = new Set(["467997340","82911376"]);
     const companyOwner  = companyOwners[company] || null;
     let growthOwnerId;
     if (NBD_IS_GROWTH.has(info.nbdOwnerId)) {
@@ -955,30 +956,25 @@ function buildNBDRows() {
 
     if(ltv > 0) {
       const eligibleMonths = activePeriodMonths.filter(m => monthNum(m) >= monthNum(info.nbdMonth));
-      // Compute momentum first so we can status-filter before pushing
-      const activeAmts0 = eligibleMonths.filter(m => months[m]).map(m => months[m]);
-      let momentum0 = "new";
-      if(activeAmts0.length >= 2) {
-        const mid0 = Math.ceil(activeAmts0.length/2);
-        const af0  = activeAmts0.slice(0,mid0).reduce((s,v)=>s+v,0)/mid0;
-        const al0  = activeAmts0.slice(-mid0).reduce((s,v)=>s+v,0)/mid0;
-        const pct0 = af0 > 0 ? (al0-af0)/af0 : 0;
-        momentum0  = pct0 > 0.05 ? "up" : pct0 < -0.05 ? "down" : "flat";
-      }
-      if(activeStatusSet.size < 4 && !activeStatusSet.has(momentum0)) return;
+      // Momentum: compare last two calendar months (silence = $0)
+      const monthVals    = eligibleMonths.map(m => months[m] || 0);
       const streakDots   = eligibleMonths.map(m => !!months[m]);
       const streakActive = streakDots.filter(Boolean).length;
-
-      const activeAmts = eligibleMonths.filter(m => months[m]).map(m => months[m]);
       let momentum = "new", momPct = 0;
-      if(activeAmts.length >= 2) {
-        const mid      = Math.ceil(activeAmts.length / 2);
-        const avgFirst = activeAmts.slice(0, mid).reduce((s,v) => s+v, 0) / mid;
-        const avgLast  = activeAmts.slice(-mid).reduce((s,v) => s+v, 0) / mid;
-        const pct      = avgFirst > 0 ? (avgLast - avgFirst) / avgFirst : 0;
-        momPct   = Math.round(Math.abs(pct) * 100);
-        momentum = pct > 0.05 ? "up" : pct < -0.05 ? "down" : "flat";
+      if(monthVals.length >= 2) {
+        const last = monthVals[monthVals.length - 1];
+        const prev = monthVals[monthVals.length - 2];
+        if(prev === 0 && last === 0) {
+          momentum = monthVals.some(v => v > 0) ? "down" : "new";
+        } else if(prev === 0) {
+          momentum = "up"; momPct = 100;
+        } else {
+          const p = (last - prev) / prev;
+          momPct   = Math.round(Math.abs(p) * 100);
+          momentum = p > 0.05 ? "up" : p < -0.05 ? "down" : "flat";
+        }
       }
+      if(activeStatusSet.size < 4 && !activeStatusSet.has(momentum)) return;
 
       rows.push({
         company, nbdOwner: info.nbdOwnerId, nbdMonth: info.nbdMonth,
@@ -1215,7 +1211,7 @@ function renderTablePage() {
   const bodyRows = slice.map((r,i) => {
     const growthOwnerHtml = !r.growthOwnerId
       ? '<span style="color:#D0D0D0;font-style:italic;font-size:9px">—</span>'
-      : r.growthOwnerId === r.nbdOwner
+      : (r.growthOwnerId === r.nbdOwner && !NBD_IS_GROWTH.has(r.growthOwnerId))
         ? '<span style="color:#9A9A9A;font-style:italic;font-size:9px">NBD</span>'
         : ownerName(r.growthOwnerId);
     const streakHtml = (r.streakDots||[]).map(d => d
