@@ -451,9 +451,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <!-- RIGHT CONTENT -->
   <div class="nbd-content">
 
-  <!-- Head Health Donuts -->
-  <div class="donut-grid" id="nbd-donut-grid"></div>
-
   <!-- KPI Strip -->
   <div class="nbd-kpi-strip">
     <div class="nbd-kpi k-ltv">
@@ -479,6 +476,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   </div>
 
   <div class="mom-bar" id="mom-bar" style="display:none"></div>
+
+  <!-- Head Health Donuts -->
+  <div class="donut-grid" id="nbd-donut-grid"></div>
 
   <!-- Owner bar chart -->
   <div class="obc-wrap" id="owner-bar-chart-wrap" style="display:none"></div>
@@ -1039,12 +1039,8 @@ const NBD_HEAD_BADGE   = {
   tanuj:   {bg:"#E6F4F1",color:"#006E5E"}
 };
 
-function scoreColor(pct) {
-  if(pct>=75) return "#006E5E";
-  if(pct>=50) return "#FFDA30";
-  if(pct>=25) return "#EF2D56";
-  return "#696969";
-}
+
+const NBD_HEAD_ACCENT = {jaydeep:"#3B3561", jiggyasa:"#A07A00", tanuj:"#006E5E"};
 
 function renderNBDHealthDonuts(rows) {
   const grid = $("nbd-donut-grid");
@@ -1059,6 +1055,8 @@ function renderNBDHealthDonuts(rows) {
   const GAP  = 1.5;
   const VIEWBOX = `0 0 ${CX*2} ${CY*2}`;
 
+  const totalLTV = rows.reduce((s,r) => s+r.ltv, 0);
+
   const cards = NBD_HEADS_CFG.map(hcfg => {
     const hRows = rows.filter(r => r.geoHead === hcfg.name);
     const total  = hRows.length;
@@ -1070,10 +1068,10 @@ function renderNBDHealthDonuts(rows) {
       down: hRows.filter(r => r.momentum==="down").length,
       new:  hRows.filter(r => r.momentum==="new").length
     };
-    const ltv   = hRows.reduce((s,r) => s+r.ltv, 0);
-    const score = Math.round(((counts.up*4)+(counts.flat*3)+(counts.new*2)+(counts.down*1))/(total*4)*100);
+    const ltv    = hRows.reduce((s,r) => s+r.ltv, 0);
+    const ltvPct = totalLTV > 0 ? Math.round(ltv/totalLTV*100) : 0;
     const badge  = NBD_HEAD_BADGE[hcfg.id] || {bg:"#F2F2F2",color:"#696969"};
-    const sColor = scoreColor(score);
+    const sColor = NBD_HEAD_ACCENT[hcfg.id] || "#434343";
 
     let arcOffset = 0;
     const arcsSVG = NBD_MOM_ORDER.map(key => {
@@ -1091,15 +1089,15 @@ function renderNBDHealthDonuts(rows) {
         stroke-dashoffset="${dOff}"
         stroke-linecap="butt"
         class="donut-arc-group"
-        onclick="nbdDonutSegClick('${hcfg.id}','${key}',this)"
+        onclick="nbdDonutSegClick('${hcfg.id}','${key}')"
         style="cursor:pointer;transition:opacity .2s,stroke-width .2s"/>`;
     }).join("");
 
     const legendRows = NBD_MOM_ORDER.filter(k => counts[k]>0).map(key => {
       const pct = ((counts[key]/total)*100).toFixed(1);
       return `<div class="donut-legend-row" id="nleg-${hcfg.id}-${key}"
-        onclick="nbdDonutSegClick('${hcfg.id}','${key}',null)"
-        title="Click to highlight ${NBD_MOM_LABEL[key]}">
+        onclick="nbdDonutSegClick('${hcfg.id}','${key}')"
+        title="Click to filter: ${hcfg.name.split(' ')[0]} · ${NBD_MOM_LABEL[key]}">
         <div class="donut-seg-dot" style="background:${NBD_DONUT_COLORS[key]}"></div>
         <span class="donut-seg-lbl">${NBD_MOM_LABEL[key]}</span>
         <span class="donut-seg-cnt">${counts[key]}</span>
@@ -1118,8 +1116,8 @@ function renderNBDHealthDonuts(rows) {
           ${arcsSVG}
         </svg>
         <div class="donut-centre">
-          <div class="donut-score" id="ndscore-${hcfg.id}" style="color:${sColor}" data-target="${score}">0%</div>
-          <div class="donut-score-lbl">Health</div>
+          <div class="donut-score" id="ndscore-${hcfg.id}" style="color:${sColor}" data-target="${ltvPct}">0%</div>
+          <div class="donut-score-lbl">of NBD LTV</div>
           <div class="donut-kitty-count">${fmtUSD(ltv)}</div>
         </div>
       </div>
@@ -1148,25 +1146,35 @@ function nbdAnimateScores() {
 }
 
 const _nbdDonutActiveSegs = {};
-function nbdDonutSegClick(headId, key, arcEl) {
-  const card = $(`ndcard-${headId}`);
-  if(!card) return;
-  const prev = _nbdDonutActiveSegs[headId];
+function nbdDonutSegClick(headId, key) {
+  const prev     = _nbdDonutActiveSegs[headId];
+  const headName = NBD_HEADS_CFG.find(c => c.id === headId)?.name;
+
   if(prev === key) {
+    // Toggle off — restore all heads + all statuses
     delete _nbdDonutActiveSegs[headId];
-    card.querySelectorAll(".donut-arc-group").forEach(c => { c.style.opacity="1"; c.style.strokeWidth=""; });
-    card.querySelectorAll(".donut-legend-row").forEach(r => r.classList.remove("seg-highlight"));
+    ALL_HEADS.forEach(h => { const el=$("head-"+h.replace(/\s/g,"_")); if(el) el.checked=true; });
+    updateHeadLabel();
+    updateSmartFilters();
+    activeStatusSet = new Set(["new","up","flat","down"]);
+    syncStatusPills();
+    renderAll();
     return;
   }
+
   _nbdDonutActiveSegs[headId] = key;
-  card.querySelectorAll(".donut-arc-group").forEach(c => {
-    const isSel = c.id === `narc-${headId}-${key}`;
-    c.style.opacity     = isSel ? "1" : "0.22";
-    c.style.strokeWidth = isSel ? String(parseFloat(c.getAttribute("stroke-width")||9)+2) : "";
-  });
-  card.querySelectorAll(".donut-legend-row").forEach(r => {
-    r.classList.toggle("seg-highlight", r.id === `nleg-${headId}-${key}`);
-  });
+
+  // Set Head filter to only this head
+  ALL_HEADS.forEach(h => { const el=$("head-"+h.replace(/\s/g,"_")); if(el) el.checked=false; });
+  if(headName) { const el=$("head-"+headName.replace(/\s/g,"_")); if(el) el.checked=true; }
+  updateHeadLabel();
+  updateSmartFilters();
+
+  // Set Status filter to only this momentum
+  activeStatusSet = new Set([key]);
+  syncStatusPills();
+
+  renderAll();
 }
 
 // ════ RENDER TABLE ════
