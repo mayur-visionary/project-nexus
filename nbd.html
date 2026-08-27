@@ -148,6 +148,22 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .mom-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A;margin-top:2px}
 .mom-div{width:1px;height:28px;background:#E8E8E8;flex-shrink:0}
 .mom-bar-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-right:4px}
+/* ── Owner bar chart ── */
+.obc-wrap{background:#fff;border-radius:12px;border:1px solid #E2E2E2;padding:16px 20px;margin-bottom:16px}
+.obc-hdr{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:12px}
+.obc-legend{display:flex;gap:14px;margin-bottom:14px}
+.obc-leg{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:600;color:#696969}
+.obc-leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.obc-group-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#AAAAAA;padding:6px 0 5px;border-bottom:1px solid #F0F0F0;margin-bottom:6px}
+.obc-row{display:flex;align-items:center;gap:10px;padding:3px 0}
+.obc-name{font-size:10px;font-weight:600;color:#434343;width:130px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.obc-bar{flex:1;height:14px;border-radius:4px;overflow:hidden;background:#F0F0F0}
+.obc-bar-inner{height:100%;display:flex;border-radius:4px;overflow:hidden}
+.obc-seg{height:100%}
+.obc-meta{font-size:9px;font-weight:600;color:#9A9A9A;width:90px;flex-shrink:0;text-align:right;white-space:nowrap}
+/* ── Table toggle button ── */
+.tbl-toggle-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid #E2E2E2;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:.07em;text-transform:uppercase;background:#fff;color:#434343;transition:all .15s}
+.tbl-toggle-btn.shown{background:#FFDA30;border-color:#FFDA30;color:#111}
 
 /* ── Sidebar layout ── */
 .nbd-layout{display:flex;gap:20px;align-items:flex-start}
@@ -491,6 +507,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
   <div class="mom-bar" id="mom-bar" style="display:none"></div>
 
+  <!-- Owner bar chart -->
+  <div class="obc-wrap" id="owner-bar-chart-wrap" style="display:none"></div>
+
   <!-- Table card -->
   <div class="tbl-card">
     <div class="tbl-card-hdr">
@@ -498,6 +517,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="tbl-card-ttl">Company &times; Month Booking Matrix</div>
         <div class="tbl-card-sub" id="tbl-sub">LTV from NBD acquisition month onwards</div>
       </div>
+      <button class="tbl-toggle-btn shown" id="tbl-toggle-btn" onclick="toggleTable()">Hide Clients &#9652;</button>
     </div>
     <div class="twrap">
       <table class="nbd-table">
@@ -986,7 +1006,10 @@ function buildNBDRows() {
     }
   });
 
-  rows.sort((a,b) => b.ltv - a.ltv);
+  rows.sort((a,b) => {
+    const md = monthNum(b.nbdMonth) - monthNum(a.nbdMonth);
+    return md !== 0 ? md : b.ltv - a.ltv;
+  });
   return { rows, svcCount: svcSet.size };
 }
 
@@ -1188,7 +1211,7 @@ function renderTablePage() {
   th += '<th style="width:28px">#</th>';
   th += '<th style="min-width:170px">Client</th>';
   th += '<th>Category</th>';
-  th += "<th>New Business Date</th>";
+  th += "<th>New Business Month</th>";
   th += "<th>New Business Owner</th>";
   th += "<th>Growth Owner</th>";
   th += '<th class="num" style="white-space:nowrap">Streak</th>';
@@ -1287,6 +1310,87 @@ function renderTablePage() {
 function pageNav(dir) { currentPage += dir; renderTablePage(); }
 
 // ════ RENDER ALL ════
+// ════ OWNER BAR CHART ════
+function renderOwnerBarChart(rows) {
+  const wrap = $("owner-bar-chart-wrap");
+  if(!rows.length) { wrap.style.display = "none"; return; }
+  wrap.style.display = "";
+
+  const ownerMap = {};
+  rows.forEach(r => {
+    const oid = r.growthOwnerId;
+    if(!oid) return;
+    if(!ownerMap[oid]) ownerMap[oid] = {
+      name: OWNER_NAME_MAP[oid] || "Unknown", head: r.geoHead,
+      count:0, growing:0, stable:0, atRisk:0, isNew:0, ltv:0
+    };
+    ownerMap[oid].count++;
+    ownerMap[oid].ltv += r.ltv;
+    if(r.momentum==="up")   ownerMap[oid].growing++;
+    else if(r.momentum==="flat") ownerMap[oid].stable++;
+    else if(r.momentum==="down") ownerMap[oid].atRisk++;
+    else ownerMap[oid].isNew++;
+  });
+
+  const allOwners = Object.values(ownerMap);
+  if(!allOwners.length) { wrap.style.display = "none"; return; }
+  const maxCount = Math.max(...allOwners.map(o => o.count), 1);
+
+  const ownersByHead = {};
+  HEAD_ORDER.forEach(h => { ownersByHead[h] = []; });
+  allOwners.forEach(o => { if(ownersByHead[o.head]) ownersByHead[o.head].push(o); });
+  HEAD_ORDER.forEach(h => { ownersByHead[h].sort((a,b) => b.ltv - a.ltv); });
+
+  const seg = (pct, color, title) => pct > 0
+    ? `<div class="obc-seg" style="width:${pct.toFixed(1)}%;background:${color}" title="${title}"></div>` : '';
+
+  let html = `<div class="obc-hdr">Owner Performance</div>
+<div class="obc-legend">
+  <span class="obc-leg"><span class="obc-leg-dot" style="background:#006E5E"></span>Growing</span>
+  <span class="obc-leg"><span class="obc-leg-dot" style="background:#FFDA30;border:1px solid #E0C900"></span>Stable</span>
+  <span class="obc-leg"><span class="obc-leg-dot" style="background:#EF2D56"></span>At Risk</span>
+  <span class="obc-leg"><span class="obc-leg-dot" style="background:#D0D0D0"></span>New</span>
+</div>`;
+
+  HEAD_ORDER.forEach(h => {
+    const owners = ownersByHead[h];
+    if(!owners.length) return;
+    html += `<div class="obc-group-lbl">&#9656; ${h.split(" ")[0]}</div>`;
+    owners.forEach(o => {
+      const barW  = (o.count / maxCount) * 100;
+      const gPct  = (o.growing / o.count) * 100;
+      const sPct  = (o.stable  / o.count) * 100;
+      const rPct  = (o.atRisk  / o.count) * 100;
+      const nPct  = (o.isNew   / o.count) * 100;
+      html += `<div class="obc-row">
+        <div class="obc-name" title="${o.name}">${o.name}</div>
+        <div class="obc-bar">
+          <div class="obc-bar-inner" style="width:${barW.toFixed(1)}%">
+            ${seg(gPct,"#006E5E",o.growing+" Growing")}${seg(sPct,"#FFDA30",o.stable+" Stable")}${seg(rPct,"#EF2D56",o.atRisk+" At Risk")}${seg(nPct,"#D0D0D0",o.isNew+" New")}
+          </div>
+        </div>
+        <div class="obc-meta">${o.count} co &middot; ${fmtUSD(o.ltv)}</div>
+      </div>`;
+    });
+    html += '<div style="height:8px"></div>';
+  });
+
+  wrap.innerHTML = html;
+}
+
+// ════ TABLE TOGGLE ════
+let tableVisible = true;
+function toggleTable() {
+  tableVisible = !tableVisible;
+  const btn = $("tbl-toggle-btn");
+  const twrap = document.querySelector(".twrap");
+  const tfoot = $("nbd-tfoot");
+  const pg    = $("nbd-pg");
+  [twrap, pg].forEach(el => { if(el) el.style.display = tableVisible ? "" : "none"; });
+  btn.textContent = tableVisible ? "Hide Clients ▲" : "Show Clients ▾";
+  btn.classList.toggle("shown", tableVisible);
+}
+
 function renderAll() {
   const fyMonths = getFYMonths(currentFY);
   const selNBM   = getSelectedNBM();
@@ -1296,8 +1400,10 @@ function renderAll() {
   const { rows, svcCount } = buildNBDRows();
   renderHeadCards(rows);
   renderPerformanceMatrix(rows);
+  renderOwnerBarChart(rows);
   renderKPIs(rows, svcCount);
   renderTable(rows);
+  $("nbd-status").textContent = rows.length + " NBD companies · FY " + currentFY;
 }
 
 function onFilterChange() { renderAll(); }
@@ -1619,11 +1725,9 @@ async function doSync(force=false) {
     await fetchCompanyOwners();
     initOwnerFilter();
     renderAll();
-    const cohortCount = Object.keys(nbdCohort).length;
     $("sdot").style.background="#FFDA30";
     $("stxt").textContent="LIVE · "+allDeals.length+" DEALS";
     $("last-sync").textContent="Synced "+new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})+" · "+new Date().toLocaleTimeString();
-    $("nbd-status").textContent=cohortCount+" NBD companies · FY "+currentFY;
   } catch(e) {
     console.error(e);
     $("err-msg").textContent="Sync error: "+e.message;
