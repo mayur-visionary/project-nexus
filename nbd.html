@@ -234,7 +234,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
     <div class="login-title">Growth Ledger</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
@@ -1672,7 +1672,7 @@ async function doLogin() {
   btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
   const _head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
   try {
-    const res = await fetch("/nbd-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
+    const res = await fetch("/nbd-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:_head})});
     const data = await res.json();
     if(data.success){
       Object.keys(localStorage).filter(k=>k.startsWith("nexus_nbd_auth")).forEach(k=>{
