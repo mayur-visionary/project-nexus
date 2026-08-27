@@ -2715,6 +2715,8 @@ function bootCloneMode(){
   if(portfolioLink)portfolioLink.href=`/portfolio?head=${param}&tok=${param}`;
   const radarLink=$("radar-link");
   if(radarLink)radarLink.href=`/radar?head=${param}&tok=${param}`;
+  const nbdLink=$("nbd-link");
+  if(nbdLink)nbdLink.href=`/nbd?head=${param}&tok=${param}`;
   const pipelineLink=$("pipeline-link");
   if(pipelineLink)pipelineLink.href=`/pipeline?head=${param}&tok=${param}`;
   // Funnel Desk — scoped tab + token for seamless SSO
