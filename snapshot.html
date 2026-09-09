@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revenue Snapshot · Mavlers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+
+/* ── Login ── */
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-logo{margin-bottom:22px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── Header ── */
+.hdr{background:#473400}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+
+/* ── Loader ── */
+.lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
+.lo.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid #E2E2E2;border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Err bar ── */
+.err-bar{background:#EF2D56;color:#fff;font-size:10px;font-weight:700;padding:10px 28px;letter-spacing:.04em;display:none}
+.err-bar.show{display:block}
+
+/* ── Main ── */
+.main{max-width:1480px;margin:0 auto;padding:24px 28px 60px}
+
+/* ── Snapshot header strip ── */
+.snap-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #FFDA30}
+.snap-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#473400}
+.snap-date{font-size:10px;font-weight:700;color:#696969;letter-spacing:.04em;background:#fff;border:1px solid #E2E2E2;border-radius:6px;padding:5px 12px}
+.snap-date span{color:#434343;font-weight:800}
+
+/* ── BU grid ── */
+.bu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+@media(max-width:900px){.bu-grid{grid-template-columns:1fr}}
+
+/* ── BU column ── */
+.bu-col{display:flex;flex-direction:column;gap:12px}
+.bu-hdr{background:#473400;border-radius:10px 10px 0 0;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.bu-hdr-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.bu-hdr-name{font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.08em}
+.bu-badge{font-size:8px;font-weight:700;letter-spacing:.06em;color:#473400;background:#FFDA30;border-radius:4px;padding:2px 6px;text-transform:uppercase;margin-left:auto}
+
+/* ── Metric cards inside BU ── */
+.metric-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
+.metric-card.booking{border-top:3px solid #473400}
+.metric-card.new-add{border-top:3px solid #006E5E}
+.metric-card.lost{border-top:3px solid #E84040}
+.metric-card-hdr{padding:10px 14px 8px;border-bottom:1px solid #F2F2F2;background:#FAFAFA;display:flex;align-items:center;justify-content:space-between}
+.metric-card-ttl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
+.metric-badge{font-size:8px;font-weight:700;color:#696969;letter-spacing:.04em;background:#F2F2F2;border-radius:4px;padding:2px 6px}
+
+/* ── Booking sub-table ── */
+.booking-tbl{width:100%;border-collapse:collapse;font-size:10px}
+.booking-tbl thead th{padding:6px 12px;background:#F7F7F7;text-align:left;font-size:7.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #EBEBEB;white-space:nowrap}
+.booking-tbl thead th.num{text-align:right}
+.booking-tbl tbody td{padding:7px 12px;border-bottom:1px solid #F5F5F5;font-weight:600;color:#434343;font-size:10px}
+.booking-tbl tbody td.num{text-align:right}
+.booking-tbl tbody td.lbl{color:#696969;font-weight:500;font-size:9px}
+.booking-tbl tbody tr:last-child td{border-bottom:none;background:#FAFAFA}
+.booking-tbl tbody tr:last-child td{font-weight:800;color:#434343}
+.booking-tbl tbody tr.total-row td{background:#F7F7F7;font-weight:800;font-size:10.5px}
+.booking-tbl tbody tr.total-row td.lbl{color:#434343}
+
+/* ── Single-metric card (count / amount) ── */
+.single-metric{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sm-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#696969}
+.sm-val{font-size:18px;font-weight:800;color:#434343;line-height:1;text-align:right}
+.sm-val.green{color:#006E5E}
+.sm-val.red{color:#E84040}
+.sm-unit{font-size:9px;font-weight:600;color:#9A9A9A;text-align:right;margin-top:2px}
+
+/* Amount metric card */
+.amount-metric{padding:14px 16px}
+.am-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.am-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A}
+.am-val{font-size:13px;font-weight:800;color:#434343}
+.am-val.green{color:#006E5E}
+.am-val.red{color:#E84040}
+.am-total-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #F2F2F2;padding-top:8px;margin-top:8px}
+.am-total-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
+.am-total-val{font-size:15px;font-weight:800;color:#434343}
+.am-total-val.green{color:#006E5E}
+.am-total-val.red{color:#E84040}
+
+/* ── Grand total bar ── */
+.grand-total{background:#473400;border-radius:10px;padding:14px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.gt-item{text-align:center}
+.gt-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:4px}
+.gt-val{font-size:16px;font-weight:800;color:#FFDA30;line-height:1}
+
+/* ── Date pill ── */
+.date-pill{background:#473400;color:#FFDA30;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:20px;padding:4px 12px;display:inline-flex;align-items:center;gap:5px;margin:0 14px 10px}
+
+/* ── Placeholder state ── */
+.val-ph{color:#D0D0D0;font-weight:400}
+.dash{color:#D0D0D0}
+
+/* ── Divider between BU sections ── */
+.sec-hdr{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#473400;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #FFDA30}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg width="38" height="29" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path fill="#473400" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title">Revenue Snapshot</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Access password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">Mavlers · Internal Use Only</div>
+  </div>
+</div>
+
+<!-- Loader -->
+<div class="lo" id="loader"><div class="spin"></div></div>
+
+<!-- Error bar -->
+<div class="err-bar" id="err-bar"></div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" href="/">
+        <svg width="38" height="29" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="rgba(255,255,255,.55)" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Mavlers · Sales-Ops</span></div>
+          <div class="hdr-title">Revenue Snapshot</div>
+          <div class="hdr-sub">End-of-Day Booking Summary</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div>
+          <div class="stxt"><span class="sdot" id="sdot" style="background:#9A9A9A"></span><span id="sync-txt">—</span></div>
+          <div class="last-sync" id="last-sync"></div>
+        </div>
+        <a class="nexus-btn" href="/">&#8599; Revenue Pulse</a>
+      </div>
+    </div>
+  </div>
+  <div class="yellow-rule"></div>
+</div>
+
+<!-- Main -->
+<div class="main" id="main-content" style="display:none">
+
+  <!-- Snapshot header -->
+  <div class="snap-header">
+    <div class="snap-title">Daily Revenue Snapshot</div>
+    <div class="snap-date">As of <span id="snapshot-date">—</span></div>
+  </div>
+
+  <!-- BU Grid -->
+  <div class="bu-grid">
+
+    <!-- ── Digital BU ── -->
+    <div class="bu-col" id="col-digital">
+      <div class="metric-card booking">
+        <div class="metric-card-hdr">
+          <div>
+            <div class="metric-card-ttl">&#128200; Digital BU</div>
+          </div>
+          <div class="metric-badge">Booking</div>
+        </div>
+        <table class="booking-tbl">
+          <thead>
+            <tr>
+              <th>Segment</th>
+              <th class="num">Recurring</th>
+              <th class="num">P2P</th>
+              <th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody id="digital-booking-body">
+            <tr><td class="lbl">India</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">US</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">UAE</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">UK</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">AU</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr class="total-row"><td class="lbl">Total</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Managed</div>
+          <div class="metric-badge">Count</div>
+        </div>
+        <div class="single-metric">
+          <div class="sm-lbl">Companies added</div>
+          <div>
+            <div class="sm-val green" id="digital-newcount">—</div>
+            <div class="sm-unit">accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Amount</div>
+          <div class="metric-badge">Revenue</div>
+        </div>
+        <div class="amount-metric" id="digital-newamount">
+          <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val green" id="digital-newamt-rec">—</span></div>
+          <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val green" id="digital-newamt-p2p">—</span></div>
+          <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val green" id="digital-newamt-total">—</span></div>
+        </div>
+      </div>
+
+      <div class="metric-card lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost</div>
+          <div class="metric-badge">Count</div>
+        </div>
+        <div class="single-metric">
+          <div class="sm-lbl">Companies churned</div>
+          <div>
+            <div class="sm-val red" id="digital-lostcount">—</div>
+            <div class="sm-unit">accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge">Revenue</div>
+        </div>
+        <div class="amount-metric">
+          <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val red" id="digital-lostamt-rec">—</span></div>
+          <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val red" id="digital-lostamt-p2p">—</span></div>
+          <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val red" id="digital-lostamt-total">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Inter BU ── -->
+    <div class="bu-col" id="col-interbu">
+      <div class="metric-card booking">
+        <div class="metric-card-hdr">
+          <div>
+            <div class="metric-card-ttl">&#127759; Inter BU</div>
+          </div>
+          <div class="metric-badge">Booking</div>
+        </div>
+        <table class="booking-tbl">
+          <thead>
+            <tr>
+              <th>Segment</th>
+              <th class="num">Recurring</th>
+              <th class="num">P2P</th>
+              <th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody id="interbu-booking-body">
+            <tr><td class="lbl">India</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">US</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">UAE</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">UK</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">AU</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr class="total-row"><td class="lbl">Total</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Managed</div>
+          <div class="metric-badge">Count</div>
+        </div>
+        <div class="single-metric">
+          <div class="sm-lbl">Companies added</div>
+          <div>
+            <div class="sm-val green" id="interbu-newcount">—</div>
+            <div class="sm-unit">accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Amount</div>
+          <div class="metric-badge">Revenue</div>
+        </div>
+        <div class="amount-metric">
+          <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val green" id="interbu-newamt-rec">—</span></div>
+          <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val green" id="interbu-newamt-p2p">—</span></div>
+          <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val green" id="interbu-newamt-total">—</span></div>
+        </div>
+      </div>
+
+      <div class="metric-card lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost</div>
+          <div class="metric-badge">Count</div>
+        </div>
+        <div class="single-metric">
+          <div class="sm-lbl">Companies churned</div>
+          <div>
+            <div class="sm-val red" id="interbu-lostcount">—</div>
+            <div class="sm-unit">accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge">Revenue</div>
+        </div>
+        <div class="amount-metric">
+          <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val red" id="interbu-lostamt-rec">—</span></div>
+          <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val red" id="interbu-lostamt-p2p">—</span></div>
+          <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val red" id="interbu-lostamt-total">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MarTech BU ── -->
+    <div class="bu-col" id="col-martech">
+      <div class="metric-card booking">
+        <div class="metric-card-hdr">
+          <div>
+            <div class="metric-card-ttl">&#9881;&#65039; MarTech BU</div>
+          </div>
+          <div class="metric-badge">Booking</div>
+        </div>
+        <table class="booking-tbl">
+          <thead>
+            <tr>
+              <th>Segment</th>
+              <th class="num">Recurring</th>
+              <th class="num">P2P</th>
+              <th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody id="martech-booking-body">
+            <tr><td class="lbl">India</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">US</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">UAE</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">UK</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr><td class="lbl">AU</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+            <tr class="total-row"><td class="lbl">Total</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Managed</div>
+          <div class="metric-badge">Count</div>
+        </div>
+        <div class="single-metric">
+          <div class="sm-lbl">Companies added</div>
+          <div>
+            <div class="sm-val green" id="martech-newcount">—</div>
+            <div class="sm-unit">accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Amount</div>
+          <div class="metric-badge">Revenue</div>
+        </div>
+        <div class="amount-metric">
+          <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val green" id="martech-newamt-rec">—</span></div>
+          <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val green" id="martech-newamt-p2p">—</span></div>
+          <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val green" id="martech-newamt-total">—</span></div>
+        </div>
+      </div>
+
+      <div class="metric-card lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost</div>
+          <div class="metric-badge">Count</div>
+        </div>
+        <div class="single-metric">
+          <div class="sm-lbl">Companies churned</div>
+          <div>
+            <div class="sm-val red" id="martech-lostcount">—</div>
+            <div class="sm-unit">accounts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-card lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge">Revenue</div>
+        </div>
+        <div class="amount-metric">
+          <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val red" id="martech-lostamt-rec">—</span></div>
+          <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val red" id="martech-lostamt-p2p">—</span></div>
+          <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val red" id="martech-lostamt-total">—</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /bu-grid -->
+
+  <!-- Grand Total bar -->
+  <div class="grand-total" id="grand-total-bar">
+    <div class="gt-item">
+      <div class="gt-lbl">Total Booking</div>
+      <div class="gt-val" id="gt-booking">—</div>
+    </div>
+    <div class="gt-item">
+      <div class="gt-lbl">Net New Addition</div>
+      <div class="gt-val" id="gt-newamt">—</div>
+    </div>
+    <div class="gt-item">
+      <div class="gt-lbl">Engagement Lost</div>
+      <div class="gt-val" id="gt-lost">—</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+const $ = id => document.getElementById(id);
+
+/* ── Auth ── */
+async function doLogin() {
+  const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
+  if(!pw){err.textContent="Please enter the access password.";return;}
+  btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
+  try {
+    const res = await fetch("/snapshot-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
+    const data = await res.json();
+    if(data.success){
+      localStorage.setItem("nexus_snapshot_auth","1");
+      $("login-overlay").style.display="none";
+      boot();
+    } else if(res.status===500||data.error){
+      err.textContent="Server config error. Contact Mayur.";
+    } else {
+      err.textContent="Incorrect password. Please try again.";
+      $("pw-input").value=""; $("pw-input").focus();
+    }
+  } catch(e){ err.textContent="Connection error. Check your network."; }
+  finally{ btn.disabled=false; btn.textContent="Access Dashboard"; }
+}
+
+function checkAuth(){
+  if(localStorage.getItem("nexus_snapshot_auth")==="1"){
+    $("login-overlay").style.display="none";
+    return true;
+  }
+  return false;
+}
+
+/* ── Formatting ── */
+function fmtAmt(v, currencySymbol="$"){
+  if(v===null||v===undefined||v==="") return "—";
+  const n=Number(v);
+  if(isNaN(n)) return "—";
+  if(Math.abs(n)>=1000000) return currencySymbol+(n/1000000).toFixed(2)+"M";
+  if(Math.abs(n)>=1000) return currencySymbol+(n/1000).toFixed(1)+"K";
+  return currencySymbol+n.toFixed(0);
+}
+
+function fmtCount(v){
+  if(v===null||v===undefined||v==="") return "—";
+  const n=Number(v);
+  if(isNaN(n)) return "—";
+  return n.toString();
+}
+
+/* ── Populate helpers ── */
+const GEO_ROWS = ["India","US","UAE","UK","AU"];
+
+function fillBookingTable(tbodyId, data){
+  const tbody=$(tbodyId);
+  if(!tbody) return;
+  const rows=tbody.querySelectorAll("tr");
+  let totalRec=0, totalP2p=0, totalTot=0;
+  GEO_ROWS.forEach((geo, i)=>{
+    const row=rows[i];
+    if(!row) return;
+    const d=data[geo]||{};
+    const rec=Number(d.recurring||0), p2p=Number(d.p2p||0), tot=Number(d.total||rec+p2p);
+    totalRec+=rec; totalP2p+=p2p; totalTot+=tot;
+    row.cells[1].textContent=fmtAmt(rec);
+    row.cells[1].className="num";
+    row.cells[2].textContent=fmtAmt(p2p);
+    row.cells[2].className="num";
+    row.cells[3].textContent=fmtAmt(tot);
+    row.cells[3].className="num";
+  });
+  const totalRow=rows[GEO_ROWS.length];
+  if(totalRow){
+    totalRow.cells[1].textContent=fmtAmt(totalRec);
+    totalRow.cells[2].textContent=fmtAmt(totalP2p);
+    totalRow.cells[3].textContent=fmtAmt(totalTot);
+  }
+}
+
+function fillSingle(id, val, fmt="count"){
+  const el=$(id);
+  if(!el) return;
+  el.textContent= fmt==="count" ? fmtCount(val) : fmtAmt(val);
+}
+
+function fillAmounts(prefix, rec, p2p, total){
+  fillSingle(prefix+"-rec", rec, "amt");
+  fillSingle(prefix+"-p2p", p2p, "amt");
+  fillSingle(prefix+"-total", total, "amt");
+}
+
+/* ── Main data population ── */
+function populateSnapshot(snapshot){
+  /* snapshot structure:
+    {
+      date: "8 Sep 2025, 23:59 IST",
+      digital: {
+        booking: { India:{recurring,p2p,total}, US:{...}, UAE:{...}, UK:{...}, AU:{...} },
+        newcount: 5,
+        newamt: { recurring: 12000, p2p: 3000, total: 15000 },
+        lostcount: 2,
+        lostamt: { recurring: 4000, p2p: 1000, total: 5000 }
+      },
+      interbu: { ... same shape ... },
+      martech: { ... same shape ... }
+    }
+  */
+  $("snapshot-date").textContent = snapshot.date || "—";
+
+  const BUS = ["digital","interbu","martech"];
+  let gtBooking=0, gtNew=0, gtLost=0;
+
+  BUS.forEach(bu=>{
+    const d=snapshot[bu]||{};
+    fillBookingTable(bu+"-booking-body", d.booking||{});
+    fillSingle(bu+"-newcount", d.newcount, "count");
+    fillAmounts(bu+"-newamt", d.newamt?.recurring, d.newamt?.p2p, d.newamt?.total);
+    fillSingle(bu+"-lostcount", d.lostcount, "count");
+    fillAmounts(bu+"-lostamt", d.lostamt?.recurring, d.lostamt?.p2p, d.lostamt?.total);
+
+    const bookTotal=Object.values(d.booking||{}).reduce((sum,geo)=>sum+Number(geo.total||0),0);
+    gtBooking+=bookTotal;
+    gtNew+=Number(d.newamt?.total||0);
+    gtLost+=Number(d.lostamt?.total||0);
+  });
+
+  $("gt-booking").textContent=fmtAmt(gtBooking);
+  $("gt-newamt").textContent=fmtAmt(gtNew);
+  $("gt-lost").textContent=fmtAmt(gtLost);
+}
+
+/* ── Fetch snapshot data ── */
+async function fetchSnapshot(){
+  $("loader").classList.add("show");
+  const sdot=$("sdot"), stxt=$("sync-txt");
+  try {
+    /* TODO: replace with real data source — HubSpot API, Google Sheets, or Cloudflare KV */
+    const snapshot = await getSnapshotData();
+    populateSnapshot(snapshot);
+    sdot.style.background="#0CCE6B";
+    stxt.textContent="Live";
+    $("last-sync").textContent="Updated "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+    $("main-content").style.display="block";
+  } catch(err){
+    console.error("[Snapshot] fetch error", err);
+    sdot.style.background="#E84040";
+    stxt.textContent="Error";
+    const eb=$("err-bar");
+    eb.textContent="Failed to load snapshot data. "+err.message;
+    eb.classList.add("show");
+    $("main-content").style.display="block";
+  } finally {
+    $("loader").classList.remove("show");
+  }
+}
+
+/* ── Stub: returns demo data until real source is wired ── */
+async function getSnapshotData(){
+  /* This function will be replaced with a real fetch call.
+     Shape matches what populateSnapshot() expects. */
+  return {
+    date: "8 Sep 2025, 23:59 IST",
+    digital: {
+      booking: {
+        India:  {recurring:42000, p2p:8000,  total:50000},
+        US:     {recurring:31000, p2p:5500,  total:36500},
+        UAE:    {recurring:18000, p2p:2000,  total:20000},
+        UK:     {recurring:12000, p2p:1000,  total:13000},
+        AU:     {recurring:9000,  p2p:500,   total:9500}
+      },
+      newcount: 7,
+      newamt:  {recurring:28000, p2p:4000, total:32000},
+      lostcount: 2,
+      lostamt: {recurring:6000,  p2p:500,  total:6500}
+    },
+    interbu: {
+      booking: {
+        India:  {recurring:15000, p2p:3000,  total:18000},
+        US:     {recurring:22000, p2p:4000,  total:26000},
+        UAE:    {recurring:8000,  p2p:1000,  total:9000},
+        UK:     {recurring:5000,  p2p:500,   total:5500},
+        AU:     {recurring:3000,  p2p:200,   total:3200}
+      },
+      newcount: 4,
+      newamt:  {recurring:14000, p2p:2000, total:16000},
+      lostcount: 1,
+      lostamt: {recurring:3500,  p2p:0,    total:3500}
+    },
+    martech: {
+      booking: {
+        India:  {recurring:28000, p2p:5000,  total:33000},
+        US:     {recurring:19000, p2p:3500,  total:22500},
+        UAE:    {recurring:11000, p2p:1500,  total:12500},
+        UK:     {recurring:7000,  p2p:800,   total:7800},
+        AU:     {recurring:4500,  p2p:300,   total:4800}
+      },
+      newcount: 5,
+      newamt:  {recurring:18000, p2p:3000, total:21000},
+      lostcount: 3,
+      lostamt: {recurring:8000,  p2p:1000, total:9000}
+    }
+  };
+}
+
+/* ── Boot ── */
+function boot(){
+  $("main-content").style.display="block";
+  fetchSnapshot();
+}
+
+window.addEventListener("DOMContentLoaded", function(){
+  if(checkAuth()) boot();
+});
+</script>
+</body>
+</html>
