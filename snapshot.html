@@ -30,7 +30,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Header ── */
 .hdr{background:#473400}
-.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-in{max-width:1480px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
@@ -39,11 +39,14 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
 .hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
 .hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
-.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.rfbtn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.rfbtn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.rfbtn:disabled{opacity:.35;cursor:not-allowed}
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
 /* ── Loader ── */
@@ -52,7 +55,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .spin{width:36px;height:36px;border:3px solid #E2E2E2;border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── Err bar ── */
+/* ── Error bar ── */
 .err-bar{background:#EF2D56;color:#fff;font-size:10px;font-weight:700;padding:10px 28px;letter-spacing:.04em;display:none}
 .err-bar.show{display:block}
 
@@ -62,21 +65,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Snapshot header strip ── */
 .snap-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #FFDA30}
 .snap-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#473400}
+.snap-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .snap-date{font-size:10px;font-weight:700;color:#696969;letter-spacing:.04em;background:#fff;border:1px solid #E2E2E2;border-radius:6px;padding:5px 12px}
 .snap-date span{color:#434343;font-weight:800}
+.snap-period{font-size:9px;font-weight:700;color:#9A9A9A;letter-spacing:.06em;text-transform:uppercase}
 
 /* ── BU grid ── */
 .bu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-@media(max-width:900px){.bu-grid{grid-template-columns:1fr}}
+@media(max-width:960px){.bu-grid{grid-template-columns:1fr}}
 
 /* ── BU column ── */
 .bu-col{display:flex;flex-direction:column;gap:12px}
-.bu-hdr{background:#473400;border-radius:10px 10px 0 0;padding:10px 16px;display:flex;align-items:center;gap:8px}
-.bu-hdr-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
-.bu-hdr-name{font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.08em}
-.bu-badge{font-size:8px;font-weight:700;letter-spacing:.06em;color:#473400;background:#FFDA30;border-radius:4px;padding:2px 6px;text-transform:uppercase;margin-left:auto}
 
-/* ── Metric cards inside BU ── */
+/* ── BU column header (standalone, above cards) ── */
+.bu-col-hdr{background:#473400;border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.bu-col-hdr-name{font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.08em;flex:1}
+.bu-badge{font-size:8px;font-weight:700;letter-spacing:.06em;color:#473400;background:#FFDA30;border-radius:4px;padding:2px 6px;text-transform:uppercase}
+
+/* ── Metric cards ── */
 .metric-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
 .metric-card.booking{border-top:3px solid #473400}
 .metric-card.new-add{border-top:3px solid #006E5E}
@@ -85,54 +91,44 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .metric-card-ttl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
 .metric-badge{font-size:8px;font-weight:700;color:#696969;letter-spacing:.04em;background:#F2F2F2;border-radius:4px;padding:2px 6px}
 
-/* ── Booking sub-table ── */
-.booking-tbl{width:100%;border-collapse:collapse;font-size:10px}
+/* ── Booking table ── */
+.booking-tbl{width:100%;border-collapse:collapse}
 .booking-tbl thead th{padding:6px 12px;background:#F7F7F7;text-align:left;font-size:7.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #EBEBEB;white-space:nowrap}
 .booking-tbl thead th.num{text-align:right}
 .booking-tbl tbody td{padding:7px 12px;border-bottom:1px solid #F5F5F5;font-weight:600;color:#434343;font-size:10px}
 .booking-tbl tbody td.num{text-align:right}
 .booking-tbl tbody td.lbl{color:#696969;font-weight:500;font-size:9px}
-.booking-tbl tbody tr:last-child td{border-bottom:none;background:#FAFAFA}
-.booking-tbl tbody tr:last-child td{font-weight:800;color:#434343}
 .booking-tbl tbody tr.total-row td{background:#F7F7F7;font-weight:800;font-size:10.5px}
 .booking-tbl tbody tr.total-row td.lbl{color:#434343}
+.booking-tbl tbody tr:last-child td{border-bottom:none}
 
-/* ── Single-metric card (count / amount) ── */
+/* ── Single-metric count card ── */
 .single-metric{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .sm-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#696969}
-.sm-val{font-size:18px;font-weight:800;color:#434343;line-height:1;text-align:right}
+.sm-val{font-size:22px;font-weight:800;line-height:1;text-align:right}
 .sm-val.green{color:#006E5E}
 .sm-val.red{color:#E84040}
 .sm-unit{font-size:9px;font-weight:600;color:#9A9A9A;text-align:right;margin-top:2px}
 
-/* Amount metric card */
+/* ── Amount metric card ── */
 .amount-metric{padding:14px 16px}
-.am-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.am-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .am-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9A9A9A}
 .am-val{font-size:13px;font-weight:800;color:#434343}
 .am-val.green{color:#006E5E}
 .am-val.red{color:#E84040}
 .am-total-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #F2F2F2;padding-top:8px;margin-top:8px}
 .am-total-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
-.am-total-val{font-size:15px;font-weight:800;color:#434343}
+.am-total-val{font-size:15px;font-weight:800}
 .am-total-val.green{color:#006E5E}
 .am-total-val.red{color:#E84040}
 
 /* ── Grand total bar ── */
-.grand-total{background:#473400;border-radius:10px;padding:14px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.grand-total{background:#473400;border-radius:10px;padding:16px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .gt-item{text-align:center}
-.gt-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:4px}
-.gt-val{font-size:16px;font-weight:800;color:#FFDA30;line-height:1}
-
-/* ── Date pill ── */
-.date-pill{background:#473400;color:#FFDA30;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-radius:20px;padding:4px 12px;display:inline-flex;align-items:center;gap:5px;margin:0 14px 10px}
-
-/* ── Placeholder state ── */
-.val-ph{color:#D0D0D0;font-weight:400}
-.dash{color:#D0D0D0}
-
-/* ── Divider between BU sections ── */
-.sec-hdr{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#473400;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #FFDA30}
+.gt-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:5px}
+.gt-val{font-size:15px;font-weight:800;color:#FFDA30;line-height:1}
+.gt-sub{font-size:8px;font-weight:500;color:rgba(255,255,255,.4);margin-top:3px}
 </style>
 </head>
 <body>
@@ -146,7 +142,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <path fill="#473400" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
     <div class="login-title">Revenue Snapshot</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
@@ -156,7 +152,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 </div>
 
 <!-- Loader -->
-<div class="lo" id="loader"><div class="spin"></div></div>
+<div class="lo" id="lo"><div class="spin"></div></div>
 
 <!-- Error bar -->
 <div class="err-bar" id="err-bar"></div>
@@ -178,9 +174,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </a>
       <div class="hdr-right">
         <div>
-          <div class="stxt"><span class="sdot" id="sdot" style="background:#9A9A9A"></span><span id="sync-txt">—</span></div>
+          <div class="stxt"><span class="sdot" id="sdot" style="background:#9A9A9A"></span><span id="stxt">—</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
+        <button class="rfbtn" id="rfbtn" onclick="doSync(true)">&#8635; Refresh</button>
         <a class="nexus-btn" href="/">&#8599; Revenue Pulse</a>
       </div>
     </div>
@@ -194,86 +191,49 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <!-- Snapshot header -->
   <div class="snap-header">
     <div class="snap-title">Daily Revenue Snapshot</div>
-    <div class="snap-date">As of <span id="snapshot-date">—</span></div>
+    <div class="snap-meta">
+      <div class="snap-period" id="snap-period">—</div>
+      <div class="snap-date">As of <span id="snapshot-date">—</span></div>
+    </div>
   </div>
 
   <!-- BU Grid -->
   <div class="bu-grid">
 
-    <!-- ── Digital BU ── -->
-    <div class="bu-col" id="col-digital">
+    <!-- Digital BU -->
+    <div class="bu-col">
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span><span class="bu-badge">Search · Web</span></div>
       <div class="metric-card booking">
-        <div class="metric-card-hdr">
-          <div>
-            <div class="metric-card-ttl">&#128200; Digital BU</div>
-          </div>
-          <div class="metric-badge">Booking</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Booking</div><div class="metric-badge">MTD</div></div>
         <table class="booking-tbl">
-          <thead>
-            <tr>
-              <th>Segment</th>
-              <th class="num">Recurring</th>
-              <th class="num">P2P</th>
-              <th class="num">Total</th>
-            </tr>
-          </thead>
-          <tbody id="digital-booking-body">
-            <tr><td class="lbl">India</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">US</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">UAE</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">UK</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">AU</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr class="total-row"><td class="lbl">Total</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-          </tbody>
+          <thead><tr><th>Geo</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-booking-body"></tbody>
         </table>
       </div>
-
       <div class="metric-card new-add">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">New Addition — Managed</div>
-          <div class="metric-badge">Count</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Managed</div><div class="metric-badge">Count</div></div>
         <div class="single-metric">
-          <div class="sm-lbl">Companies added</div>
-          <div>
-            <div class="sm-val green" id="digital-newcount">—</div>
-            <div class="sm-unit">accounts</div>
-          </div>
+          <div class="sm-lbl">New this month</div>
+          <div><div class="sm-val green" id="digital-newcount">—</div><div class="sm-unit">companies</div></div>
         </div>
       </div>
-
       <div class="metric-card new-add">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">New Addition — Amount</div>
-          <div class="metric-badge">Revenue</div>
-        </div>
-        <div class="amount-metric" id="digital-newamount">
+        <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Amount</div><div class="metric-badge">Revenue</div></div>
+        <div class="amount-metric">
           <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val green" id="digital-newamt-rec">—</span></div>
           <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val green" id="digital-newamt-p2p">—</span></div>
           <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val green" id="digital-newamt-total">—</span></div>
         </div>
       </div>
-
       <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost</div>
-          <div class="metric-badge">Count</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost</div><div class="metric-badge">Count</div></div>
         <div class="single-metric">
-          <div class="sm-lbl">Companies churned</div>
-          <div>
-            <div class="sm-val red" id="digital-lostcount">—</div>
-            <div class="sm-unit">accounts</div>
-          </div>
+          <div class="sm-lbl">Churned this month</div>
+          <div><div class="sm-val red" id="digital-lostcount">—</div><div class="sm-unit">companies</div></div>
         </div>
       </div>
-
       <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge">Revenue</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Amount</div><div class="metric-badge">Revenue</div></div>
         <div class="amount-metric">
           <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val red" id="digital-lostamt-rec">—</span></div>
           <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val red" id="digital-lostamt-p2p">—</span></div>
@@ -282,80 +242,40 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
 
-    <!-- ── Inter BU ── -->
-    <div class="bu-col" id="col-interbu">
+    <!-- Inter BU -->
+    <div class="bu-col">
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span><span class="bu-badge">Campaign · Email · Design</span></div>
       <div class="metric-card booking">
-        <div class="metric-card-hdr">
-          <div>
-            <div class="metric-card-ttl">&#127759; Inter BU</div>
-          </div>
-          <div class="metric-badge">Booking</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Booking</div><div class="metric-badge">MTD</div></div>
         <table class="booking-tbl">
-          <thead>
-            <tr>
-              <th>Segment</th>
-              <th class="num">Recurring</th>
-              <th class="num">P2P</th>
-              <th class="num">Total</th>
-            </tr>
-          </thead>
-          <tbody id="interbu-booking-body">
-            <tr><td class="lbl">India</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">US</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">UAE</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">UK</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">AU</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr class="total-row"><td class="lbl">Total</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-          </tbody>
+          <thead><tr><th>Geo</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-booking-body"></tbody>
         </table>
       </div>
-
       <div class="metric-card new-add">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">New Addition — Managed</div>
-          <div class="metric-badge">Count</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Managed</div><div class="metric-badge">Count</div></div>
         <div class="single-metric">
-          <div class="sm-lbl">Companies added</div>
-          <div>
-            <div class="sm-val green" id="interbu-newcount">—</div>
-            <div class="sm-unit">accounts</div>
-          </div>
+          <div class="sm-lbl">New this month</div>
+          <div><div class="sm-val green" id="interbu-newcount">—</div><div class="sm-unit">companies</div></div>
         </div>
       </div>
-
       <div class="metric-card new-add">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">New Addition — Amount</div>
-          <div class="metric-badge">Revenue</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Amount</div><div class="metric-badge">Revenue</div></div>
         <div class="amount-metric">
           <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val green" id="interbu-newamt-rec">—</span></div>
           <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val green" id="interbu-newamt-p2p">—</span></div>
           <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val green" id="interbu-newamt-total">—</span></div>
         </div>
       </div>
-
       <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost</div>
-          <div class="metric-badge">Count</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost</div><div class="metric-badge">Count</div></div>
         <div class="single-metric">
-          <div class="sm-lbl">Companies churned</div>
-          <div>
-            <div class="sm-val red" id="interbu-lostcount">—</div>
-            <div class="sm-unit">accounts</div>
-          </div>
+          <div class="sm-lbl">Churned this month</div>
+          <div><div class="sm-val red" id="interbu-lostcount">—</div><div class="sm-unit">companies</div></div>
         </div>
       </div>
-
       <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge">Revenue</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Amount</div><div class="metric-badge">Revenue</div></div>
         <div class="amount-metric">
           <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val red" id="interbu-lostamt-rec">—</span></div>
           <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val red" id="interbu-lostamt-p2p">—</span></div>
@@ -364,80 +284,40 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
 
-    <!-- ── MarTech BU ── -->
-    <div class="bu-col" id="col-martech">
+    <!-- MarTech BU -->
+    <div class="bu-col">
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span><span class="bu-badge">Jaydeep's Team</span></div>
       <div class="metric-card booking">
-        <div class="metric-card-hdr">
-          <div>
-            <div class="metric-card-ttl">&#9881;&#65039; MarTech BU</div>
-          </div>
-          <div class="metric-badge">Booking</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Booking</div><div class="metric-badge">MTD</div></div>
         <table class="booking-tbl">
-          <thead>
-            <tr>
-              <th>Segment</th>
-              <th class="num">Recurring</th>
-              <th class="num">P2P</th>
-              <th class="num">Total</th>
-            </tr>
-          </thead>
-          <tbody id="martech-booking-body">
-            <tr><td class="lbl">India</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">US</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">UAE</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">UK</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr><td class="lbl">AU</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-            <tr class="total-row"><td class="lbl">Total</td><td class="num dash">—</td><td class="num dash">—</td><td class="num dash">—</td></tr>
-          </tbody>
+          <thead><tr><th>Geo</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-booking-body"></tbody>
         </table>
       </div>
-
       <div class="metric-card new-add">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">New Addition — Managed</div>
-          <div class="metric-badge">Count</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Managed</div><div class="metric-badge">Count</div></div>
         <div class="single-metric">
-          <div class="sm-lbl">Companies added</div>
-          <div>
-            <div class="sm-val green" id="martech-newcount">—</div>
-            <div class="sm-unit">accounts</div>
-          </div>
+          <div class="sm-lbl">New this month</div>
+          <div><div class="sm-val green" id="martech-newcount">—</div><div class="sm-unit">companies</div></div>
         </div>
       </div>
-
       <div class="metric-card new-add">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">New Addition — Amount</div>
-          <div class="metric-badge">Revenue</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Amount</div><div class="metric-badge">Revenue</div></div>
         <div class="amount-metric">
           <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val green" id="martech-newamt-rec">—</span></div>
           <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val green" id="martech-newamt-p2p">—</span></div>
           <div class="am-total-row"><span class="am-total-lbl">Total</span><span class="am-total-val green" id="martech-newamt-total">—</span></div>
         </div>
       </div>
-
       <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost</div>
-          <div class="metric-badge">Count</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost</div><div class="metric-badge">Count</div></div>
         <div class="single-metric">
-          <div class="sm-lbl">Companies churned</div>
-          <div>
-            <div class="sm-val red" id="martech-lostcount">—</div>
-            <div class="sm-unit">accounts</div>
-          </div>
+          <div class="sm-lbl">Churned this month</div>
+          <div><div class="sm-val red" id="martech-lostcount">—</div><div class="sm-unit">companies</div></div>
         </div>
       </div>
-
       <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge">Revenue</div>
-        </div>
+        <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Amount</div><div class="metric-badge">Revenue</div></div>
         <div class="amount-metric">
           <div class="am-row"><span class="am-lbl">Recurring</span><span class="am-val red" id="martech-lostamt-rec">—</span></div>
           <div class="am-row"><span class="am-lbl">P2P</span><span class="am-val red" id="martech-lostamt-p2p">—</span></div>
@@ -448,47 +328,490 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
   </div><!-- /bu-grid -->
 
-  <!-- Grand Total bar -->
-  <div class="grand-total" id="grand-total-bar">
+  <!-- Grand total bar -->
+  <div class="grand-total">
     <div class="gt-item">
-      <div class="gt-lbl">Total Booking</div>
+      <div class="gt-lbl">Total Booking MTD</div>
       <div class="gt-val" id="gt-booking">—</div>
+      <div class="gt-sub" id="gt-booking-sub"></div>
     </div>
     <div class="gt-item">
-      <div class="gt-lbl">Net New Addition</div>
+      <div class="gt-lbl">New Addition — Amount</div>
       <div class="gt-val" id="gt-newamt">—</div>
+      <div class="gt-sub" id="gt-newamt-sub"></div>
     </div>
     <div class="gt-item">
-      <div class="gt-lbl">Engagement Lost</div>
-      <div class="gt-val" id="gt-lost">—</div>
+      <div class="gt-lbl">Engagement Lost — Amount</div>
+      <div class="gt-val" id="gt-lostamt">—</div>
+      <div class="gt-sub" id="gt-lostamt-sub"></div>
+    </div>
+    <div class="gt-item">
+      <div class="gt-lbl">Net Portfolio Change</div>
+      <div class="gt-val" id="gt-net">—</div>
+      <div class="gt-sub" id="gt-net-sub">New − Lost</div>
     </div>
   </div>
 
 </div><!-- /main -->
 
 <script>
+// ════════════════════════════════════════════════════════════
+// CONSTANTS (verbatim from Revenue Pulse / Growth Ledger)
+// ════════════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
+const PIPELINE = "115832232", STAGE = "205348626";
+const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-/* ── Auth ── */
-async function doLogin() {
-  const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
+const EXCLUDED_COMPANIES = ["InboxArmy","Uplers","Solomax"];
+const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement"];
+
+/* Snapshot-specific geo map — India stays as India (unlike Revenue Pulse where India → AU) */
+const SNAP_GEO_MAP = {
+  "India":"India","US":"US","UAE":"UAE","UK":"UK","Netherlands":"UK","AU/NZ":"AU","AU":"AU"
+};
+const GEO_ROWS = ["India","US","UAE","UK","AU"];
+
+/* Owner → Geo (static, from CSV) */
+const OWNER_GEO = {
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
+  "19799470":"US","557894666":"US",
+  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
+  "86813698":"AU","255830830":"UK","37762663":"US",
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  "82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"
+};
+
+/* Owner → BU */
+const MARTECH_OWNER_IDS = new Set([
+  "107178262","17738843","34140174",   // MarTech Leaders
+  "467997340",                          // MarTech AU
+  "82911376","916030451","82030736","107178262", // MarTech UK
+  "86147905","85767516","89530815","46153051","93107638" // MarTech US
+]);
+function buFromOwner(oid){return MARTECH_OWNER_IDS.has(String(oid))?"MarTech":"Digital";}
+
+/* Classify line item → {svc, bu} */
+function classifyLineItem(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+  if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
+    return{svc:"Campaign",bu:"MarTech"};
+  if(n.includes("design - asset")||n.includes("design - digital"))
+    return{svc:"Web",bu:"Digital"};
+  if(n.includes("design - "))
+    return{svc:"Design",bu:"MarTech"};
+  if(n.includes("development - email")||n.includes("email coding"))
+    return{svc:"Email",bu:"MarTech"};
+  if(n.includes("email design and coding"))
+    return{svc:"Design",bu:"MarTech"};
+  if(n.includes("development - web")||n.includes("development - lp/hub")||
+     n.includes("development - mobile app")||n.includes("ai & automation - web")||
+     n.includes("dot-net development")||n.includes("operational service - data entry")||
+     n.includes("landing page coding"))
+    return{svc:"Web",bu:"Digital"};
+  if(n.includes("search -")||n.includes("consultancy fees"))
+    return{svc:"Search",bu:"Digital"};
+  return null;
+}
+
+/* Engagement type from line item name */
+function engGroupFromLiName(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+  if(n.startsWith("dedicated fte")||n.startsWith("dedicated pte")||n.startsWith("recurring services")||n.startsWith("recurring"))return"Recurring";
+  if(n.startsWith("p2p")||n.startsWith("time and material")||n.startsWith("t&m"))return"P2P";
+  if(n.includes("email coding"))return"P2P";
+  return null;
+}
+
+/* Engagement type from deal property */
+function engGroup(val){
+  if(!val)return null;
+  if(["Dedicated FTE","Dedicated PTE","Multiple","Recurring Services","Recurring"].includes(val))return"Recurring";
+  if(["P2P","Time and Material","T&M","Time"].includes(val))return"P2P";
+  return null;
+}
+
+/* Snapshot geo: India stays India; OWNER_GEO fallback for null geo */
+function snapGeo(d){
+  const g=(d.geo||"").trim();
+  if(g&&SNAP_GEO_MAP[g])return SNAP_GEO_MAP[g];
+  if(g==="Other"||!g){const og=OWNER_GEO[String(d.owner_id||"")];return og||null;}
+  return null;
+}
+
+// ════════════════════════════════════════════════════════════
+// FORMATTING
+// ════════════════════════════════════════════════════════════
+function fmtUSD(v){
+  if(!v&&v!==0)return"—";
+  const n=Number(v);
+  if(isNaN(n))return"—";
+  if(Math.abs(n)>=1000000)return"$"+(n/1000000).toFixed(2)+"M";
+  if(Math.abs(n)>=1000)return"$"+(n/1000).toFixed(1)+"K";
+  return"$"+n.toFixed(0);
+}
+
+// ════════════════════════════════════════════════════════════
+// DATA FETCHING
+// ════════════════════════════════════════════════════════════
+function getMonthStr(date){
+  return MFULL[date.getMonth()]+"-"+date.getFullYear();
+}
+
+function dedup(deals){
+  const seen=new Set(),out=[];
+  deals.forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);out.push(d);}});
+  return out;
+}
+
+async function fetchMonthDeals(monthStr){
+  const props=[
+    "dealname","amount_in_home_currency","hubspot_owner_id","closedate",
+    "invoice_booking_month__invoice_app_","engagement_model__invoice_app_",
+    "company_name__invoice_app_","zoho_display_name__invoice_app_",
+    "geo__invoice_app_","geo_head__invoice_app_",
+    "user_role_invoice_app","user_role__invoice_app_"
+  ];
+  const filters=[
+    {propertyName:"pipeline",   operator:"EQ",  value:PIPELINE},
+    {propertyName:"dealstage",  operator:"EQ",  value:STAGE},
+    {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ", value:monthStr},
+    {propertyName:"engagement_model__invoice_app_",  operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
+    {propertyName:"company_name__invoice_app_",       operator:"NOT_IN", values:EXCLUDED_COMPANIES}
+  ];
+  const fetched=[];
+  let after=null;
+  do {
+    const body={filterGroups:[{filters}],properties:props,limit:200};
+    if(after)body.after=after;
+    const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error("API "+res.status);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      const bm=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase().trim();
+      const role=(r.properties?.user_role_invoice_app||r.properties?.user_role__invoice_app_||"").trim().toUpperCase();
+      const cn=(r.properties?.company_name__invoice_app_||"").trim();
+      const company=(cn&&cn!=="(blank)")?cn:(r.properties?.zoho_display_name__invoice_app_||"").trim();
+      if(!company)return;
+      fetched.push({
+        id:       String(r.id),
+        dealname: r.properties?.dealname||"",
+        owner_id: String(r.properties?.hubspot_owner_id||""),
+        company:  company,
+        month:    bm,
+        user_role:role,
+        geo:      (r.properties?.geo__invoice_app_||"").trim(),
+        geo_head: (r.properties?.geo_head__invoice_app_||"").trim(),
+        eng_model:(r.properties?.engagement_model__invoice_app_||"").trim()
+      });
+    });
+    after=data.paging?.next?.after||null;
+  }while(after);
+  return dedup(fetched);
+}
+
+async function fetchLineItems(deals){
+  const liMap={};
+  for(let i=0;i<deals.length;i+=500){
+    const chunk=deals.slice(i,i+500).map(d=>d.id);
+    const res=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+    if(!res.ok)continue;
+    const data=await res.json();
+    Object.entries(data.items||{}).forEach(([did,lis])=>{
+      liMap[did]=(lis||[]).map(li=>{
+        const cls=classifyLineItem(li.name);
+        return{svc:cls?.svc||null,bu:cls?.bu||null,amount:li.amount||0,name:li.name||""};
+      }).filter(li=>li.amount!==0);
+    });
+  }
+  return liMap;
+}
+
+// ════════════════════════════════════════════════════════════
+// COMPUTE SNAPSHOT
+// ════════════════════════════════════════════════════════════
+/* Zero'd per-geo × per-type bucket */
+function emptyGeoBlock(){
+  return{India:{rec:0,p2p:0},US:{rec:0,p2p:0},UAE:{rec:0,p2p:0},UK:{rec:0,p2p:0},AU:{rec:0,p2p:0}};
+}
+function emptyBU(){
+  return{booking:emptyGeoBlock(),newRec:0,newP2p:0,newCount:0,lostRec:0,lostP2p:0,lostCount:0};
+}
+
+function computeSnapshot(curDeals, prevDeals, liMap){
+  /* BU buckets */
+  const bkt={digital:emptyBU(),interbu:emptyBU(),martech:emptyBU()};
+
+  /* ── 1. Booking (current month) ── */
+  curDeals.forEach(d=>{
+    const geo=snapGeo(d)||"India"; // default to India if no geo
+    const lis=liMap[d.id]||[];
+    const ownerBU=buFromOwner(d.owner_id);
+
+    if(!lis.length){
+      /* No line items — use deal-level eng_model, classify BU from owner */
+      const eg=engGroup(d.eng_model);
+      if(!eg)return;
+      const bu=ownerBU==="MarTech"?"martech":"digital";
+      const gobj=bkt[bu].booking[geo];
+      if(!gobj)return;
+      if(eg==="Recurring")gobj.rec+=0; // no amount without line items
+      else gobj.p2p+=0;
+      return;
+    }
+
+    lis.forEach(li=>{
+      if(!li.amount||li.amount<=0)return;
+      const liEng=engGroupFromLiName(li.name);
+      const eg=liEng||engGroup(d.eng_model);
+      if(!eg)return;
+
+      /* BU from line item: if owner is Digital but li.bu is MarTech → Inter BU */
+      let snapBU;
+      if(ownerBU==="MarTech"){
+        snapBU="martech";
+      } else {
+        /* Digital owner: line item BU determines Digital vs Inter */
+        snapBU=(li.bu==="MarTech")?"interbu":"digital";
+      }
+
+      const gobj=bkt[snapBU].booking[geo];
+      if(!gobj)return;
+      if(eg==="Recurring")gobj.rec+=li.amount;
+      else gobj.p2p+=li.amount;
+    });
+  });
+
+  /* ── 2. New Addition (companies in curDeals not in prevDeals) ── */
+  const prevCompanies=new Set(prevDeals.map(d=>d.company));
+
+  /* Group cur deals by company to compute amounts */
+  const curByCompany={};
+  curDeals.forEach(d=>{
+    if(!curByCompany[d.company])curByCompany[d.company]={deals:[],ownerBU:buFromOwner(d.owner_id)};
+    curByCompany[d.company].deals.push(d);
+  });
+
+  Object.entries(curByCompany).forEach(([company,info])=>{
+    if(prevCompanies.has(company))return; // was in previous month
+    let rec=0,p2p=0;
+    info.deals.forEach(d=>{
+      const lis=liMap[d.id]||[];
+      lis.forEach(li=>{
+        if(!li.amount||li.amount<=0)return;
+        const eg=engGroupFromLiName(li.name)||engGroup(d.eng_model);
+        if(eg==="Recurring")rec+=li.amount;
+        else if(eg==="P2P")p2p+=li.amount;
+      });
+      if(!lis.length){
+        const eg=engGroup(d.eng_model);
+        /* No line item amounts available, skip */
+      }
+    });
+    /* Classify this company's BU (use majority line-item BU) */
+    let digitalAmt=0,interbuAmt=0,martechAmt=0;
+    info.deals.forEach(d=>{
+      const ownerBU=buFromOwner(d.owner_id);
+      (liMap[d.id]||[]).forEach(li=>{
+        if(ownerBU==="MarTech")martechAmt+=li.amount;
+        else if(li.bu==="MarTech")interbuAmt+=li.amount;
+        else digitalAmt+=li.amount;
+      });
+    });
+    let snapBU;
+    if(martechAmt>=digitalAmt&&martechAmt>=interbuAmt)snapBU="martech";
+    else if(interbuAmt>=digitalAmt)snapBU="interbu";
+    else snapBU="digital";
+
+    bkt[snapBU].newRec+=rec;
+    bkt[snapBU].newP2p+=p2p;
+    bkt[snapBU].newCount+=1;
+  });
+
+  /* ── 3. Engagement Lost (companies in prevDeals not in curDeals) ── */
+  const curCompanies=new Set(curDeals.map(d=>d.company));
+
+  const prevByCompany={};
+  prevDeals.forEach(d=>{
+    if(!prevByCompany[d.company])prevByCompany[d.company]={deals:[],ownerBU:buFromOwner(d.owner_id)};
+    prevByCompany[d.company].deals.push(d);
+  });
+
+  Object.entries(prevByCompany).forEach(([company,info])=>{
+    if(curCompanies.has(company))return; // still active
+    let rec=0,p2p=0;
+    info.deals.forEach(d=>{
+      const lis=liMap[d.id]||[];
+      lis.forEach(li=>{
+        if(!li.amount||li.amount<=0)return;
+        const eg=engGroupFromLiName(li.name)||engGroup(d.eng_model);
+        if(eg==="Recurring")rec+=li.amount;
+        else if(eg==="P2P")p2p+=li.amount;
+      });
+    });
+    /* BU */
+    let digitalAmt=0,interbuAmt=0,martechAmt=0;
+    info.deals.forEach(d=>{
+      const ownerBU=buFromOwner(d.owner_id);
+      (liMap[d.id]||[]).forEach(li=>{
+        if(ownerBU==="MarTech")martechAmt+=li.amount;
+        else if(li.bu==="MarTech")interbuAmt+=li.amount;
+        else digitalAmt+=li.amount;
+      });
+    });
+    let snapBU;
+    if(martechAmt>=digitalAmt&&martechAmt>=interbuAmt)snapBU="martech";
+    else if(interbuAmt>=digitalAmt)snapBU="interbu";
+    else snapBU="digital";
+
+    bkt[snapBU].lostRec+=rec;
+    bkt[snapBU].lostP2p+=p2p;
+    bkt[snapBU].lostCount+=1;
+  });
+
+  return bkt;
+}
+
+// ════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════
+function renderBookingTable(tbodyId, geoBlock){
+  const tbody=$(tbodyId);
+  if(!tbody)return;
+  let totalRec=0,totalP2p=0;
+  const rows=GEO_ROWS.map(geo=>{
+    const g=geoBlock[geo]||{rec:0,p2p:0};
+    const tot=g.rec+g.p2p;
+    totalRec+=g.rec; totalP2p+=g.p2p;
+    if(tot===0)return`<tr><td class="lbl">${geo}</td><td class="num" style="color:#D0D0D0">—</td><td class="num" style="color:#D0D0D0">—</td><td class="num" style="color:#D0D0D0">—</td></tr>`;
+    return`<tr><td class="lbl">${geo}</td><td class="num">${fmtUSD(g.rec)}</td><td class="num">${fmtUSD(g.p2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`;
+  });
+  const tot=totalRec+totalP2p;
+  rows.push(`<tr class="total-row"><td class="lbl">Total</td><td class="num">${fmtUSD(totalRec)}</td><td class="num">${fmtUSD(totalP2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`);
+  tbody.innerHTML=rows.join("");
+  return tot;
+}
+
+function setText(id,txt){const e=$(id);if(e)e.textContent=txt;}
+
+function renderBU(prefix, buData){
+  const bookTotal=renderBookingTable(prefix+"-booking-body", buData.booking);
+
+  setText(prefix+"-newcount", buData.newCount||"0");
+  setText(prefix+"-newamt-rec", fmtUSD(buData.newRec));
+  setText(prefix+"-newamt-p2p", fmtUSD(buData.newP2p));
+  setText(prefix+"-newamt-total", fmtUSD(buData.newRec+buData.newP2p));
+
+  setText(prefix+"-lostcount", buData.lostCount||"0");
+  setText(prefix+"-lostamt-rec", fmtUSD(buData.lostRec));
+  setText(prefix+"-lostamt-p2p", fmtUSD(buData.lostP2p));
+  setText(prefix+"-lostamt-total", fmtUSD(buData.lostRec+buData.lostP2p));
+
+  return{book:bookTotal,newAmt:buData.newRec+buData.newP2p,lostAmt:buData.lostRec+buData.lostP2p,newCnt:buData.newCount,lostCnt:buData.lostCount};
+}
+
+function populateSnapshot(bkt, curMonth, prevMonth){
+  const now=new Date();
+  const dateStr=now.toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"})+" · "+now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})+" IST";
+  const monLabel=MSHRT[now.getMonth()]+" "+now.getFullYear();
+
+  setText("snapshot-date", dateStr);
+  setText("snap-period","vs "+MSHRT[new Date(now.getFullYear(),now.getMonth()-1,1).getMonth()]+" "+new Date(now.getFullYear(),now.getMonth()-1,1).getFullYear());
+
+  const d=renderBU("digital", bkt.digital);
+  const ib=renderBU("interbu", bkt.interbu);
+  const mt=renderBU("martech", bkt.martech);
+
+  const gtBook=(d.book||0)+(ib.book||0)+(mt.book||0);
+  const gtNew=(d.newAmt||0)+(ib.newAmt||0)+(mt.newAmt||0);
+  const gtLost=(d.lostAmt||0)+(ib.lostAmt||0)+(mt.lostAmt||0);
+  const gtNet=gtNew-gtLost;
+
+  setText("gt-booking", fmtUSD(gtBook));
+  setText("gt-booking-sub", monLabel+" MTD");
+  setText("gt-newamt", fmtUSD(gtNew));
+  setText("gt-newamt-sub", `${(d.newCnt||0)+(ib.newCnt||0)+(mt.newCnt||0)} companies`);
+  setText("gt-lostamt", fmtUSD(gtLost));
+  setText("gt-lostamt-sub", `${(d.lostCnt||0)+(ib.lostCnt||0)+(mt.lostCnt||0)} companies`);
+  setText("gt-net", (gtNet>=0?"+":"")+fmtUSD(gtNet));
+}
+
+// ════════════════════════════════════════════════════════════
+// SYNC
+// ════════════════════════════════════════════════════════════
+let isSyncing=false;
+
+async function doSync(force=false){
+  if(isSyncing&&!force)return;
+  isSyncing=true;
+  $("lo").classList.add("show");
+  if($("rfbtn"))$("rfbtn").disabled=true;
+  $("sdot").style.background="#006E5E";
+  $("stxt").textContent="SYNCING…";
+  $("err-bar").classList.remove("show");
+
+  try{
+    const now=new Date();
+    const curMonth=getMonthStr(now);
+    const prevDate=new Date(now.getFullYear(),now.getMonth()-1,1);
+    const prevMonth=getMonthStr(prevDate);
+
+    $("stxt").textContent="FETCHING CURRENT MONTH…";
+    const curDeals=await fetchMonthDeals(curMonth);
+
+    $("stxt").textContent="FETCHING PREVIOUS MONTH…";
+    const prevDeals=await fetchMonthDeals(prevMonth);
+
+    $("stxt").textContent="FETCHING LINE ITEMS…";
+    const allDeals=dedup([...curDeals,...prevDeals]);
+    const liMap=await fetchLineItems(allDeals);
+
+    const bkt=computeSnapshot(curDeals,prevDeals,liMap);
+    populateSnapshot(bkt,curMonth,prevMonth);
+
+    $("main-content").style.display="block";
+    $("sdot").style.background="#FFDA30";
+    $("stxt").textContent="LIVE · "+curDeals.length+" DEALS";
+    $("last-sync").textContent="Synced "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){
+    console.error("[Snapshot] sync error",e);
+    $("sdot").style.background="#E84040";
+    $("stxt").textContent="SYNC FAILED";
+    $("err-bar").textContent="Failed to load snapshot: "+e.message;
+    $("err-bar").classList.add("show");
+    $("main-content").style.display="block";
+  }finally{
+    isSyncing=false;
+    $("lo").classList.remove("show");
+    if($("rfbtn"))$("rfbtn").disabled=false;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════
+async function doLogin(){
+  const btn=$("login-btn"),err=$("login-err"),pw=$("pw-input").value.trim();
   if(!pw){err.textContent="Please enter the access password.";return;}
-  btn.disabled=true; btn.textContent="Verifying..."; err.textContent="";
-  try {
-    const res = await fetch("/snapshot-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
-    const data = await res.json();
+  btn.disabled=true;btn.textContent="Verifying…";err.textContent="";
+  try{
+    const res=await fetch("/snapshot-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
+    const data=await res.json();
     if(data.success){
       localStorage.setItem("nexus_snapshot_auth","1");
       $("login-overlay").style.display="none";
-      boot();
-    } else if(res.status===500||data.error){
+      doSync(true);
+    }else if(res.status===500||data.error){
       err.textContent="Server config error. Contact Mayur.";
-    } else {
+    }else{
       err.textContent="Incorrect password. Please try again.";
-      $("pw-input").value=""; $("pw-input").focus();
+      $("pw-input").value="";$("pw-input").focus();
     }
-  } catch(e){ err.textContent="Connection error. Check your network."; }
-  finally{ btn.disabled=false; btn.textContent="Access Dashboard"; }
+  }catch(e){err.textContent="Connection error. Check your network.";}
+  finally{btn.disabled=false;btn.textContent="Access Dashboard";}
 }
 
 function checkAuth(){
@@ -499,185 +822,8 @@ function checkAuth(){
   return false;
 }
 
-/* ── Formatting ── */
-function fmtAmt(v, currencySymbol="$"){
-  if(v===null||v===undefined||v==="") return "—";
-  const n=Number(v);
-  if(isNaN(n)) return "—";
-  if(Math.abs(n)>=1000000) return currencySymbol+(n/1000000).toFixed(2)+"M";
-  if(Math.abs(n)>=1000) return currencySymbol+(n/1000).toFixed(1)+"K";
-  return currencySymbol+n.toFixed(0);
-}
-
-function fmtCount(v){
-  if(v===null||v===undefined||v==="") return "—";
-  const n=Number(v);
-  if(isNaN(n)) return "—";
-  return n.toString();
-}
-
-/* ── Populate helpers ── */
-const GEO_ROWS = ["India","US","UAE","UK","AU"];
-
-function fillBookingTable(tbodyId, data){
-  const tbody=$(tbodyId);
-  if(!tbody) return;
-  const rows=tbody.querySelectorAll("tr");
-  let totalRec=0, totalP2p=0, totalTot=0;
-  GEO_ROWS.forEach((geo, i)=>{
-    const row=rows[i];
-    if(!row) return;
-    const d=data[geo]||{};
-    const rec=Number(d.recurring||0), p2p=Number(d.p2p||0), tot=Number(d.total||rec+p2p);
-    totalRec+=rec; totalP2p+=p2p; totalTot+=tot;
-    row.cells[1].textContent=fmtAmt(rec);
-    row.cells[1].className="num";
-    row.cells[2].textContent=fmtAmt(p2p);
-    row.cells[2].className="num";
-    row.cells[3].textContent=fmtAmt(tot);
-    row.cells[3].className="num";
-  });
-  const totalRow=rows[GEO_ROWS.length];
-  if(totalRow){
-    totalRow.cells[1].textContent=fmtAmt(totalRec);
-    totalRow.cells[2].textContent=fmtAmt(totalP2p);
-    totalRow.cells[3].textContent=fmtAmt(totalTot);
-  }
-}
-
-function fillSingle(id, val, fmt="count"){
-  const el=$(id);
-  if(!el) return;
-  el.textContent= fmt==="count" ? fmtCount(val) : fmtAmt(val);
-}
-
-function fillAmounts(prefix, rec, p2p, total){
-  fillSingle(prefix+"-rec", rec, "amt");
-  fillSingle(prefix+"-p2p", p2p, "amt");
-  fillSingle(prefix+"-total", total, "amt");
-}
-
-/* ── Main data population ── */
-function populateSnapshot(snapshot){
-  /* snapshot structure:
-    {
-      date: "8 Sep 2025, 23:59 IST",
-      digital: {
-        booking: { India:{recurring,p2p,total}, US:{...}, UAE:{...}, UK:{...}, AU:{...} },
-        newcount: 5,
-        newamt: { recurring: 12000, p2p: 3000, total: 15000 },
-        lostcount: 2,
-        lostamt: { recurring: 4000, p2p: 1000, total: 5000 }
-      },
-      interbu: { ... same shape ... },
-      martech: { ... same shape ... }
-    }
-  */
-  $("snapshot-date").textContent = snapshot.date || "—";
-
-  const BUS = ["digital","interbu","martech"];
-  let gtBooking=0, gtNew=0, gtLost=0;
-
-  BUS.forEach(bu=>{
-    const d=snapshot[bu]||{};
-    fillBookingTable(bu+"-booking-body", d.booking||{});
-    fillSingle(bu+"-newcount", d.newcount, "count");
-    fillAmounts(bu+"-newamt", d.newamt?.recurring, d.newamt?.p2p, d.newamt?.total);
-    fillSingle(bu+"-lostcount", d.lostcount, "count");
-    fillAmounts(bu+"-lostamt", d.lostamt?.recurring, d.lostamt?.p2p, d.lostamt?.total);
-
-    const bookTotal=Object.values(d.booking||{}).reduce((sum,geo)=>sum+Number(geo.total||0),0);
-    gtBooking+=bookTotal;
-    gtNew+=Number(d.newamt?.total||0);
-    gtLost+=Number(d.lostamt?.total||0);
-  });
-
-  $("gt-booking").textContent=fmtAmt(gtBooking);
-  $("gt-newamt").textContent=fmtAmt(gtNew);
-  $("gt-lost").textContent=fmtAmt(gtLost);
-}
-
-/* ── Fetch snapshot data ── */
-async function fetchSnapshot(){
-  $("loader").classList.add("show");
-  const sdot=$("sdot"), stxt=$("sync-txt");
-  try {
-    /* TODO: replace with real data source — HubSpot API, Google Sheets, or Cloudflare KV */
-    const snapshot = await getSnapshotData();
-    populateSnapshot(snapshot);
-    sdot.style.background="#0CCE6B";
-    stxt.textContent="Live";
-    $("last-sync").textContent="Updated "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
-    $("main-content").style.display="block";
-  } catch(err){
-    console.error("[Snapshot] fetch error", err);
-    sdot.style.background="#E84040";
-    stxt.textContent="Error";
-    const eb=$("err-bar");
-    eb.textContent="Failed to load snapshot data. "+err.message;
-    eb.classList.add("show");
-    $("main-content").style.display="block";
-  } finally {
-    $("loader").classList.remove("show");
-  }
-}
-
-/* ── Stub: returns demo data until real source is wired ── */
-async function getSnapshotData(){
-  /* This function will be replaced with a real fetch call.
-     Shape matches what populateSnapshot() expects. */
-  return {
-    date: "8 Sep 2025, 23:59 IST",
-    digital: {
-      booking: {
-        India:  {recurring:42000, p2p:8000,  total:50000},
-        US:     {recurring:31000, p2p:5500,  total:36500},
-        UAE:    {recurring:18000, p2p:2000,  total:20000},
-        UK:     {recurring:12000, p2p:1000,  total:13000},
-        AU:     {recurring:9000,  p2p:500,   total:9500}
-      },
-      newcount: 7,
-      newamt:  {recurring:28000, p2p:4000, total:32000},
-      lostcount: 2,
-      lostamt: {recurring:6000,  p2p:500,  total:6500}
-    },
-    interbu: {
-      booking: {
-        India:  {recurring:15000, p2p:3000,  total:18000},
-        US:     {recurring:22000, p2p:4000,  total:26000},
-        UAE:    {recurring:8000,  p2p:1000,  total:9000},
-        UK:     {recurring:5000,  p2p:500,   total:5500},
-        AU:     {recurring:3000,  p2p:200,   total:3200}
-      },
-      newcount: 4,
-      newamt:  {recurring:14000, p2p:2000, total:16000},
-      lostcount: 1,
-      lostamt: {recurring:3500,  p2p:0,    total:3500}
-    },
-    martech: {
-      booking: {
-        India:  {recurring:28000, p2p:5000,  total:33000},
-        US:     {recurring:19000, p2p:3500,  total:22500},
-        UAE:    {recurring:11000, p2p:1500,  total:12500},
-        UK:     {recurring:7000,  p2p:800,   total:7800},
-        AU:     {recurring:4500,  p2p:300,   total:4800}
-      },
-      newcount: 5,
-      newamt:  {recurring:18000, p2p:3000, total:21000},
-      lostcount: 3,
-      lostamt: {recurring:8000,  p2p:1000, total:9000}
-    }
-  };
-}
-
-/* ── Boot ── */
-function boot(){
-  $("main-content").style.display="block";
-  fetchSnapshot();
-}
-
-window.addEventListener("DOMContentLoaded", function(){
-  if(checkAuth()) boot();
+window.addEventListener("DOMContentLoaded",function(){
+  if(checkAuth())doSync(true);
 });
 </script>
 </body>
