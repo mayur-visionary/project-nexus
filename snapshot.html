@@ -790,15 +790,10 @@ function sumMR(mrRows) {
 }
 
 function populateSnapshot(bkt, yesterdayStr) {
-  const now = new Date();
-  const monLabel = MSHRT[now.getMonth()] + " " + now.getFullYear();
+  // All display labels derived from yesterdayStr — consistent with data anchor
+  const yestDate = new Date(yesterdayStr + "T00:00:00");
+  const monLabel = MSHRT[yestDate.getMonth()] + " " + yestDate.getFullYear();
   setText("snap-period", monLabel + " MTD");
-
-  // "As of" date: previous business day (skip Sat/Sun)
-  const yestDate = new Date(now);
-  yestDate.setDate(yestDate.getDate() - 1);
-  if (yestDate.getDay() === 0) yestDate.setDate(yestDate.getDate() - 2); // Sunday → Friday
-  if (yestDate.getDay() === 6) yestDate.setDate(yestDate.getDate() - 1); // Saturday → Friday
   setText("snapshot-date", yestDate.toLocaleDateString("en-IN", {day:"numeric", month:"long", year:"numeric"}));
 
   const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, yesterdayStr);
@@ -835,14 +830,19 @@ async function doSync(force = false) {
   $("err-bar").classList.remove("show");
 
   try {
+    // ── All dates anchored to YESTERDAY (EOD Sep 9 if today is Sep 10) ──
+    // The scorecard always shows the last complete day's picture,
+    // regardless of what hour today it is opened. This ensures consistent
+    // numbers across all Leadership views throughout the day.
     const now = new Date();
-    const curMonth  = getMonthStr(now);
-    const prevDate  = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const prevMonth = getMonthStr(prevDate);
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-    const yest = new Date(now);
-    yest.setDate(yest.getDate() - 1);
-    const yesterdayStr = yest.toISOString().split("T")[0];
+    // curMonth = yesterday's month (e.g. Sep if yesterday was Sep 30, even if today is Oct 1)
+    const curMonth  = getMonthStr(yesterday);
+    // prevMonth = one month before yesterday's month
+    const prevDate  = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, 1);
+    const prevMonth = getMonthStr(prevDate);
 
     $("stxt").textContent = "FETCHING CURRENT MONTH…";
     const curDeals = await fetchMonthDeals(curMonth);
