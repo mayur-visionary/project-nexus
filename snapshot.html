@@ -94,7 +94,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .metric-card-ttl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
 .metric-badge{font-size:8px;font-weight:700;color:#696969;letter-spacing:.04em;background:#F2F2F2;border-radius:4px;padding:2px 6px}
 
-/* ── Snapshot table (all 5-col tables) ── */
+/* ── Snapshot table ── */
 .snap-tbl{width:100%;border-collapse:collapse}
 .snap-tbl thead th{padding:5px 10px;background:#F7F7F7;text-align:left;font-size:7px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #EBEBEB;white-space:nowrap}
 .snap-tbl thead th.num{text-align:right}
@@ -107,7 +107,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .snap-tbl tbody td.dim{color:#D0D0D0}
 
 /* ── Grand total bar ── */
-.grand-total{background:#473400;border-radius:10px;padding:16px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grand-total{background:#473400;border-radius:10px;padding:16px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .gt-item{text-align:center}
 .gt-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:5px}
 .gt-val{font-size:15px;font-weight:800;color:#FFDA30;line-height:1}
@@ -216,32 +216,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <!-- Digital BU -->
     <div class="bu-col">
       <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span><span class="bu-badge">Search · Web</span></div>
-
       <div class="metric-card booking">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Revenue</div><div class="metric-badge">MTD</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="digital-rev-body"></tbody></table>
       </div>
-
       <div class="metric-card asof-card">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Contribution to MTD</div><div class="metric-badge" id="digital-asof-date">—</div></div>
-        <table class="snap-tbl"><thead><tr><th colspan="2">—</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="digital-asof-body"></tbody></table>
+        <table class="snap-tbl"><thead><tr><th colspan="2">Yesterday</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="digital-asof-body"></tbody></table>
       </div>
-
       <div class="metric-card new-add">
         <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition</div><div class="metric-badge">Count</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-nacount-body"></tbody></table>
       </div>
-
       <div class="metric-card new-add">
         <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition Amount</div><div class="metric-badge">Revenue</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-naamt-body"></tbody></table>
       </div>
-
       <div class="metric-card lost">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost</div><div class="metric-badge">Count</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-elcount-body"></tbody></table>
       </div>
-
       <div class="metric-card lost">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost Amount</div><div class="metric-badge">Revenue</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-elamt-body"></tbody></table>
@@ -251,32 +245,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <!-- Inter BU -->
     <div class="bu-col">
       <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span><span class="bu-badge">Campaign · Email · Design</span></div>
-
       <div class="metric-card booking">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Revenue</div><div class="metric-badge">MTD</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="interbu-rev-body"></tbody></table>
       </div>
-
       <div class="metric-card asof-card">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Contribution to MTD</div><div class="metric-badge" id="interbu-asof-date">—</div></div>
-        <table class="snap-tbl"><thead><tr><th colspan="2">—</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="interbu-asof-body"></tbody></table>
+        <table class="snap-tbl"><thead><tr><th colspan="2">Yesterday</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="interbu-asof-body"></tbody></table>
       </div>
-
       <div class="metric-card new-add">
         <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition</div><div class="metric-badge">Count</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-nacount-body"></tbody></table>
       </div>
-
       <div class="metric-card new-add">
         <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition Amount</div><div class="metric-badge">Revenue</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-naamt-body"></tbody></table>
       </div>
-
       <div class="metric-card lost">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost</div><div class="metric-badge">Count</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-elcount-body"></tbody></table>
       </div>
-
       <div class="metric-card lost">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost Amount</div><div class="metric-badge">Revenue</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-elamt-body"></tbody></table>
@@ -286,32 +274,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <!-- MarTech BU -->
     <div class="bu-col">
       <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span><span class="bu-badge">Jaydeep's Team</span></div>
-
       <div class="metric-card booking">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Revenue</div><div class="metric-badge">MTD</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="martech-rev-body"></tbody></table>
       </div>
-
       <div class="metric-card asof-card">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Contribution to MTD</div><div class="metric-badge" id="martech-asof-date">—</div></div>
-        <table class="snap-tbl"><thead><tr><th colspan="2">—</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="martech-asof-body"></tbody></table>
+        <table class="snap-tbl"><thead><tr><th colspan="2">Yesterday</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="martech-asof-body"></tbody></table>
       </div>
-
       <div class="metric-card new-add">
         <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition</div><div class="metric-badge">Count</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-nacount-body"></tbody></table>
       </div>
-
       <div class="metric-card new-add">
         <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition Amount</div><div class="metric-badge">Revenue</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-naamt-body"></tbody></table>
       </div>
-
       <div class="metric-card lost">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost</div><div class="metric-badge">Count</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-elcount-body"></tbody></table>
       </div>
-
       <div class="metric-card lost">
         <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost Amount</div><div class="metric-badge">Revenue</div></div>
         <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-elamt-body"></tbody></table>
@@ -323,21 +305,42 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 </div><!-- /main -->
 
 <script>
+// ════════════════════════════════════════════════════════════════
+// BU SCORECARD — MAVLERS · Project Nexus
+// Standalone page. Data source: HubSpot via /api + /lineItems.
+//
+// Attribution: OWNER-BASED ONLY — registry (OWNER_BU / OWNER_ROW_KEY)
+//   is primary. geo__invoice_app_ is NEVER used for attribution.
+//   Fallback for unregistered owners: "NBD" row (surfaced, not silently dropped).
+//
+// Dedup key for New Addition / Engagement Lost: zoho_billing_id__invoice_app_
+//   (falls back to contact_name__invoice_app_ only when billing_id is blank).
+//   company name string is retained for display only.
+//
+// Engagement classification (snapEngType): per line-item name.
+//   Managed = Dedicated FTE / PTE
+//   Recurring = Recurring Services
+//   P2P = P2P / T&M / Time and Material / email coding
+//   engGroup(deal.eng_model) used ONLY as fallback when no line items exist.
+// ════════════════════════════════════════════════════════════════
+
 const $ = id => document.getElementById(id);
 const PIPELINE = "115832232", STAGE = "205348626";
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-const EXCLUDED_COMPANIES = ["InboxArmy","Uplers","Solomax"];
+const EXCLUDED_COMPANIES  = ["InboxArmy","Uplers","Solomax"];
 const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement"];
 
 // ── Head-row definitions ──
+// Digital BU and Inter BU share these rows (attribution drives which column)
 const DIGITAL_ROWS = [
   {key:"AU",  head:"Jiggyasa",  region:"AU"},
   {key:"UK",  head:"Tanuj UK",  region:"UK"},
   {key:"US",  head:"Tanuj USA", region:"US"},
   {key:"NBD", head:"Nevilson",  region:"NBD"}
 ];
+// MarTech BU — single head (Jaydeep), broken out by region
 const MARTECH_ROWS = [
   {key:"AU",  head:"Jaydeep", region:"AU"},
   {key:"UK",  head:"Jaydeep", region:"UK"},
@@ -345,57 +348,86 @@ const MARTECH_ROWS = [
   {key:"NBD", head:"Jaydeep", region:"NBD"}
 ];
 
-// ── Owner → row key (Digital/Inter BU) ──
-const DIGITAL_OWNER_ROW = {
-  "86940863":"NBD","86813698":"NBD","255830830":"NBD","37762663":"NBD",
-  "131779647":"AU","78831011":"AU","94746500":"AU","176516495":"AU","263464861":"AU",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "38568120":"US","42663191":"US","240935328":"US","19799470":"US",
-  "34558123":"US","284770744":"US","557894666":"US"
-};
+// ── Owner registry — SINGLE SOURCE OF TRUTH for attribution ──
+// BU: "MarTech" | "Digital"
+// rowKey: row bucket within that BU's table
+// All 37 registered owners. Unregistered owners → NBD fallback row, BU inferred from MARTECH_OWNER_IDS.
 
-// ── Owner → row key (MarTech BU) ──
-const MARTECH_OWNER_ROW = {
-  "467997340":"AU",
-  "82911376":"UK","82030736":"UK",
-  "916030451":"US","86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
-  "41490632":"NBD"
-};
-
-// ── MarTech owner IDs (includes leaders) ──
+// MarTech owner IDs (used to route to martech BU for unregistered owners)
 const MARTECH_OWNER_IDS = new Set([
-  "107178262","17738843","34140174",
-  "467997340",
-  "82911376","82030736",
-  "916030451","86147905","85767516","89530815","46153051","93107638",
-  "41490632"
+  "107178262",  // Chintan Doshi       — MarTech Leader
+  "17738843",   // Jaydeep Salla/Soni  — MarTech Leader
+  "34140174",   // Mrugesh Dabhi       — MarTech Leader
+  "467997340",  // Karan Doshi         — MarTech AU
+  "82911376",   // Divya S             — MarTech UK
+  "82030736",   // Sakshi Bissa        — MarTech UK
+  "93107638",   // Ayush Dhupar        — MarTech US
+  "46153051",   // Ayush Rathi         — MarTech US
+  "86147905",   // Preeti Thapliyal    — MarTech US
+  "85767516",   // Rupali Sindhu       — MarTech US
+  "89530815",   // Vinita Raidu        — MarTech US
+  "916030451",  // Kamesh Biniwale     — MarTech NBD (geo=US)
+  "41490632"    // Mukund Basita       — MarTech Reactivation
 ]);
 
-// ── Owner geo for leader geo-fallback ──
-const OWNER_GEO = {
-  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
-  "19799470":"US","557894666":"US",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
-  "86813698":"AU","255830830":"UK","37762663":"US",
-  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
-  "82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"
+// Owner → row key map — REGISTRY ONLY, no geo fallback
+// Digital / Inter BU owners
+const DIGITAL_OWNER_ROW = {
+  // Digital AU — Jiggyasa's team
+  "131779647":"AU",  // Jiggyasa Agrawal
+  "78831011":"AU",   // Kunal Gohil
+  "94746500":"AU",   // Manvi Choumal
+  "176516495":"AU",  // Prachi Porwal
+  "263464861":"AU",  // Saquib Khan
+  // Digital UK — Tanuj UK team
+  "37344296":"UK",   // Kalgi Shah
+  "31730801":"UK",   // Vikram Sahi
+  "46156316":"UK",   // Flintoff Mehta
+  "24817892":"UK",   // Sheldon Fernandes (departed — historical deals still attributed)
+  // Digital US — Tanuj US team
+  "38568120":"US",   // Baspin Thomas
+  "42663191":"US",   // Dhaval Damania
+  "240935328":"US",  // Hammad Bhaldar
+  "19799470":"US",   // Jebin Joy
+  "34558123":"US",   // Kaustubh Agrawal
+  "284770744":"US",  // Sourya Ghosh
+  "557894666":"US",  // Sudarshan Damani
+  // Digital NBD — Nevilson's team
+  "86813698":"NBD",  // Aman Acharya
+  "255830830":"NBD", // Devanshu Kumar
+  "37762663":"NBD",  // Malav Modi
+  // Digital Leaders — no fixed region; deals fall to NBD row
+  "17739548":"NBD",  // Darshan Modi
+  "79217713":"NBD",  // Krunal Bakraniya
+  "17739173":"NBD"   // Tanuj Gupta (leader)
 };
 
-const GEO_ROW_MAP = {"US":"US","UK":"UK","Netherlands":"UK","AU/NZ":"AU","AU":"AU","India":"AU"};
+// MarTech owner → row key
+const MARTECH_OWNER_ROW = {
+  // MarTech Leaders — no region; NBD row
+  "107178262":"NBD", // Chintan Doshi
+  "17738843":"NBD",  // Jaydeep Salla/Soni
+  "34140174":"NBD",  // Mrugesh Dabhi
+  // MarTech AU
+  "467997340":"AU",  // Karan Doshi
+  // MarTech UK
+  "82911376":"UK",   // Divya S
+  "82030736":"UK",   // Sakshi Bissa
+  // MarTech US
+  "93107638":"US",   // Ayush Dhupar
+  "46153051":"US",   // Ayush Rathi
+  "86147905":"US",   // Preeti Thapliyal
+  "85767516":"US",   // Rupali Sindhu
+  "89530815":"US",   // Vinita Raidu
+  "916030451":"US",  // Kamesh Biniwale (NBD by nature but geo=US)
+  // MarTech Reactivation — no fixed region; NBD row
+  "41490632":"NBD"   // Mukund Basita
+};
 
-function snapGeoRow(d) {
-  const g = (d.geo || "").trim();
-  if (GEO_ROW_MAP[g]) return GEO_ROW_MAP[g];
-  const og = OWNER_GEO[String(d.owner_id || "")];
-  if (og) return og;
-  return "US";
-}
-
-function getDealRowKey(d, isMarTech) {
-  const oid = String(d.owner_id || "");
-  if (isMarTech) return MARTECH_OWNER_ROW[oid] || snapGeoRow(d);
-  return DIGITAL_OWNER_ROW[oid] || snapGeoRow(d);
+// Get row key from registry — NBD fallback for any unregistered owner
+function getDealRowKey(oid, isMarTech) {
+  if (isMarTech) return MARTECH_OWNER_ROW[oid] || "NBD";
+  return DIGITAL_OWNER_ROW[oid] || "NBD";
 }
 
 // ── Line item classification ──
@@ -422,8 +454,10 @@ function classifyLineItem(name) {
   return null;
 }
 
-// ── Three-way engagement type for snapshot ──
-// Managed = FTE/PTE headcount; Recurring = Recurring Services; P2P = transactional
+// ── Three-way engagement type ──
+// Managed = Dedicated FTE/PTE headcount
+// Recurring = Recurring Services
+// P2P = transactional
 function snapEngType(liName) {
   if (!liName) return null;
   const n = liName.toLowerCase();
@@ -433,6 +467,7 @@ function snapEngType(liName) {
   return null;
 }
 
+// Deal-level eng_model fallback (used only when no line items exist)
 function engGroup(val) {
   if (!val) return null;
   if (["Dedicated FTE","Dedicated PTE","Multiple","Recurring Services","Recurring"].includes(val)) return "Recurring";
@@ -456,24 +491,32 @@ function fmtDateShort(iso) {
   return d + " " + MSHRT[parseInt(m)-1] + " " + y;
 }
 
-// ── Data fetch ──
+// ── Month string helper ──
 function getMonthStr(date) {
   return MFULL[date.getMonth()] + "-" + date.getFullYear();
 }
 
+// ── Dedup by deal ID ──
 function dedup(deals) {
   const seen = new Set(), out = [];
   deals.forEach(d => { if (!seen.has(d.id)) { seen.add(d.id); out.push(d); }});
   return out;
 }
 
+// ── Data fetch ──
 async function fetchMonthDeals(monthStr) {
   const props = [
-    "dealname","amount_in_home_currency","hubspot_owner_id","closedate",
-    "invoice_booking_month__invoice_app_","engagement_model__invoice_app_",
-    "company_name__invoice_app_","zoho_display_name__invoice_app_",
-    "geo__invoice_app_","geo_head__invoice_app_",
-    "user_role_invoice_app","user_role__invoice_app_"
+    "dealname",
+    "amount_in_home_currency",
+    "hubspot_owner_id",
+    "closedate",
+    "invoice_booking_month__invoice_app_",
+    "engagement_model__invoice_app_",
+    "company_name__invoice_app_",
+    "zoho_display_name__invoice_app_",
+    "zoho_billing_id__invoice_app_",   // ← primary dedup key
+    "contact_name__invoice_app_",       // ← billing_id fallback
+    "geo__invoice_app_"
   ];
   const filters = [
     {propertyName:"pipeline",   operator:"EQ",  value:PIPELINE},
@@ -492,18 +535,23 @@ async function fetchMonthDeals(monthStr) {
     const data = await res.json();
     (data.results || []).forEach(r => {
       const bm = (r.properties?.invoice_booking_month__invoice_app_ || "").toLowerCase().trim();
+      // billing_id: zoho_billing_id primary, contact_name fallback — same pattern as index.html
+      const billing_id = (r.properties?.zoho_billing_id__invoice_app_ || r.properties?.contact_name__invoice_app_ || "").trim();
+      // company display name: company_name → zoho_display_name → contact_name
       const cn = (r.properties?.company_name__invoice_app_ || "").trim();
-      const company = (cn && cn !== "(blank)") ? cn : (r.properties?.zoho_display_name__invoice_app_ || "").trim();
-      if (!company || company === "(blank)") return;
+      const company = (cn && cn !== "(blank)") ? cn : (r.properties?.zoho_display_name__invoice_app_ || r.properties?.contact_name__invoice_app_ || "").trim();
+      // Skip deals with no identifiable client
+      if (!billing_id && !company) return;
+      if (company === "(blank)") return;
       fetched.push({
-        id:        String(r.id),
-        owner_id:  String(r.properties?.hubspot_owner_id || ""),
-        company:   company,
-        month:     bm,
-        geo:       (r.properties?.geo__invoice_app_ || "").trim(),
-        eng_model: (r.properties?.engagement_model__invoice_app_ || "").trim(),
-        closedate: (r.properties?.closedate || "").split("T")[0],
-        amount:    parseFloat(r.properties?.amount_in_home_currency || 0) || 0
+        id:         String(r.id),
+        owner_id:   String(r.properties?.hubspot_owner_id || ""),
+        billing_id: billing_id || company, // billing_id is primary; company name as last-resort display key
+        company:    company,
+        month:      bm,
+        eng_model:  (r.properties?.engagement_model__invoice_app_ || "").trim(),
+        closedate:  (r.properties?.closedate || "").split("T")[0],
+        amount:     parseFloat(r.properties?.amount_in_home_currency || 0) || 0
       });
     });
     after = data.paging?.next?.after || null;
@@ -545,24 +593,24 @@ function emptyBU() {
 function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
   const bkt = {digital: emptyBU(), interbu: emptyBU(), martech: emptyBU()};
 
-  // 1. Booking + Contribution to MTD (current month deals)
-  // Uses deal-level amount_in_home_currency (matches Revenue Pulse) pro-rated
-  // across line items for the Recurring/P2P split.
+  // ── 1. Revenue MTD + Contribution to MTD (yesterday's deals) ──
+  // Attribution: owner registry → rowKey. No geo fallback.
+  // Engagement split: per LI snapEngType. Deal-level engGroup only when no LIs.
   curDeals.forEach(deal => {
     const oid = String(deal.owner_id || "");
     const isMarTech = MARTECH_OWNER_IDS.has(oid);
-    const rowKey = getDealRowKey(deal, isMarTech);
+    const rowKey = getDealRowKey(oid, isMarTech);
     const lis = liMap[deal.id] || [];
     const isYesterday = yesterdayStr && deal.closedate === yesterdayStr;
     const dealAmt = deal.amount || 0;
     if (!dealAmt) return;
 
     if (!lis.length) {
-      // No line items — attribute entire deal amount using deal-level eng_model
+      // No line items — use deal-level eng_model as fallback
       const eg = engGroup(deal.eng_model);
       const et = eg === "P2P" ? "P2P" : eg ? "Recurring" : null;
       if (!et) return;
-      let bu = isMarTech ? "martech" : "digital";
+      const bu = isMarTech ? "martech" : "digital";
       const bRow = bkt[bu].booking[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += dealAmt; if (isYesterday) bkt[bu].asof.p2p += dealAmt; }
@@ -585,6 +633,7 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
       if (isMarTech) {
         bu = "martech";
       } else {
+        // Digital owner with MarTech-classified LI → Inter BU
         bu = (li.bu === "MarTech") ? "interbu" : "digital";
       }
 
@@ -601,23 +650,31 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
     });
   });
 
-  // Helper: accumulate new/lost data for a set of deals grouped by company
-  function accumulateNL(dealList, targetCount, targetAmt, prevSet, isCur) {
-    const byCompany = {};
+  // ── 2. New Addition / Engagement Lost ──
+  // Dedup key: billing_id (zoho_billing_id || contact_name fallback)
+  // New Addition: billing_id in current month NOT in previous month
+  // Engagement Lost: billing_id in previous month NOT in current month
+  // P2P excluded — only Managed and Recurring tracked here.
+
+  function accumulateNL(dealList, targetCount, targetAmt, excludeSet) {
+    // Group all deals by billing_id
+    const byClient = {};
     dealList.forEach(d => {
-      if (!byCompany[d.company]) byCompany[d.company] = [];
-      byCompany[d.company].push(d);
+      const key = d.billing_id;
+      if (!key) return;
+      if (!byClient[key]) byClient[key] = [];
+      byClient[key].push(d);
     });
 
-    Object.entries(byCompany).forEach(([company, deals]) => {
-      if (prevSet.has(company)) return; // skip: exists in other month
+    Object.entries(byClient).forEach(([billingId, deals]) => {
+      if (excludeSet.has(billingId)) return; // exists in other month — not new/lost
 
-      // Per BU+rowKey: accumulate Managed and Recurring amounts
+      // Accumulate Managed + Recurring amounts per BU + rowKey
       const buRowAmts = {};
       deals.forEach(deal => {
         const oid = String(deal.owner_id || "");
         const isMarTech = MARTECH_OWNER_IDS.has(oid);
-        const rowKey = getDealRowKey(deal, isMarTech);
+        const rowKey = getDealRowKey(oid, isMarTech);
         const lis = liMap[deal.id] || [];
 
         lis.forEach(li => {
@@ -654,13 +711,14 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
     });
   }
 
-  // 2. New Addition: in current month, NOT in previous month
-  const prevCompanySet = new Set(prevDeals.map(d => d.company));
-  accumulateNL(curDeals, "naCount", "naAmt", prevCompanySet, true);
+  // Build billing_id sets for each month
+  const prevBillingSet = new Set(prevDeals.map(d => d.billing_id).filter(Boolean));
+  const curBillingSet  = new Set(curDeals.map(d => d.billing_id).filter(Boolean));
 
-  // 3. Engagement Lost: in previous month (with Managed/Recurring), NOT in current month
-  const curCompanySet = new Set(curDeals.map(d => d.company));
-  accumulateNL(prevDeals, "elCount", "elAmt", curCompanySet, false);
+  // New Addition: in current month, NOT in previous month
+  accumulateNL(curDeals, "naCount", "naAmt", prevBillingSet);
+  // Engagement Lost: in previous month, NOT in current month
+  accumulateNL(prevDeals, "elCount", "elAmt", curBillingSet);
 
   return bkt;
 }
@@ -692,7 +750,7 @@ function renderAsof(prefix, asofData, yesterdayStr) {
   if (!tbody) return;
   const tot = asofData.rec + asofData.p2p;
   const dim = tot === 0 ? ' class="dim"' : '';
-  tbody.innerHTML = `<tr><td colspan="2" style="color:#9A9A9A;font-size:9px">${yesterdayStr || "—"}</td><td class="num"${dim}>${fmtUSD(asofData.rec)}</td><td class="num"${dim}>${fmtUSD(asofData.p2p)}</td><td class="num"${dim}>${fmtUSD(tot)}</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="2" style="color:#9A9A9A;font-size:9px">${fmtDateShort(yesterdayStr)}</td><td class="num"${dim}>${fmtUSD(asofData.rec)}</td><td class="num"${dim}>${fmtUSD(asofData.p2p)}</td><td class="num"${dim}>${fmtUSD(tot)}</td></tr>`;
 }
 
 function renderMRTable(tbodyId, mrData, rowDefs, isCount) {
@@ -704,10 +762,9 @@ function renderMRTable(tbodyId, mrData, rowDefs, isCount) {
     const tot = d.managed + d.rec;
     totalM += d.managed; totalR += d.rec;
     const fmtV = v => isCount ? (v === 0 ? "—" : v) : fmtUSD(v);
-    const fmtT = v => isCount ? (v === 0 ? "—" : v) : fmtUSD(v);
     if (tot === 0)
       return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${fmtV(d.managed)}</td><td class="num">${fmtV(d.rec)}</td><td class="num">${fmtT(tot)}</td></tr>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${fmtV(d.managed)}</td><td class="num">${fmtV(d.rec)}</td><td class="num">${fmtV(tot)}</td></tr>`;
   });
   const tot = totalM + totalR;
   const fmtV = v => isCount ? v : fmtUSD(v);
@@ -717,12 +774,12 @@ function renderMRTable(tbodyId, mrData, rowDefs, isCount) {
 }
 
 function renderBU(prefix, buData, rowDefs, yesterdayStr) {
-  const bookTotal = renderRevTable(prefix + "-rev-body", buData.booking, rowDefs);
+  const bookTotal   = renderRevTable(prefix + "-rev-body",    buData.booking, rowDefs);
   renderAsof(prefix, buData.asof, yesterdayStr);
   renderMRTable(prefix + "-nacount-body", buData.naCount, rowDefs, true);
-  const naAmtTotal = renderMRTable(prefix + "-naamt-body",   buData.naAmt,   rowDefs, false);
+  const naAmtTotal  = renderMRTable(prefix + "-naamt-body",   buData.naAmt,   rowDefs, false);
   renderMRTable(prefix + "-elcount-body", buData.elCount, rowDefs, true);
-  const elAmtTotal = renderMRTable(prefix + "-elamt-body",   buData.elAmt,   rowDefs, false);
+  const elAmtTotal  = renderMRTable(prefix + "-elamt-body",   buData.elAmt,   rowDefs, false);
   return {book: bookTotal || 0, naAmt: naAmtTotal || 0, elAmt: elAmtTotal || 0};
 }
 
@@ -731,41 +788,36 @@ function sumMR(mrRows) {
   Object.values(mrRows).forEach(r => { t += (r.managed||0) + (r.rec||0); });
   return t;
 }
-function sumMRCount(mrRows) {
-  let t = 0;
-  Object.values(mrRows).forEach(r => { t += (r.managed||0) + (r.rec||0); });
-  return t;
-}
 
-function populateSnapshot(bkt, curMonth, yesterdayStr) {
+function populateSnapshot(bkt, yesterdayStr) {
   const now = new Date();
   const monLabel = MSHRT[now.getMonth()] + " " + now.getFullYear();
   setText("snap-period", monLabel + " MTD");
-  // Show previous business day as the data-through date
+
+  // "As of" date: previous business day (skip Sat/Sun)
   const yestDate = new Date(now);
   yestDate.setDate(yestDate.getDate() - 1);
-  // Skip weekends: if Sunday go back to Friday, if Saturday go back to Friday
-  if (yestDate.getDay() === 0) yestDate.setDate(yestDate.getDate() - 2);
-  if (yestDate.getDay() === 6) yestDate.setDate(yestDate.getDate() - 1);
-  setText("snapshot-date", yestDate.toLocaleDateString("en-IN", {day:"numeric",month:"long",year:"numeric"}));
+  if (yestDate.getDay() === 0) yestDate.setDate(yestDate.getDate() - 2); // Sunday → Friday
+  if (yestDate.getDay() === 6) yestDate.setDate(yestDate.getDate() - 1); // Saturday → Friday
+  setText("snapshot-date", yestDate.toLocaleDateString("en-IN", {day:"numeric", month:"long", year:"numeric"}));
 
   const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, yesterdayStr);
   const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, yesterdayStr);
   const mt = renderBU("martech", bkt.martech, MARTECH_ROWS, yesterdayStr);
 
-  const gtBook = d.book + ib.book + mt.book;
-  const gtNew  = sumMR(bkt.digital.naAmt) + sumMR(bkt.interbu.naAmt) + sumMR(bkt.martech.naAmt);
-  const gtLost = sumMR(bkt.digital.elAmt) + sumMR(bkt.interbu.elAmt) + sumMR(bkt.martech.elAmt);
-  const gtNet  = gtNew - gtLost;
-  const gtNewCnt  = sumMRCount(bkt.digital.naCount) + sumMRCount(bkt.interbu.naCount) + sumMRCount(bkt.martech.naCount);
-  const gtLostCnt = sumMRCount(bkt.digital.elCount) + sumMRCount(bkt.interbu.elCount) + sumMRCount(bkt.martech.elCount);
+  const gtBook    = d.book + ib.book + mt.book;
+  const gtNew     = sumMR(bkt.digital.naAmt) + sumMR(bkt.interbu.naAmt) + sumMR(bkt.martech.naAmt);
+  const gtLost    = sumMR(bkt.digital.elAmt) + sumMR(bkt.interbu.elAmt) + sumMR(bkt.martech.elAmt);
+  const gtNet     = gtNew - gtLost;
+  const gtNewCnt  = sumMR(bkt.digital.naCount) + sumMR(bkt.interbu.naCount) + sumMR(bkt.martech.naCount);
+  const gtLostCnt = sumMR(bkt.digital.elCount) + sumMR(bkt.interbu.elCount) + sumMR(bkt.martech.elCount);
 
   setText("gt-booking",     fmtUSD(gtBook));
   setText("gt-booking-sub", monLabel + " MTD");
   setText("gt-newamt",      fmtUSD(gtNew));
-  setText("gt-newamt-sub",  gtNewCnt + " companies");
+  setText("gt-newamt-sub",  gtNewCnt + " clients");
   setText("gt-lostamt",     fmtUSD(gtLost));
-  setText("gt-lostamt-sub", gtLostCnt + " companies");
+  setText("gt-lostamt-sub", gtLostCnt + " clients");
   setText("gt-net", (gtNet >= 0 ? "+" : "") + fmtUSD(gtNet));
 }
 
@@ -777,6 +829,7 @@ async function doSync(force = false) {
   isSyncing = true;
   $("lo").classList.add("show");
   if ($("rfbtn")) $("rfbtn").disabled = true;
+  if ($("resetbtn")) $("resetbtn").disabled = true;
   $("sdot").style.background = "#006E5E";
   $("stxt").textContent = "SYNCING…";
   $("err-bar").classList.remove("show");
@@ -801,22 +854,23 @@ async function doSync(force = false) {
     const liMap = await fetchLineItems(dedup([...curDeals, ...prevDeals]));
 
     const bkt = computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr);
-    populateSnapshot(bkt, curMonth, yesterdayStr);
+    populateSnapshot(bkt, yesterdayStr);
 
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
     $("stxt").textContent = "LIVE · " + curDeals.length + " DEALS";
   } catch(e) {
-    console.error("[Snapshot]", e);
+    console.error("[BU Scorecard]", e);
     $("sdot").style.background = "#E84040";
     $("stxt").textContent = "SYNC FAILED";
-    $("err-bar").textContent = "Failed to load snapshot: " + e.message;
+    $("err-bar").textContent = "Failed to load scorecard: " + e.message;
     $("err-bar").classList.add("show");
     $("main-content").style.display = "block";
   } finally {
     isSyncing = false;
     $("lo").classList.remove("show");
     if ($("rfbtn")) $("rfbtn").disabled = false;
+    if ($("resetbtn")) $("resetbtn").disabled = false;
   }
 }
 
