@@ -472,7 +472,19 @@ function snapEngType(liName) {
 // Returns null if not found — those LIs are skipped for New Addition / Engagement Lost
 function parseProjectName(description) {
   if (!description) return null;
-  const m = description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Note\s*:|$)/i);
+  const m = description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+  if (!m) return null;
+  const name = m[1].trim();
+  return name || null;
+}
+
+// ── Talent Name parser — from line item description field ──
+// Used as dedup key for Managed (Dedicated FTE/PTE) LIs.
+// Pattern: "Talent Name : <value>"
+// Returns null if not found — those LIs are skipped for New Addition / Engagement Lost
+function parseTalentName(description) {
+  if (!description) return null;
+  const m = description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|Note\s*:|$)/i);
   if (!m) return null;
   const name = m[1].trim();
   return name || null;
@@ -669,12 +681,12 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
   // Engagement Lost: billing_id in previous month NOT in current month
   // P2P excluded — only Managed and Recurring tracked here.
 
-  // ── Build Project Name sets per month ──
-  // Key: Project Name parsed from each Managed/Recurring line item description.
-  // LIs with no parseable Project Name are skipped entirely.
-  // Each entry: projectName → { oid, bu, rowKey, et, amount }
+  // ── Build dedup key map per month ──
+  // Managed LIs  → keyed by Talent Name (the person assigned)
+  // Recurring LIs → keyed by Project Name (the campaign/project)
+  // LIs with no parseable key are skipped entirely.
   function buildProjectMap(dealList) {
-    const map = {}; // projectName → { oid, isMarTech, rowKey, et, amount }
+    const map = {}; // key → { bu, rowKey, et, amount }
     dealList.forEach(deal => {
       const oid = String(deal.owner_id || "");
       const isMarTech = MARTECH_OWNER_IDS.has(oid);
@@ -684,17 +696,21 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
         if (!li.amount || li.amount <= 0) return;
         const et = snapEngType(li.name);
         if (et === "P2P" || !et) return; // P2P excluded
-        const projectName = parseProjectName(li.description);
-        if (!projectName) return; // no Project Name — skip
-        // If same project appears in multiple deals (shouldn't happen but safe)
-        if (!map[projectName]) {
-          let bu;
-          if (isMarTech) bu = "martech";
-          else bu = (li.bu === "MarTech") ? "interbu" : "digital";
-          map[projectName] = {bu, rowKey, et, amount: li.amount};
+
+        // Managed → Talent Name; Recurring → Project Name
+        const key = et === "Managed"
+          ? parseTalentName(li.description)
+          : parseProjectName(li.description);
+        if (!key) return; // no parseable key — skip
+
+        let bu;
+        if (isMarTech) bu = "martech";
+        else bu = (li.bu === "MarTech") ? "interbu" : "digital";
+
+        if (!map[key]) {
+          map[key] = {bu, rowKey, et, amount: li.amount};
         } else {
-          // accumulate amount if same project appears multiple times
-          map[projectName].amount += li.amount;
+          map[key].amount += li.amount;
         }
       });
     });
