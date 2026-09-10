@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Revenue Snapshot · Mavlers</title>
+<title>BU Scorecard · Mavlers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,7 +41,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
-.last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 .rfbtn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
@@ -123,7 +122,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </svg>
     </div>
     <div class="login-eyebrow">Mavlers · Sales-Ops</div>
-    <div class="login-title">Revenue Snapshot</div>
+    <div class="login-title">BU Scorecard</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
@@ -148,14 +147,13 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         </svg>
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Mavlers · Sales-Ops</span></div>
-          <div class="hdr-title">Revenue Snapshot</div>
+          <div class="hdr-title">BU Scorecard</div>
           <div class="hdr-sub">End-of-Day Booking Summary</div>
         </div>
       </a>
       <div class="hdr-right">
         <div>
           <div class="stxt"><span class="sdot" id="sdot" style="background:#9A9A9A"></span><span id="stxt">—</span></div>
-          <div class="last-sync" id="last-sync"></div>
         </div>
         <button class="rfbtn" id="rfbtn" onclick="doSync(true)">&#8635; Refresh</button>
         <a class="nexus-btn" href="/">&#8599; Revenue Pulse</a>
@@ -170,10 +168,34 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
   <!-- Snapshot header -->
   <div class="snap-header">
-    <div class="snap-title">Daily Revenue Snapshot</div>
+    <div class="snap-title">BU Scorecard</div>
     <div class="snap-meta">
       <div class="snap-period" id="snap-period">—</div>
       <div class="snap-date" id="snapshot-date">—</div>
+    </div>
+  </div>
+
+  <!-- Grand total bar -->
+  <div class="grand-total">
+    <div class="gt-item">
+      <div class="gt-lbl">Total Booking MTD</div>
+      <div class="gt-val" id="gt-booking">—</div>
+      <div class="gt-sub" id="gt-booking-sub"></div>
+    </div>
+    <div class="gt-item">
+      <div class="gt-lbl">New Addition Amount</div>
+      <div class="gt-val" id="gt-newamt">—</div>
+      <div class="gt-sub" id="gt-newamt-sub"></div>
+    </div>
+    <div class="gt-item">
+      <div class="gt-lbl">Engagement Lost Amount</div>
+      <div class="gt-val" id="gt-lostamt">—</div>
+      <div class="gt-sub" id="gt-lostamt-sub"></div>
+    </div>
+    <div class="gt-item">
+      <div class="gt-lbl">Net Portfolio Change</div>
+      <div class="gt-val" id="gt-net">—</div>
+      <div class="gt-sub">New − Lost</div>
     </div>
   </div>
 
@@ -286,30 +308,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </div>
 
   </div><!-- /bu-grid -->
-
-  <!-- Grand total bar -->
-  <div class="grand-total">
-    <div class="gt-item">
-      <div class="gt-lbl">Total Booking MTD</div>
-      <div class="gt-val" id="gt-booking">—</div>
-      <div class="gt-sub" id="gt-booking-sub"></div>
-    </div>
-    <div class="gt-item">
-      <div class="gt-lbl">New Addition Amount</div>
-      <div class="gt-val" id="gt-newamt">—</div>
-      <div class="gt-sub" id="gt-newamt-sub"></div>
-    </div>
-    <div class="gt-item">
-      <div class="gt-lbl">Engagement Lost Amount</div>
-      <div class="gt-val" id="gt-lostamt">—</div>
-      <div class="gt-sub" id="gt-lostamt-sub"></div>
-    </div>
-    <div class="gt-item">
-      <div class="gt-lbl">Net Portfolio Change</div>
-      <div class="gt-val" id="gt-net">—</div>
-      <div class="gt-sub">New − Lost</div>
-    </div>
-  </div>
 
 </div><!-- /main -->
 
@@ -732,7 +730,13 @@ function populateSnapshot(bkt, curMonth, yesterdayStr) {
   const now = new Date();
   const monLabel = MSHRT[now.getMonth()] + " " + now.getFullYear();
   setText("snap-period", monLabel + " MTD");
-  setText("snapshot-date", now.toLocaleDateString("en-IN", {day:"numeric",month:"long",year:"numeric"}) + " · " + now.toLocaleTimeString("en-IN", {hour:"2-digit",minute:"2-digit"}) + " IST");
+  // Show previous business day as the data-through date
+  const yestDate = new Date(now);
+  yestDate.setDate(yestDate.getDate() - 1);
+  // Skip weekends: if Sunday go back to Friday, if Saturday go back to Friday
+  if (yestDate.getDay() === 0) yestDate.setDate(yestDate.getDate() - 2);
+  if (yestDate.getDay() === 6) yestDate.setDate(yestDate.getDate() - 1);
+  setText("snapshot-date", yestDate.toLocaleDateString("en-IN", {day:"numeric",month:"long",year:"numeric"}));
 
   const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, yesterdayStr);
   const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, yesterdayStr);
@@ -791,7 +795,6 @@ async function doSync(force = false) {
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
     $("stxt").textContent = "LIVE · " + curDeals.length + " DEALS";
-    $("last-sync").textContent = "Synced " + new Date().toLocaleTimeString("en-IN", {hour:"2-digit",minute:"2-digit"});
   } catch(e) {
     console.error("[Snapshot]", e);
     $("sdot").style.background = "#E84040";
