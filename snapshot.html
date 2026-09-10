@@ -504,7 +504,7 @@ function dedup(deals) {
 }
 
 // ── Data fetch ──
-async function fetchMonthDeals(monthStr) {
+async function fetchMonthDeals(monthStr, todayStr) {
   const props = [
     "dealname",
     "amount_in_home_currency",
@@ -523,7 +523,9 @@ async function fetchMonthDeals(monthStr) {
     {propertyName:"dealstage",  operator:"EQ",  value:STAGE},
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ", value:monthStr},
     {propertyName:"engagement_model__invoice_app_", operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
-    {propertyName:"company_name__invoice_app_",     operator:"NOT_IN", values:EXCLUDED_COMPANIES}
+    {propertyName:"company_name__invoice_app_",     operator:"NOT_IN", values:EXCLUDED_COMPANIES},
+    // Hard cutoff: exclude today's deals — scorecard reflects EOD yesterday only
+    {propertyName:"closedate", operator:"LT", value:`${todayStr}T00:00:00.000Z`}
   ];
   const fetched = [];
   let after = null;
@@ -837,6 +839,8 @@ async function doSync(force = false) {
     // Use local date components (not toISOString which is UTC) to avoid IST timezone rollback
     const pad = n => String(n).padStart(2, "0");
     const yesterdayStr = `${yesterday.getFullYear()}-${pad(yesterday.getMonth()+1)}-${pad(yesterday.getDate())}`;
+    // todayStr: used as the hard closedate cutoff in HubSpot filter (LT today = up to EOD yesterday)
+    const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
 
     // curMonth = yesterday's month (e.g. Sep if yesterday was Sep 30, even if today is Oct 1)
     const curMonth  = getMonthStr(yesterday);
@@ -845,10 +849,10 @@ async function doSync(force = false) {
     const prevMonth = getMonthStr(prevDate);
 
     $("stxt").textContent = "FETCHING CURRENT MONTH…";
-    const curDeals = await fetchMonthDeals(curMonth);
+    const curDeals = await fetchMonthDeals(curMonth, todayStr);
 
     $("stxt").textContent = "FETCHING PREVIOUS MONTH…";
-    const prevDeals = await fetchMonthDeals(prevMonth);
+    const prevDeals = await fetchMonthDeals(prevMonth, todayStr);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(dedup([...curDeals, ...prevDeals]));
