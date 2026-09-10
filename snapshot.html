@@ -860,7 +860,7 @@ async function doSync(force = false) {
     // Use local date components (not toISOString which is UTC) to avoid IST timezone rollback
     const pad = n => String(n).padStart(2, "0");
     const yesterdayStr = `${yesterday.getFullYear()}-${pad(yesterday.getMonth()+1)}-${pad(yesterday.getDate())}`;
-    // todayStr: used as the hard closedate cutoff in HubSpot filter (LT today = up to EOD yesterday)
+    // todayStr: hard closedate cutoff for current month (LT today = up to EOD yesterday)
     const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
 
     // curMonth = yesterday's month (e.g. Sep if yesterday was Sep 30, even if today is Oct 1)
@@ -869,11 +869,18 @@ async function doSync(force = false) {
     const prevDate  = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, 1);
     const prevMonth = getMonthStr(prevDate);
 
+    // prevCutoffStr: same day-of-month as yesterday, but in previous month.
+    // e.g. if yesterday = Sep 9, prevCutoffStr = Aug 10 (LT Aug 10 = up to Aug 9).
+    // This ensures New Addition and Engagement Lost compare equal windows:
+    // Sep 1–9 vs Aug 1–9 — apples to apples, not Sep 1–9 vs all of August.
+    const prevCutoff = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, yesterday.getDate() + 1);
+    const prevCutoffStr = `${prevCutoff.getFullYear()}-${pad(prevCutoff.getMonth()+1)}-${pad(prevCutoff.getDate())}`;
+
     $("stxt").textContent = "FETCHING CURRENT MONTH…";
     const curDeals = await fetchMonthDeals(curMonth, todayStr);
 
     $("stxt").textContent = "FETCHING PREVIOUS MONTH…";
-    const prevDeals = await fetchMonthDeals(prevMonth, todayStr);
+    const prevDeals = await fetchMonthDeals(prevMonth, prevCutoffStr);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(dedup([...curDeals, ...prevDeals]));
