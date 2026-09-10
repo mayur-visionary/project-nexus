@@ -71,7 +71,7 @@ export async function onRequestPost(context) {
             headers: hdrs,
             body: JSON.stringify({
               inputs: chunk.map(id => ({ id })),
-              properties: ["name", "amount"]
+              properties: ["name", "amount", "description"]
             })
           }
         );
@@ -84,7 +84,8 @@ export async function onRequestPost(context) {
         (liData.results || []).forEach(r => {
           liProps[String(r.id)] = {
             name: r.properties?.name || "",
-            amount: parseFloat(r.properties?.amount || 0) || 0
+            amount: parseFloat(r.properties?.amount || 0) || 0,
+            description: r.properties?.description || ""
           };
         });
       } catch (e) {
