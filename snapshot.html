@@ -493,7 +493,8 @@ async function fetchMonthDeals(monthStr) {
         month:     bm,
         geo:       (r.properties?.geo__invoice_app_ || "").trim(),
         eng_model: (r.properties?.engagement_model__invoice_app_ || "").trim(),
-        closedate: (r.properties?.closedate || "").split("T")[0]
+        closedate: (r.properties?.closedate || "").split("T")[0],
+        amount:    parseFloat(r.properties?.amount_in_home_currency || 0) || 0
       });
     });
     after = data.paging?.next?.after || null;
@@ -536,22 +537,40 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
   const bkt = {digital: emptyBU(), interbu: emptyBU(), martech: emptyBU()};
 
   // 1. Booking + Contribution to MTD (current month deals)
+  // Uses deal-level amount_in_home_currency (matches Revenue Pulse) pro-rated
+  // across line items for the Recurring/P2P split.
   curDeals.forEach(deal => {
     const oid = String(deal.owner_id || "");
     const isMarTech = MARTECH_OWNER_IDS.has(oid);
     const rowKey = getDealRowKey(deal, isMarTech);
     const lis = liMap[deal.id] || [];
     const isYesterday = yesterdayStr && deal.closedate === yesterdayStr;
+    const dealAmt = deal.amount || 0;
+    if (!dealAmt) return;
 
     if (!lis.length) {
-      // No line items: use deal-level eng_model, but we have no amount to add
+      // No line items — attribute entire deal amount using deal-level eng_model
+      const eg = engGroup(deal.eng_model);
+      const et = eg === "P2P" ? "P2P" : eg ? "Recurring" : null;
+      if (!et) return;
+      let bu = isMarTech ? "martech" : "digital";
+      const bRow = bkt[bu].booking[rowKey];
+      if (!bRow) return;
+      if (et === "P2P") { bRow.p2p += dealAmt; if (isYesterday) bkt[bu].asof.p2p += dealAmt; }
+      else              { bRow.rec += dealAmt; if (isYesterday) bkt[bu].asof.rec += dealAmt; }
       return;
     }
+
+    // Pro-rate deal amount across classified line items
+    const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
+    if (liTotal <= 0) return;
+    const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
       if (!li.amount || li.amount <= 0) return;
       const et = snapEngType(li.name) || (engGroup(deal.eng_model) === "P2P" ? "P2P" : engGroup(deal.eng_model) ? "Recurring" : null);
       if (!et) return;
+      const amt = li.amount * scale;
 
       let bu;
       if (isMarTech) {
@@ -564,12 +583,11 @@ function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
       if (!bRow) return;
 
       if (et === "P2P") {
-        bRow.p2p += li.amount;
-        if (isYesterday) bkt[bu].asof.p2p += li.amount;
+        bRow.p2p += amt;
+        if (isYesterday) bkt[bu].asof.p2p += amt;
       } else {
-        // Managed + Recurring both appear in "Recurring" column of revenue table
-        bRow.rec += li.amount;
-        if (isYesterday) bkt[bu].asof.rec += li.amount;
+        bRow.rec += amt;
+        if (isYesterday) bkt[bu].asof.rec += amt;
       }
     });
   });
