@@ -83,18 +83,12 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .gt-split-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:4px}
 .gt-split-val{font-size:14px;font-weight:800;color:rgba(255,218,48,.8);line-height:1}
 .gt-split-sub{font-size:8px;font-weight:500;color:rgba(255,255,255,.3);margin-top:2px}
-/* Phase 2 second row in grand bar */
 .gt-divider{height:1px;background:rgba(255,255,255,.1);margin:14px 0 12px}
 .gt-row2{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
 .gt-row2-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-right:4px;white-space:nowrap}
 .gt-split2{text-align:center}
 .gt-split2-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:4px}
-.gt-split2-val{font-size:13px;font-weight:800;line-height:1}
-.gt-split2-val.na-val{color:#0CCE6B}
-.gt-split2-val.el-val{color:#EF2D56}
-.gt-split2-val.net-pos{color:#0CCE6B}
-.gt-split2-val.net-neg{color:#EF2D56}
-.gt-split2-val.net-zero{color:rgba(255,255,255,.5)}
+.gt-split2-val{font-size:13px;font-weight:800;line-height:1;color:#0CCE6B}
 .gt-split2-sub{font-size:8px;font-weight:500;color:rgba(255,255,255,.25);margin-top:2px}
 
 /* ── BU grid ── */
@@ -114,12 +108,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .metric-card.booking{border-top:3px solid #473400}
 .metric-card.asof-card{border-top:3px solid #6E5000}
 .metric-card.new-add{border-top:3px solid #006E5E}
-.metric-card.lost{border-top:3px solid #E84040}
 .metric-card-hdr{padding:9px 12px 7px;border-bottom:1px solid #F2F2F2;background:#FAFAFA;display:flex;align-items:center;justify-content:space-between}
 .metric-card-ttl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
 .metric-badge{font-size:8px;font-weight:700;color:#696969;letter-spacing:.04em;background:#F2F2F2;border-radius:4px;padding:2px 6px}
 .metric-badge.na-badge{background:#E6F7F2;color:#006E5E}
-.metric-badge.el-badge{background:#FDEAEA;color:#C13030}
 
 /* ── Snapshot table ── */
 .snap-tbl{width:100%;border-collapse:collapse}
@@ -133,8 +125,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .snap-tbl tbody tr:last-child td{border-bottom:none}
 .snap-tbl tbody td.dim{color:#D0D0D0}
 .snap-tbl tbody td.na-val{color:#006E5E;font-weight:700}
-.snap-tbl tbody td.el-val{color:#C13030;font-weight:700}
-/* clickable cells */
 .snap-tbl tbody td.drillable{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
 .snap-tbl tbody td.drillable:hover{opacity:.75}
 
@@ -153,9 +143,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .drill-summary{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid #F0F0F0;background:#FAFAFA;flex-shrink:0}
 .drill-kpi{flex:1;text-align:center}
 .drill-kpi-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:3px}
-.drill-kpi-val{font-size:15px;font-weight:800;color:#434343}
-.drill-kpi-val.na{color:#006E5E}
-.drill-kpi-val.el{color:#C13030}
+.drill-kpi-val{font-size:15px;font-weight:800;color:#006E5E}
 .drill-body{overflow-y:auto;flex:1;padding:0}
 .drill-section{padding:10px 18px 4px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;background:#F7F7F7;border-bottom:1px solid #EBEBEB;border-top:1px solid #EBEBEB;margin-top:4px}
 .drill-row{display:flex;align-items:flex-start;gap:10px;padding:9px 18px;border-bottom:1px solid #F5F5F5}
@@ -163,9 +151,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .drill-row-left{flex:1;min-width:0}
 .drill-row-name{font-size:10px;font-weight:700;color:#434343;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drill-row-sub{font-size:9px;font-weight:500;color:#9A9A9A;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.drill-row-amt{font-size:10px;font-weight:800;flex-shrink:0}
-.drill-row-amt.na{color:#006E5E}
-.drill-row-amt.el{color:#C13030}
+.drill-row-amt{font-size:10px;font-weight:800;color:#006E5E;flex-shrink:0}
 .drill-empty{padding:32px 18px;text-align:center;color:#C0C0C0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 </style>
 </head>
@@ -192,6 +178,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <!-- Loader -->
 <div class="lo" id="lo"><div class="spin"></div></div>
 
+<!-- Error bar -->
+<div class="err-bar" id="err-bar"></div>
+
 <!-- Drill drawer -->
 <div class="drill-overlay" id="drill-overlay" onclick="closeDrill()"></div>
 <div class="drill-panel" id="drill-panel">
@@ -212,16 +201,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="drill-kpi-lbl">Total Amount</div>
       <div class="drill-kpi-val" id="drill-kpi-amt">—</div>
     </div>
-    <div class="drill-kpi">
-      <div class="drill-kpi-lbl">Window</div>
-      <div class="drill-kpi-val" style="font-size:11px" id="drill-kpi-window">—</div>
-    </div>
   </div>
   <div class="drill-body" id="drill-body"></div>
 </div>
-
-<!-- Error bar -->
-<div class="err-bar" id="err-bar"></div>
 
 <!-- Header -->
 <div class="hdr">
@@ -268,7 +250,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </div>
   </div>
 
-  <!-- Grand total bar — Phase 2: Total Booking MTD + BU splits + NA/EL/Net row -->
+  <!-- Grand total bar -->
   <div class="grand-total">
     <div class="gt-row1">
       <div class="gt-main">
@@ -294,24 +276,23 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         </div>
       </div>
     </div>
-    <!-- Phase 2 row: Portfolio movement vs equal window prev month -->
     <div class="gt-divider"></div>
     <div class="gt-row2">
-      <div class="gt-row2-lbl">Portfolio Movement</div>
+      <div class="gt-row2-lbl">New Addition MTD</div>
       <div class="gt-split2">
-        <div class="gt-split2-lbl">New Addition</div>
-        <div class="gt-split2-val na-val" id="gt-na-amt">—</div>
-        <div class="gt-split2-sub" id="gt-na-count">—</div>
+        <div class="gt-split2-lbl">Managed</div>
+        <div class="gt-split2-val" id="gt-na-managed">—</div>
+        <div class="gt-split2-sub" id="gt-na-managed-count">—</div>
       </div>
       <div class="gt-split2">
-        <div class="gt-split2-lbl">Engagement Lost</div>
-        <div class="gt-split2-val el-val" id="gt-el-amt">—</div>
-        <div class="gt-split2-sub" id="gt-el-count">—</div>
+        <div class="gt-split2-lbl">Recurring</div>
+        <div class="gt-split2-val" id="gt-na-recurring">—</div>
+        <div class="gt-split2-sub" id="gt-na-recurring-count">—</div>
       </div>
       <div class="gt-split2">
-        <div class="gt-split2-lbl">Net Portfolio Change</div>
-        <div class="gt-split2-val net-zero" id="gt-net-amt">—</div>
-        <div class="gt-split2-sub" id="gt-net-window">vs equal window prev month</div>
+        <div class="gt-split2-lbl">Total</div>
+        <div class="gt-split2-val" id="gt-na-total">—</div>
+        <div class="gt-split2-sub" id="gt-na-total-count">—</div>
       </div>
     </div>
   </div>
@@ -322,7 +303,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <!-- Digital BU -->
     <div class="bu-col">
       <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span><span class="bu-badge">Search · Web</span></div>
-      <!-- Revenue MTD -->
       <div class="metric-card booking">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Revenue MTD</div>
@@ -333,7 +313,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="digital-rev-body"></tbody>
         </table>
       </div>
-      <!-- Contribution to MTD -->
       <div class="metric-card asof-card">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Contribution to MTD</div>
@@ -344,48 +323,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="digital-asof-body"></tbody>
         </table>
       </div>
-      <!-- New Addition Count -->
       <div class="metric-card new-add">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">New Addition — Count</div>
-          <div class="metric-badge na-badge" id="digital-na-count-badge">vs prev month</div>
+          <div class="metric-badge na-badge">Status : New</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="digital-na-count-body"></tbody>
         </table>
       </div>
-      <!-- New Addition Amount -->
       <div class="metric-card new-add">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">New Addition — Amount</div>
-          <div class="metric-badge na-badge" id="digital-na-amt-badge">vs prev month</div>
+          <div class="metric-badge na-badge">Status : New</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="digital-na-amt-body"></tbody>
-        </table>
-      </div>
-      <!-- Engagement Lost Count -->
-      <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="digital-el-count-badge">vs prev month</div>
-        </div>
-        <table class="snap-tbl">
-          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
-          <tbody id="digital-el-count-body"></tbody>
-        </table>
-      </div>
-      <!-- Engagement Lost Amount -->
-      <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge" id="digital-el-amt-badge">vs prev month</div>
-        </div>
-        <table class="snap-tbl">
-          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
-          <tbody id="digital-el-amt-body"></tbody>
         </table>
       </div>
     </div>
@@ -393,7 +348,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <!-- Inter BU -->
     <div class="bu-col">
       <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span><span class="bu-badge">Campaign · Email · Design</span></div>
-      <!-- Revenue MTD -->
       <div class="metric-card booking">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Revenue MTD</div>
@@ -404,7 +358,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="interbu-rev-body"></tbody>
         </table>
       </div>
-      <!-- Contribution to MTD -->
       <div class="metric-card asof-card">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Contribution to MTD</div>
@@ -415,48 +368,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="interbu-asof-body"></tbody>
         </table>
       </div>
-      <!-- New Addition Count -->
       <div class="metric-card new-add">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">New Addition — Count</div>
-          <div class="metric-badge na-badge" id="interbu-na-count-badge">vs prev month</div>
+          <div class="metric-badge na-badge">Status : New</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="interbu-na-count-body"></tbody>
         </table>
       </div>
-      <!-- New Addition Amount -->
       <div class="metric-card new-add">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">New Addition — Amount</div>
-          <div class="metric-badge na-badge" id="interbu-na-amt-badge">vs prev month</div>
+          <div class="metric-badge na-badge">Status : New</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="interbu-na-amt-body"></tbody>
-        </table>
-      </div>
-      <!-- Engagement Lost Count -->
-      <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="interbu-el-count-badge">vs prev month</div>
-        </div>
-        <table class="snap-tbl">
-          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
-          <tbody id="interbu-el-count-body"></tbody>
-        </table>
-      </div>
-      <!-- Engagement Lost Amount -->
-      <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge" id="interbu-el-amt-badge">vs prev month</div>
-        </div>
-        <table class="snap-tbl">
-          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
-          <tbody id="interbu-el-amt-body"></tbody>
         </table>
       </div>
     </div>
@@ -464,7 +393,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <!-- MarTech BU -->
     <div class="bu-col">
       <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span><span class="bu-badge">Jaydeep's Team</span></div>
-      <!-- Revenue MTD -->
       <div class="metric-card booking">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Revenue MTD</div>
@@ -475,7 +403,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="martech-rev-body"></tbody>
         </table>
       </div>
-      <!-- Contribution to MTD -->
       <div class="metric-card asof-card">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Contribution to MTD</div>
@@ -486,48 +413,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="martech-asof-body"></tbody>
         </table>
       </div>
-      <!-- New Addition Count -->
       <div class="metric-card new-add">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">New Addition — Count</div>
-          <div class="metric-badge na-badge" id="martech-na-count-badge">vs prev month</div>
+          <div class="metric-badge na-badge">Status : New</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="martech-na-count-body"></tbody>
         </table>
       </div>
-      <!-- New Addition Amount -->
       <div class="metric-card new-add">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">New Addition — Amount</div>
-          <div class="metric-badge na-badge" id="martech-na-amt-badge">vs prev month</div>
+          <div class="metric-badge na-badge">Status : New</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="martech-na-amt-body"></tbody>
-        </table>
-      </div>
-      <!-- Engagement Lost Count -->
-      <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="martech-el-count-badge">vs prev month</div>
-        </div>
-        <table class="snap-tbl">
-          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
-          <tbody id="martech-el-count-body"></tbody>
-        </table>
-      </div>
-      <!-- Engagement Lost Amount -->
-      <div class="metric-card lost">
-        <div class="metric-card-hdr">
-          <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge" id="martech-el-amt-badge">vs prev month</div>
-        </div>
-        <table class="snap-tbl">
-          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
-          <tbody id="martech-el-amt-body"></tbody>
         </table>
       </div>
     </div>
@@ -540,27 +443,22 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <script>
 // ════════════════════════════════════════════════════════════════
-// BU SCORECARD — MAVLERS · Project Nexus · Phase 2
-// Session 27 rebuild — Phase 1 base + New Addition / Engagement Lost
+// BU SCORECARD — MAVLERS · Project Nexus · Session 27
 //
-// ATTRIBUTION MODEL (unchanged from Phase 1 — two-tier, mirrors index.html):
-//   Tier 1 — Registry: MARTECH_OWNER_IDS determines BU.
-//             DIGITAL_OWNER_ROW / MARTECH_OWNER_ROW → row key.
-//   Tier 2 — Leader geo fallback: if owner is a LEADER (no fixed
-//             region), row key comes from deal's geo__invoice_app_.
-//             AU→AU, UK→UK, US/other→US. NOT NBD for leaders.
+// WHAT THIS DOES:
+//   - Revenue MTD: full month, live & rolling, no cutoff
+//   - Contribution to MTD: yesterday's deals only (invoice date = yesterdayStr)
+//   - New Addition: LIs with Status : New in description
+//       Managed  = Dedicated FTE / Dedicated PTE + Status : New
+//       Recurring = Recurring Services / Recurring  + Status : New
+//       ON-prefix deals excluded. P2P excluded.
+//   - No Engagement Lost. No prev month fetch. No window comparison.
 //
-// PHASE 2 ADDITIONS:
-//   - prevDeals fetch: equal window (same day-of-month) prior month
-//   - Single dedup LI call for curDeals + prevDeals combined
-//   - buildProjectMaps(): keyed by parseTalentName (Managed) /
-//     parseProjectName (Recurring) per LI. P2P excluded entirely.
-//   - New Addition  = key in curMap  NOT in prevMap
-//   - Engagement Lost = key in prevMap NOT in curMap
-//   - emptyMRRows() added to emptyBU() for naCount/naAmt/elCount/elAmt
-//   - Grand total bar Phase 2 row: NA amt / EL amt / Net Portfolio Change
-//
-// ALL 10 PHASE 1 ATTRIBUTION FIXES PRESERVED (see Phase 1 comments).
+// ATTRIBUTION MODEL (two-tier, mirrors index.html):
+//   Tier 1 — Registry: MARTECH_OWNER_IDS → BU.
+//             MARTECH/DIGITAL_OWNER_ROW → row key.
+//   Tier 2 — Leader geo fallback: MARTECH/DIGITAL_LEADERS use
+//             deal's geo__invoice_app_ to determine row key.
 // ════════════════════════════════════════════════════════════════
 
 const $ = id => document.getElementById(id);
@@ -569,7 +467,7 @@ const MFULL = ["january","february","march","april","may","june","july","august"
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 const EXCLUDED_COMPANIES  = ["InboxArmy","Uplers","Solomax"];
-const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement","Credit Note Deduct"];
+const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement"];
 
 // ── Head-row definitions ──
 const DIGITAL_ROWS = [
@@ -587,16 +485,16 @@ const MARTECH_ROWS = [
 
 // ── Owner registry ──
 const MARTECH_OWNER_IDS = new Set([
-  "107178262","17738843","34140174",  // MarTech Leaders
-  "467997340",                         // Karan — MarTech AU
-  "82911376","82030736",               // MarTech UK
+  "107178262","17738843","34140174",   // MarTech Leaders
+  "467997340",                          // Karan — MarTech AU
+  "82911376","82030736",                // MarTech UK
   "93107638","46153051","86147905","85767516","89530815", // MarTech US
-  "916030451",                         // Kamesh — MarTech NBD (FIX)
-  "41490632"                           // Mukund — Reactivation
+  "916030451",                          // Kamesh — MarTech NBD
+  "41490632"                            // Mukund — Reactivation
 ]);
 
-const DIGITAL_LEADERS  = new Set(["17739548","79217713","17739173"]);
-const MARTECH_LEADERS  = new Set(["107178262","17738843","34140174"]);
+const DIGITAL_LEADERS = new Set(["17739548","79217713","17739173"]);
+const MARTECH_LEADERS = new Set(["107178262","17738843","34140174"]);
 
 const DIGITAL_OWNER_ROW = {
   "131779647":"AU","78831011":"AU","94746500":"AU","176516495":"AU","263464861":"AU",
@@ -609,8 +507,8 @@ const MARTECH_OWNER_ROW = {
   "467997340":"AU",
   "82911376":"UK","82030736":"UK",
   "93107638":"US","46153051":"US","86147905":"US","85767516":"US","89530815":"US",
-  "916030451":"NBD",  // Kamesh — NBD (FIX)
-  "41490632":"NBD"    // Mukund — Reactivation
+  "916030451":"NBD",
+  "41490632":"NBD"
 };
 
 const GEO_ROW_MAP = {
@@ -630,31 +528,31 @@ function getDealRowKey(oid, isMarTech, dealGeo) {
   }
 }
 
-// ── Line item BU classifier ──
+// ── LI BU classifier (for Inter BU routing) ──
 function classifyLineItem(name) {
   if (!name) return null;
   const n = name.toLowerCase();
-  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc"))
-    return {svc:"Campaign", bu:"MarTech"};
+  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc") || n.includes("salesforce marketing cloud"))
+    return {bu:"MarTech"};
   if (n.includes("design - asset") || n.includes("design - digital"))
-    return {svc:"Web", bu:"Digital"};
+    return {bu:"Digital"};
   if (n.includes("design - "))
-    return {svc:"Design", bu:"MarTech"};
+    return {bu:"MarTech"};
   if (n.includes("development - email") || n.includes("email coding"))
-    return {svc:"Email", bu:"MarTech"};
+    return {bu:"MarTech"};
   if (n.includes("email design and coding"))
-    return {svc:"Design", bu:"MarTech"};
+    return {bu:"MarTech"};
   if (n.includes("development - web") || n.includes("development - lp/hub") ||
       n.includes("development - mobile app") || n.includes("ai & automation - web") ||
       n.includes("dot-net development") || n.includes("operational service - data entry") ||
       n.includes("landing page coding"))
-    return {svc:"Web", bu:"Digital"};
+    return {bu:"Digital"};
   if (n.includes("search -") || n.includes("consultancy fees"))
-    return {svc:"Search", bu:"Digital"};
+    return {bu:"Digital"};
   return null;
 }
 
-// ── Engagement type — Revenue MTD (Recurring broad / P2P) ──
+// ── Revenue engagement type (Recurring broad / P2P) ──
 function snapEngType(liName) {
   if (!liName) return null;
   const n = liName.toLowerCase();
@@ -664,20 +562,7 @@ function snapEngType(liName) {
   return null;
 }
 
-// ── Engagement type — NA/EL (Managed / Recurring / null) ──
-// P2P-type LIs return null → excluded from NA/EL entirely.
-// "Managed" = Dedicated FTE or Dedicated PTE only.
-// "Recurring" = Recurring Services or Recurring (but NOT Dedicated).
-function naElEngType(liName) {
-  if (!liName) return null;
-  const n = liName.toLowerCase();
-  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Managed";
-  if (n.startsWith("recurring services") || n.startsWith("recurring"))  return "Recurring";
-  // P2P / T&M / Time and Material → null (excluded)
-  return null;
-}
-
-// ── Deal-level eng_model fallback (no LIs) ──
+// ── Deal-level eng_model fallback ──
 function engGroup(val) {
   if (!val) return null;
   if (["Dedicated FTE","Dedicated PTE","Multiple","Recurring Services","Recurring"].includes(val)) return "Recurring";
@@ -685,21 +570,18 @@ function engGroup(val) {
   return null;
 }
 
-// ── NA/EL description parsers (confirmed regex from Sales Ops LI descriptions) ──
-function parseProjectName(description) {
-  if (!description) return null;
-  const m = description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
-  if (!m) return null;
-  const name = m[1].trim();
-  return name || null;
-}
-
-function parseTalentName(description) {
-  if (!description) return null;
-  const m = description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|Note\s*:|$)/i);
-  if (!m) return null;
-  const name = m[1].trim();
-  return name || null;
+// ── New Addition: detect Status : New in LI description ──
+// Returns "Managed" (Dedicated FTE/PTE + Status:New)
+//      or "Recurring" (Recurring Services/Recurring + Status:New)
+//      or null (P2P, no Status:New, or unclassifiable)
+function naStatus(liName, liDescription) {
+  if (!liName || !liDescription) return null;
+  const n = liName.toLowerCase();
+  // Must be Status : New (case-insensitive)
+  if (!/Status\s*:\s*New/i.test(liDescription)) return null;
+  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Managed";
+  if (n.startsWith("recurring services") || n.startsWith("recurring"))  return "Recurring";
+  return null;
 }
 
 // ── Formatting ──
@@ -732,14 +614,15 @@ function dedup(deals) {
 
 // ══════════════════════════════════════════════
 // DATA FETCH
+// Live & rolling — no date cutoff on fetch.
+// All deals in the current booking month are fetched.
 // ══════════════════════════════════════════════
-async function fetchMonthDeals(monthStr, cutoffStr) {
-  // cutoffStr is the LT boundary (todayStr for cur, prevCutoffStr for prev)
+async function fetchDeals(monthStr) {
   const props = [
     "dealname",
     "amount_in_home_currency",
     "hubspot_owner_id",
-    "closedate",
+    "invoice_booking_date_formatted__invoice_app_",
     "invoice_booking_month__invoice_app_",
     "engagement_model__invoice_app_",
     "company_name__invoice_app_",
@@ -753,8 +636,7 @@ async function fetchMonthDeals(monthStr, cutoffStr) {
     {propertyName:"dealstage", operator:"EQ",     value:STAGE},
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
-    {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES},
-    {propertyName:"closedate", operator:"LT", value:`${cutoffStr}T00:00:00.000Z`}
+    {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
 
   const fetched = [];
@@ -767,25 +649,22 @@ async function fetchMonthDeals(monthStr, cutoffStr) {
     const data = await res.json();
     (data.results || []).forEach(r => {
       const p = r.properties || {};
-      const bm = (p.invoice_booking_month__invoice_app_ || "").toLowerCase().trim();
       const billing_id = (p.zoho_billing_id__invoice_app_ || p.contact_name__invoice_app_ || "").trim();
       const cn = (p.company_name__invoice_app_ || "").trim();
       const company = (cn && cn !== "(blank)") ? cn : (p.zoho_display_name__invoice_app_ || p.contact_name__invoice_app_ || "").trim();
       if (!billing_id && !company) return;
       if (company === "(blank)") return;
-
       const amount = parseFloat(p.amount_in_home_currency || 0) || 0;
       if (amount <= 0) return;
-
       fetched.push({
         id:        String(r.id),
         owner_id:  String(p.hubspot_owner_id || ""),
         billing_id: billing_id || company,
         company:   company,
-        month:     bm,
         eng_model: (p.engagement_model__invoice_app_ || "").trim(),
         dealname:  (p.dealname || "").trim(),
-        closedate: (p.closedate || "").split("T")[0],
+        // invoice_date: used for Contribution to MTD (today's bookings)
+        invoice_date: (p.invoice_booking_date_formatted__invoice_app_ || "").split("T")[0],
         geo:       (p.geo__invoice_app_ || "").trim(),
         amount
       });
@@ -796,8 +675,6 @@ async function fetchMonthDeals(monthStr, cutoffStr) {
 }
 
 async function fetchLineItems(deals) {
-  // Phase 2: deals = dedup([...curDeals, ...prevDeals])
-  // description field is already fetched by lineItems.js
   const liMap = {};
   for (let i = 0; i < deals.length; i += 500) {
     const chunk = deals.slice(i, i + 500).map(d => d.id);
@@ -829,8 +706,7 @@ function emptyRevRows() {
   return r;
 }
 
-// Phase 2: Managed / Recurring rows for NA/EL
-function emptyMRRows() {
+function emptyNARows() {
   const r = {};
   ["AU","UK","US","NBD"].forEach(k => r[k] = {managed:0, rec:0});
   return r;
@@ -838,106 +714,35 @@ function emptyMRRows() {
 
 function emptyBU() {
   return {
-    booking:  emptyRevRows(),
-    asof:     emptyRevRows(),
-    naCount:  emptyMRRows(),
-    naAmt:    emptyMRRows(),
-    elCount:  emptyMRRows(),
-    elAmt:    emptyMRRows()
+    booking: emptyRevRows(),  // Revenue MTD
+    asof:    emptyRevRows(),  // Contribution to MTD (today's invoice date)
+    naCount: emptyNARows(),   // New Addition count
+    naAmt:   emptyNARows()    // New Addition amount
   };
 }
 
-// ── Build per-month project map for NA/EL ──
-// Returns: Map<dedup_key → {bu, rowKey, et, amount, label, company, dealIds[]}>
-// One entry per unique key per month. If the same key appears multiple
-// times in a month (e.g. talent on multiple deals), amount accumulates.
-function buildProjectMap(deals, liMap) {
-  const map = new Map(); // key → {bu, rowKey, et, amount, label, company, dealIds}
+// ── Drill store — NA only ──
+// DRILL_STORE["NA"][bu][rowKey]["Managed"|"Recurring"] = [{label, company, amount, dealId}]
+let DRILL_STORE = {};
 
-  deals.forEach(deal => {
-    const oid       = String(deal.owner_id || "");
-    const isMarTech = MARTECH_OWNER_IDS.has(oid);
-    const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
-    const lis       = liMap[deal.id] || [];
-    const dealAmt   = deal.amount;
-    if (!dealAmt || dealAmt <= 0) return;
-
-    // ON-prefix deals → entire deal is P2P → excluded from NA/EL entirely
-    const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
-    if (isOnPrefix) return;
-
-    if (!lis.length) {
-      // No LIs: use deal-level eng_model. Only Managed/Recurring map to NA/EL.
-      // Deal-level fallback cannot distinguish Managed from Recurring at NA/EL level
-      // (Dedicated FTE/PTE maps to Managed; Recurring Services → Recurring).
-      let et = null;
-      if (deal.eng_model === "Dedicated FTE" || deal.eng_model === "Dedicated PTE") et = "Managed";
-      else if (deal.eng_model === "Recurring Services" || deal.eng_model === "Recurring") et = "Recurring";
-      // Multiple / P2P / T&M / null → skip
-      if (!et) return;
-
-      // For deals with no LIs, use billing_id as dedup key
-      const key = `${deal.billing_id}||${et}`;
-      if (!map.has(key)) {
-        map.set(key, {bu: isMarTech ? "martech" : "digital", rowKey, et, amount: dealAmt,
-          label: deal.billing_id, company: deal.company, dealIds: [deal.id]});
-      } else {
-        const e = map.get(key);
-        e.amount += dealAmt;
-        if (!e.dealIds.includes(deal.id)) e.dealIds.push(deal.id);
-      }
-      return;
-    }
-
-    // Has LIs: per-LI dedup keys
-    const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
-    if (liTotal <= 0) return;
-    const scale = dealAmt / liTotal;
-
-    lis.forEach(li => {
-      if (!li.amount || li.amount <= 0) return;
-
-      const et = naElEngType(li.name);
-      if (!et) return; // P2P / unclassifiable — excluded from NA/EL
-
-      // Dedup key: Managed → Talent Name from description; Recurring → Project Name
-      let rawKey;
-      if (et === "Managed") {
-        rawKey = parseTalentName(li.description);
-      } else {
-        rawKey = parseProjectName(li.description);
-      }
-      // Null key = unparseable — silently skip (3% acceptable)
-      if (!rawKey) return;
-
-      const key = `${rawKey}||${et}`;
-
-      // BU routing (same as Phase 1 Revenue)
-      let bucketKey;
-      if (isMarTech) {
-        bucketKey = "martech";
-      } else {
-        bucketKey = (li.bu === "MarTech") ? "interbu" : "digital";
-      }
-
-      const amt = li.amount * scale;
-
-      if (!map.has(key)) {
-        map.set(key, {bu: bucketKey, rowKey, et, amount: amt,
-          label: rawKey, company: deal.company, dealIds: [deal.id]});
-      } else {
-        const e = map.get(key);
-        e.amount += amt;
-        if (!e.dealIds.includes(deal.id)) e.dealIds.push(deal.id);
-      }
+function initDrillStore() {
+  DRILL_STORE = {NA:{}};
+  ["digital","interbu","martech"].forEach(bu => {
+    DRILL_STORE.NA[bu] = {};
+    ["AU","UK","US","NBD"].forEach(rk => {
+      DRILL_STORE.NA[bu][rk] = {Managed:[], Recurring:[]};
     });
   });
-
-  return map;
 }
 
-// ── Compute Revenue MTD (unchanged Phase 1 logic) ──
-function computeRevenue(deals, liMap, yesterdayStr, bkt) {
+function computeSnapshot(deals, liMap, todayStr) {
+  const bkt = {
+    digital: emptyBU(),
+    interbu: emptyBU(),
+    martech: emptyBU()
+  };
+  initDrillStore();
+
   deals.forEach(deal => {
     const oid       = String(deal.owner_id || "");
     const isMarTech = MARTECH_OWNER_IDS.has(oid);
@@ -946,35 +751,41 @@ function computeRevenue(deals, liMap, yesterdayStr, bkt) {
     const dealAmt   = deal.amount;
     if (!dealAmt || dealAmt <= 0) return;
 
-    const isYesterday = deal.closedate === yesterdayStr;
-    const isOnPrefix  = deal.dealname.toUpperCase().startsWith("ON");
+    const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
+    const isToday    = deal.invoice_date === todayStr;
 
+    // ── No LIs: deal-level fallback for Revenue only ──
     if (!lis.length) {
       let et;
       if (isOnPrefix) { et = "P2P"; }
-      else { const eg = engGroup(deal.eng_model); if (!eg) return; et = eg; }
-
+      else { et = engGroup(deal.eng_model); if (!et) return; }
       const bucketKey = isMarTech ? "martech" : "digital";
       const bRow = bkt[bucketKey].booking[rowKey];
       const aRow = bkt[bucketKey].asof[rowKey];
       if (!bRow) return;
-      if (et === "P2P") { bRow.p2p += dealAmt; if (isYesterday) aRow.p2p += dealAmt; }
-      else              { bRow.rec += dealAmt;  if (isYesterday) aRow.rec += dealAmt; }
+      if (et === "P2P") { bRow.p2p += dealAmt; if (isToday) aRow.p2p += dealAmt; }
+      else              { bRow.rec += dealAmt;  if (isToday) aRow.rec += dealAmt; }
+      // No LIs = no Status:New signal available → skip NA
       return;
     }
 
+    // ── Has LIs ──
     const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
     if (liTotal <= 0) return;
     const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
       if (!li.amount || li.amount <= 0) return;
+
+      // ── Revenue MTD + Contribution ──
       let et;
       if (isOnPrefix) { et = "P2P"; }
       else if (deal.eng_model === "Multiple") { et = snapEngType(li.name); if (!et) return; }
-      else { et = snapEngType(li.name); if (!et) { const eg = engGroup(deal.eng_model); if (!eg) return; et = eg; } }
+      else { et = snapEngType(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
 
       const amt = li.amount * scale;
+
+      // BU routing
       let bucketKey;
       if (isMarTech) { bucketKey = "martech"; }
       else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
@@ -982,83 +793,43 @@ function computeRevenue(deals, liMap, yesterdayStr, bkt) {
       const bRow = bkt[bucketKey].booking[rowKey];
       const aRow = bkt[bucketKey].asof[rowKey];
       if (!bRow) return;
-      if (et === "P2P") { bRow.p2p += amt; if (isYesterday) aRow.p2p += amt; }
-      else              { bRow.rec += amt;  if (isYesterday) aRow.rec += amt; }
-    });
-  });
-}
+      if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
+      else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
 
-// ── Global drill store ──
-// drillStore[type][bu][rowKey][et] = [{label, company, amount, dealIds}]
-// type = "NA" | "EL"
-let DRILL_STORE = {};
-let DRILL_PREV_LABEL = "";
+      // ── New Addition: Status : New in description ──
+      // ON-prefix deals are P2P → excluded
+      if (isOnPrefix) return;
 
-function makeDrillStore() {
-  const store = {};
-  ["NA","EL"].forEach(t => {
-    store[t] = {};
-    ["digital","interbu","martech"].forEach(bu => {
-      store[t][bu] = {};
-      ["AU","UK","US","NBD"].forEach(rk => {
-        store[t][bu][rk] = {Managed:[], Recurring:[]};
+      const naType = naStatus(li.name, li.description);
+      if (!naType) return;
+
+      const naRow   = bkt[bucketKey].naCount[rowKey];
+      const naAmt   = bkt[bucketKey].naAmt[rowKey];
+      if (!naRow) return;
+
+      // Talent name for Managed, first Talent Name occurrence in description
+      // Project name for Recurring, first Project Name occurrence
+      let label = deal.company;
+      if (naType === "Managed") {
+        const m = li.description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|$)/i);
+        if (m) label = m[1].trim();
+      } else {
+        const m = li.description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+        if (m) label = m[1].trim();
+      }
+
+      if (naType === "Managed") {
+        naRow.managed += 1;
+        naAmt.managed += amt;
+      } else {
+        naRow.rec += 1;
+        naAmt.rec += amt;
+      }
+      DRILL_STORE.NA[bucketKey][rowKey][naType].push({
+        label, company: deal.company, amount: amt, dealId: deal.id
       });
     });
   });
-  return store;
-}
-
-// ── Compute NA/EL from two project maps ──
-function computeNAEL(curMap, prevMap, bkt) {
-  DRILL_STORE = makeDrillStore();
-
-  // New Addition: in curMap NOT in prevMap
-  curMap.forEach((entry, key) => {
-    if (prevMap.has(key)) return;
-    const {bu, rowKey, et, amount, label, company, dealIds} = entry;
-    const row = bkt[bu];
-    if (!row || !row.naCount[rowKey]) return;
-    if (et === "Managed") {
-      row.naCount[rowKey].managed += 1;
-      row.naAmt[rowKey].managed   += amount;
-    } else {
-      row.naCount[rowKey].rec += 1;
-      row.naAmt[rowKey].rec   += amount;
-    }
-    DRILL_STORE["NA"][bu][rowKey][et].push({label, company, amount, dealIds});
-  });
-
-  // Engagement Lost: in prevMap NOT in curMap
-  prevMap.forEach((entry, key) => {
-    if (curMap.has(key)) return;
-    const {bu, rowKey, et, amount, label, company, dealIds} = entry;
-    const row = bkt[bu];
-    if (!row || !row.elCount[rowKey]) return;
-    if (et === "Managed") {
-      row.elCount[rowKey].managed += 1;
-      row.elAmt[rowKey].managed   += amount;
-    } else {
-      row.elCount[rowKey].rec += 1;
-      row.elAmt[rowKey].rec   += amount;
-    }
-    DRILL_STORE["EL"][bu][rowKey][et].push({label, company, amount, dealIds});
-  });
-}
-
-function computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr) {
-  const bkt = {
-    digital: emptyBU(),
-    interbu: emptyBU(),
-    martech: emptyBU()
-  };
-
-  // Phase 1: Revenue MTD + Contribution — curDeals only
-  computeRevenue(curDeals, liMap, yesterdayStr, bkt);
-
-  // Phase 2: NA/EL — both months
-  const curMap  = buildProjectMap(curDeals,  liMap);
-  const prevMap = buildProjectMap(prevDeals, liMap);
-  computeNAEL(curMap, prevMap, bkt);
 
   return bkt;
 }
@@ -1072,7 +843,7 @@ function renderRevTable(tbodyId, revData, rowDefs) {
   if (!tbody) return 0;
   let totalRec = 0, totalP2p = 0;
   const rows = rowDefs.map(r => {
-    const d   = revData[r.key] || {rec:0, p2p:0};
+    const d = revData[r.key] || {rec:0, p2p:0};
     const tot = d.rec + d.p2p;
     totalRec += d.rec; totalP2p += d.p2p;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
@@ -1084,137 +855,114 @@ function renderRevTable(tbodyId, revData, rowDefs) {
   return tot;
 }
 
-function renderAsofTable(prefix, asofData, rowDefs, yesterdayStr) {
-  setText(prefix + "-asof-badge", fmtDateShort(yesterdayStr));
-  const tbody = $(prefix + "-asof-body");
-  if (!tbody) return;
-  let totalRec = 0, totalP2p = 0;
-  const rows = rowDefs.map(r => {
-    const d   = asofData[r.key] || {rec:0, p2p:0};
-    const tot = d.rec + d.p2p;
-    totalRec += d.rec; totalP2p += d.p2p;
-    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${fmtUSD(d.rec)}</td><td class="num">${fmtUSD(d.p2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`;
-  });
-  const tot = totalRec + totalP2p;
-  rows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${fmtUSD(totalRec)}</td><td class="num">${fmtUSD(totalP2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`);
-  tbody.innerHTML = rows.join("");
-}
-
-// ── Render NA / EL count table (integer count, not dollars) ──
-function renderNAELCountTable(tbodyId, mrData, rowDefs, naElType, buKey) {
+function renderNACountTable(tbodyId, naData, rowDefs, buKey) {
   const tbody = $(tbodyId);
   if (!tbody) return 0;
-  let totalManaged = 0, totalRec = 0;
+  let totalM = 0, totalR = 0;
   const rows = rowDefs.map(r => {
-    const d   = mrData[r.key] || {managed:0, rec:0};
+    const d = naData[r.key] || {managed:0, rec:0};
     const tot = d.managed + d.rec;
-    totalManaged += d.managed; totalRec += d.rec;
+    totalM += d.managed; totalR += d.rec;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    const mCell = d.managed > 0
-      ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Managed')">${d.managed}</td>`
-      : `<td class="num dim">—</td>`;
-    const rcCell = d.rec > 0
-      ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Recurring')">${d.rec}</td>`
-      : `<td class="num dim">—</td>`;
-    const totCell = `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Both')">${tot}</td>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rcCell}${totCell}</tr>`;
+    const mCell = d.managed > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','${r.key}','Managed')">${d.managed}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','${r.key}','Recurring')">${d.rec}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num drillable" onclick="openDrill('${buKey}','${r.key}','Both')">${tot}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
   });
-  const grandTotal = totalManaged + totalRec;
-  const totM = totalManaged > 0 ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Managed')">${totalManaged}</td>` : `<td class="num">—</td>`;
-  const totR = totalRec > 0     ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Recurring')">${totalRec}</td>` : `<td class="num">—</td>`;
-  const totT = grandTotal > 0   ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Both')">${grandTotal}</td>` : `<td class="num">—</td>`;
+  const grand = totalM + totalR;
+  const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
+  const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
+  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','ALL','Both')">${grand}</td>` : `<td class="num">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
-  return grandTotal;
+  return grand;
 }
 
-// ── Render NA / EL amount table (dollars) — returns grand total amount ──
-function renderNAELAmtTable(tbodyId, mrData, rowDefs, isNA, buKey) {
+function renderNAAmtTable(tbodyId, naData, rowDefs, buKey) {
   const tbody = $(tbodyId);
   if (!tbody) return 0;
-  let totalManaged = 0, totalRec = 0;
-  const valClass = isNA ? "na-val" : "el-val";
-  const naElType = isNA ? "NA" : "EL";
+  let totalM = 0, totalR = 0;
   const rows = rowDefs.map(r => {
-    const d   = mrData[r.key] || {managed:0, rec:0};
+    const d = naData[r.key] || {managed:0, rec:0};
     const tot = d.managed + d.rec;
-    totalManaged += d.managed; totalRec += d.rec;
+    totalM += d.managed; totalR += d.rec;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    const mCell = d.managed > 0
-      ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>`
-      : `<td class="num dim">—</td>`;
-    const rcCell = d.rec > 0
-      ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`
-      : `<td class="num dim">—</td>`;
-    const totCell = `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rcCell}${totCell}</tr>`;
+    const mCell = d.managed > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num na-val drillable" onclick="openDrill('${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
   });
-  const grandAmt = totalManaged + totalRec;
-  const totM = totalManaged > 0 ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Managed')">${fmtUSD(totalManaged)}</td>` : `<td class="num ${valClass}">—</td>`;
-  const totR = totalRec > 0     ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Recurring')">${fmtUSD(totalRec)}</td>` : `<td class="num ${valClass}">—</td>`;
-  const totT = grandAmt > 0     ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Both')">${fmtUSD(grandAmt)}</td>` : `<td class="num ${valClass}">—</td>`;
+  const grand = totalM + totalR;
+  const totM = totalM > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num na-val">—</td>`;
+  const totR = totalR > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num na-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','ALL','Both')">${fmtUSD(grand)}</td>` : `<td class="num na-val">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
-  return grandAmt;
+  return grand;
 }
 
-function renderBU(prefix, buData, rowDefs, yesterdayStr) {
+function renderBU(prefix, buData, rowDefs, todayStr) {
+  // Revenue MTD
   const bookTotal = renderRevTable(prefix + "-rev-body", buData.booking, rowDefs);
-  renderAsofTable(prefix, buData.asof, rowDefs, yesterdayStr);
-  renderNAELCountTable(prefix + "-na-count-body", buData.naCount, rowDefs, "NA", prefix);
-  const naAmt = renderNAELAmtTable(prefix + "-na-amt-body",  buData.naAmt,  rowDefs, true,  prefix);
-  renderNAELCountTable(prefix + "-el-count-body", buData.elCount, rowDefs, "EL", prefix);
-  const elAmt = renderNAELAmtTable(prefix + "-el-amt-body",  buData.elAmt,  rowDefs, false, prefix);
-  return {bookTotal, naAmt, elAmt};
+  // Contribution to MTD — badge = today's date
+  setText(prefix + "-asof-badge", fmtDateShort(todayStr));
+  const asofTbody = $(prefix + "-asof-body");
+  if (asofTbody) {
+    let tR = 0, tP = 0;
+    const aRows = rowDefs.map(r => {
+      const d = buData.asof[r.key] || {rec:0, p2p:0};
+      const tot = d.rec + d.p2p;
+      tR += d.rec; tP += d.p2p;
+      if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
+      return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${fmtUSD(d.rec)}</td><td class="num">${fmtUSD(d.p2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`;
+    });
+    aRows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${fmtUSD(tR)}</td><td class="num">${fmtUSD(tP)}</td><td class="num">${fmtUSD(tR+tP)}</td></tr>`);
+    asofTbody.innerHTML = aRows.join("");
+  }
+  // New Addition
+  renderNACountTable(prefix + "-na-count-body", buData.naCount, rowDefs, prefix);
+  const naAmt = renderNAAmtTable(prefix + "-na-amt-body", buData.naAmt, rowDefs, prefix);
+  return {bookTotal, naAmt};
 }
 
-function populateSnapshot(bkt, yesterdayStr, prevMonthLabel) {
-  DRILL_PREV_LABEL = prevMonthLabel;
-  const yestDate = new Date(yesterdayStr + "T00:00:00");
-  const monLabel = MSHRT[yestDate.getMonth()] + " " + yestDate.getFullYear();
+function populateSnapshot(bkt, todayStr) {
+  const todayDate = new Date(todayStr + "T00:00:00");
+  const monLabel  = MSHRT[todayDate.getMonth()] + " " + todayDate.getFullYear();
 
   setText("snap-period",   monLabel + " MTD");
-  setText("snapshot-date", yestDate.toLocaleDateString("en-IN", {day:"numeric", month:"long", year:"numeric"}));
-
-  // Badge labels for Revenue MTD
+  setText("snapshot-date", todayDate.toLocaleDateString("en-IN", {day:"numeric", month:"long", year:"numeric"}));
   ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
 
-  // Badge labels for NA/EL (show comparison window)
-  const compLabel = prevMonthLabel + " window";
-  ["digital","interbu","martech"].forEach(p => {
-    ["na-count","na-amt","el-count","el-amt"].forEach(s => setText(p + "-" + s + "-badge", compLabel));
-  });
-
-  const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, yesterdayStr);
-  const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, yesterdayStr);
-  const mt = renderBU("martech", bkt.martech, MARTECH_ROWS, yesterdayStr);
+  const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, todayStr);
+  const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, todayStr);
+  const mt = renderBU("martech", bkt.martech, MARTECH_ROWS, todayStr);
 
   const grandTotal = d.bookTotal + ib.bookTotal + mt.bookTotal;
-  const totalNA    = d.naAmt + ib.naAmt + mt.naAmt;
-  const totalEL    = d.elAmt + ib.elAmt + mt.elAmt;
-  const netChange  = totalNA - totalEL;
+  const totalNAAmt = d.naAmt + ib.naAmt + mt.naAmt;
 
-  // Grand total bar — Row 1
+  // Grand bar — Revenue row
   setText("gt-booking",     fmtUSD(grandTotal));
   setText("gt-booking-sub", monLabel + " MTD");
   setText("gt-digital",     fmtUSD(d.bookTotal));
   setText("gt-interbu",     fmtUSD(ib.bookTotal));
   setText("gt-martech",     fmtUSD(mt.bookTotal));
 
-  // Grand total bar — Row 2 (Phase 2)
-  setText("gt-na-amt",   totalNA  > 0 ? fmtUSD(totalNA)  : "—");
-  setText("gt-el-amt",   totalEL  > 0 ? fmtUSD(totalEL)  : "—");
-  setText("gt-net-amt",  netChange !== 0 ? (netChange > 0 ? "+" : "") + fmtUSD(netChange) : "$0");
-  setText("gt-na-count", "vs " + prevMonthLabel);
-  setText("gt-el-count", "vs " + prevMonthLabel);
-  setText("gt-net-window", "vs equal window " + prevMonthLabel);
+  // Grand bar — NA row: aggregate across all BUs
+  const allM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.managed||0), 0), 0);
+  const allR = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.rec||0), 0), 0);
+  const allAmtM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.managed||0), 0), 0);
+  const allAmtR = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.rec||0), 0), 0);
 
-  // Net colour
-  const netEl = $("gt-net-amt");
-  if (netEl) {
-    netEl.className = "gt-split2-val " + (netChange > 0 ? "net-pos" : netChange < 0 ? "net-neg" : "net-zero");
-  }
+  setText("gt-na-managed",       allAmtM > 0 ? fmtUSD(allAmtM) : "—");
+  setText("gt-na-managed-count", allM > 0 ? allM + " talent" + (allM > 1 ? "s" : "") : "—");
+  setText("gt-na-recurring",       allAmtR > 0 ? fmtUSD(allAmtR) : "—");
+  setText("gt-na-recurring-count", allR > 0 ? allR + " project" + (allR > 1 ? "s" : "") : "—");
+  setText("gt-na-total",       totalNAAmt > 0 ? fmtUSD(totalNAAmt) : "—");
+  setText("gt-na-total-count", (allM+allR) > 0 ? (allM+allR) + " new" : "—");
 }
 
 // ══════════════════════════════════════════════
@@ -1222,58 +970,39 @@ function populateSnapshot(bkt, yesterdayStr, prevMonthLabel) {
 // ══════════════════════════════════════════════
 const BU_LABELS = {digital:"Digital BU", interbu:"Inter BU", martech:"MarTech BU"};
 
-function openDrill(naElType, buKey, rowKey, etFilter) {
-  // Collect entries from DRILL_STORE
-  const typeStore = DRILL_STORE[naElType];
+function openDrill(buKey, rowKey, etFilter) {
+  const typeStore = DRILL_STORE.NA;
   if (!typeStore) return;
-
-  // Flatten: all BUs if buKey passed, specific rowKeys, specific et
   let entries = [];
-  const buKeys = buKey === "ALL_BU" ? ["digital","interbu","martech"] : [buKey];
-  const rowKeys = rowKey === "ALL" ? ["AU","UK","US","NBD"] : [rowKey];
-
+  const buKeys  = buKey  === "ALL_BU" ? ["digital","interbu","martech"] : [buKey];
+  const rowKeys = rowKey === "ALL"    ? ["AU","UK","US","NBD"]          : [rowKey];
   buKeys.forEach(bk => {
-    if (!typeStore[bk]) return;
     rowKeys.forEach(rk => {
-      if (!typeStore[bk][rk]) return;
+      if (!typeStore[bk] || !typeStore[bk][rk]) return;
       const etKeys = etFilter === "Both" ? ["Managed","Recurring"] : [etFilter];
       etKeys.forEach(et => {
-        (typeStore[bk][rk][et] || []).forEach(e => {
-          entries.push({...e, et, buKey:bk, rowKey:rk});
-        });
+        (typeStore[bk][rk][et] || []).forEach(e => entries.push({...e, et, buKey:bk, rowKey:rk}));
       });
     });
   });
+  entries.sort((a,b) => b.amount - a.amount);
 
-  // Sort by amount desc
-  entries.sort((a, b) => b.amount - a.amount);
+  const buLabel = buKey === "ALL_BU" ? "All BUs" : BU_LABELS[buKey] || buKey;
+  const rkLabel = rowKey === "ALL"   ? "All Regions" : rowKey;
+  const etLabel = etFilter === "Both" ? "Managed + Recurring" : etFilter;
 
-  const isNA      = naElType === "NA";
-  const typeLabel = isNA ? "New Addition" : "Engagement Lost";
-  const buLabel   = buKey === "ALL_BU" ? "All BUs" : BU_LABELS[buKey] || buKey;
-  const rkLabel   = rowKey === "ALL" ? "All Regions" : rowKey;
-  const etLabel   = etFilter === "Both" ? "Managed + Recurring" : etFilter;
-
-  // Header
   $("drill-eyebrow").textContent = buLabel + " · " + rkLabel;
-  $("drill-title").textContent   = typeLabel + " — " + etLabel;
-  $("drill-sub").textContent     = "vs equal window " + DRILL_PREV_LABEL;
+  $("drill-title").textContent   = "New Addition — " + etLabel;
+  $("drill-sub").textContent     = "Status : New · Current Month MTD";
 
-  // KPIs
   const totalAmt = entries.reduce((s,e) => s + e.amount, 0);
-  const kpiCls = isNA ? "na" : "el";
-  $("drill-kpi-count").textContent  = entries.length || "—";
-  $("drill-kpi-count").className    = "drill-kpi-val " + kpiCls;
-  $("drill-kpi-amt").textContent    = entries.length ? fmtUSD(totalAmt) : "—";
-  $("drill-kpi-amt").className      = "drill-kpi-val " + kpiCls;
-  $("drill-kpi-window").textContent = DRILL_PREV_LABEL;
+  $("drill-kpi-count").textContent = entries.length || "—";
+  $("drill-kpi-amt").textContent   = entries.length ? fmtUSD(totalAmt) : "—";
 
-  // Body
   const body = $("drill-body");
   if (!entries.length) {
-    body.innerHTML = `<div class="drill-empty">No deals in this segment</div>`;
+    body.innerHTML = `<div class="drill-empty">No new additions in this segment</div>`;
   } else {
-    // Group by et if Both
     let html = "";
     const etGroups = etFilter === "Both"
       ? [["Managed", entries.filter(e => e.et === "Managed")], ["Recurring", entries.filter(e => e.et === "Recurring")]]
@@ -1282,20 +1011,18 @@ function openDrill(naElType, buKey, rowKey, etFilter) {
       if (!grp.length) return;
       if (etFilter === "Both") html += `<div class="drill-section">${etName} (${grp.length})</div>`;
       grp.forEach(e => {
-        const hubUrl = `https://app.hubspot.com/contacts/2700725/record/0-3/${e.dealIds[0]}`;
         html += `<div class="drill-row">
           <div class="drill-row-left">
             <div class="drill-row-name" title="${e.label}">${e.label}</div>
-            <div class="drill-row-sub">${e.company || "—"}${e.dealIds.length > 1 ? " · " + e.dealIds.length + " deals" : ""}</div>
+            <div class="drill-row-sub">${e.company || "—"}</div>
           </div>
-          <div class="drill-row-amt ${kpiCls}">${fmtUSD(e.amount)}</div>
+          <div class="drill-row-amt">${fmtUSD(e.amount)}</div>
         </div>`;
       });
     });
     body.innerHTML = html;
   }
 
-  // Open
   $("drill-overlay").classList.add("open");
   $("drill-panel").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -1323,44 +1050,24 @@ async function doSync(force = false) {
   $("err-bar").classList.remove("show");
 
   try {
-    // ── Date anchor: calendar dates (Invoice App stores dates as UTC midnight) ──
-    // The Invoice App writes closedate as a plain calendar date at T00:00:00.000Z.
-    // No timezone conversion needed — LT <date>T00:00:00.000Z correctly means
-    // "before calendar day <date>", matching HubSpot's report filter exactly.
-    const pad        = n => String(n).padStart(2, "0");
-    const now        = new Date();
-    const yesterday  = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const pad      = n => String(n).padStart(2,"0");
+    const now      = new Date();
+    const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+    const curMonth = getMonthStr(today);
 
-    const yesterdayStr = `${yesterday.getFullYear()}-${pad(yesterday.getMonth()+1)}-${pad(yesterday.getDate())}`;
-    // todayStr: LT boundary — includes all deals with closedate up to EOD yesterday
-    const todayStr     = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-    const curMonth     = getMonthStr(yesterday);
-
-    // ── Phase 2: equal window previous month ──
-    // yesterday = Sep 10 → prevCutoffStr = Aug 11 → LT Aug 11 = up to Aug 10 ✓
-    const prevMonthDate  = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, 1);
-    const prevMonth      = getMonthStr(prevMonthDate);
-    const prevCutoff     = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, yesterday.getDate() + 1);
-    const prevCutoffStr  = `${prevCutoff.getFullYear()}-${pad(prevCutoff.getMonth()+1)}-${pad(prevCutoff.getDate())}`;
-    const prevMonthLabel = MSHRT[prevMonthDate.getMonth()] + " " + prevMonthDate.getFullYear();
-
-    $("stxt").textContent = "FETCHING CURRENT MONTH…";
-    const curDeals = await fetchMonthDeals(curMonth, todayStr);
-
-    $("stxt").textContent = "FETCHING PREV MONTH…";
-    const prevDeals = await fetchMonthDeals(prevMonth, prevCutoffStr);
+    $("stxt").textContent = "FETCHING DEALS…";
+    const deals = await fetchDeals(curMonth);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
-    // Single LI call for all deals (curDeals + prevDeals deduped by deal ID)
-    const allDeals = dedup([...curDeals, ...prevDeals]);
-    const liMap    = await fetchLineItems(allDeals);
+    const liMap = await fetchLineItems(deals);
 
-    const bkt = computeSnapshot(curDeals, prevDeals, liMap, yesterdayStr);
-    populateSnapshot(bkt, yesterdayStr, prevMonthLabel);
+    const bkt = computeSnapshot(deals, liMap, todayStr);
+    populateSnapshot(bkt, todayStr);
 
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
-    $("stxt").textContent = "LIVE · " + curDeals.length + " CUR · " + prevDeals.length + " PREV";
+    $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
   } catch(e) {
     console.error("[BU Scorecard]", e);
     $("sdot").style.background = "#E84040";
