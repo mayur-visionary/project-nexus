@@ -52,7 +52,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Nav tab strip (below header, above main) ── */
-.nav-strip{background:#2C1F00;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-strip{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-strip-in{max-width:1480px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .nav-tabs{display:flex;align-items:stretch;gap:0}
 .nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#FFDA30;padding:11px 18px;border-bottom:3px solid #FFDA30;cursor:default}
@@ -234,7 +234,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="hdr-right">
         <div class="h-status">
           <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="sync-ts" id="sync-ts" style="color:rgba(255,255,255,.45);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px"></div>
         </div>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)" disabled>⟳ Refresh</button>
         <a class="nexus-btn" href="/">↗ Revenue Pulse</a>
       </div>
     </div>
@@ -247,10 +249,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <div class="nav-strip-in">
     <div class="nav-tabs">
       <div class="nav-tab-active">BU Scorecard</div>
-    </div>
-    <div class="nav-strip-right">
-      <span class="sync-ts" id="sync-ts">—</span>
-      <button class="refresh-btn" id="rfbtn" onclick="doSync(true)" disabled>⟳ Refresh</button>
     </div>
   </div>
 </div>
@@ -1078,11 +1076,10 @@ async function doSync(force = false) {
     populateSnapshot(bkt, todayStr);
 
     $("main-content").style.display = "block";
-    const ns = $("nav-strip"); if (ns) ns.style.display = "block";
     $("sdot").style.background = "#FFDA30";
     $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
-        const syncedAt = new Date();
-    const ts = syncedAt.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    const now = new Date();
+    const ts = now.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const el = $("sync-ts"); if (el) el.textContent = "Synced at " + ts;
   } catch(e) {
     console.error("[BU Scorecard]", e);
@@ -1091,7 +1088,6 @@ async function doSync(force = false) {
     $("err-bar").textContent = "Failed to load scorecard: " + e.message;
     $("err-bar").classList.add("show");
     $("main-content").style.display = "block";
-    const ns2 = $("nav-strip"); if (ns2) ns2.style.display = "block";
   } finally {
     isSyncing = false;
     $("lo").classList.remove("show");
