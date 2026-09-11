@@ -622,7 +622,7 @@ function dedup(deals) {
 // Live & rolling — no date cutoff on fetch.
 // All deals in the current booking month are fetched.
 // ══════════════════════════════════════════════
-async function fetchDeals(monthStr, cutoffStr) {
+async function fetchDeals(monthStr) {
   const props = [
     "dealname",
     "amount_in_home_currency",
@@ -640,7 +640,6 @@ async function fetchDeals(monthStr, cutoffStr) {
     {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
     {propertyName:"dealstage", operator:"EQ",     value:STAGE},
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
-    {propertyName:"closedate",                            operator:"LT",     value:`${cutoffStr}T00:00:00.000Z`},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
@@ -1060,12 +1059,10 @@ async function doSync(force = false) {
     const now      = new Date();
     const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const todayStr    = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-    const tomorrow    = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-    const tomorrowStr = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth()+1)}-${pad(tomorrow.getDate())}`;
     const curMonth    = getMonthStr(today);
 
     $("stxt").textContent = "FETCHING DEALS…";
-    const deals = await fetchDeals(curMonth, tomorrowStr);
+    const deals = await fetchDeals(curMonth);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
