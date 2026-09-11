@@ -243,7 +243,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 </div>
 
 <!-- Nav tab strip -->
-<div class="nav-strip">
+<div class="nav-strip" id="nav-strip" style="display:none">
   <div class="nav-strip-in">
     <div class="nav-tabs">
       <div class="nav-tab-active">BU Scorecard</div>
@@ -1078,6 +1078,7 @@ async function doSync(force = false) {
     populateSnapshot(bkt, todayStr);
 
     $("main-content").style.display = "block";
+    const ns = $("nav-strip"); if (ns) ns.style.display = "block";
     $("sdot").style.background = "#FFDA30";
     $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
     const now = new Date();
@@ -1090,6 +1091,7 @@ async function doSync(force = false) {
     $("err-bar").textContent = "Failed to load scorecard: " + e.message;
     $("err-bar").classList.add("show");
     $("main-content").style.display = "block";
+    const ns = $("nav-strip"); if (ns) ns.style.display = "block";
   } finally {
     isSyncing = false;
     $("lo").classList.remove("show");
