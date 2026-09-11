@@ -607,8 +607,13 @@ function getMonthStr(date) {
 function setText(id, txt) { const e = $(id); if (e) e.textContent = txt; }
 
 function dedup(deals) {
+  // Dedup key mirrors Revenue Pulse: dealname + amount + month
+  // Prevents double-counting when HubSpot pagination returns overlapping results
   const seen = new Set(), out = [];
-  deals.forEach(d => { if (!seen.has(d.id)) { seen.add(d.id); out.push(d); }});
+  deals.forEach(d => {
+    const key = d.dealname + "|" + d.amount + "|" + (d.month || "");
+    if (!seen.has(key)) { seen.add(key); out.push(d); }
+  });
   return out;
 }
 
@@ -617,7 +622,7 @@ function dedup(deals) {
 // Live & rolling — no date cutoff on fetch.
 // All deals in the current booking month are fetched.
 // ══════════════════════════════════════════════
-async function fetchDeals(monthStr) {
+async function fetchDeals(monthStr, cutoffStr) {
   const props = [
     "dealname",
     "amount_in_home_currency",
@@ -635,6 +640,7 @@ async function fetchDeals(monthStr) {
     {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
     {propertyName:"dealstage", operator:"EQ",     value:STAGE},
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
+    {propertyName:"closedate",                            operator:"LT",     value:`${cutoffStr}T00:00:00.000Z`},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
@@ -655,7 +661,7 @@ async function fetchDeals(monthStr) {
       if (!billing_id && !company) return;
       if (company === "(blank)") return;
       const amount = parseFloat(p.amount_in_home_currency || 0) || 0;
-      if (amount <= 0) return;
+      if (!amount) return; // skip zero-amount deals only
       fetched.push({
         id:        String(r.id),
         owner_id:  String(p.hubspot_owner_id || ""),
@@ -1057,7 +1063,7 @@ async function doSync(force = false) {
     const curMonth = getMonthStr(today);
 
     $("stxt").textContent = "FETCHING DEALS…";
-    const deals = await fetchDeals(curMonth);
+    const deals = await fetchDeals(curMonth, todayStr);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
