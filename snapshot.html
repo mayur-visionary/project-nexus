@@ -1059,11 +1059,13 @@ async function doSync(force = false) {
     const pad      = n => String(n).padStart(2,"0");
     const now      = new Date();
     const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-    const curMonth = getMonthStr(today);
+    const todayStr    = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+    const tomorrow    = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    const tomorrowStr = `${tomorrow.getFullYear()}-${pad(tomorrow.getMonth()+1)}-${pad(tomorrow.getDate())}`;
+    const curMonth    = getMonthStr(today);
 
     $("stxt").textContent = "FETCHING DEALS…";
-    const deals = await fetchDeals(curMonth, todayStr);
+    const deals = await fetchDeals(curMonth, tomorrowStr);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
