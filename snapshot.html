@@ -719,7 +719,7 @@ function fmtDateShort(iso) {
 }
 
 function getMonthStr(date) {
-  return MFULL[date.getMonth()] + "-" + date.getFullYear();
+  return MFULL[date.getUTCMonth()] + "-" + date.getUTCFullYear();
 }
 
 function setText(id, txt) { const e = $(id); if (e) e.textContent = txt; }
@@ -754,7 +754,7 @@ async function fetchMonthDeals(monthStr, cutoffStr) {
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES},
-    {propertyName:"closedate", operator:"LT", value:`${cutoffStr}T18:30:00.000Z`}
+    {propertyName:"closedate", operator:"LT", value:`${cutoffStr}T00:00:00.000Z`}
   ];
 
   const fetched = [];
@@ -1323,23 +1323,40 @@ async function doSync(force = false) {
   $("err-bar").classList.remove("show");
 
   try {
-    // ── Date anchor: all dates from YESTERDAY (local IST, not UTC) ──
-    const now       = new Date();
-    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-    const pad       = n => String(n).padStart(2, "0");
+    // ── Date anchor: IST-local date (UTC+5:30) ──
+    // HubSpot interprets closedate boundaries in IST. We derive the current IST
+    // calendar date by offsetting UTC by +5h30m, then use that for all cutoffs.
+    // "closedate LT <date>T00:00:00.000Z" = before midnight UTC on <date>
+    // = before 05:30 IST on <date> — which is NOT midnight IST.
+    // Correct fix: pass the IST-local "today" date so the UTC midnight boundary
+    // aligns with IST midnight, matching HubSpot's "Close date before <date> IST".
+    const pad         = n => String(n).padStart(2, "0");
+    const IST_OFFSET  = 5.5 * 60 * 60 * 1000; // 5h30m in ms
+    const nowIST      = new Date(Date.now() + IST_OFFSET);
+    // IST calendar components
+    const istY = nowIST.getUTCFullYear();
+    const istM = nowIST.getUTCMonth();
+    const istD = nowIST.getUTCDate();
 
-    const yesterdayStr  = `${yesterday.getFullYear()}-${pad(yesterday.getMonth()+1)}-${pad(yesterday.getDate())}`;
-    // todayStr: LT boundary for current month (up to EOD yesterday)
-    const todayStr      = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-    const curMonth      = getMonthStr(yesterday);
+    // Today and yesterday in IST calendar (as UTC Date objects at 00:00 UTC)
+    const todayIST     = new Date(Date.UTC(istY, istM, istD));
+    const yesterdayIST = new Date(Date.UTC(istY, istM, istD - 1));
+
+    const yesterdayStr = `${yesterdayIST.getUTCFullYear()}-${pad(yesterdayIST.getUTCMonth()+1)}-${pad(yesterdayIST.getUTCDate())}`;
+    // todayStr as LT boundary: "closedate < todayIST 00:00 UTC"
+    // = before IST midnight of today = includes all deals up to EOD yesterday IST
+    const todayStr     = `${todayIST.getUTCFullYear()}-${pad(todayIST.getUTCMonth()+1)}-${pad(todayIST.getUTCDate())}`;
+    const curMonth     = getMonthStr(yesterdayIST);
 
     // ── Phase 2: equal window previous month ──
-    // If yesterday = Sep 10 → prevCutoffStr = Aug 11 → LT Aug 11 = up to Aug 10
-    const prevMonthDate  = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, 1);
+    // yesterdayIST = Sep 10 → prevCutoff = Aug 11 IST → LT Aug 11 00:00 UTC = up to Aug 10 IST
+    const prevMonthDate  = new Date(Date.UTC(istY, istM - 1, 1));
     const prevMonth      = getMonthStr(prevMonthDate);
-    const prevCutoff     = new Date(yesterday.getFullYear(), yesterday.getMonth() - 1, yesterday.getDate() + 1);
-    const prevCutoffStr  = `${prevCutoff.getFullYear()}-${pad(prevCutoff.getMonth()+1)}-${pad(prevCutoff.getDate())}`;
-    const prevMonthLabel = MSHRT[prevMonthDate.getMonth()] + " " + prevMonthDate.getFullYear();
+    // prevCutoff: equal window to yesterdayIST (= day istD-1)
+    // LT prev_month/(istD) 00:00 UTC = up to prev_month/(istD-1) IST = equal window ✓
+    const prevCutoff     = new Date(Date.UTC(istY, istM - 1, istD));
+    const prevCutoffStr  = `${prevCutoff.getUTCFullYear()}-${pad(prevCutoff.getUTCMonth()+1)}-${pad(prevCutoff.getUTCDate())}`;
+    const prevMonthLabel = MSHRT[prevMonthDate.getUTCMonth()] + " " + prevMonthDate.getUTCFullYear();
 
     $("stxt").textContent = "FETCHING CURRENT MONTH…";
     const curDeals = await fetchMonthDeals(curMonth, todayStr);
