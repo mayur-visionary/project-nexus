@@ -134,6 +134,39 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .snap-tbl tbody td.dim{color:#D0D0D0}
 .snap-tbl tbody td.na-val{color:#006E5E;font-weight:700}
 .snap-tbl tbody td.el-val{color:#C13030;font-weight:700}
+/* clickable cells */
+.snap-tbl tbody td.drillable{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px}
+.snap-tbl tbody td.drillable:hover{opacity:.75}
+
+/* ── Drill drawer ── */
+.drill-overlay{position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:7000;display:none}
+.drill-overlay.open{display:block}
+.drill-panel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:96vw;background:#fff;z-index:7001;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .22s cubic-bezier(.4,0,.2,1)}
+.drill-panel.open{transform:translateX(0)}
+.drill-hdr{background:#473400;padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0}
+.drill-hdr-text{}
+.drill-hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:.14em;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:4px}
+.drill-hdr-title{font-size:13px;font-weight:800;color:#fff;letter-spacing:.04em;text-transform:uppercase;line-height:1.3}
+.drill-hdr-sub{font-size:9px;font-weight:600;color:rgba(255,218,48,.7);margin-top:4px;letter-spacing:.04em}
+.drill-close{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:16px;font-family:'Montserrat',sans-serif;font-weight:800;cursor:pointer;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.drill-close:hover{background:rgba(255,255,255,.22)}
+.drill-summary{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid #F0F0F0;background:#FAFAFA;flex-shrink:0}
+.drill-kpi{flex:1;text-align:center}
+.drill-kpi-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:3px}
+.drill-kpi-val{font-size:15px;font-weight:800;color:#434343}
+.drill-kpi-val.na{color:#006E5E}
+.drill-kpi-val.el{color:#C13030}
+.drill-body{overflow-y:auto;flex:1;padding:0}
+.drill-section{padding:10px 18px 4px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;background:#F7F7F7;border-bottom:1px solid #EBEBEB;border-top:1px solid #EBEBEB;margin-top:4px}
+.drill-row{display:flex;align-items:flex-start;gap:10px;padding:9px 18px;border-bottom:1px solid #F5F5F5}
+.drill-row:last-child{border-bottom:none}
+.drill-row-left{flex:1;min-width:0}
+.drill-row-name{font-size:10px;font-weight:700;color:#434343;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drill-row-sub{font-size:9px;font-weight:500;color:#9A9A9A;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drill-row-amt{font-size:10px;font-weight:800;flex-shrink:0}
+.drill-row-amt.na{color:#006E5E}
+.drill-row-amt.el{color:#C13030}
+.drill-empty{padding:32px 18px;text-align:center;color:#C0C0C0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 </style>
 </head>
 <body>
@@ -158,6 +191,34 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <!-- Loader -->
 <div class="lo" id="lo"><div class="spin"></div></div>
+
+<!-- Drill drawer -->
+<div class="drill-overlay" id="drill-overlay" onclick="closeDrill()"></div>
+<div class="drill-panel" id="drill-panel">
+  <div class="drill-hdr">
+    <div class="drill-hdr-text">
+      <div class="drill-hdr-eyebrow" id="drill-eyebrow">Deal Breakdown</div>
+      <div class="drill-hdr-title" id="drill-title">—</div>
+      <div class="drill-hdr-sub" id="drill-sub">—</div>
+    </div>
+    <button class="drill-close" onclick="closeDrill()">✕</button>
+  </div>
+  <div class="drill-summary">
+    <div class="drill-kpi">
+      <div class="drill-kpi-lbl">Count</div>
+      <div class="drill-kpi-val" id="drill-kpi-count">—</div>
+    </div>
+    <div class="drill-kpi">
+      <div class="drill-kpi-lbl">Total Amount</div>
+      <div class="drill-kpi-val" id="drill-kpi-amt">—</div>
+    </div>
+    <div class="drill-kpi">
+      <div class="drill-kpi-lbl">Window</div>
+      <div class="drill-kpi-val" style="font-size:11px" id="drill-kpi-window">—</div>
+    </div>
+  </div>
+  <div class="drill-body" id="drill-body"></div>
+</div>
 
 <!-- Error bar -->
 <div class="err-bar" id="err-bar"></div>
@@ -787,11 +848,11 @@ function emptyBU() {
 }
 
 // ── Build per-month project map for NA/EL ──
-// Returns: Map<dedup_key → {bu, rowKey, et, amount}>
+// Returns: Map<dedup_key → {bu, rowKey, et, amount, label, company, dealIds[]}>
 // One entry per unique key per month. If the same key appears multiple
 // times in a month (e.g. talent on multiple deals), amount accumulates.
 function buildProjectMap(deals, liMap) {
-  const map = new Map(); // key → {bu, rowKey, et, amount}
+  const map = new Map(); // key → {bu, rowKey, et, amount, label, company, dealIds}
 
   deals.forEach(deal => {
     const oid       = String(deal.owner_id || "");
@@ -818,9 +879,12 @@ function buildProjectMap(deals, liMap) {
       // For deals with no LIs, use billing_id as dedup key
       const key = `${deal.billing_id}||${et}`;
       if (!map.has(key)) {
-        map.set(key, {bu: isMarTech ? "martech" : "digital", rowKey, et, amount: dealAmt});
+        map.set(key, {bu: isMarTech ? "martech" : "digital", rowKey, et, amount: dealAmt,
+          label: deal.billing_id, company: deal.company, dealIds: [deal.id]});
       } else {
-        map.get(key).amount += dealAmt;
+        const e = map.get(key);
+        e.amount += dealAmt;
+        if (!e.dealIds.includes(deal.id)) e.dealIds.push(deal.id);
       }
       return;
     }
@@ -859,9 +923,12 @@ function buildProjectMap(deals, liMap) {
       const amt = li.amount * scale;
 
       if (!map.has(key)) {
-        map.set(key, {bu: bucketKey, rowKey, et, amount: amt});
+        map.set(key, {bu: bucketKey, rowKey, et, amount: amt,
+          label: rawKey, company: deal.company, dealIds: [deal.id]});
       } else {
-        map.get(key).amount += amt;
+        const e = map.get(key);
+        e.amount += amt;
+        if (!e.dealIds.includes(deal.id)) e.dealIds.push(deal.id);
       }
     });
   });
@@ -921,12 +988,34 @@ function computeRevenue(deals, liMap, yesterdayStr, bkt) {
   });
 }
 
+// ── Global drill store ──
+// drillStore[type][bu][rowKey][et] = [{label, company, amount, dealIds}]
+// type = "NA" | "EL"
+let DRILL_STORE = {};
+let DRILL_PREV_LABEL = "";
+
+function makeDrillStore() {
+  const store = {};
+  ["NA","EL"].forEach(t => {
+    store[t] = {};
+    ["digital","interbu","martech"].forEach(bu => {
+      store[t][bu] = {};
+      ["AU","UK","US","NBD"].forEach(rk => {
+        store[t][bu][rk] = {Managed:[], Recurring:[]};
+      });
+    });
+  });
+  return store;
+}
+
 // ── Compute NA/EL from two project maps ──
 function computeNAEL(curMap, prevMap, bkt) {
+  DRILL_STORE = makeDrillStore();
+
   // New Addition: in curMap NOT in prevMap
   curMap.forEach((entry, key) => {
     if (prevMap.has(key)) return;
-    const {bu, rowKey, et, amount} = entry;
+    const {bu, rowKey, et, amount, label, company, dealIds} = entry;
     const row = bkt[bu];
     if (!row || !row.naCount[rowKey]) return;
     if (et === "Managed") {
@@ -936,12 +1025,13 @@ function computeNAEL(curMap, prevMap, bkt) {
       row.naCount[rowKey].rec += 1;
       row.naAmt[rowKey].rec   += amount;
     }
+    DRILL_STORE["NA"][bu][rowKey][et].push({label, company, amount, dealIds});
   });
 
   // Engagement Lost: in prevMap NOT in curMap
   prevMap.forEach((entry, key) => {
     if (curMap.has(key)) return;
-    const {bu, rowKey, et, amount} = entry;
+    const {bu, rowKey, et, amount, label, company, dealIds} = entry;
     const row = bkt[bu];
     if (!row || !row.elCount[rowKey]) return;
     if (et === "Managed") {
@@ -951,6 +1041,7 @@ function computeNAEL(curMap, prevMap, bkt) {
       row.elCount[rowKey].rec += 1;
       row.elAmt[rowKey].rec   += amount;
     }
+    DRILL_STORE["EL"][bu][rowKey][et].push({label, company, amount, dealIds});
   });
 }
 
@@ -1011,7 +1102,7 @@ function renderAsofTable(prefix, asofData, rowDefs, yesterdayStr) {
 }
 
 // ── Render NA / EL count table (integer count, not dollars) ──
-function renderNAELCountTable(tbodyId, mrData, rowDefs) {
+function renderNAELCountTable(tbodyId, mrData, rowDefs, naElType, buKey) {
   const tbody = $(tbodyId);
   if (!tbody) return 0;
   let totalManaged = 0, totalRec = 0;
@@ -1020,37 +1111,50 @@ function renderNAELCountTable(tbodyId, mrData, rowDefs) {
     const tot = d.managed + d.rec;
     totalManaged += d.managed; totalRec += d.rec;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${d.managed || "—"}</td><td class="num">${d.rec || "—"}</td><td class="num">${tot}</td></tr>`;
+    const mCell = d.managed > 0
+      ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Managed')">${d.managed}</td>`
+      : `<td class="num dim">—</td>`;
+    const rcCell = d.rec > 0
+      ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Recurring')">${d.rec}</td>`
+      : `<td class="num dim">—</td>`;
+    const totCell = `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Both')">${tot}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rcCell}${totCell}</tr>`;
   });
   const grandTotal = totalManaged + totalRec;
-  rows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${totalManaged || "—"}</td><td class="num">${totalRec || "—"}</td><td class="num">${grandTotal || "—"}</td></tr>`);
+  const totM = totalManaged > 0 ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Managed')">${totalManaged}</td>` : `<td class="num">—</td>`;
+  const totR = totalRec > 0     ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Recurring')">${totalRec}</td>` : `<td class="num">—</td>`;
+  const totT = grandTotal > 0   ? `<td class="num drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Both')">${grandTotal}</td>` : `<td class="num">—</td>`;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grandTotal;
 }
 
 // ── Render NA / EL amount table (dollars) — returns grand total amount ──
-function renderNAELAmtTable(tbodyId, mrData, rowDefs, isNA) {
+function renderNAELAmtTable(tbodyId, mrData, rowDefs, isNA, buKey) {
   const tbody = $(tbodyId);
   if (!tbody) return 0;
   let totalManaged = 0, totalRec = 0;
   const valClass = isNA ? "na-val" : "el-val";
+  const naElType = isNA ? "NA" : "EL";
   const rows = rowDefs.map(r => {
     const d   = mrData[r.key] || {managed:0, rec:0};
     const tot = d.managed + d.rec;
     totalManaged += d.managed; totalRec += d.rec;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>
-      <td class="num ${d.managed > 0 ? valClass : "dim"}">${d.managed > 0 ? fmtUSD(d.managed) : "—"}</td>
-      <td class="num ${d.rec > 0 ? valClass : "dim"}">${d.rec > 0 ? fmtUSD(d.rec) : "—"}</td>
-      <td class="num ${valClass}">${fmtUSD(tot)}</td>
-    </tr>`;
+    const mCell = d.managed > 0
+      ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>`
+      : `<td class="num dim">—</td>`;
+    const rcCell = d.rec > 0
+      ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`
+      : `<td class="num dim">—</td>`;
+    const totCell = `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rcCell}${totCell}</tr>`;
   });
   const grandAmt = totalManaged + totalRec;
-  rows.push(`<tr class="total-row"><td colspan="2">Total</td>
-    <td class="num ${valClass}">${totalManaged > 0 ? fmtUSD(totalManaged) : "—"}</td>
-    <td class="num ${valClass}">${totalRec > 0 ? fmtUSD(totalRec) : "—"}</td>
-    <td class="num ${valClass}">${grandAmt > 0 ? fmtUSD(grandAmt) : "—"}</td>
-  </tr>`);
+  const totM = totalManaged > 0 ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Managed')">${fmtUSD(totalManaged)}</td>` : `<td class="num ${valClass}">—</td>`;
+  const totR = totalRec > 0     ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Recurring')">${fmtUSD(totalRec)}</td>` : `<td class="num ${valClass}">—</td>`;
+  const totT = grandAmt > 0     ? `<td class="num ${valClass} drillable" onclick="openDrill('${naElType}','${buKey}','ALL','Both')">${fmtUSD(grandAmt)}</td>` : `<td class="num ${valClass}">—</td>`;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grandAmt;
 }
@@ -1058,14 +1162,15 @@ function renderNAELAmtTable(tbodyId, mrData, rowDefs, isNA) {
 function renderBU(prefix, buData, rowDefs, yesterdayStr) {
   const bookTotal = renderRevTable(prefix + "-rev-body", buData.booking, rowDefs);
   renderAsofTable(prefix, buData.asof, rowDefs, yesterdayStr);
-  renderNAELCountTable(prefix + "-na-count-body", buData.naCount, rowDefs);
-  const naAmt = renderNAELAmtTable(prefix + "-na-amt-body",  buData.naAmt,  rowDefs, true);
-  renderNAELCountTable(prefix + "-el-count-body", buData.elCount, rowDefs);
-  const elAmt = renderNAELAmtTable(prefix + "-el-amt-body",  buData.elAmt,  rowDefs, false);
+  renderNAELCountTable(prefix + "-na-count-body", buData.naCount, rowDefs, "NA", prefix);
+  const naAmt = renderNAELAmtTable(prefix + "-na-amt-body",  buData.naAmt,  rowDefs, true,  prefix);
+  renderNAELCountTable(prefix + "-el-count-body", buData.elCount, rowDefs, "EL", prefix);
+  const elAmt = renderNAELAmtTable(prefix + "-el-amt-body",  buData.elAmt,  rowDefs, false, prefix);
   return {bookTotal, naAmt, elAmt};
 }
 
 function populateSnapshot(bkt, yesterdayStr, prevMonthLabel) {
+  DRILL_PREV_LABEL = prevMonthLabel;
   const yestDate = new Date(yesterdayStr + "T00:00:00");
   const monLabel = MSHRT[yestDate.getMonth()] + " " + yestDate.getFullYear();
 
@@ -1111,6 +1216,98 @@ function populateSnapshot(bkt, yesterdayStr, prevMonthLabel) {
     netEl.className = "gt-split2-val " + (netChange > 0 ? "net-pos" : netChange < 0 ? "net-neg" : "net-zero");
   }
 }
+
+// ══════════════════════════════════════════════
+// DRILL DRAWER
+// ══════════════════════════════════════════════
+const BU_LABELS = {digital:"Digital BU", interbu:"Inter BU", martech:"MarTech BU"};
+
+function openDrill(naElType, buKey, rowKey, etFilter) {
+  // Collect entries from DRILL_STORE
+  const typeStore = DRILL_STORE[naElType];
+  if (!typeStore) return;
+
+  // Flatten: all BUs if buKey passed, specific rowKeys, specific et
+  let entries = [];
+  const buKeys = buKey === "ALL_BU" ? ["digital","interbu","martech"] : [buKey];
+  const rowKeys = rowKey === "ALL" ? ["AU","UK","US","NBD"] : [rowKey];
+
+  buKeys.forEach(bk => {
+    if (!typeStore[bk]) return;
+    rowKeys.forEach(rk => {
+      if (!typeStore[bk][rk]) return;
+      const etKeys = etFilter === "Both" ? ["Managed","Recurring"] : [etFilter];
+      etKeys.forEach(et => {
+        (typeStore[bk][rk][et] || []).forEach(e => {
+          entries.push({...e, et, buKey:bk, rowKey:rk});
+        });
+      });
+    });
+  });
+
+  // Sort by amount desc
+  entries.sort((a, b) => b.amount - a.amount);
+
+  const isNA      = naElType === "NA";
+  const typeLabel = isNA ? "New Addition" : "Engagement Lost";
+  const buLabel   = buKey === "ALL_BU" ? "All BUs" : BU_LABELS[buKey] || buKey;
+  const rkLabel   = rowKey === "ALL" ? "All Regions" : rowKey;
+  const etLabel   = etFilter === "Both" ? "Managed + Recurring" : etFilter;
+
+  // Header
+  $("drill-eyebrow").textContent = buLabel + " · " + rkLabel;
+  $("drill-title").textContent   = typeLabel + " — " + etLabel;
+  $("drill-sub").textContent     = "vs equal window " + DRILL_PREV_LABEL;
+
+  // KPIs
+  const totalAmt = entries.reduce((s,e) => s + e.amount, 0);
+  const kpiCls = isNA ? "na" : "el";
+  $("drill-kpi-count").textContent  = entries.length || "—";
+  $("drill-kpi-count").className    = "drill-kpi-val " + kpiCls;
+  $("drill-kpi-amt").textContent    = entries.length ? fmtUSD(totalAmt) : "—";
+  $("drill-kpi-amt").className      = "drill-kpi-val " + kpiCls;
+  $("drill-kpi-window").textContent = DRILL_PREV_LABEL;
+
+  // Body
+  const body = $("drill-body");
+  if (!entries.length) {
+    body.innerHTML = `<div class="drill-empty">No deals in this segment</div>`;
+  } else {
+    // Group by et if Both
+    let html = "";
+    const etGroups = etFilter === "Both"
+      ? [["Managed", entries.filter(e => e.et === "Managed")], ["Recurring", entries.filter(e => e.et === "Recurring")]]
+      : [[etFilter, entries]];
+    etGroups.forEach(([etName, grp]) => {
+      if (!grp.length) return;
+      if (etFilter === "Both") html += `<div class="drill-section">${etName} (${grp.length})</div>`;
+      grp.forEach(e => {
+        const hubUrl = `https://app.hubspot.com/contacts/2700725/record/0-3/${e.dealIds[0]}`;
+        html += `<div class="drill-row">
+          <div class="drill-row-left">
+            <div class="drill-row-name" title="${e.label}">${e.label}</div>
+            <div class="drill-row-sub">${e.company || "—"}${e.dealIds.length > 1 ? " · " + e.dealIds.length + " deals" : ""}</div>
+          </div>
+          <div class="drill-row-amt ${kpiCls}">${fmtUSD(e.amount)}</div>
+        </div>`;
+      });
+    });
+    body.innerHTML = html;
+  }
+
+  // Open
+  $("drill-overlay").classList.add("open");
+  $("drill-panel").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDrill() {
+  $("drill-overlay").classList.remove("open");
+  $("drill-panel").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrill(); });
 
 // ══════════════════════════════════════════════
 // SYNC
