@@ -754,7 +754,7 @@ function computeSnapshot(deals, liMap, todayStr) {
     const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
     const lis       = liMap[deal.id] || [];
     const dealAmt   = deal.amount;
-    if (!dealAmt || dealAmt <= 0) return;
+    if (!dealAmt || dealAmt === 0) return; // keep negatives — they net against revenue
 
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
     const isToday    = deal.invoice_date === todayStr;
@@ -776,11 +776,11 @@ function computeSnapshot(deals, liMap, todayStr) {
 
     // ── Has LIs ──
     const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
-    if (liTotal <= 0) return;
+    if (liTotal === 0) return;
     const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
-      if (!li.amount || li.amount <= 0) return;
+      if (!li.amount || li.amount === 0) return;
 
       // ── Revenue MTD + Contribution ──
       let et;
