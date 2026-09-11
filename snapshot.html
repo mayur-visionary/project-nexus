@@ -754,7 +754,7 @@ async function fetchMonthDeals(monthStr, cutoffStr) {
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES},
-    {propertyName:"closedate", operator:"LT", value:`${cutoffStr}T00:00:00.000Z`}
+    {propertyName:"closedate", operator:"LT", value:`${cutoffStr}T18:30:00.000Z`}
   ];
 
   const fetched = [];
