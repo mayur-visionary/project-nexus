@@ -1091,7 +1091,7 @@ async function doSync(force = false) {
     $("err-bar").textContent = "Failed to load scorecard: " + e.message;
     $("err-bar").classList.add("show");
     $("main-content").style.display = "block";
-    const ns = $("nav-strip"); if (ns) ns.style.display = "block";
+    const ns2 = $("nav-strip"); if (ns2) ns2.style.display = "block";
   } finally {
     isSyncing = false;
     $("lo").classList.remove("show");
