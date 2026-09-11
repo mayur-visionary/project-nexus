@@ -51,6 +51,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Footer ── */
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
+/* ── Nav tab strip (below header, above main) ── */
+.nav-strip{background:#2C1F00;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-strip-in{max-width:1480px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-tabs{display:flex;align-items:stretch;gap:0}
+.nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#FFDA30;padding:11px 18px;border-bottom:3px solid #FFDA30;cursor:default}
+.nav-strip-right{display:flex;align-items:center;gap:12px;padding:8px 0}
+.sync-ts{font-size:9px;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+.refresh-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.refresh-btn:disabled{opacity:.4;cursor:not-allowed}
+
 /* ── Loader ── */
 .lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
 .lo.show{display:flex}
@@ -63,13 +74,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Main ── */
 .main{max-width:1480px;margin:0 auto;padding:24px 28px 60px}
-
-/* ── Snapshot header strip ── */
-.snap-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #FFDA30}
-.snap-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#473400}
-.snap-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.snap-date{font-size:10px;font-weight:700;color:#696969;letter-spacing:.04em;background:#fff;border:1px solid #E2E2E2;border-radius:6px;padding:5px 12px}
-.snap-period{font-size:9px;font-weight:700;color:#9A9A9A;letter-spacing:.06em;text-transform:uppercase}
 
 /* ── Grand total bar ── */
 .grand-total{background:#473400;border-radius:10px;padding:20px 32px;margin-bottom:20px}
@@ -238,17 +242,21 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
   <div class="yellow-rule"></div>
 </div>
 
-<!-- Main -->
-<div class="main" id="main-content" style="display:none">
-
-  <!-- Snapshot header -->
-  <div class="snap-header">
-    <div class="snap-title">BU Scorecard</div>
-    <div class="snap-meta">
-      <div class="snap-period" id="snap-period">—</div>
-      <div class="snap-date" id="snapshot-date">—</div>
+<!-- Nav tab strip -->
+<div class="nav-strip">
+  <div class="nav-strip-in">
+    <div class="nav-tabs">
+      <div class="nav-tab-active">BU Scorecard</div>
+    </div>
+    <div class="nav-strip-right">
+      <span class="sync-ts" id="sync-ts">—</span>
+      <button class="refresh-btn" id="rfbtn" onclick="doSync(true)" disabled>⟳ Refresh</button>
     </div>
   </div>
+</div>
+
+<!-- Main -->
+<div class="main" id="main-content" style="display:none">
 
   <!-- Grand total bar -->
   <div class="grand-total">
@@ -934,8 +942,6 @@ function populateSnapshot(bkt, todayStr) {
   const todayDate = new Date(todayStr + "T00:00:00");
   const monLabel  = MSHRT[todayDate.getMonth()] + " " + todayDate.getFullYear();
 
-  setText("snap-period",   monLabel + " MTD");
-  setText("snapshot-date", todayDate.toLocaleDateString("en-IN", {day:"numeric", month:"long", year:"numeric"}));
   ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
 
   const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, todayStr);
@@ -1052,6 +1058,7 @@ async function doSync(force = false) {
   $("lo").classList.add("show");
   $("sdot").style.background = "#006E5E";
   $("stxt").textContent = "SYNCING…";
+  const rfbtn = $("rfbtn"); if (rfbtn) rfbtn.disabled = true;
   $("err-bar").classList.remove("show");
 
   try {
@@ -1073,6 +1080,9 @@ async function doSync(force = false) {
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
     $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
+    const now = new Date();
+    const ts = now.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    const el = $("sync-ts"); if (el) el.textContent = "Synced at " + ts;
   } catch(e) {
     console.error("[BU Scorecard]", e);
     $("sdot").style.background = "#E84040";
@@ -1083,6 +1093,7 @@ async function doSync(force = false) {
   } finally {
     isSyncing = false;
     $("lo").classList.remove("show");
+    const rfbtn2 = $("rfbtn"); if (rfbtn2) rfbtn2.disabled = false;
   }
 }
 
