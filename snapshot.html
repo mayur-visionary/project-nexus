@@ -1078,8 +1078,8 @@ async function doSync(force = false) {
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
     $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
-    const now = new Date();
-    const ts = now.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    const syncedAt = new Date();
+    const ts = syncedAt.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const el = $("sync-ts"); if (el) el.textContent = "Synced at " + ts;
   } catch(e) {
     console.error("[BU Scorecard]", e);
