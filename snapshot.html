@@ -234,7 +234,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="hdr-right">
         <div class="h-status">
           <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
-          <div class="sync-ts" id="sync-ts" style="color:rgba(255,255,255,.45);font-size:9px;font-weight:500;letter-spacing:.02em;text-transform:none;margin-top:2px"></div>
+          <div class="sync-ts" id="sync-ts" style="color:rgba(255,255,255,.45);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px"></div>
         </div>
         <button class="refresh-btn" id="rfbtn" onclick="doSync(true)" disabled>⟳ Refresh</button>
         <a class="nexus-btn" href="/">↗ Revenue Pulse</a>
@@ -308,7 +308,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
     <!-- Digital BU -->
     <div class="bu-col">
-      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span></div>
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span><span class="bu-badge">Search · Web</span></div>
       <div class="metric-card booking">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Revenue MTD</div>
@@ -353,7 +353,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
     <!-- Inter BU -->
     <div class="bu-col">
-      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span></div>
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span><span class="bu-badge">Campaign · Email · Design</span></div>
       <div class="metric-card booking">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Revenue MTD</div>
@@ -398,7 +398,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
     <!-- MarTech BU -->
     <div class="bu-col">
-      <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span></div>
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span><span class="bu-badge">Jaydeep's Team</span></div>
       <div class="metric-card booking">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Revenue MTD</div>
@@ -580,11 +580,21 @@ function engGroup(val) {
 // Returns "Managed" (Dedicated FTE/PTE + Status:New)
 //      or "Recurring" (Recurring Services/Recurring + Status:New)
 //      or null (P2P, no Status:New, or unclassifiable)
-function naStatus(liName, liDescription) {
+function naStatus(liName, liDescription, liStartDate, todayStr) {
   if (!liName || !liDescription) return null;
   const n = liName.toLowerCase();
   // Must be Status : New (case-insensitive)
   if (!/Status\s*:\s*New/i.test(liDescription)) return null;
+  // start_date must fall within the current booking month
+  // start_date format from Invoice App: "DD/MM/YYYY HH:MM:SS"
+  if (!liStartDate) return null;
+  const parts = liStartDate.split(/[\/\s:]/); // ["DD","MM","YYYY",...]
+  if (parts.length < 3) return null;
+  const sdYear  = parseInt(parts[2], 10);
+  const sdMonth = parseInt(parts[1], 10); // 1-based
+  const [tsYear, tsMonth] = todayStr.split("-").map(Number);
+  if (sdYear !== tsYear || sdMonth !== tsMonth) return null;
+  // Type classification
   if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Managed";
   if (n.startsWith("recurring services") || n.startsWith("recurring"))  return "Recurring";
   return null;
@@ -699,7 +709,8 @@ async function fetchLineItems(deals) {
           bu:          cls?.bu || null,
           amount:      li.amount || 0,
           name:        li.name || "",
-          description: li.description || ""
+          description: li.description || "",
+          start_date:  li.start_date || ""
         };
       }).filter(li => li.amount > 0);
     });
@@ -811,7 +822,7 @@ function computeSnapshot(deals, liMap, todayStr) {
       // ON-prefix deals are P2P → excluded
       if (isOnPrefix) return;
 
-      const naType = naStatus(li.name, li.description);
+      const naType = naStatus(li.name, li.description, li.start_date, todayStr);
       if (!naType) return;
 
       const naRow   = bkt[bucketKey].naCount[rowKey];
