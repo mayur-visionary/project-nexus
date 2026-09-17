@@ -1,26 +1,16 @@
 // ════════════════════════════════════════════════════════════════
 // /functions/snapshot-data.js
-// Project Nexus · Mavlers · Session 28
+// Project Nexus · Mavlers · Session 28 (updated to match snapshot.html Session 27)
 //
-// Server-side compute endpoint for BU Scorecard data.
-// Called by Apps Script daily publisher — returns computed bkt
-// totals as clean JSON. No HTML, no rendering.
-//
-// AUTH: X-Snapshot-Key header must match SNAPSHOT_DATA_KEY env var.
-// Add SNAPSHOT_DATA_KEY to Cloudflare Pages environment variables.
-//
-// RESPONSE:
-//   {
-//     grand, digital, interbu, martech,
-//     na: { managed, rec, managedAmt, recAmt },
-//     monLabel, dateLabel, dealCount
-//   }
-//
-// COMPUTE: identical to snapshot.html — same classifiers, same
-// attribution registry, same NA detection. Single source of truth.
+// CHANGES vs previous version:
+//   1. naStatus() — added liStartDate + month validation (DD/MM/YYYY format)
+//      LI start_date must fall in the current booking month to qualify as NA.
+//   2. fetchLineItems() — added "start_date" to LI property fetch.
+//   3. classifyLineItem() — return value aligned to {bu:...} object shape,
+//      consistent with snapshot.html.
+//   4. LI map building — reads li.bu from cls?.bu (object shape).
 // ════════════════════════════════════════════════════════════════
 
-// ── Constants ──
 const PIPELINE            = "115832232";
 const STAGE               = "205348626";
 const EXCLUDED_COMPANIES  = ["InboxArmy","Uplers","Solomax"];
@@ -28,7 +18,6 @@ const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement"];
 const MFULL = ["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-// ── Owner registry (mirrors snapshot.html exactly) ──
 const MARTECH_OWNER_IDS = new Set([
   "107178262","17738843","34140174",
   "467997340",
@@ -37,8 +26,8 @@ const MARTECH_OWNER_IDS = new Set([
   "916030451",
   "41490632"
 ]);
-const DIGITAL_LEADERS  = new Set(["17739548","79217713","17739173"]);
-const MARTECH_LEADERS  = new Set(["107178262","17738843","34140174"]);
+const DIGITAL_LEADERS = new Set(["17739548","79217713","17739173"]);
+const MARTECH_LEADERS = new Set(["107178262","17738843","34140174"]);
 
 const DIGITAL_OWNER_ROW = {
   "131779647":"AU","78831011":"AU","94746500":"AU","176516495":"AU","263464861":"AU",
@@ -71,22 +60,15 @@ export async function onRequestPost(context) {
 
 async function handleRequest(context) {
   try {
-    // ── Auth ──
     const expectedKey = context.env.SNAPSHOT_DATA_KEY;
-    if (!expectedKey) {
-      return jsonError("SNAPSHOT_DATA_KEY not configured in Cloudflare environment.", 500);
-    }
+    if (!expectedKey) return jsonError("SNAPSHOT_DATA_KEY not configured.", 500);
     const incomingKey = context.request.headers.get("X-Snapshot-Key") || "";
-    if (incomingKey !== expectedKey) {
-      return jsonError("Unauthorised.", 401);
-    }
+    if (incomingKey !== expectedKey) return jsonError("Unauthorised.", 401);
 
     const token = context.env.HUBSPOT_TOKEN;
     if (!token) return jsonError("HUBSPOT_TOKEN not configured.", 500);
 
-    // ── Date anchor: yesterday in IST ──
-    // Apps Script runs at 08:00 IST. We anchor to yesterday to match
-    // the "EOD yesterday" framing of the daily scorecard.
+    // Date anchor: yesterday IST (trigger fires at 00:00 IST)
     const istOffset = 5.5 * 60 * 60 * 1000;
     const nowIST    = new Date(Date.now() + istOffset);
     const yesterday = new Date(nowIST);
@@ -98,19 +80,15 @@ async function handleRequest(context) {
     const monLabel  = `${MSHRT[yesterday.getUTCMonth()]} ${yesterday.getUTCFullYear()}`;
     const dateLabel = `${yesterday.getUTCDate()} ${MSHRT[yesterday.getUTCMonth()]} ${yesterday.getUTCFullYear()}`;
 
-    // ── Fetch ──
     const deals = await fetchDeals(token, monthStr);
     const liMap = await fetchLineItems(token, deals);
+    const bkt   = computeSnapshot(deals, liMap, yStr);
 
-    // ── Compute ──
-    const bkt = computeSnapshot(deals, liMap, yStr);
-
-    // ── Aggregate ──
-    const digital  = buTotal(bkt.digital);
-    const interbu  = buTotal(bkt.interbu);
-    const martech  = buTotal(bkt.martech);
-    const grand    = digital + interbu + martech;
-    const na       = naTotals(bkt);
+    const digital = buTotal(bkt.digital);
+    const interbu = buTotal(bkt.interbu);
+    const martech = buTotal(bkt.martech);
+    const grand   = digital + interbu + martech;
+    const na      = naTotals(bkt);
 
     return new Response(JSON.stringify({
       grand, digital, interbu, martech, na,
@@ -134,7 +112,7 @@ function jsonError(msg, status) {
 }
 
 // ════════════════════════════════════════════════
-// HUBSPOT FETCH (reuses same patterns as api.js + lineItems.js)
+// HUBSPOT FETCH
 // ════════════════════════════════════════════════
 async function fetchDeals(token, monthStr) {
   const props = [
@@ -155,14 +133,12 @@ async function fetchDeals(token, monthStr) {
   ];
 
   const hdrs = {"Content-Type":"application/json","Authorization":`Bearer ${token}`};
-  const fetched = [];
-  const seen    = new Set();
-  let after     = null;
+  const fetched = [], seen = new Set();
+  let after = null;
 
   do {
     const body = {filterGroups:[{filters}], properties:props, limit:200};
     if (after) body.after = after;
-
     const res  = await fetch("https://api.hubapi.com/crm/v3/objects/deals/search",
       {method:"POST", headers:hdrs, body:JSON.stringify(body)});
     if (!res.ok) throw new Error(`Deal search ${res.status}: ${await res.text()}`);
@@ -203,17 +179,14 @@ async function fetchDeals(token, monthStr) {
 }
 
 async function fetchLineItems(token, deals) {
-  const hdrs   = {"Content-Type":"application/json","Authorization":`Bearer ${token}`};
-  const liMap  = {};
-  const CHUNK  = 100;
+  const hdrs  = {"Content-Type":"application/json","Authorization":`Bearer ${token}`};
+  const liMap = {};
+  const CHUNK = 100;
 
   for (let i = 0; i < deals.length; i += CHUNK) {
-    const chunk   = deals.slice(i, i + CHUNK);
-    const dealIds = chunk.map(d => d.id);
+    const dealIds = deals.slice(i, i + CHUNK).map(d => d.id);
 
-    // Associations
-    const assocMap     = {};
-    const allLiIds     = new Set();
+    const assocMap = {}, allLiIds = new Set();
     try {
       const assocRes = await fetch(
         "https://api.hubapi.com/crm/v3/associations/deals/line_items/batch/read",
@@ -229,16 +202,16 @@ async function fetchLineItems(token, deals) {
       }
     } catch(e) { console.error("Assoc error:", e.message); }
 
-    // Batch-read LI properties
-    const liProps  = {};
-    const liIdArr  = [...allLiIds];
+    const liProps = {};
+    const liIdArr = [...allLiIds];
     for (let j = 0; j < liIdArr.length; j += 100) {
       try {
         const liRes = await fetch(
           "https://api.hubapi.com/crm/v3/objects/line_items/batch/read",
           {method:"POST", headers:hdrs, body:JSON.stringify({
             inputs:     liIdArr.slice(j, j+100).map(id=>({id})),
-            properties: ["name","amount","description"]
+            // ── start_date added: required for naStatus() month validation ──
+            properties: ["name","amount","description","start_date"]
           })}
         );
         if (liRes.ok) {
@@ -246,18 +219,19 @@ async function fetchLineItems(token, deals) {
           (liData.results || []).forEach(r => {
             const amt = parseFloat(r.properties?.amount || 0) || 0;
             if (amt <= 0) return;
+            const cls = classifyLineItem((r.properties?.name || "").trim());
             liProps[String(r.id)] = {
               name:        (r.properties?.name || "").trim(),
               description: (r.properties?.description || "").trim(),
+              start_date:  (r.properties?.start_date || "").trim(),
               amount:      amt,
-              bu:          classifyLineItem((r.properties?.name || "").trim())
+              bu:          cls?.bu || null   // object shape: {bu:"MarTech"} → .bu
             };
           });
         }
       } catch(e) { console.error("LI batch error:", e.message); }
     }
 
-    // Attach LIs to deals
     Object.entries(assocMap).forEach(([did, liIds]) => {
       liMap[did] = liIds.map(id => liProps[id]).filter(Boolean);
     });
@@ -267,23 +241,24 @@ async function fetchLineItems(token, deals) {
 }
 
 // ════════════════════════════════════════════════
-// CLASSIFIERS (verbatim from snapshot.html)
+// CLASSIFIERS — verbatim from snapshot.html
 // ════════════════════════════════════════════════
 function classifyLineItem(name) {
   if (!name) return null;
   const n = name.toLowerCase();
+  // Return shape matches snapshot.html: {bu: "..."}
   if (n.includes("campaign -") || n.includes("campaign manager") ||
       n.includes("campaign operation specialist") || n.includes("sfmc") ||
-      n.includes("salesforce marketing cloud"))                          return "MarTech";
-  if (n.includes("design - asset") || n.includes("design - digital"))   return "Digital";
-  if (n.includes("design - "))                                           return "MarTech";
-  if (n.includes("development - email") || n.includes("email coding"))  return "MarTech";
-  if (n.includes("email design and coding"))                             return "MarTech";
+      n.includes("salesforce marketing cloud"))                          return {bu:"MarTech"};
+  if (n.includes("design - asset") || n.includes("design - digital"))   return {bu:"Digital"};
+  if (n.includes("design - "))                                           return {bu:"MarTech"};
+  if (n.includes("development - email") || n.includes("email coding"))  return {bu:"MarTech"};
+  if (n.includes("email design and coding"))                             return {bu:"MarTech"};
   if (n.includes("development - web") || n.includes("development - lp/hub") ||
       n.includes("development - mobile app") || n.includes("ai & automation - web") ||
       n.includes("dot-net development") || n.includes("operational service - data entry") ||
-      n.includes("landing page coding"))                                 return "Digital";
-  if (n.includes("search -") || n.includes("consultancy fees"))         return "Digital";
+      n.includes("landing page coding"))                                 return {bu:"Digital"};
+  if (n.includes("search -") || n.includes("consultancy fees"))         return {bu:"Digital"};
   return null;
 }
 
@@ -304,10 +279,20 @@ function engGroup(val) {
   return null;
 }
 
-function naStatus(liName, liDescription) {
+// ── naStatus: verbatim from new snapshot.html ──
+// start_date format from Invoice App: "DD/MM/YYYY HH:MM:SS"
+// Must match current booking month (derived from todayStr YYYY-MM-DD).
+function naStatus(liName, liDescription, liStartDate, todayStr) {
   if (!liName || !liDescription) return null;
   const n = liName.toLowerCase();
   if (!/Status\s*:\s*New/i.test(liDescription)) return null;
+  if (!liStartDate) return null;
+  const parts = liStartDate.split(/[\/\s:]/); // ["DD","MM","YYYY",...]
+  if (parts.length < 3) return null;
+  const sdYear  = parseInt(parts[2], 10);
+  const sdMonth = parseInt(parts[1], 10); // 1-based
+  const [tsYear, tsMonth] = todayStr.split("-").map(Number);
+  if (sdYear !== tsYear || sdMonth !== tsMonth) return null;
   if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Managed";
   if (n.startsWith("recurring services") || n.startsWith("recurring"))  return "Recurring";
   return null;
@@ -324,7 +309,7 @@ function getDealRowKey(oid, isMarTech, dealGeo) {
 }
 
 // ════════════════════════════════════════════════
-// COMPUTE (verbatim from snapshot.html)
+// COMPUTE — verbatim from snapshot.html
 // ════════════════════════════════════════════════
 function emptyBU() {
   const rows = () => ({AU:{rec:0,p2p:0},UK:{rec:0,p2p:0},US:{rec:0,p2p:0},NBD:{rec:0,p2p:0}});
@@ -344,7 +329,7 @@ function computeSnapshot(deals, liMap, todayStr) {
     const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
     const lis       = liMap[deal.id] || [];
     const dealAmt   = deal.amount;
-    if (!dealAmt) return;
+    if (!dealAmt || dealAmt === 0) return;
 
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
 
@@ -364,7 +349,7 @@ function computeSnapshot(deals, liMap, todayStr) {
     const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
-      if (!li.amount) return;
+      if (!li.amount || li.amount === 0) return;
 
       let et;
       if (isOnPrefix) { et = "P2P"; }
@@ -378,12 +363,13 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (et === "P2P") bRow.p2p += amt; else bRow.rec += amt;
 
       if (isOnPrefix) return;
-      const naType = naStatus(li.name, li.description);
+      // ── naStatus now requires start_date + todayStr for month gate ──
+      const naType = naStatus(li.name, li.description, li.start_date, todayStr);
       if (!naType) return;
       const naRow = bkt[bk].na[rowKey];
       if (!naRow) return;
-      if (naType === "Managed") { naRow.managed++;    naRow.managedAmt += amt; }
-      else                      { naRow.rec++;         naRow.recAmt    += amt; }
+      if (naType === "Managed") { naRow.managed++;  naRow.managedAmt += amt; }
+      else                      { naRow.rec++;       naRow.recAmt    += amt; }
     });
   });
 
