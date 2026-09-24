@@ -580,23 +580,36 @@ function engGroup(val) {
 // Returns "Managed" (Dedicated FTE/PTE + Status:New)
 //      or "Recurring" (Recurring Services/Recurring + Status:New)
 //      or null (P2P, no Status:New, or unclassifiable)
-function naStatus(liName, liDescription, liStartDate, todayStr) {
-  if (!liName || !liDescription) return null;
+// ── New Addition classifier ──
+// Managed:   Dedicated FTE/PTE + status_1 = "New" (HubSpot LI property) + start_date in current month
+// Recurring: Recurring Services/Recurring + project_type = "New" + start_date in current month
+// Both require start_date to fall within the current booking month (todayStr YYYY-MM-DD)
+// NOTE: status_1 is the canonical signal for Managed — NOT the description text.
+//       The description may contain "Status : New" text for old engagements; status_1 is reliable.
+function naStatus(liName, liStatus1, liStartDate, liProjectType, todayStr) {
+  if (!liName) return null;
   const n = liName.toLowerCase();
-  // Must be Status : New (case-insensitive)
-  if (!/Status\s*:\s*New/i.test(liDescription)) return null;
-  // start_date must fall within the current booking month
-  // start_date format from Invoice App: "DD/MM/YYYY HH:MM:SS"
+
+  // ── start_date gate (applies to both Managed and Recurring) ──
+  // Format from Invoice App: "DD/MM/YYYY HH:MM:SS"
   if (!liStartDate) return null;
-  const parts = liStartDate.split(/[\/\s:]/); // ["DD","MM","YYYY",...]
+  const parts = liStartDate.split(/[\/\s:]/);
   if (parts.length < 3) return null;
   const sdYear  = parseInt(parts[2], 10);
   const sdMonth = parseInt(parts[1], 10); // 1-based
   const [tsYear, tsMonth] = todayStr.split("-").map(Number);
   if (sdYear !== tsYear || sdMonth !== tsMonth) return null;
-  // Type classification
-  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Managed";
-  if (n.startsWith("recurring services") || n.startsWith("recurring"))  return "Recurring";
+
+  // ── Managed: Dedicated FTE/PTE + status_1 = "New" ──
+  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
+    return (liStatus1 || "").toLowerCase() === "new" ? "Managed" : null;
+  }
+
+  // ── Recurring: Recurring Services/Recurring + project_type = "New" ──
+  if (n.startsWith("recurring services") || n.startsWith("recurring")) {
+    return (liProjectType || "").toLowerCase() === "new" ? "Recurring" : null;
+  }
+
   return null;
 }
 
@@ -706,11 +719,13 @@ async function fetchLineItems(deals) {
       liMap[did] = (lis || []).map(li => {
         const cls = classifyLineItem(li.name);
         return {
-          bu:          cls?.bu || null,
-          amount:      li.amount || 0,
-          name:        li.name || "",
-          description: li.description || "",
-          start_date:  li.start_date || ""
+          bu:           cls?.bu || null,
+          amount:       li.amount || 0,
+          name:         li.name || "",
+          description:  li.description || "",
+          start_date:   li.start_date || "",
+          project_type: li.project_type || "",
+          status_1:     li.status_1 || ""
         };
       }).filter(li => li.amount > 0);
     });
@@ -822,7 +837,7 @@ function computeSnapshot(deals, liMap, todayStr) {
       // ON-prefix deals are P2P → excluded
       if (isOnPrefix) return;
 
-      const naType = naStatus(li.name, li.description, li.start_date, todayStr);
+      const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
 
       const naRow   = bkt[bucketKey].naCount[rowKey];
