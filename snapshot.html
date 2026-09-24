@@ -856,7 +856,9 @@ function computeSnapshot(deals, liMap, todayStr) {
       }
 
       if (naType === "Managed") {
-        naRow.managed += 1;
+        // PTE = 0.5 headcount, FTE = 1 headcount (business rule)
+        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
+        naRow.managed += headcount;
         naAmt.managed += amt;
       } else {
         naRow.rec += 1;
@@ -993,7 +995,7 @@ function populateSnapshot(bkt, todayStr) {
     s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.rec||0), 0), 0);
 
   setText("gt-na-managed",       allAmtM > 0 ? fmtUSD(allAmtM) : "—");
-  setText("gt-na-managed-count", allM > 0 ? allM + " talent" + (allM > 1 ? "s" : "") : "—");
+  setText("gt-na-managed-count", allM > 0 ? allM + " talent" + (allM > 1 ? "s" : "") : "—"); // 0.5=PTE, 1=FTE
   setText("gt-na-recurring",       allAmtR > 0 ? fmtUSD(allAmtR) : "—");
   setText("gt-na-recurring-count", allR > 0 ? allR + " project" + (allR > 1 ? "s" : "") : "—");
   setText("gt-na-total",       totalNAAmt > 0 ? fmtUSD(totalNAAmt) : "—");
