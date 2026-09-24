@@ -210,8 +210,8 @@ async function fetchLineItems(token, deals) {
           "https://api.hubapi.com/crm/v3/objects/line_items/batch/read",
           {method:"POST", headers:hdrs, body:JSON.stringify({
             inputs:     liIdArr.slice(j, j+100).map(id=>({id})),
-            // ── start_date added: required for naStatus() month validation ──
-            properties: ["name","amount","description","start_date"]
+            // ── project_type + status_1 added: canonical NA signals from Invoice App ──
+            properties: ["name","amount","description","start_date","project_type","status_1"]
           })}
         );
         if (liRes.ok) {
@@ -221,11 +221,13 @@ async function fetchLineItems(token, deals) {
             if (amt <= 0) return;
             const cls = classifyLineItem((r.properties?.name || "").trim());
             liProps[String(r.id)] = {
-              name:        (r.properties?.name || "").trim(),
-              description: (r.properties?.description || "").trim(),
-              start_date:  (r.properties?.start_date || "").trim(),
-              amount:      amt,
-              bu:          cls?.bu || null   // object shape: {bu:"MarTech"} → .bu
+              name:         (r.properties?.name || "").trim(),
+              description:  (r.properties?.description || "").trim(),
+              start_date:   (r.properties?.start_date || "").trim(),
+              project_type: (r.properties?.project_type || "").trim(),
+              status_1:     (r.properties?.status_1 || "").trim(),
+              amount:       amt,
+              bu:           cls?.bu || null
             };
           });
         }
@@ -280,21 +282,26 @@ function engGroup(val) {
 }
 
 // ── naStatus: verbatim from new snapshot.html ──
+// Managed:   Dedicated FTE/PTE + status_1 = "New" + start_date in current month
+// Recurring: Recurring Services/Recurring + project_type = "New" + start_date in current month
+// Description-text "Status : New" check retired — status_1/project_type are canonical.
 // start_date format from Invoice App: "DD/MM/YYYY HH:MM:SS"
-// Must match current booking month (derived from todayStr YYYY-MM-DD).
-function naStatus(liName, liDescription, liStartDate, todayStr) {
-  if (!liName || !liDescription) return null;
+function naStatus(liName, liStatus1, liStartDate, liProjectType, todayStr) {
+  if (!liName) return null;
   const n = liName.toLowerCase();
-  if (!/Status\s*:\s*New/i.test(liDescription)) return null;
   if (!liStartDate) return null;
-  const parts = liStartDate.split(/[\/\s:]/); // ["DD","MM","YYYY",...]
+  const parts = liStartDate.split(/[\/\s:]/);
   if (parts.length < 3) return null;
   const sdYear  = parseInt(parts[2], 10);
-  const sdMonth = parseInt(parts[1], 10); // 1-based
+  const sdMonth = parseInt(parts[1], 10);
   const [tsYear, tsMonth] = todayStr.split("-").map(Number);
   if (sdYear !== tsYear || sdMonth !== tsMonth) return null;
-  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Managed";
-  if (n.startsWith("recurring services") || n.startsWith("recurring"))  return "Recurring";
+  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
+    return (liStatus1 || "").toLowerCase() === "new" ? "Managed" : null;
+  }
+  if (n.startsWith("recurring services") || n.startsWith("recurring")) {
+    return (liProjectType || "").toLowerCase() === "new" ? "Recurring" : null;
+  }
   return null;
 }
 
@@ -363,13 +370,20 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (et === "P2P") bRow.p2p += amt; else bRow.rec += amt;
 
       if (isOnPrefix) return;
-      // ── naStatus now requires start_date + todayStr for month gate ──
-      const naType = naStatus(li.name, li.description, li.start_date, todayStr);
+      // ── new signature: status_1 + project_type replace description-text check ──
+      const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
       const naRow = bkt[bk].na[rowKey];
       if (!naRow) return;
-      if (naType === "Managed") { naRow.managed++;  naRow.managedAmt += amt; }
-      else                      { naRow.rec++;       naRow.recAmt    += amt; }
+      if (naType === "Managed") {
+        // PTE = 0.5 headcount, FTE = 1.0 headcount
+        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
+        naRow.managed    += headcount;
+        naRow.managedAmt += amt;
+      } else {
+        naRow.rec    += 1;
+        naRow.recAmt += amt;
+      }
     });
   });
 
