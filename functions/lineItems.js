@@ -71,7 +71,7 @@ export async function onRequestPost(context) {
             headers: hdrs,
             body: JSON.stringify({
               inputs: chunk.map(id => ({ id })),
-              properties: ["name", "amount", "description", "start_date"]
+              properties: ["name", "amount", "description", "start_date", "project_type", "status_1"]
             })
           }
         );
@@ -86,7 +86,9 @@ export async function onRequestPost(context) {
             name: r.properties?.name || "",
             amount: parseFloat(r.properties?.amount || 0) || 0,
             description: r.properties?.description || "",
-            start_date: r.properties?.start_date || ""
+            start_date:   r.properties?.start_date || "",
+            project_type: r.properties?.project_type || "",
+            status_1:     r.properties?.status_1 || ""
           };
         });
       } catch (e) {
