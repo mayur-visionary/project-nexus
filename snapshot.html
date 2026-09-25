@@ -742,7 +742,7 @@ function dedup(deals) {
 // Live & rolling — no date cutoff on fetch.
 // All deals in the current booking month are fetched.
 // ══════════════════════════════════════════════
-async function fetchDeals(monthStr) {
+async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if set, only fetch deals with closedate <= cutoffDay (YYYY-MM-DD)
   const props = [
     "dealname",
     "amount_in_home_currency",
@@ -763,6 +763,10 @@ async function fetchDeals(monthStr) {
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
+  // Equal window cutoff — only include deals up to the same day-of-month as current month
+  if (cutoffDay) {
+    filters.push({propertyName:"closedate", operator:"LTE", value:`${cutoffDay}T23:59:59.000Z`});
+  }
 
   const fetched = [];
   let after = null;
@@ -1378,11 +1382,13 @@ async function doSync(force = false) {
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
 
-    // ── Prev month (Aug) fetch for Engagement Lost ──
-    const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const prevMonth     = getMonthStr(prevMonthDate);
+    // ── Prev month fetch for Engagement Lost — equal window ──
+    // Equal window: if today = Sep 25, only fetch Aug deals up to Aug 25
+    const prevMonthDate  = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const prevMonth      = getMonthStr(prevMonthDate);
+    const prevCutoffDay  = `${prevMonthDate.getFullYear()}-${pad(prevMonthDate.getMonth()+1)}-${pad(today.getDate())}`;
     $("stxt").textContent = "FETCHING PREV MONTH…";
-    const prevDeals = await fetchDeals(prevMonth);
+    const prevDeals = await fetchDeals(prevMonth, prevCutoffDay);
     const prevLiMap = await fetchLineItems(prevDeals);
 
     const bkt = computeSnapshot(deals, liMap, todayStr);
