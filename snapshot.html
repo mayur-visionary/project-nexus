@@ -876,8 +876,7 @@ function extractLabel(liName, liDescription, company) {
     return m ? m[1].trim().split(/\s*-\s*/)[0].trim() : company;
   }
   if (n.startsWith("recurring services") || n.startsWith("recurring")) {
-    const m = liDescription.match(/Project\s+Name\s*:\s*(.+?)(?:
-|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+    const m = liDescription.match(/Project\s+Name\s*:\s*(.+?)(?:[\n\r]|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
     return m ? m[1].trim() : company;
   }
   return company;
