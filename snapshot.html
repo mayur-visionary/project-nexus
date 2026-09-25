@@ -117,6 +117,11 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .metric-badge{font-size:8px;font-weight:700;color:#696969;letter-spacing:.04em;background:#F2F2F2;border-radius:4px;padding:2px 6px}
 .metric-badge.na-badge{background:#E6F7F2;color:#006E5E}
 
+/* ── EL card ── */
+.metric-card.eng-lost{border-top:3px solid #C13030}
+.metric-badge.el-badge{background:#FDEAEA;color:#C13030}
+.snap-tbl tbody td.el-val{color:#C13030;font-weight:700}
+
 /* ── Snapshot table ── */
 .snap-tbl{width:100%;border-collapse:collapse}
 .snap-tbl thead th{padding:5px 10px;background:#F7F7F7;text-align:left;font-size:7px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #EBEBEB;white-space:nowrap}
@@ -301,6 +306,30 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="gt-split2-sub" id="gt-na-total-count">—</div>
       </div>
     </div>
+    <div class="gt-divider"></div>
+    <div class="gt-row2">
+      <div class="gt-row2-lbl" style="color:rgba(255,80,80,.6)">Engagement Lost MTD</div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Managed</div>
+        <div class="gt-split2-val" id="gt-el-managed" style="color:#E05050">—</div>
+        <div class="gt-split2-sub" id="gt-el-managed-count">—</div>
+      </div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Recurring</div>
+        <div class="gt-split2-val" id="gt-el-recurring" style="color:#E05050">—</div>
+        <div class="gt-split2-sub" id="gt-el-recurring-count">—</div>
+      </div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Total</div>
+        <div class="gt-split2-val" id="gt-el-total" style="color:#E05050">—</div>
+        <div class="gt-split2-sub" id="gt-el-total-count">—</div>
+      </div>
+      <div class="gt-split2" style="margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.12)">
+        <div class="gt-split2-lbl">Net Portfolio</div>
+        <div class="gt-split2-val" id="gt-net-portfolio" style="color:#FFDA30">—</div>
+        <div class="gt-split2-sub">NA − EL</div>
+      </div>
+    </div>
   </div>
 
   <!-- BU Grid -->
@@ -349,6 +378,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="digital-na-amt-body"></tbody>
         </table>
       </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Count</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-el-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-el-amt-body"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Inter BU -->
@@ -392,6 +441,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
           <tbody id="interbu-na-amt-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Count</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-el-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-el-amt-body"></tbody>
         </table>
       </div>
     </div>
@@ -439,6 +508,26 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <tbody id="martech-na-amt-body"></tbody>
         </table>
       </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Count</div>
+          <div class="metric-badge el-badge" id="martech-el-badge">vs Aug 2026</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-el-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-el-amt-body"></tbody>
+        </table>
+      </div>
     </div>
 
   </div><!-- /bu-grid -->
@@ -458,7 +547,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 //       Managed  = Dedicated FTE / Dedicated PTE + Status : New
 //       Recurring = Recurring Services / Recurring  + Status : New
 //       ON-prefix deals excluded. P2P excluded.
-//   - No Engagement Lost. No prev month fetch. No window comparison.
+//   - Engagement Lost: prev month LI key comparison (Talent/Project Name + Company)
+//     Full loss: present Aug, absent Sep → count=headcount, amt=Aug amount
+//     Downgrade: FTE→PTE same talent → count=0.5, amt=Aug-Sep delta
 //
 // ATTRIBUTION MODEL (two-tier, mirrors index.html):
 //   Tier 1 — Registry: MARTECH_OWNER_IDS → BU.
@@ -754,7 +845,9 @@ function emptyBU() {
     booking: emptyRevRows(),  // Revenue MTD
     asof:    emptyRevRows(),  // Contribution to MTD (today's invoice date)
     naCount: emptyNARows(),   // New Addition count
-    naAmt:   emptyNARows()    // New Addition amount
+    naAmt:   emptyNARows(),   // New Addition amount
+    elCount: emptyNARows(),   // Engagement Lost count
+    elAmt:   emptyNARows()    // Engagement Lost amount
   };
 }
 
@@ -763,11 +856,110 @@ function emptyBU() {
 let DRILL_STORE = {};
 
 function initDrillStore() {
-  DRILL_STORE = {NA:{}};
+  DRILL_STORE = {NA:{}, EL:{}};
   ["digital","interbu","martech"].forEach(bu => {
     DRILL_STORE.NA[bu] = {};
+    DRILL_STORE.EL[bu] = {};
     ["AU","UK","US","NBD"].forEach(rk => {
       DRILL_STORE.NA[bu][rk] = {Managed:[], Recurring:[]};
+      DRILL_STORE.EL[bu][rk] = {Managed:[], Recurring:[]};
+    });
+  });
+}
+
+// ── Extract talent/project name from LI description ──
+function extractLabel(liName, liDescription, company) {
+  const n = liName.toLowerCase();
+  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
+    // Multiple talents in one LI description — take first Talent Name
+    const m = liDescription.match(/Talent\s+Name\s*:\s*(.+?)(?:\s*Status\s*:|Rate\s*:|$)/i);
+    return m ? m[1].trim().split(/\s*-\s*/)[0].trim() : company;
+  }
+  if (n.startsWith("recurring services") || n.startsWith("recurring")) {
+    const m = liDescription.match(/Project\s+Name\s*:\s*(.+?)(?:
+|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+    return m ? m[1].trim() : company;
+  }
+  return company;
+}
+
+// ── Build LI key map for EL comparison ──
+// Returns Map: key → {amount, engType, bucketKey, rowKey, label, company, dealId}
+// Key = "TalentName|Company" for Managed, "ProjectName|Company" for Recurring
+function buildLIKeyMap(deals, liMap) {
+  const map = new Map();
+  deals.forEach(deal => {
+    const oid       = String(deal.owner_id || "");
+    const isMarTech = MARTECH_OWNER_IDS.has(oid);
+    const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
+    const lis       = liMap[deal.id] || [];
+    if (!lis.length) return;
+    const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
+    if (isOnPrefix) return; // P2P — skip
+
+    const liTotal = lis.reduce((s,li) => s + Math.abs(li.amount||0), 0);
+    if (liTotal === 0) return;
+    const scale = Math.abs(deal.amount) / liTotal;
+
+    lis.forEach(li => {
+      if (!li.amount || li.amount === 0) return;
+      const n = li.name.toLowerCase();
+      const isMgd = n.startsWith("dedicated fte") || n.startsWith("dedicated pte");
+      const isRec = n.startsWith("recurring services") || n.startsWith("recurring");
+      if (!isMgd && !isRec) return;
+
+      const label    = extractLabel(li.name, li.description, deal.company);
+      const key      = label + "|" + deal.company;
+      const engType  = n.startsWith("dedicated fte") ? "FTE" : (n.startsWith("dedicated pte") ? "PTE" : "Recurring");
+      const amt      = Math.abs(li.amount * scale);
+
+      let bucketKey;
+      if (isMarTech) { bucketKey = "martech"; }
+      else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
+
+      if (!map.has(key)) {
+        map.set(key, {amount:amt, engType, bucketKey, rowKey, label, company:deal.company, dealId:deal.id});
+      } else {
+        // Accumulate if same talent appears on multiple deals (e.g. Tanium 2 deals)
+        map.get(key).amount += amt;
+      }
+    });
+  });
+  return map;
+}
+
+// ── Compute Engagement Lost ──
+// Compares Aug LI key map vs Sep LI key map
+// Full loss: key in Aug, absent in Sep
+// Downgrade: key in both, FTE→PTE — count delta 0.5, amount delta Aug-Sep
+function computeEL(prevMap, curMap, bkt) {
+  prevMap.forEach((prev, key) => {
+    const cur = curMap.get(key);
+    const {bucketKey, rowKey, engType, label, company, dealId} = prev;
+    const row  = bkt[bucketKey];
+    if (!row) return;
+
+    let lostCount = 0, lostAmt = 0;
+
+    if (!cur) {
+      // Full loss — talent/project absent in current month
+      lostCount = (engType === "PTE") ? 0.5 : (engType === "FTE" ? 1 : 1);
+      lostAmt   = prev.amount;
+    } else if (prev.engType === "FTE" && cur.engType === "PTE") {
+      // Downgrade FTE→PTE: 0.5 headcount delta, revenue delta
+      lostCount = 0.5;
+      lostAmt   = prev.amount - cur.amount;
+      if (lostAmt <= 0) return; // No net loss
+    } else {
+      return; // Same or upgrade — not a loss
+    }
+
+    const naElType = (prev.engType === "Recurring") ? "rec" : "managed";
+    row.elCount[rowKey][naElType] += lostCount;
+    row.elAmt[rowKey][naElType]   += lostAmt;
+
+    DRILL_STORE.EL[bucketKey][rowKey][naElType === "managed" ? "Managed" : "Recurring"].push({
+      label, company, amount: lostAmt, count: lostCount, dealId, engType: prev.engType
     });
   });
 }
@@ -877,6 +1069,52 @@ function computeSnapshot(deals, liMap, todayStr) {
 // RENDER
 // ══════════════════════════════════════════════
 
+function renderELCountTable(tbodyId, elData, rowDefs, buKey) {
+  const tbody = $(tbodyId);
+  if (!tbody) return 0;
+  let totalM = 0, totalR = 0;
+  const rows = rowDefs.map(r => {
+    const d = elData[r.key] || {managed:0, rec:0};
+    const tot = d.managed + d.rec;
+    totalM += d.managed; totalR += d.rec;
+    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
+    const mCell = d.managed > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','${r.key}','Managed')">${d.managed}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','${r.key}','Recurring')">${d.rec}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num drillable" onclick="openDrill('EL','${buKey}','${r.key}','Both')">${tot}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
+  });
+  const grand = totalM + totalR;
+  const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
+  const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
+  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${grand}</td>` : `<td class="num">—</td>`;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
+  tbody.innerHTML = rows.join("");
+  return grand;
+}
+
+function renderELAmtTable(tbodyId, elData, rowDefs, buKey) {
+  const tbody = $(tbodyId);
+  if (!tbody) return 0;
+  let totalM = 0, totalR = 0;
+  const rows = rowDefs.map(r => {
+    const d = elData[r.key] || {managed:0, rec:0};
+    const tot = d.managed + d.rec;
+    totalM += d.managed; totalR += d.rec;
+    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
+    const mCell = d.managed > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
+  });
+  const grand = totalM + totalR;
+  const totM = totalM > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num el-val">—</td>`;
+  const totR = totalR > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num el-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>` : `<td class="num el-val">—</td>`;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
+  tbody.innerHTML = rows.join("");
+  return grand;
+}
+
 function renderRevTable(tbodyId, revData, rowDefs) {
   const tbody = $(tbodyId);
   if (!tbody) return 0;
@@ -903,15 +1141,15 @@ function renderNACountTable(tbodyId, naData, rowDefs, buKey) {
     const tot = d.managed + d.rec;
     totalM += d.managed; totalR += d.rec;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    const mCell = d.managed > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','${r.key}','Managed')">${d.managed}</td>` : `<td class="num dim">—</td>`;
-    const rCell = d.rec     > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','${r.key}','Recurring')">${d.rec}</td>`   : `<td class="num dim">—</td>`;
-    const tCell = `<td class="num drillable" onclick="openDrill('${buKey}','${r.key}','Both')">${tot}</td>`;
+    const mCell = d.managed > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','${r.key}','Managed')">${d.managed}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','${r.key}','Recurring')">${d.rec}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num drillable" onclick="openDrill('NA','${buKey}','${r.key}','Both')">${tot}</td>`;
     return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
   });
   const grand = totalM + totalR;
-  const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
-  const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
-  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('${buKey}','ALL','Both')">${grand}</td>` : `<td class="num">—</td>`;
+  const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
+  const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
+  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${grand}</td>` : `<td class="num">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -926,15 +1164,15 @@ function renderNAAmtTable(tbodyId, naData, rowDefs, buKey) {
     const tot = d.managed + d.rec;
     totalM += d.managed; totalR += d.rec;
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    const mCell = d.managed > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>` : `<td class="num dim">—</td>`;
-    const rCell = d.rec     > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`   : `<td class="num dim">—</td>`;
-    const tCell = `<td class="num na-val drillable" onclick="openDrill('${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
+    const mCell = d.managed > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
     return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
   });
   const grand = totalM + totalR;
-  const totM = totalM > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num na-val">—</td>`;
-  const totR = totalR > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num na-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('${buKey}','ALL','Both')">${fmtUSD(grand)}</td>` : `<td class="num na-val">—</td>`;
+  const totM = totalM > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num na-val">—</td>`;
+  const totR = totalR > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num na-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>` : `<td class="num na-val">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -961,7 +1199,10 @@ function renderBU(prefix, buData, rowDefs, todayStr) {
   // New Addition
   renderNACountTable(prefix + "-na-count-body", buData.naCount, rowDefs, prefix);
   const naAmt = renderNAAmtTable(prefix + "-na-amt-body", buData.naAmt, rowDefs, prefix);
-  return {bookTotal, naAmt};
+  // Engagement Lost
+  renderELCountTable(prefix + "-el-count-body", buData.elCount, rowDefs, prefix);
+  const elAmt = renderELAmtTable(prefix + "-el-amt-body", buData.elAmt, rowDefs, prefix);
+  return {bookTotal, naAmt, elAmt};
 }
 
 function populateSnapshot(bkt, todayStr) {
@@ -1000,6 +1241,34 @@ function populateSnapshot(bkt, todayStr) {
   setText("gt-na-recurring-count", allR > 0 ? allR + " project" + (allR > 1 ? "s" : "") : "—");
   setText("gt-na-total",       totalNAAmt > 0 ? fmtUSD(totalNAAmt) : "—");
   setText("gt-na-total-count", (allM+allR) > 0 ? (allM+allR) + " new" : "—");
+
+  // Grand bar — EL row
+  const allEM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.managed||0), 0), 0);
+  const allER = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.rec||0), 0), 0);
+  const allElAmtM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.managed||0), 0), 0);
+  const allElAmtR = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.rec||0), 0), 0);
+  const totalELAmt = allElAmtM + allElAmtR;
+
+  setText("gt-el-managed",       allElAmtM > 0 ? fmtUSD(allElAmtM) : "—");
+  setText("gt-el-managed-count", allEM > 0 ? allEM + " lost" : "—");
+  setText("gt-el-recurring",     allElAmtR > 0 ? fmtUSD(allElAmtR) : "—");
+  setText("gt-el-recurring-count", allER > 0 ? allER + " lost" : "—");
+  setText("gt-el-total",         totalELAmt > 0 ? fmtUSD(totalELAmt) : "—");
+  setText("gt-el-total-count",   (allEM+allER) > 0 ? (allEM+allER) + " lost" : "—");
+
+  // Net Portfolio Change
+  const netAmt = totalNAAmt - totalELAmt;
+  const netEl  = $("gt-net-portfolio");
+  if (netEl) {
+    netEl.textContent = fmtUSD(Math.abs(netAmt));
+    netEl.style.color = netAmt >= 0 ? "#0CCE6B" : "#E05050";
+    const prefix = netAmt >= 0 ? "+" : "-";
+    netEl.textContent = prefix + fmtUSD(Math.abs(netAmt));
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1007,8 +1276,9 @@ function populateSnapshot(bkt, todayStr) {
 // ══════════════════════════════════════════════
 const BU_LABELS = {digital:"Digital BU", interbu:"Inter BU", martech:"MarTech BU"};
 
-function openDrill(buKey, rowKey, etFilter) {
-  const typeStore = DRILL_STORE.NA;
+function openDrill(type, buKey, rowKey, etFilter) {
+  // type = "NA" or "EL"
+  const typeStore = DRILL_STORE[type];
   if (!typeStore) return;
   let entries = [];
   const buKeys  = buKey  === "ALL_BU" ? ["digital","interbu","martech"] : [buKey];
@@ -1028,13 +1298,17 @@ function openDrill(buKey, rowKey, etFilter) {
   const rkLabel = rowKey === "ALL"   ? "All Regions" : rowKey;
   const etLabel = etFilter === "Both" ? "Managed + Recurring" : etFilter;
 
+  const isNA   = type === "NA";
+  const kpiClr = isNA ? "#006E5E" : "#C13030";
   $("drill-eyebrow").textContent = buLabel + " · " + rkLabel;
-  $("drill-title").textContent   = "New Addition — " + etLabel;
-  $("drill-sub").textContent     = "Status : New · Current Month MTD";
+  $("drill-title").textContent   = (isNA ? "New Addition" : "Engagement Lost") + " — " + etLabel;
+  $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs Aug 2026 equal window";
 
   const totalAmt = entries.reduce((s,e) => s + e.amount, 0);
   $("drill-kpi-count").textContent = entries.length || "—";
+  $("drill-kpi-count").style.color = kpiClr;
   $("drill-kpi-amt").textContent   = entries.length ? fmtUSD(totalAmt) : "—";
+  $("drill-kpi-amt").style.color   = kpiClr;
 
   const body = $("drill-body");
   if (!entries.length) {
@@ -1053,7 +1327,7 @@ function openDrill(buKey, rowKey, etFilter) {
             <div class="drill-row-name" title="${e.label}">${e.label}</div>
             <div class="drill-row-sub">${e.company || "—"}</div>
           </div>
-          <div class="drill-row-amt">${fmtUSD(e.amount)}</div>
+          <div class="drill-row-amt" style="color:${kpiClr}">${fmtUSD(e.amount)}</div>
         </div>`;
       });
     });
@@ -1100,7 +1374,20 @@ async function doSync(force = false) {
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
 
+    // ── Prev month (Aug) fetch for Engagement Lost ──
+    const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const prevMonth     = getMonthStr(prevMonthDate);
+    $("stxt").textContent = "FETCHING PREV MONTH…";
+    const prevDeals = await fetchDeals(prevMonth);
+    const prevLiMap = await fetchLineItems(prevDeals);
+
     const bkt = computeSnapshot(deals, liMap, todayStr);
+
+    // Build LI key maps and compute EL
+    const curLIKeyMap  = buildLIKeyMap(deals,     liMap);
+    const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap);
+    computeEL(prevLIKeyMap, curLIKeyMap, bkt);
+
     populateSnapshot(bkt, todayStr);
 
     $("main-content").style.display = "block";
