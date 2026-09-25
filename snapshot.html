@@ -904,7 +904,12 @@ function buildLIKeyMap(deals, liMap) {
       if (!li.amount || li.amount === 0) return;
       const n = li.name.toLowerCase();
       const isMgd = n.startsWith("dedicated fte") || n.startsWith("dedicated pte");
-      const isRec = n.startsWith("recurring services") || n.startsWith("recurring");
+      // For EL Recurring: only named retainer projects tracked by Invoice App
+      // (project_type populated = Invoice App is tracking this project explicitly)
+      // Generic SEM/SEO/Social campaign LIs have no project_type and must be excluded
+      // as their project names change every invoice and would generate false EL signals
+      const isRec = (n.startsWith("recurring services") || n.startsWith("recurring"))
+                    && (li.project_type || "").trim() !== "";
       if (!isMgd && !isRec) return;
 
       const label    = extractLabel(li.name, li.description, deal.company);
