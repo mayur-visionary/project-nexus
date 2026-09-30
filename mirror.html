@@ -16,15 +16,16 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
 .login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
 .login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.login-sub{font-size:10px;color:#9A9A9A;font-weight:600;letter-spacing:.04em;margin-bottom:22px}
+.login-sub{font-size:10px;color:#9A9A9A;font-weight:600;margin-bottom:22px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
-.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
 .login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
 .login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
 .login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
 
-/* ── Loading spinner ── */
+/* ── Spinner ── */
 .lo{position:fixed;inset:0;background:rgba(242,254,220,.88);z-index:8888;display:none;align-items:center;justify-content:center}
 .lo.show{display:flex}
 .spin{width:30px;height:30px;border:3px solid rgba(255,218,48,.2);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
@@ -35,31 +36,38 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .hdr-in{max-width:1440px;margin:0 auto;padding:0 28px}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
-.hdr-eyebrow{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.65);text-transform:uppercase}
-.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
 .hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
 .hdr-right{display:flex;align-items:center;gap:10px}
 .h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
-.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
-.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em}
-.refresh-btn:hover{background:rgba(255,218,48,.18)}
-.back-link{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;text-decoration:none}
-.back-link:hover{background:rgba(255,255,255,.12);color:#fff}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+
+/* ── Nav tabs ── */
+.nav-tabs-bar{background:rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;gap:0}
+.nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
+.nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important}
+.nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
 
 /* ── Filter bar ── */
-.fbar{background:#333;border-top:1px solid rgba(255,255,255,.08);padding:0}
+.fbar{background:#333}
 .fbar-in{max-width:1440px;margin:0 auto;padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;max-width:180px}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:175px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
-.fsel.sm{max-width:120px}
+.fsel.sm{max-width:115px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
-.vs-badge{font-size:9px;font-weight:800;color:#FFDA30;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,218,48,.12);padding:3px 8px;border-radius:4px}
-
-/* ── Multi-select dropdown ── */
+.vs-badge{font-size:9px;font-weight:800;color:#FFDA30;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,218,48,.12);padding:3px 8px;border-radius:4px;flex-shrink:0}
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
 .ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
@@ -70,39 +78,59 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-ctrl-lbl{font-size:9px;font-weight:800;color:#9A9A9A;letter-spacing:.1em;text-transform:uppercase}
 .ms-actions{display:flex;gap:8px}
 .ms-act{color:#006E5E;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.ms-list{padding:6px 0}
+.ms-list-inner{padding:6px 0;max-height:220px;overflow-y:auto}
 .ms-item{display:flex;align-items:center;gap:8px;padding:5px 10px;cursor:pointer}
 .ms-item:hover{background:#F7F7F7}
 .ms-item input{width:12px;height:12px;accent-color:#FFDA30;cursor:pointer;flex-shrink:0}
 .ms-item label{font-size:10px;font-weight:500;color:#434343;cursor:pointer;flex:1}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
-/* ── Page layout ── */
-.page{max-width:1440px;margin:0 auto;padding:20px 28px 48px}
+/* ── Error ── */
+.err-wrap{max-width:1540px;margin:0 auto;padding:8px 0 0}
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500}
+.err-bar strong{color:#FFDA30}
 
-/* ── Period summary bar ── */
-.period-bar{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;margin-bottom:20px;align-items:stretch}
+/* ── App layout ── */
+.app-layout{display:flex;max-width:1540px;margin:0 auto;min-height:calc(100vh - 160px)}
+.sidebar{width:180px;flex-shrink:0;background:#fff;border-right:1px solid #E2E2E2;padding:16px 14px;position:sticky;top:0;align-self:flex-start;height:fit-content;overflow:visible}
+.sb-section{margin-bottom:0}
+.sb-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:5px}
+.sb-sel{width:100%;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;border-radius:6px;padding:6px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:none}
+.sb-sel:hover,.sb-sel:focus{border-color:#FFDA30;background:#FFFBEA}
+.sb-sel option{background:#fff;color:#434343}
+.sb-ms-btn{width:100%;justify-content:space-between;background:#F7F7F7;border:1px solid #E2E2E2;color:#434343;font-size:10px}
+.sb-ms-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.sb-ms-btn .ms-arrow{color:#9A9A9A}
+.sb-divider{height:1px;background:#F2F2F2;margin:10px 0}
+.nbd-toggle{padding:6px 8px;border-radius:6px;border:1.5px solid #E2E2E2;background:#F7F7F7;color:#9A9A9A;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;white-space:nowrap}
+.nbd-toggle:hover{border-color:#006E5E;background:#FFFBEA;color:#434343}
+.nbd-toggle.active{background:#FFDA30;border-color:#FFDA30;color:#111}
+.sidebar .ms-dropdown{min-width:100%;left:0}
+
+/* ── Main content ── */
+.main{flex:1;min-width:0;padding:18px 28px 48px}
+
+/* ── Period summary ── */
+.period-bar{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;margin-bottom:18px;align-items:stretch}
 .period-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px}
 .period-card.wip{border-top:3px solid #FFDA30}
 .period-card.complete{border-top:3px solid #006E5E}
-.period-label{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:4px}
-.period-name{font-size:15px;font-weight:800;color:#434343;margin-bottom:2px}
-.period-range{font-size:9px;font-weight:600;color:#9A9A9A;margin-bottom:10px}
-.period-total{font-size:22px;font-weight:800;color:#434343;line-height:1}
-.period-count{font-size:10px;font-weight:600;color:#696969;margin-top:4px}
-.wip-badge{display:inline-block;font-size:8px;font-weight:800;background:#FFDA30;color:#111;padding:2px 7px;border-radius:3px;letter-spacing:.06em;text-transform:uppercase;margin-left:6px;vertical-align:middle}
-.delta-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:130px}
+.pc-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:4px}
+.pc-name{font-size:15px;font-weight:800;color:#434343;margin-bottom:2px}
+.pc-range{font-size:9px;font-weight:600;color:#9A9A9A;margin-bottom:10px}
+.pc-total{font-size:22px;font-weight:800;color:#434343;line-height:1}
+.pc-count{font-size:10px;font-weight:600;color:#696969;margin-top:4px}
+.wip-badge{display:inline-block;font-size:8px;font-weight:800;background:#FFDA30;color:#111;padding:2px 6px;border-radius:3px;letter-spacing:.06em;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.delta-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:120px}
 .delta-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:6px}
 .delta-val{font-size:20px;font-weight:800;line-height:1}
 .delta-pct{font-size:11px;font-weight:700;margin-top:4px}
-.delta-pos{color:#006E5E}
-.delta-neg{color:#E84040}
-.delta-neu{color:#9A9A9A}
+.d-pos{color:#006E5E}.d-neg{color:#E84040}.d-neu{color:#9A9A9A}
 
 /* ── Category tiles ── */
-.cat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.cat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
 .cat-tile{background:#fff;border-radius:8px;border:1px solid #E2E2E2;border-top:3px solid #E2E2E2;padding:11px 14px;cursor:pointer;transition:box-shadow .15s}
 .cat-tile:hover{box-shadow:0 3px 12px rgba(0,0,0,.1)}
-.cat-tile.active{box-shadow:0 4px 16px rgba(0,0,0,.12)}
 .cat-tile[data-cat="new"]{border-top-color:#0CCE6B}
 .cat-tile[data-cat="lost"]{border-top-color:#E84040}
 .cat-tile[data-cat="increased"]{border-top-color:#006E5E}
@@ -116,69 +144,61 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .cat-tile[data-cat="increased"] .cat-count{color:#006E5E}
 .cat-tile[data-cat="decreased"] .cat-count{color:#473400}
 
-/* ── Results table ── */
-.section-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;margin-bottom:14px;overflow:hidden}
-.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #F2F2F2;cursor:pointer;user-select:none}
+/* ── Section cards ── */
+.section-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;margin-bottom:12px;overflow:hidden}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #F2F2F2;cursor:pointer;user-select:none}
 .section-hdr:hover{background:#FAFAFA}
 .section-title{display:flex;align-items:center;gap:8px}
 .sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .sec-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
 .sec-count-badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;background:#F2F2F2;color:#696969}
-.sec-rev{font-size:10px;font-weight:700;color:#9A9A9A}
 .sec-toggle{font-size:10px;color:#9A9A9A;transition:transform .2s}
 .sec-toggle.open{transform:rotate(180deg)}
 .section-body{display:none}
 .section-body.open{display:block}
+
+/* ── Table ── */
 .tbl{width:100%;border-collapse:collapse}
 .tbl thead th{padding:7px 12px;background:#F7F7F7;text-align:left;font-size:8.5px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #E8E8E8;white-space:nowrap}
 .tbl thead th.num{text-align:right}
 .tbl tbody tr:hover{background:#FAFAFA}
 .tbl tbody td{padding:8px 12px;border-bottom:1px solid #F2F2F2;font-size:11px}
 .tbl tbody tr:last-child td{border-bottom:none}
-.td-num{text-align:right;font-weight:700;font-size:11px;font-family:'Montserrat',sans-serif}
+.td-num{text-align:right;font-weight:700;font-size:11px}
 .td-name{font-weight:700;color:#434343;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .td-meta{font-size:10px;color:#9A9A9A;font-weight:500}
 .geo-chip{font-size:8px;font-weight:800;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}
-.geo-US{background:#FFDA30;color:#111}
-.geo-UK{background:#006E5E;color:#fff}
-.geo-AU{background:#473400;color:#FFDA30}
-.geo-Other{background:#E2E2E2;color:#696969}
-.delta-cell-pos{color:#006E5E;font-weight:800}
-.delta-cell-neg{color:#E84040;font-weight:800}
-.delta-cell-neu{color:#9A9A9A;font-weight:700}
+.geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#fff}
+.geo-AU{background:#473400;color:#FFDA30}.geo-null{background:#E2E2E2;color:#696969}
+.d-pos-cell{color:#006E5E;font-weight:800}.d-neg-cell{color:#E84040;font-weight:800}.d-neu-cell{color:#9A9A9A;font-weight:700}
 .tbl-empty{padding:28px;text-align:center;color:#9A9A9A;font-size:11px;font-weight:600}
 
 /* ── Pagination ── */
 .pgs{display:flex;align-items:center;gap:5px;padding:10px 14px;border-top:1px solid #F2F2F2}
-.pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Montserrat',sans-serif}
+.pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Montserrat',sans-serif;transition:all .15s}
 .pg:hover{background:#FFFBEA;border-color:#FFDA30}
 .pg.on{background:#FFDA30;color:#111;border-color:#FFDA30}
-.pg-nav{font-size:14px;font-weight:800;color:#434343;width:27px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.pg-nav.disabled{color:#C0C0C0;cursor:not-allowed}
-
-/* ── Error / status bars ── */
-.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500;margin-bottom:14px}
-.err-bar strong{color:#FFDA30}
-.no-data{text-align:center;padding:60px 20px;color:#9A9A9A}
-.no-data-title{font-size:14px;font-weight:800;color:#434343;margin-bottom:8px}
-.no-data-sub{font-size:11px;font-weight:500}
+.pg-nav{font-size:14px;font-weight:800;color:#434343;width:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+.pg-nav.dis{color:#C0C0C0;cursor:not-allowed}
 
 /* ── Same-period warning ── */
-.same-period-warn{background:#FFFBEA;border:1px solid rgba(255,218,48,.4);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:11px;font-weight:600;color:#473400;display:none}
+.same-warn{background:#FFFBEA;border:1px solid rgba(255,218,48,.4);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:11px;font-weight:600;color:#473400;display:none}
 
 /* ── Footer ── */
-.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+.footer{margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;text-align:center;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Responsive ── */
 @media(max-width:900px){
+  .app-layout{flex-direction:column}
+  .sidebar{width:100%;flex-shrink:initial;border-right:none;border-bottom:1px solid #E2E2E2;display:flex;flex-wrap:wrap;gap:10px;padding:12px 18px;position:static}
+  .sb-section{flex:1;min-width:120px}.sb-divider{display:none}
+  .main{padding:16px 18px 40px}
   .period-bar{grid-template-columns:1fr}
   .delta-card{min-width:auto}
   .cat-tiles{grid-template-columns:repeat(3,1fr)}
-  .fbar-in{gap:8px}
 }
 @media(max-width:600px){
-  .page{padding:14px 14px 36px}
-  .hdr-in{padding:0 14px}
+  .hdr-in,.fbar-in,.nav-in{padding-left:14px;padding-right:14px}
   .cat-tiles{grid-template-columns:repeat(2,1fr)}
 }
 </style>
@@ -189,7 +209,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
     <div style="margin-bottom:22px">
-      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
         <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
         <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
@@ -210,8 +230,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
-      <div class="hdr-brand">
-        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+      <a class="hdr-brand" href="/" title="Revenue Pulse">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
           <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
@@ -223,167 +243,218 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
         </svg>
         <div>
-          <div class="hdr-eyebrow"><span style="font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.65);text-transform:uppercase">Sales Operations</span></div>
-          <div class="hdr-title">Account Mirror</div>
-          <div class="hdr-sub">Week-on-Week Client Booking Analysis · Project Nexus</div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title">Project Nexus</div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
-      </div>
+      </a>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="stxt"><div class="sdot" id="sdot" style="background:#9A9A9A"></div><span id="stxt">Loading...</span></div>
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#696969"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
-        <a class="back-link" href="/" title="Back to Revenue Pulse">← Revenue Pulse</a>
-        <button class="refresh-btn" id="refresh-btn" onclick="doSync(true)">⟳ Refresh</button>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
       </div>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs-bar">
+    <div class="nav-in">
+      <a class="nav-tab nav-tab-ext" href="/">Revenue Pulse</a>
+      <a class="nav-tab nav-tab-ext" href="/">Weekly Sprint</a>
+      <a class="nav-tab nav-tab-ext" href="/snapshot" target="_blank">BU Scorecard ↗</a>
+      <a class="nav-tab nav-tab-ext" href="/nbd" target="_blank">Growth Ledger ↗</a>
+      <a class="nav-tab nav-tab-ext" href="/radar" target="_blank">Recurring Radar ↗</a>
+      <a class="nav-tab nav-tab-ext" href="/funnel" target="_blank">Funnel Desk ↗</a>
+      <a class="nav-tab nav-tab-ext" href="/">Client Club</a>
+      <a class="nav-tab nav-tab-ext" href="/portfolio" target="_blank">Portfolio Health ↗</a>
+      <span class="nav-tab active">Account Mirror</span>
     </div>
   </div>
 
   <!-- FILTER BAR -->
   <div class="fbar">
     <div class="fbar-in">
-      <!-- Period A -->
       <span class="fl">Period A</span>
-      <select class="fsel" id="period-a" onchange="onPeriodChange()">
-        <option value="">Loading...</option>
-      </select>
-
+      <select class="fsel" id="period-a" onchange="onPeriodChange()"><option value="">Loading...</option></select>
       <span class="vs-badge">vs</span>
-
-      <!-- Period B -->
       <span class="fl">Period B</span>
-      <select class="fsel" id="period-b" onchange="onPeriodChange()">
-        <option value="">Loading...</option>
-      </select>
-
+      <select class="fsel" id="period-b" onchange="onPeriodChange()"><option value="">Loading...</option></select>
       <div class="vdiv"></div>
-
-      <!-- BU -->
-      <span class="fl">BU</span>
+      <span class="fl">Business Unit</span>
       <select class="fsel sm" id="bu-sel" onchange="onFilterChange()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
         <option value="MarTech">MarTech</option>
       </select>
-
       <div class="vdiv"></div>
-
-      <!-- Region -->
       <span class="fl">Region</span>
-      <div class="ms-wrap">
-        <div class="ms-btn" id="geo-btn" onclick="toggleMS('geo',event)">
-          <span id="geo-lbl">All Regions</span><span class="ms-arrow">▼</span>
+      <div class="ms-wrap" id="geo-ms-wrap">
+        <div class="ms-btn" id="geo-ms-btn" onclick="toggleDropdown('geo',event)">
+          <span id="geo-ms-label">All Regions</span><span class="ms-arrow">▼</span>
         </div>
-        <div class="ms-dropdown" id="geo-dd">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Regions</span>
+        <div class="ms-dropdown" id="geo-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Regions</span>
             <div class="ms-actions">
-              <span class="ms-act" onclick="selectAll('geo')">All</span>
-              <span class="ms-act" onclick="selectNone('geo')">None</span>
+              <span class="ms-act" onclick="selectAllGeo()">All</span>
+              <span class="ms-act" onclick="selectNoneGeo()">None</span>
             </div>
           </div>
-          <div class="ms-list" id="geo-list"></div>
+          <div class="ms-list-inner" id="geo-ms-list"></div>
         </div>
       </div>
-
       <div class="vdiv"></div>
-
-      <!-- Head -->
       <span class="fl">Head</span>
-      <div class="ms-wrap">
-        <div class="ms-btn" id="head-btn" onclick="toggleMS('head',event)">
-          <span id="head-lbl">All Heads</span><span class="ms-arrow">▼</span>
+      <div class="ms-wrap" id="head-ms-wrap">
+        <div class="ms-btn" id="head-ms-btn" onclick="toggleDropdown('head',event)">
+          <span id="head-ms-label">All Heads</span><span class="ms-arrow">▼</span>
         </div>
-        <div class="ms-dropdown" id="head-dd">
-          <div class="ms-ctrl">
-            <span class="ms-ctrl-lbl">Heads</span>
+        <div class="ms-dropdown" id="head-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Heads</span>
             <div class="ms-actions">
-              <span class="ms-act" onclick="selectAll('head')">All</span>
-              <span class="ms-act" onclick="selectNone('head')">None</span>
+              <span class="ms-act" onclick="selectAllHead()">All</span>
+              <span class="ms-act" onclick="selectNoneHead()">None</span>
             </div>
           </div>
-          <div class="ms-list" id="head-list"></div>
+          <div class="ms-list-inner" id="head-ms-list"></div>
+        </div>
+      </div>
+      <div class="vdiv"></div>
+      <span class="fl">Service</span>
+      <div class="ms-wrap" id="svc-ms-wrap">
+        <div class="ms-btn" id="svc-ms-btn" onclick="toggleDropdown('svc',event)">
+          <span id="svc-ms-label">All Services</span><span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="svc-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Services</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllSvc()">All</span>
+              <span class="ms-act" onclick="selectNoneSvc()">None</span>
+            </div>
+          </div>
+          <div class="ms-list-inner" id="svc-ms-list"></div>
         </div>
       </div>
     </div>
   </div>
+  <div class="yellow-rule"></div>
 </div>
 
-<!-- MAIN -->
-<div class="page" id="page" style="display:none">
+<div class="err-wrap"><div class="err-bar" id="err-bar"></div></div>
 
-  <!-- Error bar -->
-  <div class="err-bar" id="err-bar"></div>
+<!-- APP LAYOUT -->
+<div class="app-layout" id="app-layout" style="display:none">
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Owners</div>
+      <div class="ms-wrap" id="owner-ms-wrap" style="width:100%">
+        <div class="ms-btn sb-ms-btn" id="owner-ms-btn" onclick="toggleDropdown('owner',event)">
+          <span id="owner-ms-label">All Owners</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="owner-ms-dropdown">
+          <div class="ms-ctrl"><span class="ms-ctrl-lbl">Deal Owners</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllOwners()">All</span>
+              <span class="ms-act" onclick="selectNoneOwners()">None</span>
+            </div>
+          </div>
+          <div class="ms-list-inner" id="owner-ms-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Quick Filter</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="nbd-toggle" id="existing-toggle" onclick="toggleExisting()" style="flex:1;min-width:60px">Existing</button>
+        <button class="nbd-toggle" id="nbd-toggle-btn" onclick="toggleNBD()" style="flex:1;min-width:45px">NBD</button>
+        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1;min-width:50px">React.</button>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-lbl">Engagement Model</div>
+      <select class="sb-sel" id="itype-sel" onchange="onFilterChange()">
+        <option value="">All Types</option>
+        <option value="P2P">P2P</option>
+        <option value="Recurring">Recurring</option>
+      </select>
+    </div>
+  </aside>
 
-  <!-- Same-period warning -->
-  <div class="same-period-warn" id="same-warn">⚠️ Period A and Period B are the same week — please select two different periods to compare.</div>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="same-warn" id="same-warn">⚠️ Period A and Period B are the same — select two different periods to compare.</div>
 
-  <!-- Period summary cards -->
-  <div class="period-bar" id="period-bar">
-    <div class="period-card" id="card-a">
-      <div class="period-label">Period A</div>
-      <div class="period-name" id="card-a-name">—</div>
-      <div class="period-range" id="card-a-range">—</div>
-      <div class="period-total" id="card-a-total">—</div>
-      <div class="period-count" id="card-a-count">—</div>
+    <!-- Period summary cards -->
+    <div class="period-bar" id="period-bar">
+      <div class="period-card complete" id="card-a">
+        <div class="pc-label">Period A</div>
+        <div class="pc-name" id="card-a-name">—</div>
+        <div class="pc-range" id="card-a-range">—</div>
+        <div class="pc-total" id="card-a-total">—</div>
+        <div class="pc-count" id="card-a-count">—</div>
+      </div>
+      <div class="delta-card">
+        <div class="delta-lbl">Δ vs B</div>
+        <div class="delta-val d-neu" id="delta-val">—</div>
+        <div class="delta-pct d-neu" id="delta-pct">—</div>
+      </div>
+      <div class="period-card complete" id="card-b">
+        <div class="pc-label">Period B (Comparison)</div>
+        <div class="pc-name" id="card-b-name">—</div>
+        <div class="pc-range" id="card-b-range">—</div>
+        <div class="pc-total" id="card-b-total">—</div>
+        <div class="pc-count" id="card-b-count">—</div>
+      </div>
     </div>
-    <div class="delta-card" id="delta-card">
-      <div class="delta-lbl">Δ vs B</div>
-      <div class="delta-val" id="delta-val">—</div>
-      <div class="delta-pct" id="delta-pct">—</div>
+
+    <!-- Category tiles -->
+    <div class="cat-tiles">
+      <div class="cat-tile" data-cat="new" onclick="scrollToSection('new')">
+        <div class="cat-name">New</div>
+        <div class="cat-count" id="tile-new-count">0</div>
+        <div class="cat-rev" id="tile-new-rev">—</div>
+      </div>
+      <div class="cat-tile" data-cat="lost" onclick="scrollToSection('lost')">
+        <div class="cat-name">Lost</div>
+        <div class="cat-count" id="tile-lost-count">0</div>
+        <div class="cat-rev" id="tile-lost-rev">—</div>
+      </div>
+      <div class="cat-tile" data-cat="increased" onclick="scrollToSection('increased')">
+        <div class="cat-name">Increased</div>
+        <div class="cat-count" id="tile-increased-count">0</div>
+        <div class="cat-rev" id="tile-increased-rev">—</div>
+      </div>
+      <div class="cat-tile" data-cat="decreased" onclick="scrollToSection('decreased')">
+        <div class="cat-name">Decreased</div>
+        <div class="cat-count" id="tile-decreased-count">0</div>
+        <div class="cat-rev" id="tile-decreased-rev">—</div>
+      </div>
+      <div class="cat-tile" data-cat="consistent" onclick="scrollToSection('consistent')">
+        <div class="cat-name">Consistent</div>
+        <div class="cat-count" id="tile-consistent-count">0</div>
+        <div class="cat-rev" id="tile-consistent-rev">—</div>
+      </div>
     </div>
-    <div class="period-card" id="card-b">
-      <div class="period-label">Period B (Comparison)</div>
-      <div class="period-name" id="card-b-name">—</div>
-      <div class="period-range" id="card-b-range">—</div>
-      <div class="period-total" id="card-b-total">—</div>
-      <div class="period-count" id="card-b-count">—</div>
-    </div>
+
+    <!-- Sections -->
+    <div id="sections-wrap"></div>
+
+    <div class="footer">PROJECT NEXUS &nbsp;·&nbsp; ACCOUNT MIRROR &nbsp;·&nbsp; MAVLERS SALES-OPS</div>
   </div>
-
-  <!-- Category tiles -->
-  <div class="cat-tiles" id="cat-tiles">
-    <div class="cat-tile" data-cat="new" onclick="scrollToSection('new')">
-      <div class="cat-name">New</div>
-      <div class="cat-count" id="tile-new-count">0</div>
-      <div class="cat-rev" id="tile-new-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="lost" onclick="scrollToSection('lost')">
-      <div class="cat-name">Lost</div>
-      <div class="cat-count" id="tile-lost-count">0</div>
-      <div class="cat-rev" id="tile-lost-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="increased" onclick="scrollToSection('increased')">
-      <div class="cat-name">Increased</div>
-      <div class="cat-count" id="tile-increased-count">0</div>
-      <div class="cat-rev" id="tile-increased-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="decreased" onclick="scrollToSection('decreased')">
-      <div class="cat-name">Decreased</div>
-      <div class="cat-count" id="tile-decreased-count">0</div>
-      <div class="cat-rev" id="tile-decreased-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="consistent" onclick="scrollToSection('consistent')">
-      <div class="cat-name">Consistent</div>
-      <div class="cat-count" id="tile-consistent-count">0</div>
-      <div class="cat-rev" id="tile-consistent-rev">—</div>
-    </div>
-  </div>
-
-  <!-- Result sections -->
-  <div id="sections-wrap"></div>
-
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; ACCOUNT MIRROR &nbsp;•&nbsp; BY MAYUR DADLANI</div>
 </div>
 
 <script>
 // ════════════════════════════════════════════
-// CONSTANTS & REGISTRY (mirrors index.html)
+// REGISTRY  (mirrors index.html exactly)
 // ════════════════════════════════════════════
 const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
 const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const FY_FLOOR=new Date(2026,3,1); // Apr 1 2026
+const FY_FLOOR=new Date(2026,3,1);
 
 const OWNER_GROUPS={
   "Leaders / Heads":[
@@ -460,21 +531,41 @@ const OWNER_HEAD_MAP=(()=>{
   });
   return m;
 })();
-// Flat owner lookup
-const OWN=(()=>{
-  const m={};
-  Object.values(OWNER_GROUPS).forEach(arr=>arr.forEach(o=>{if(!m[o.id])m[o.id]=o.name;}));
-  return m;
-})();
-const ALL_HEADS=["Jaydeep Salla","Jiggyasa Agrawal","Nevilson Christan","Tanuj Gupta"];
+// Ordered flat owner list for sidebar
+const ORDERED_OWNERS=[
+  {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},
+  {id:"34140174",name:"Mrugesh Dabhi"},{id:"467997340",name:"Karan Doshi"},
+  {id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},
+  {id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},
+  {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+  {id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},
+  {id:"41490632",name:"Mukund Basita"},{id:"17739548",name:"Darshan Modi"},
+  {id:"79217713",name:"Krunal Bakraniya"},{id:"17739173",name:"Tanuj Gupta"},
+  {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+  {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
+  {id:"263464861",name:"Saquib Khan"},{id:"46156316",name:"Flintoff Mehta"},
+  {id:"37344296",name:"Kalgi Shah"},{id:"24817892",name:"Sheldon Fernandes"},
+  {id:"31730801",name:"Vikram Sahi"},{id:"38568120",name:"Baspin Thomas"},
+  {id:"42663191",name:"Dhaval Damania"},{id:"240935328",name:"Hammad Bhaldar"},
+  {id:"19799470",name:"Jebin Joy"},{id:"34558123",name:"Kaustubh Agrawal"},
+  {id:"284770744",name:"Sourya Ghosh"},{id:"557894666",name:"Sudarshan Damani"},
+  {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
+  {id:"37762663",name:"Malav Modi"},{id:"82663745",name:"Prativa Dubey"}
+];
+const OWN=(()=>{const m={};ORDERED_OWNERS.forEach(o=>{m[o.id]=o.name;});return m;})();
+const ALL_IDS=ORDERED_OWNERS.map(o=>o.id);
 const ALL_REGIONS=["US","UK","AU"];
+const ALL_HEADS=["Jaydeep Salla","Jiggyasa Agrawal","Nevilson Christan","Tanuj Gupta"];
+const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
+const NBD_OWNERS=["37762663","255830830","86813698","916030451"];
+const REACTIVATION_OWNERS=["41490632"];
+const EXISTING_EXCLUDE=[...NBD_OWNERS,...REACTIVATION_OWNERS];
 
 // ════ HELPERS ════
 const $=id=>document.getElementById(id);
 const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
 const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).toFixed(1)+"M":a>=1e3?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
 const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
-
 function effectiveDate(d){return d.closedate||d.createdate||"";}
 function weekOfMonth(dateStr){
   if(!dateStr)return null;
@@ -482,33 +573,33 @@ function weekOfMonth(dateStr){
     if(day<=7)return 1;if(day<=14)return 2;if(day<=21)return 3;return 4;
   }catch(e){return null;}
 }
-function weekDateRange(monthIdx,year,week){
-  const starts=[1,8,15,22];
-  const start=starts[week-1];
-  let end;
-  if(week===4){const lastDay=new Date(year,monthIdx+1,0).getDate();end=lastDay;}
-  else end=starts[week]-1;
-  return `${MSHRT[monthIdx]} ${start}–${end}`;
+function weekDateRange(mIdx,yr,week){
+  const starts=[1,8,15,22];const s=starts[week-1];
+  const e=week===4?new Date(yr,mIdx+1,0).getDate():starts[week]-1;
+  return`${MSHRT[mIdx]} ${s}–${e}, ${yr}`;
 }
-function monthVal(monthIdx,year){return`${MFULL[monthIdx]}-${year}`;}
 
 // ════ STATE ════
-let allDeals=[];
-let isSyncing=false;
-let openSections=new Set(["new","lost","increased","decreased","consistent"]);
+let allDeals=[];let isSyncing=false;
+let nbdActive=false,reactivationActive=false,existingActive=false;
+let ownerFiltered=false;
 const PER=20;
 let pageState={new:1,lost:1,increased:1,decreased:1,consistent:1};
+let openSections=new Set(["new","lost","increased","decreased","consistent"]);
 
-// ════ AUTHENTICATION ════
+// ════ AUTH ════
 async function doLogin(){
-  const pw=$("pw-input").value.trim();
-  if(!pw)return;
-  $("login-btn").disabled=true;
+  const pw=$("pw-input").value.trim();if(!pw)return;
+  $("login-btn").disabled=true;$("login-err").textContent="";
   try{
     const res=await fetch("/mirror-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
     const d=await res.json();
-    if(d.success){$("login-overlay").style.display="none";$("page").style.display="block";doSync();}
-    else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
+    if(d.success){
+      $("login-overlay").style.display="none";
+      $("app-layout").style.display="flex";
+      sessionStorage.setItem("nexus_mirror_auth","1");
+      doSync();
+    }else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
   }catch(e){$("login-err").textContent="Connection error";$("login-btn").disabled=false;}
 }
 
@@ -521,7 +612,6 @@ function attributeDeals(arr){
     d.head=OWNER_HEAD_MAP[oid]||null;
     if(!d.region)d.region=GEO_MAP[d.geo||""]||null;
     if(!d.head){
-      // fallback: derive from region + bu
       if(!d.region)d.head=null;
       else if(d.bu==="MarTech")d.head="Jaydeep Salla";
       else if(d.region==="AU")d.head="Jiggyasa Agrawal";
@@ -535,16 +625,11 @@ async function doSync(force=false){
   if(isSyncing&&!force)return;
   isSyncing=true;
   $("sdot").style.background="#FFDA30";$("stxt").textContent="SYNCING...";
-  $("lo").style.display="flex";$("refresh-btn") && ($("refresh-btn").disabled=true);
-  const errBar=$("err-bar");errBar.style.display="none";
-
+  $("lo").style.display="flex";$("rfbtn").disabled=true;
+  $("err-bar").style.display="none";
   try{
-    // Build FY month list: Apr 2026 → current month
-    const fyMonths=[];
-    const now=new Date();
-    let c=new Date(FY_FLOOR);
-    while(c<=now){fyMonths.push(monthVal(c.getMonth(),c.getFullYear()));c.setMonth(c.getMonth()+1);}
-
+    const fyMonths=[];const now=new Date();let c=new Date(FY_FLOOR);
+    while(c<=now){fyMonths.push(`${MFULL[c.getMonth()]}-${c.getFullYear()}`);c.setMonth(c.getMonth()+1);}
     const filters=[
       {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
       {propertyName:"dealstage",operator:"EQ",value:STAGE},
@@ -552,498 +637,416 @@ async function doSync(force=false){
       {propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},
       {propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}
     ];
-    const fGroups=[{filters}];
-    const props=["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"];
-
+    const props=["dealname","amount_in_home_currency","hubspot_owner_id","closedate","createdate",
+      "contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_",
+      "geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_",
+      "engagement_model__invoice_app_","company_name__invoice_app_"];
     const fetched=[];let after=null;
     do{
-      const body={filterGroups:fGroups,properties:props,limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      const body={filterGroups:[{filters}],properties:props,limit:200,
+        sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
         const cd=(r.properties?.closedate||"").split("T")[0];
-        const crd=(r.properties?.createdate||"").split("T")[0];
         let mon=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
         if(!mon&&cd){try{const dt=new Date(cd+"T00:00:00");mon=`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}catch(e){}}
         fetched.push({
-          id:String(r.id),
-          dealname:r.properties?.dealname||"",
+          id:String(r.id),dealname:r.properties?.dealname||"",
           amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
           owner_id:String(r.properties?.hubspot_owner_id||""),
-          closedate:cd,createdate:crd,
+          closedate:cd,createdate:(r.properties?.createdate||"").split("T")[0],
           month:mon,
           billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           geo:(r.properties?.geo__invoice_app_||"").trim(),
-          geo_head:(r.properties?.geo_head__invoice_app_||"").trim(),
           eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),
           company_name:(r.properties?.company_name__invoice_app_||"").trim()
         });
       });
       after=data.paging?.next?.after||null;
     }while(after);
-
     // Dedup
-    const seen={};const dupeIds=[];
-    fetched.forEach(d=>{const k=d.dealname+"|"+d.amount+"|"+d.month;if(seen[k]){dupeIds.push(d.id);return;}seen[k]=d.id;});
-    allDeals=dupeIds.length?fetched.filter(d=>!dupeIds.includes(d.id)):fetched;
+    const seen={};const dupe=[];
+    fetched.forEach(d=>{const k=d.dealname+"|"+d.amount+"|"+d.month;if(seen[k]){dupe.push(d.id);return;}seen[k]=d.id;});
+    allDeals=dupe.length?fetched.filter(d=>!dupe.includes(d.id)):fetched;
     attributeDeals(allDeals);
-
-    const syncTime=new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
-    $("sdot").style.background="#006E5E";$("stxt").textContent="LIVE";
-    $("last-sync").textContent="Synced "+syncTime;
-
+    $("sdot").style.background="#006E5E";
+    $("stxt").textContent=`LIVE · ${allDeals.length} DEALS`;
+    $("last-sync").textContent="Synced "+new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
     initPeriodSelectors();
     renderMirror();
   }catch(e){
-    $("sdot").style.background="#E84040";$("stxt").textContent="ERROR";
-    errBar.innerHTML=`<strong>Sync error:</strong> ${e.message}`;errBar.style.display="block";
+    $("sdot").style.background="#696969";$("stxt").textContent="SYNC FAILED";
+    $("err-bar").innerHTML=`<strong>Sync error:</strong> ${e.message}`;$("err-bar").style.display="block";
   }finally{
-    isSyncing=false;
-    $("lo").style.display="none";
-    const rb=$("refresh-btn");if(rb)rb.disabled=false;
+    isSyncing=false;$("lo").style.display="none";$("rfbtn").disabled=false;
   }
 }
 
-// ════ PERIOD SELECTOR BUILD ════
+// ════ PERIOD SELECTORS ════
+let _periodOpts=[];
 function buildPeriodOptions(){
-  // Returns [{value:"august-2026|3", label:"Aug 2026 · W3", isWIP:bool, isCompleted:bool}]
-  const opts=[];
-  const now=new Date();
-  const today=now.getDate();
-  const currWeek=today<=7?1:today<=14?2:today<=21?3:4;
-  const currMonthIdx=now.getMonth();
-  const currYear=now.getFullYear();
-
-  // Walk from current month back to FY_FLOOR
-  let cursor=new Date(now.getFullYear(),now.getMonth(),1);
+  const opts=[];const now=new Date();
+  const today=now.getDate();const currWeek=today<=7?1:today<=14?2:today<=21?3:4;
+  const cM=now.getMonth();const cY=now.getFullYear();
+  let cursor=new Date(cY,cM,1);
   while(cursor>=FY_FLOOR){
-    const mIdx=cursor.getMonth();const yr=cursor.getFullYear();
-    const isCurrMonth=mIdx===currMonthIdx&&yr===currYear;
+    const mI=cursor.getMonth();const yr=cursor.getFullYear();
+    const isCurr=mI===cM&&yr===cY;
     for(let w=4;w>=1;w--){
-      if(isCurrMonth&&w>currWeek)continue; // future weeks
-      const isWIP=isCurrMonth&&w===currWeek;
-      opts.push({
-        value:`${MFULL[mIdx]}-${yr}|${w}`,
-        label:`${MSHRT[mIdx]} ${yr} · W${w}${isWIP?" (WIP)":""}`,
-        monthIdx:mIdx,year:yr,week:w,isWIP,
-        dateRange:weekDateRange(mIdx,yr,w)
-      });
+      if(isCurr&&w>currWeek)continue;
+      const isWIP=isCurr&&w===currWeek;
+      opts.push({value:`${MFULL[mI]}-${yr}|${w}`,
+        label:`${MSHRT[mI]} ${yr} · W${w}${isWIP?" (WIP)":""}`,
+        monthIdx:mI,year:yr,week:w,isWIP,
+        dateRange:weekDateRange(mI,yr,w)});
     }
     cursor.setMonth(cursor.getMonth()-1);
   }
   return opts;
 }
-
-let _periodOpts=[];
-
 function initPeriodSelectors(){
   _periodOpts=buildPeriodOptions();
-  const selA=$("period-a"),selB=$("period-b");
-  selA.innerHTML="";selB.innerHTML="";
-
+  const sA=$("period-a"),sB=$("period-b");
+  sA.innerHTML="";sB.innerHTML="";
   _periodOpts.forEach(o=>{
-    const optA=document.createElement("option");optA.value=o.value;optA.textContent=o.label;selA.appendChild(optA);
-    const optB=document.createElement("option");optB.value=o.value;optB.textContent=o.label;selB.appendChild(optB);
+    sA.appendChild(Object.assign(document.createElement("option"),{value:o.value,textContent:o.label}));
+    sB.appendChild(Object.assign(document.createElement("option"),{value:o.value,textContent:o.label}));
   });
-
-  // Default Period A = latest completed week (first non-WIP option)
   const firstComplete=_periodOpts.find(o=>!o.isWIP);
-  if(firstComplete)selA.value=firstComplete.value;
-
-  // Default Period B = same week, one month earlier
+  if(firstComplete){sA.value=firstComplete.value;}
   if(firstComplete){
-    const targetMonthIdx=firstComplete.monthIdx===0?11:firstComplete.monthIdx-1;
-    const targetYear=firstComplete.monthIdx===0?firstComplete.year-1:firstComplete.year;
-    const matchB=_periodOpts.find(o=>o.monthIdx===targetMonthIdx&&o.year===targetYear&&o.week===firstComplete.week);
-    if(matchB)selB.value=matchB.value;
-    else if(_periodOpts.length>1)selB.value=_periodOpts[1].value; // fallback
+    const pM=firstComplete.monthIdx===0?11:firstComplete.monthIdx-1;
+    const pY=firstComplete.monthIdx===0?firstComplete.year-1:firstComplete.year;
+    const mb=_periodOpts.find(o=>o.monthIdx===pM&&o.year===pY&&o.week===firstComplete.week);
+    if(mb)sB.value=mb.value;else if(_periodOpts.length>1)sB.value=_periodOpts[1].value;
   }
 }
-
 function parsePeriodVal(val){
-  // "august-2026|3" → {monthStr:"august-2026", week:3, monthIdx:8, year:2026}
   if(!val)return null;
-  const [mv,wStr]=val.split("|");
-  const week=parseInt(wStr,10);
-  const parts=mv.split("-");
-  const year=parseInt(parts[parts.length-1],10);
-  const monName=parts.slice(0,-1).join("-");
-  const monthIdx=MFULL.indexOf(monName);
+  const[mv,wStr]=val.split("|");const week=parseInt(wStr,10);
+  const parts=mv.split("-");const year=parseInt(parts[parts.length-1],10);
+  const monName=parts.slice(0,-1).join("-");const monthIdx=MFULL.indexOf(monName);
   if(monthIdx===-1||isNaN(year)||isNaN(week))return null;
   return{monthStr:mv,week,monthIdx,year};
 }
-
 function getPeriodMeta(val){return _periodOpts.find(o=>o.value===val)||null;}
 
-// ════ FILTER HELPERS ════
-function getGeoSel(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return!e||e.checked;});}
-function getHeadSel(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/ /g,"-"));return!e||e.checked;});}
-
+// ════ FILTER INITS ════
 function initGeoList(){
-  $("geo-list").innerHTML=ALL_REGIONS.map(r=>`
-    <div class="ms-item" onclick="event.stopPropagation()">
-      <input type="checkbox" id="geo-${r}" checked onchange="updateGeoLabel();onFilterChange()">
-      <label for="geo-${r}">${r}</label>
-    </div>`).join("");
+  $("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>`
+    <div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="updateGeoLabel();onFilterChange()">
+    <label for="geo-${r}">${r}</label></div>`).join("");
   updateGeoLabel();
 }
 function initHeadList(){
-  $("head-list").innerHTML=ALL_HEADS.map(h=>`
-    <div class="ms-item" onclick="event.stopPropagation()">
-      <input type="checkbox" id="head-${h.replace(/ /g,"-")}" checked onchange="updateHeadLabel();onFilterChange()">
-      <label for="head-${h.replace(/ /g,"-")}">${h}</label>
-    </div>`).join("");
+  $("head-ms-list").innerHTML=ALL_HEADS.map(h=>`
+    <div class="ms-item"><input type="checkbox" id="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}" checked onchange="updateHeadLabel();onFilterChange()">
+    <label for="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}">${h}</label></div>`).join("");
   updateHeadLabel();
 }
-function updateGeoLabel(){
-  const sel=getGeoSel();
-  $("geo-lbl").textContent=sel.length===ALL_REGIONS.length?"All Regions":sel.length===0?"None":sel.join(", ");
+function initSvcList(){
+  $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`
+    <div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="updateSvcLabel();onFilterChange()">
+    <label for="svc-${s}">${s}</label></div>`).join("");
+  updateSvcLabel();
 }
-function updateHeadLabel(){
-  const sel=getHeadSel();
-  $("head-lbl").textContent=sel.length===ALL_HEADS.length?"All Heads":sel.length===0?"None":sel.length===1?sel[0]:sel.length+" Heads";
+function initOwnerList(){
+  $("owner-ms-list").innerHTML=ORDERED_OWNERS.map(o=>`
+    <div class="ms-item"><input type="checkbox" id="own-${o.id}" checked onchange="updateOwnerLabel();onFilterChange()">
+    <label for="own-${o.id}">${o.name}</label></div>`).join("");
+  updateOwnerLabel();
 }
-function selectAll(key){
-  if(key==="geo"){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();}
-  if(key==="head"){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/ /g,"-"));if(e)e.checked=true;});updateHeadLabel();}
-  onFilterChange();
+function updateGeoLabel(){const s=getSelGeo();$("geo-ms-label").textContent=s.length===ALL_REGIONS.length?"All Regions":s.length===0?"None":s.join(", ");}
+function updateHeadLabel(){const s=getSelHead();$("head-ms-label").textContent=s.length===ALL_HEADS.length?"All Heads":s.length===0?"None":s.length===1?s[0]:s.length+" Heads";}
+function updateSvcLabel(){const s=getSelSvc();$("svc-ms-label").textContent=s.length===ALL_SERVICES.length?"All Services":s.length===0?"None":s.length===1?s[0]:s.length+" Services";}
+function updateOwnerLabel(){const s=getSelOwners();$("owner-ms-label").textContent=s.length===ALL_IDS.length?"All Owners":s.length===0?"None":s.length===1?ownerName(s[0]):s.length+" Owners";}
+function getSelGeo(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return!e||e.checked;});}
+function getSelHead(){return ALL_HEADS.filter(h=>{const e=$("head-"+h.replace(/ /g,"-").replace(/[()]/g,""));return!e||e.checked;});}
+function getSelSvc(){return ALL_SERVICES.filter(s=>{const e=$("svc-"+s);return!e||e.checked;});}
+function getSelOwners(){return ALL_IDS.filter(id=>{const e=$("own-"+id);return!e||e.checked;});}
+function selectAllGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=true;});updateGeoLabel();onFilterChange();}
+function selectNoneGeo(){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
+function selectAllHead(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/ /g,"-").replace(/[()]/g,""));if(e)e.checked=true;});updateHeadLabel();onFilterChange();}
+function selectNoneHead(){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/ /g,"-").replace(/[()]/g,""));if(e)e.checked=false;});updateHeadLabel();}
+function selectAllSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();onFilterChange();}
+function selectNoneSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=false;});updateSvcLabel();}
+function selectAllOwners(){ALL_IDS.forEach(id=>{const e=$("own-"+id);if(e)e.checked=true;});updateOwnerLabel();onFilterChange();}
+function selectNoneOwners(){ALL_IDS.forEach(id=>{const e=$("own-"+id);if(e)e.checked=false;});updateOwnerLabel();}
+
+// ════ QUICK FILTERS ════
+function _clearQuickFilters(){
+  nbdActive=false;reactivationActive=false;existingActive=false;
+  ["existing-toggle","nbd-toggle-btn","react-toggle"].forEach(id=>{const e=$(id);if(e)e.classList.remove("active");});
 }
-function selectNone(key){
-  if(key==="geo"){ALL_REGIONS.forEach(r=>{const e=$("geo-"+r);if(e)e.checked=false;});updateGeoLabel();}
-  if(key==="head"){ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/ /g,"-"));if(e)e.checked=false;});updateHeadLabel();}
-}
-function toggleMS(key,e){
+function toggleExisting(){const was=existingActive;_clearQuickFilters();if(!was){existingActive=true;$("existing-toggle").classList.add("active");}onFilterChange();}
+function toggleNBD(){const was=nbdActive;_clearQuickFilters();if(!was){nbdActive=true;$("nbd-toggle-btn").classList.add("active");}onFilterChange();}
+function toggleReactivation(){const was=reactivationActive;_clearQuickFilters();if(!was){reactivationActive=true;$("react-toggle").classList.add("active");}onFilterChange();}
+
+// ════ DROPDOWN TOGGLE ════
+function toggleDropdown(key,e){
   e.stopPropagation();
-  const dd=$(key+"-dd");
+  const ddId=key==="owner"?"owner-ms-dropdown":`${key}-ms-dropdown`;
+  const dd=$(ddId);if(!dd)return;
   const isOpen=dd.classList.contains("open");
   document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open"));
   if(!isOpen)dd.classList.add("open");
 }
-document.addEventListener("click",()=>{document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open"));});
+document.addEventListener("click",()=>document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open")));
+
+// ════ ENGAGEMENT MODEL ════
+function engGroup(em){
+  if(!em)return null;
+  const l=em.toLowerCase();
+  if(l.includes("one time")||l==="p2p")return"P2P";
+  if(l.includes("recurring"))return"Recurring";
+  return null;
+}
 
 // ════ FILTER APPLICATION ════
 function applyFilters(deals){
   const bu=$("bu-sel")?.value||"";
-  const selGeo=getGeoSel();
-  const geoFiltered=selGeo.length>0&&selGeo.length<ALL_REGIONS.length;
-  const selHead=getHeadSel();
-  const headFiltered=selHead.length>0&&selHead.length<ALL_HEADS.length;
-
+  const selGeo=getSelGeo();const geoFilt=selGeo.length<ALL_REGIONS.length;
+  const selHead=getSelHead();const headFilt=selHead.length<ALL_HEADS.length;
+  const selOwn=getSelOwners();const ownFilt=selOwn.length<ALL_IDS.length;
+  const itype=$("itype-sel")?.value||"";
   return deals.filter(d=>{
     if(bu&&d.bu!==bu)return false;
-    if(geoFiltered&&(!d.region||!selGeo.includes(d.region)))return false;
-    if(headFiltered){
+    if(geoFilt&&(!d.region||!selGeo.includes(d.region)))return false;
+    if(headFilt){
       const bh=(d.head||"").replace(" (UK)","").replace(" (US)","");
       if(!selHead.includes(bh))return false;
     }
+    if(ownFilt&&!selOwn.includes(String(d.owner_id)))return false;
+    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return false;
+    if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return false;
+    if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return false;
+    if(itype){const eg=engGroup(d.eng_model);if(eg&&eg!==itype)return false;}
     if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     return true;
   });
 }
 
-// ════ DEAL → WEEK FILTER ════
-function dealsForPeriod(period){
-  if(!period)return[];
+// ════ PERIOD → DEALS ════
+function dealsForPeriod(p){
+  if(!p)return[];
   return allDeals.filter(d=>{
-    const ed=effectiveDate(d);
-    if(!ed)return false;
-    const w=weekOfMonth(ed);if(w!==period.week)return false;
-    // Match month: derive month from effective date
-    try{
-      const dt=new Date(ed+"T00:00:00");
-      return dt.getMonth()===period.monthIdx&&dt.getFullYear()===period.year;
-    }catch(e){return false;}
+    const ed=effectiveDate(d);if(!ed)return false;
+    if(weekOfMonth(ed)!==p.week)return false;
+    try{const dt=new Date(ed+"T00:00:00");return dt.getMonth()===p.monthIdx&&dt.getFullYear()===p.year;}
+    catch(e){return false;}
   });
 }
 
 // ════ CLIENT AGGREGATION ════
 function aggregateByClient(deals){
-  // Returns {billing_id: {client, rev, owner_id, region, head, bu, deals:[]}}
-  const map={};
+  const m={};
   deals.forEach(d=>{
     if(!d.billing_id||d.amount===0)return;
-    if(!map[d.billing_id]){
-      map[d.billing_id]={
-        billing_id:d.billing_id,
-        client:d.client||d.billing_id,
-        rev:0,deal_count:0,
-        owner_id:d.owner_id,
-        region:d.region,head:d.head,bu:d.bu
-      };
-    }
-    map[d.billing_id].rev+=d.amount;
-    map[d.billing_id].deal_count++;
+    if(!m[d.billing_id])m[d.billing_id]={billing_id:d.billing_id,client:d.client||d.billing_id,rev:0,deal_count:0,owner_id:d.owner_id,region:d.region,head:d.head,bu:d.bu};
+    m[d.billing_id].rev+=d.amount;m[d.billing_id].deal_count++;
   });
-  return map;
+  return m;
 }
 
 // ════ CATEGORISE ════
-const CONSISTENT_TOLERANCE=0.02; // ±2%
-
-function categorise(mapA,mapB){
-  const allIds=new Set([...Object.keys(mapA),...Object.keys(mapB)]);
+const TOLERANCE=0.02;
+function categorise(mA,mB){
+  const all=new Set([...Object.keys(mA),...Object.keys(mB)]);
   const cats={new:[],lost:[],increased:[],decreased:[],consistent:[]};
-
-  allIds.forEach(id=>{
-    const a=mapA[id],b=mapB[id];
-    const revA=a?a.rev:0,revB=b?b.rev:0;
-    if(revA===0&&revB===0)return;
-
-    const record={
-      billing_id:id,
-      client:(a||b).client,
-      owner_id:(a||b).owner_id,
+  all.forEach(id=>{
+    const a=mA[id],b=mB[id];const rA=a?a.rev:0,rB=b?b.rev:0;
+    if(!rA&&!rB)return;
+    const rec={billing_id:id,client:(a||b).client,owner_id:(a||b).owner_id,
       region:(a||b).region,head:(a||b).head,bu:(a||b).bu,
-      revA,revB,
-      delta:revA-revB,
-      deltaPct:revB>0?((revA-revB)/revB*100):null
-    };
-
-    if(revB===0&&revA>0){cats.new.push(record);}
-    else if(revA===0&&revB>0){cats.lost.push(record);}
+      revA:rA,revB:rB,delta:rA-rB,deltaPct:rB>0?(rA-rB)/rB*100:null};
+    if(!rB&&rA)cats.new.push(rec);
+    else if(!rA&&rB)cats.lost.push(rec);
     else{
-      const pct=Math.abs((revA-revB)/revB);
-      if(pct<=CONSISTENT_TOLERANCE){cats.consistent.push(record);}
-      else if(revA>revB){cats.increased.push(record);}
-      else{cats.decreased.push(record);}
+      const pct=Math.abs((rA-rB)/rB);
+      if(pct<=TOLERANCE)cats.consistent.push(rec);
+      else if(rA>rB)cats.increased.push(rec);
+      else cats.decreased.push(rec);
     }
   });
-
-  // Sort each category
-  cats.new.sort((a,b)=>b.revA-a.revA);
-  cats.lost.sort((a,b)=>b.revB-a.revB);
-  cats.increased.sort((a,b)=>b.delta-a.delta);
-  cats.decreased.sort((a,b)=>a.delta-b.delta);
+  cats.new.sort((a,b)=>b.revA-a.revA);cats.lost.sort((a,b)=>b.revB-a.revB);
+  cats.increased.sort((a,b)=>b.delta-a.delta);cats.decreased.sort((a,b)=>a.delta-b.delta);
   cats.consistent.sort((a,b)=>b.revA-a.revA);
   return cats;
 }
 
 // ════ RENDER ════
 const CAT_META={
-  new:{label:"New Clients",color:"#0CCE6B",desc:"Revenue in Period A · not in Period B"},
-  lost:{label:"Lost Clients",color:"#E84040",desc:"Revenue in Period B · none in Period A"},
-  increased:{label:"Increased",color:"#006E5E",desc:"Higher revenue in Period A vs Period B"},
-  decreased:{label:"Decreased",color:"#473400",desc:"Lower revenue in Period A vs Period B"},
-  consistent:{label:"Consistent",color:"#9A9A9A",desc:"Revenue within ±2% across both periods"}
+  new:{label:"New Clients",color:"#0CCE6B",desc:"Present in Period A · absent in Period B"},
+  lost:{label:"Lost Clients",color:"#E84040",desc:"Present in Period B · absent in Period A"},
+  increased:{label:"Increased",color:"#006E5E",desc:"Higher revenue in Period A"},
+  decreased:{label:"Decreased",color:"#473400",desc:"Lower revenue in Period A"},
+  consistent:{label:"Consistent",color:"#9A9A9A",desc:"Within ±2% across both periods"}
 };
 
 function renderMirror(){
-  const valA=$("period-a")?.value,valB=$("period-b")?.value;
-  const pA=parsePeriodVal(valA),pB=parsePeriodVal(valB);
-  const metaA=getPeriodMeta(valA),metaB=getPeriodMeta(valB);
+  const vA=$("period-a")?.value,vB=$("period-b")?.value;
+  $("same-warn").style.display=(vA&&vB&&vA===vB)?"block":"none";
+  if(vA===vB){$("sections-wrap").innerHTML="";return;}
+  const pA=parsePeriodVal(vA),pB=parsePeriodVal(vB);
+  const mA=getPeriodMeta(vA),mB=getPeriodMeta(vB);
+  if(!pA||!pB)return;
 
-  const warn=$("same-warn");
-  if(valA&&valB&&valA===valB){warn.style.display="block";$("sections-wrap").innerHTML="";return;}
-  else warn.style.display="none";
+  const fA=applyFilters(dealsForPeriod(pA));
+  const fB=applyFilters(dealsForPeriod(pB));
+  const cA=aggregateByClient(fA),cB=aggregateByClient(fB);
+  const tA=Object.values(cA).reduce((s,c)=>s+c.rev,0);
+  const tB=Object.values(cB).reduce((s,c)=>s+c.rev,0);
+  const delta=tA-tB,deltaPct=tB>0?delta/tB*100:null;
 
-  if(!pA||!pB){$("sections-wrap").innerHTML="";return;}
+  // Period cards
+  $("card-a").className="period-card "+(mA?.isWIP?"wip":"complete");
+  $("card-b").className="period-card "+(mB?.isWIP?"wip":"complete");
+  $("card-a-name").innerHTML=(mA?.label||vA)+(mA?.isWIP?"<span class='wip-badge'>WIP</span>":"");
+  $("card-a-range").textContent=mA?.dateRange||"";
+  $("card-a-total").textContent=fmtUSD(tA);
+  $("card-a-count").textContent=`${Object.keys(cA).length} clients · ${fA.length} deals`;
+  $("card-b-name").innerHTML=(mB?.label||vB)+(mB?.isWIP?"<span class='wip-badge'>WIP</span>":"");
+  $("card-b-range").textContent=mB?.dateRange||"";
+  $("card-b-total").textContent=fmtUSD(tB);
+  $("card-b-count").textContent=`${Object.keys(cB).length} clients · ${fB.length} deals`;
 
-  const rawA=dealsForPeriod(pA);
-  const rawB=dealsForPeriod(pB);
-  const filtA=applyFilters(rawA);
-  const filtB=applyFilters(rawB);
-
-  const mapA=aggregateByClient(filtA);
-  const mapB=aggregateByClient(filtB);
-  const totalA=Object.values(mapA).reduce((s,c)=>s+c.rev,0);
-  const totalB=Object.values(mapB).reduce((s,c)=>s+c.rev,0);
-  const delta=totalA-totalB;
-  const deltaPct=totalB>0?delta/totalB*100:null;
-  const clientCountA=Object.keys(mapA).length;
-  const clientCountB=Object.keys(mapB).length;
-
-  // Summary cards
-  const cardA=$("card-a"),cardB=$("card-b");
-  cardA.className="period-card "+(metaA?.isWIP?"wip":"complete");
-  cardB.className="period-card "+(metaB?.isWIP?"wip":"complete");
-  $("card-a-name").innerHTML=`${metaA?.label||valA}${metaA?.isWIP?"<span class='wip-badge'>WIP</span>":""}`;
-  $("card-a-range").textContent=metaA?.dateRange||"";
-  $("card-a-total").textContent=fmtUSD(totalA);
-  $("card-a-count").textContent=`${clientCountA} client${clientCountA!==1?"s":""} · ${filtA.length} deal${filtA.length!==1?"s":""}`;
-  $("card-b-name").innerHTML=`${metaB?.label||valB}${metaB?.isWIP?"<span class='wip-badge'>WIP</span>":""}`;
-  $("card-b-range").textContent=metaB?.dateRange||"";
-  $("card-b-total").textContent=fmtUSD(totalB);
-  $("card-b-count").textContent=`${clientCountB} client${clientCountB!==1?"s":""} · ${filtB.length} deal${filtB.length!==1?"s":""}`;
-
-  // Delta card
-  const dv=$("delta-val"),dp=$("delta-pct");
-  const cls=delta>0?"delta-pos":delta<0?"delta-neg":"delta-neu";
-  dv.className="delta-val "+cls;dv.textContent=(delta>0?"+":"")+fmtShort(delta);
-  dp.className="delta-pct "+cls;
-  dp.textContent=deltaPct!==null?`${delta>0?"+":""}${deltaPct.toFixed(1)}% vs Period B`:"n/a";
+  // Delta
+  const dc=delta>0?"d-pos":delta<0?"d-neg":"d-neu";
+  $("delta-val").className="delta-val "+dc;$("delta-val").textContent=(delta>0?"+":"")+fmtShort(delta);
+  $("delta-pct").className="delta-pct "+dc;
+  $("delta-pct").textContent=deltaPct!==null?`${delta>0?"+":""}${deltaPct.toFixed(1)}% vs B`:"n/a";
 
   // Categorise
-  const cats=categorise(mapA,mapB);
-
-  // Update tiles
-  ["new","lost","increased","decreased","consistent"].forEach(cat=>{
-    const items=cats[cat];
-    const catRev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
-    $(`tile-${cat}-count`).textContent=items.length;
-    $(`tile-${cat}-rev`).textContent=fmtShort(catRev);
-  });
-
-  // Reset page state
+  const cats=categorise(cA,cB);
   pageState={new:1,lost:1,increased:1,decreased:1,consistent:1};
 
-  // Render sections
+  // Tiles
+  ["new","lost","increased","decreased","consistent"].forEach(cat=>{
+    const items=cats[cat];
+    const rev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
+    $(`tile-${cat}-count`).textContent=items.length;
+    $(`tile-${cat}-rev`).textContent=fmtShort(rev);
+  });
+
+  // Sections
   const wrap=$("sections-wrap");wrap.innerHTML="";
   ["new","lost","increased","decreased","consistent"].forEach(cat=>{
-    wrap.appendChild(buildSection(cat,cats[cat],metaA,metaB));
+    wrap.appendChild(buildSection(cat,cats[cat],mA,mB));
   });
 }
 
-function buildSection(cat,items,metaA,metaB){
-  const meta=CAT_META[cat];
-  const isOpen=openSections.has(cat);
-  const catRev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
-
-  const card=document.createElement("div");
-  card.className="section-card";card.id="section-"+cat;
-
-  // Header
+function buildSection(cat,items,mA,mB){
+  const meta=CAT_META[cat];const isOpen=openSections.has(cat);
+  const rev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
+  const card=document.createElement("div");card.className="section-card";card.id="section-"+cat;
   const hdr=document.createElement("div");hdr.className="section-hdr";
   hdr.onclick=()=>toggleSection(cat);
-  hdr.innerHTML=`
-    <div class="section-title">
-      <div class="sec-dot" style="background:${meta.color}"></div>
-      <span class="sec-name">${meta.label}</span>
-      <span class="sec-count-badge">${items.length}</span>
-      <span style="font-size:9px;color:#9A9A9A;font-weight:500;margin-left:4px">${meta.desc}</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <span class="sec-rev">${fmtShort(catRev)}</span>
-      <span class="sec-toggle ${isOpen?"open":""}">▲</span>
-    </div>`;
+  hdr.innerHTML=`<div class="section-title">
+    <div class="sec-dot" style="background:${meta.color}"></div>
+    <span class="sec-name">${meta.label}</span>
+    <span class="sec-count-badge">${items.length}</span>
+    <span style="font-size:9px;color:#9A9A9A;font-weight:500;margin-left:4px">${meta.desc}</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="font-size:10px;font-weight:700;color:#9A9A9A">${fmtShort(rev)}</span>
+    <span class="sec-toggle ${isOpen?"open":""}">▲</span>
+  </div>`;
   card.appendChild(hdr);
-
-  // Body
-  const body=document.createElement("div");
-  body.className="section-body"+(isOpen?" open":"");
-  body.id="body-"+cat;
-  body.appendChild(buildTable(cat,items,metaA,metaB,pageState[cat]));
-  card.appendChild(body);
-  return card;
+  const body=document.createElement("div");body.className="section-body"+(isOpen?" open":"");body.id="body-"+cat;
+  body.appendChild(buildTable(cat,items,mA,mB,1));
+  card.appendChild(body);return card;
 }
 
-function buildTable(cat,items,metaA,metaB,pg){
+function buildTable(cat,items,mA,mB,pg){
   const frag=document.createDocumentFragment();
-
-  if(items.length===0){
-    const empty=document.createElement("div");empty.className="tbl-empty";
-    empty.textContent="No clients in this category for the selected periods.";
-    frag.appendChild(empty);return frag;
+  if(!items.length){
+    const e=document.createElement("div");e.className="tbl-empty";
+    e.textContent="No clients in this category for the selected periods.";frag.appendChild(e);return frag;
   }
-
   const start=(pg-1)*PER,end=Math.min(start+PER,items.length);
   const slice=items.slice(start,end);
-  const showPeriodB=cat!=="new"; // lost, increased, decreased, consistent show B
-  const showPeriodA=cat!=="lost";
-
-  const table=document.createElement("table");table.className="tbl";
-  table.innerHTML=`<thead><tr>
-    <th>#</th>
-    <th>Client</th>
-    <th>Owner</th>
-    <th>Region</th>
-    <th>Head</th>
-    <th class="num">${metaA?.label||"Period A"}</th>
-    <th class="num">${metaB?.label||"Period B"}</th>
-    ${(cat==="increased"||cat==="decreased")?"<th class='num'>Δ Amount</th><th class='num'>Δ %</th>":""}
+  const showDelta=cat==="increased"||cat==="decreased";
+  const lA=mA?.label||"Period A",lB=mB?.label||"Period B";
+  const tbl=document.createElement("table");tbl.className="tbl";
+  tbl.innerHTML=`<thead><tr>
+    <th style="width:32px">#</th>
+    <th>Client</th><th>Owner</th><th>Region</th><th>Head</th>
+    <th class="num">${lA}</th>
+    <th class="num">${lB}</th>
+    ${showDelta?"<th class='num'>Δ Amount</th><th class='num'>Δ %</th>":""}
   </tr></thead>`;
-
   const tbody=document.createElement("tbody");
   slice.forEach((c,i)=>{
     const tr=document.createElement("tr");
-    const baseHead=(c.head||"").replace(" (UK)","").replace(" (US)","");
-    const headDisplay=baseHead||"—";
-    const deltaPctStr=c.deltaPct!==null?`${c.delta>0?"+":""}${c.deltaPct.toFixed(1)}%`:"—";
-    const deltaClass=c.delta>0?"delta-cell-pos":c.delta<0?"delta-cell-neg":"delta-cell-neu";
-
+    const bh=(c.head||"").replace(" (UK)","").replace(" (US)","");
+    const geo=c.region||"null";
+    const dpc=c.delta>0?"d-pos-cell":c.delta<0?"d-neg-cell":"d-neu-cell";
     tr.innerHTML=`
       <td style="color:#9A9A9A;font-weight:600;font-size:10px">${start+i+1}</td>
       <td class="td-name" title="${c.client||c.billing_id}">${c.client||c.billing_id||"—"}</td>
       <td class="td-meta">${ownerName(c.owner_id)}</td>
-      <td><span class="geo-chip geo-${c.region||"Other"}">${c.region||"—"}</span></td>
-      <td class="td-meta">${headDisplay}</td>
-      <td class="td-num">${showPeriodA?fmtUSD(c.revA):"—"}</td>
-      <td class="td-num" style="color:#9A9A9A">${showPeriodB?fmtUSD(c.revB):"—"}</td>
-      ${(cat==="increased"||cat==="decreased")?`<td class="td-num ${deltaClass}">${(c.delta>0?"+":"")+fmtShort(c.delta)}</td><td class="td-num ${deltaClass}">${deltaPctStr}</td>`:""}`;
+      <td><span class="geo-chip geo-${geo}">${c.region||"—"}</span></td>
+      <td class="td-meta">${bh||"—"}</td>
+      <td class="td-num">${cat==="lost"?"—":fmtUSD(c.revA)}</td>
+      <td class="td-num" style="color:#9A9A9A">${cat==="new"?"—":fmtUSD(c.revB)}</td>
+      ${showDelta?`<td class="td-num ${dpc}">${(c.delta>0?"+":"")+fmtShort(c.delta)}</td>
+      <td class="td-num ${dpc}">${c.deltaPct!==null?(c.delta>0?"+":"")+c.deltaPct.toFixed(1)+"%":"—"}</td>`:""}`;
     tbody.appendChild(tr);
   });
-  table.appendChild(tbody);
-  frag.appendChild(table);
-
-  // Pagination
+  tbl.appendChild(tbody);frag.appendChild(tbl);
   if(items.length>PER){
-    const totalPages=Math.ceil(items.length/PER);
-    const pgsDiv=document.createElement("div");pgsDiv.className="pgs";
-    // Prev
-    const prev=document.createElement("span");prev.className="pg-nav"+(pg===1?" disabled":"");
-    prev.textContent="‹";prev.onclick=()=>{if(pg>1)changePage(cat,pg-1,items,metaA,metaB);};
-    pgsDiv.appendChild(prev);
-    // Page numbers
-    for(let p=1;p<=totalPages;p++){
-      if(totalPages>7&&Math.abs(p-pg)>2&&p!==1&&p!==totalPages)continue;
+    const total=Math.ceil(items.length/PER);
+    const pDiv=document.createElement("div");pDiv.className="pgs";
+    const prev=document.createElement("span");prev.className="pg-nav"+(pg===1?" dis":"");
+    prev.textContent="‹";prev.onclick=()=>{if(pg>1)rePage(cat,pg-1,items,mA,mB);};pDiv.appendChild(prev);
+    for(let p=1;p<=total;p++){
+      if(total>7&&Math.abs(p-pg)>2&&p!==1&&p!==total)continue;
       const btn=document.createElement("div");btn.className="pg"+(p===pg?" on":"");
-      btn.textContent=p;btn.onclick=(()=>{const pp=p;return()=>changePage(cat,pp,items,metaA,metaB);})();
-      pgsDiv.appendChild(btn);
+      btn.textContent=p;btn.onclick=(pp=>()=>rePage(cat,pp,items,mA,mB))(p);pDiv.appendChild(btn);
     }
-    // Next
-    const next=document.createElement("span");next.className="pg-nav"+(pg===totalPages?" disabled":"");
-    next.textContent="›";next.onclick=()=>{if(pg<totalPages)changePage(cat,pg+1,items,metaA,metaB);};
-    pgsDiv.appendChild(next);
-    frag.appendChild(pgsDiv);
+    const next=document.createElement("span");next.className="pg-nav"+(pg===total?" dis":"");
+    next.textContent="›";next.onclick=()=>{if(pg<total)rePage(cat,pg+1,items,mA,mB);};pDiv.appendChild(next);
+    frag.appendChild(pDiv);
   }
-
   return frag;
 }
 
-function changePage(cat,newPage,items,metaA,metaB){
-  pageState[cat]=newPage;
-  const body=$("body-"+cat);if(!body)return;
-  body.innerHTML="";
-  body.appendChild(buildTable(cat,items,metaA,metaB,newPage));
+function rePage(cat,pg,items,mA,mB){
+  pageState[cat]=pg;const body=$("body-"+cat);if(!body)return;
+  body.innerHTML="";body.appendChild(buildTable(cat,items,mA,mB,pg));
   body.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 function toggleSection(cat){
-  if(openSections.has(cat)){openSections.delete(cat);}else{openSections.add(cat);}
-  const body=$("body-"+cat),hdr=$("section-"+cat)?.querySelector(".sec-toggle");
+  if(openSections.has(cat))openSections.delete(cat);else openSections.add(cat);
+  const body=$("body-"+cat),tog=$(`#section-${cat} .sec-toggle`);
   if(body)body.classList.toggle("open",openSections.has(cat));
-  if(hdr)hdr.classList.toggle("open",openSections.has(cat));
+  const secEl=$("section-"+cat);
+  if(secEl){const t=secEl.querySelector(".sec-toggle");if(t)t.classList.toggle("open",openSections.has(cat));}
 }
 
 function scrollToSection(cat){
-  const el=$("section-"+cat);
-  if(!el)return;
+  const el=$("section-"+cat);if(!el)return;
   if(!openSections.has(cat))toggleSection(cat);
-  setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),100);
+  setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),80);
 }
 
-// ════ EVENT HANDLERS ════
 function onPeriodChange(){renderMirror();}
 function onFilterChange(){renderMirror();}
 
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",()=>{
-  initGeoList();
-  initHeadList();
-  // Auto-login if already authenticated in this session
+  initGeoList();initHeadList();initSvcList();initOwnerList();
   if(sessionStorage.getItem("nexus_mirror_auth")==="1"){
-    $("login-overlay").style.display="none";$("page").style.display="block";doSync();
+    $("login-overlay").style.display="none";
+    $("app-layout").style.display="flex";
+    doSync();
   }
 });
-
-// Persist auth within session
-const _origDoLogin=doLogin;
-window.doLogin=async function(){
-  await _origDoLogin();
-  if($("login-overlay").style.display==="none")sessionStorage.setItem("nexus_mirror_auth","1");
-};
 </script>
 </body>
 </html>
