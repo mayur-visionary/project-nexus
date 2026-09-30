@@ -144,18 +144,30 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .cat-tile[data-cat="increased"] .cat-count{color:#006E5E}
 .cat-tile[data-cat="decreased"] .cat-count{color:#473400}
 
-/* ── Section cards ── */
-.section-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;margin-bottom:12px;overflow:hidden}
-.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #F2F2F2;cursor:pointer;user-select:none}
-.section-hdr:hover{background:#FAFAFA}
-.section-title{display:flex;align-items:center;gap:8px}
-.sec-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.sec-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
-.sec-count-badge{font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;background:#F2F2F2;color:#696969}
-.sec-toggle{font-size:10px;color:#9A9A9A;transition:transform .2s}
-.sec-toggle.open{transform:rotate(180deg)}
-.section-body{display:none}
-.section-body.open{display:block}
+/* ── Unified table card ── */
+.table-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;overflow:hidden}
+.table-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #F2F2F2}
+.table-hdr-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#434343}
+.table-hdr-meta{font-size:10px;font-weight:600;color:#9A9A9A}
+/* ── Mirror Status badges ── */
+.ms-badge{display:inline-block;font-size:8px;font-weight:800;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.ms-new{background:#0CCE6B;color:#111}
+.ms-lost{background:#E84040;color:#fff}
+.ms-increased{background:#006E5E;color:#fff}
+.ms-decreased{background:#473400;color:#FFDA30}
+.ms-consistent{background:#E2E2E2;color:#696969}
+/* ── Sort headers ── */
+.tbl thead th.sortable{cursor:pointer;user-select:none}
+.tbl thead th.sortable:hover{background:#EEE;color:#434343}
+.sort-arrow{margin-left:4px;opacity:.4;font-size:9px}
+.sort-arrow.on{opacity:1;color:#434343}
+/* ── Active tile filter ── */
+.cat-tile.active{box-shadow:0 4px 18px rgba(0,0,0,.14)!important}
+.cat-tile[data-cat="new"].active{background:#F0FFF7;border-color:#0CCE6B}
+.cat-tile[data-cat="lost"].active{background:#FFF0F0;border-color:#E84040}
+.cat-tile[data-cat="increased"].active{background:#F0FAF8;border-color:#006E5E}
+.cat-tile[data-cat="decreased"].active{background:#FAF5EE;border-color:#473400}
+.cat-tile[data-cat="consistent"].active{background:#F7F7F7;border-color:#9A9A9A}
 
 /* ── Table ── */
 .tbl{width:100%;border-collapse:collapse}
@@ -411,37 +423,37 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
 
-    <!-- Category tiles -->
+    <!-- Category tiles (active filter) -->
     <div class="cat-tiles">
-      <div class="cat-tile" data-cat="new" onclick="scrollToSection('new')">
+      <div class="cat-tile" data-cat="new" onclick="setTileFilter('new')">
         <div class="cat-name">New</div>
         <div class="cat-count" id="tile-new-count">0</div>
         <div class="cat-rev" id="tile-new-rev">—</div>
       </div>
-      <div class="cat-tile" data-cat="lost" onclick="scrollToSection('lost')">
+      <div class="cat-tile" data-cat="lost" onclick="setTileFilter('lost')">
         <div class="cat-name">Lost</div>
         <div class="cat-count" id="tile-lost-count">0</div>
         <div class="cat-rev" id="tile-lost-rev">—</div>
       </div>
-      <div class="cat-tile" data-cat="increased" onclick="scrollToSection('increased')">
+      <div class="cat-tile" data-cat="increased" onclick="setTileFilter('increased')">
         <div class="cat-name">Increased</div>
         <div class="cat-count" id="tile-increased-count">0</div>
         <div class="cat-rev" id="tile-increased-rev">—</div>
       </div>
-      <div class="cat-tile" data-cat="decreased" onclick="scrollToSection('decreased')">
+      <div class="cat-tile" data-cat="decreased" onclick="setTileFilter('decreased')">
         <div class="cat-name">Decreased</div>
         <div class="cat-count" id="tile-decreased-count">0</div>
         <div class="cat-rev" id="tile-decreased-rev">—</div>
       </div>
-      <div class="cat-tile" data-cat="consistent" onclick="scrollToSection('consistent')">
+      <div class="cat-tile" data-cat="consistent" onclick="setTileFilter('consistent')">
         <div class="cat-name">Consistent</div>
         <div class="cat-count" id="tile-consistent-count">0</div>
         <div class="cat-rev" id="tile-consistent-rev">—</div>
       </div>
     </div>
 
-    <!-- Sections -->
-    <div id="sections-wrap"></div>
+    <!-- Unified table -->
+    <div id="table-wrap"></div>
 
     <div class="footer">PROJECT NEXUS &nbsp;·&nbsp; ACCOUNT MIRROR &nbsp;·&nbsp; MAVLERS SALES-OPS</div>
   </div>
@@ -583,9 +595,14 @@ function weekDateRange(mIdx,yr,week){
 let allDeals=[];let isSyncing=false;
 let nbdActive=false,reactivationActive=false,existingActive=false;
 let ownerFiltered=false;
-const PER=20;
-let pageState={new:1,lost:1,increased:1,decreased:1,consistent:1};
-let openSections=new Set(["new","lost","increased","decreased","consistent"]);
+const PER=25;
+// Unified table state
+let activeCatFilter=null;   // null = all, "new"/"lost"/etc = filtered
+let sortKey="delta";        // default: sort by Δ Amount descending
+let sortDir="desc";
+let tablePg=1;
+let allRows=[];             // flat row array — rebuilt on every renderMirror()
+let _metaA=null,_metaB=null;
 
 // ════ AUTH ════
 async function doLogin(){
@@ -879,21 +896,17 @@ function categorise(mA,mB){
 }
 
 // ════ RENDER ════
-const CAT_META={
-  new:{label:"New Clients",color:"#0CCE6B",desc:"Present in Period A · absent in Period B"},
-  lost:{label:"Lost Clients",color:"#E84040",desc:"Present in Period B · absent in Period A"},
-  increased:{label:"Increased",color:"#006E5E",desc:"Higher revenue in Period A"},
-  decreased:{label:"Decreased",color:"#473400",desc:"Lower revenue in Period A"},
-  consistent:{label:"Consistent",color:"#9A9A9A",desc:"Within ±2% across both periods"}
-};
+const CAT_ORDER=["new","lost","increased","decreased","consistent"];
+const CAT_LABEL={new:"New",lost:"Lost",increased:"Increased",decreased:"Decreased",consistent:"Consistent"};
 
 function renderMirror(){
   const vA=$("period-a")?.value,vB=$("period-b")?.value;
   $("same-warn").style.display=(vA&&vB&&vA===vB)?"block":"none";
-  if(vA===vB){$("sections-wrap").innerHTML="";return;}
+  if(vA===vB){$("table-wrap").innerHTML="";allRows=[];return;}
   const pA=parsePeriodVal(vA),pB=parsePeriodVal(vB);
   const mA=getPeriodMeta(vA),mB=getPeriodMeta(vB);
   if(!pA||!pB)return;
+  _metaA=mA;_metaB=mB;
 
   const fA=applyFilters(dealsForPeriod(pA));
   const fB=applyFilters(dealsForPeriod(pB));
@@ -902,7 +915,7 @@ function renderMirror(){
   const tB=Object.values(cB).reduce((s,c)=>s+c.rev,0);
   const delta=tA-tB,deltaPct=tB>0?delta/tB*100:null;
 
-  // Period cards
+  // Period summary cards
   $("card-a").className="period-card "+(mA?.isWIP?"wip":"complete");
   $("card-b").className="period-card "+(mB?.isWIP?"wip":"complete");
   $("card-a-name").innerHTML=(mA?.label||vA)+(mA?.isWIP?"<span class='wip-badge'>WIP</span>":"");
@@ -914,125 +927,150 @@ function renderMirror(){
   $("card-b-total").textContent=fmtUSD(tB);
   $("card-b-count").textContent=`${Object.keys(cB).length} clients · ${fB.length} deals`;
 
-  // Delta
+  // Delta card
   const dc=delta>0?"d-pos":delta<0?"d-neg":"d-neu";
   $("delta-val").className="delta-val "+dc;$("delta-val").textContent=(delta>0?"+":"")+fmtShort(delta);
   $("delta-pct").className="delta-pct "+dc;
   $("delta-pct").textContent=deltaPct!==null?`${delta>0?"+":""}${deltaPct.toFixed(1)}% vs B`:"n/a";
 
-  // Categorise
+  // Categorise + build flat rows
   const cats=categorise(cA,cB);
-  pageState={new:1,lost:1,increased:1,decreased:1,consistent:1};
+  allRows=[];
+  CAT_ORDER.forEach(cat=>{
+    cats[cat].forEach(r=>{
+      // Normalise Δ for New (no base) and Lost (full loss)
+      let adjDelta=r.delta,adjPct=r.deltaPct;
+      if(cat==="new"){adjDelta=r.revA;adjPct=null;}
+      if(cat==="lost"){adjDelta=-r.revB;adjPct=-100;}
+      allRows.push({...r,cat,adjDelta,adjPct});
+    });
+  });
 
   // Tiles
-  ["new","lost","increased","decreased","consistent"].forEach(cat=>{
+  CAT_ORDER.forEach(cat=>{
     const items=cats[cat];
     const rev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
     $(`tile-${cat}-count`).textContent=items.length;
     $(`tile-${cat}-rev`).textContent=fmtShort(rev);
   });
 
-  // Sections
-  const wrap=$("sections-wrap");wrap.innerHTML="";
-  ["new","lost","increased","decreased","consistent"].forEach(cat=>{
-    wrap.appendChild(buildSection(cat,cats[cat],mA,mB));
+  tablePg=1;
+  renderTable();
+}
+
+// ════ TILE FILTER ════
+function setTileFilter(cat){
+  activeCatFilter=activeCatFilter===cat?null:cat;
+  // Update tile visual states
+  document.querySelectorAll(".cat-tile").forEach(el=>{
+    el.classList.toggle("active",el.dataset.cat===activeCatFilter);
   });
+  tablePg=1;renderTable();
 }
 
-function buildSection(cat,items,mA,mB){
-  const meta=CAT_META[cat];const isOpen=openSections.has(cat);
-  const rev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
-  const card=document.createElement("div");card.className="section-card";card.id="section-"+cat;
-  const hdr=document.createElement("div");hdr.className="section-hdr";
-  hdr.onclick=()=>toggleSection(cat);
-  hdr.innerHTML=`<div class="section-title">
-    <div class="sec-dot" style="background:${meta.color}"></div>
-    <span class="sec-name">${meta.label}</span>
-    <span class="sec-count-badge">${items.length}</span>
-    <span style="font-size:9px;color:#9A9A9A;font-weight:500;margin-left:4px">${meta.desc}</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px">
-    <span style="font-size:10px;font-weight:700;color:#9A9A9A">${fmtShort(rev)}</span>
-    <span class="sec-toggle ${isOpen?"open":""}">▲</span>
-  </div>`;
+// ════ SORT ════
+function sortBy(key){
+  if(sortKey===key)sortDir=sortDir==="desc"?"asc":"desc";
+  else{sortKey=key;sortDir="desc";}
+  tablePg=1;renderTable();
+}
+
+// ════ UNIFIED TABLE RENDER ════
+function renderTable(){
+  const wrap=$("table-wrap");if(!wrap)return;
+  if(!allRows.length){wrap.innerHTML="";return;}
+
+  // Filter by active cat
+  let rows=activeCatFilter?allRows.filter(r=>r.cat===activeCatFilter):[...allRows];
+
+  // Sort
+  const mult=sortDir==="asc"?1:-1;
+  const catRank={new:0,lost:1,increased:2,decreased:3,consistent:4};
+  rows.sort((a,b)=>{
+    let av,bv;
+    switch(sortKey){
+      case"client":av=(a.client||"").toLowerCase();bv=(b.client||"").toLowerCase();return mult*(av<bv?-1:av>bv?1:0);
+      case"owner":av=ownerName(a.owner_id).toLowerCase();bv=ownerName(b.owner_id).toLowerCase();return mult*(av<bv?-1:av>bv?1:0);
+      case"region":av=a.region||"";bv=b.region||"";return mult*(av<bv?-1:av>bv?1:0);
+      case"head":av=(a.head||"").replace(" (UK)","").replace(" (US)","");bv=(b.head||"").replace(" (UK)","").replace(" (US)","");return mult*(av<bv?-1:av>bv?1:0);
+      case"revA":av=a.revA;bv=b.revA;return mult*(bv-av);
+      case"revB":av=a.revB;bv=b.revB;return mult*(bv-av);
+      case"cat":av=catRank[a.cat];bv=catRank[b.cat];if(av!==bv)return mult*(av-bv);return b.adjDelta-a.adjDelta;
+      case"pct":av=a.adjPct??-999;bv=b.adjPct??-999;return mult*(bv-av);
+      default:av=a.adjDelta;bv=b.adjDelta;return mult*(bv-av); // "delta"
+    }
+  });
+
+  const total=Math.ceil(rows.length/PER);
+  if(tablePg>total)tablePg=1;
+  const start=(tablePg-1)*PER,end=Math.min(start+PER,rows.length);
+  const slice=rows.slice(start,end);
+
+  const lA=_metaA?.label||"Period A",lB=_metaB?.label||"Period B";
+  const sa=k=>sortKey===k?` <span class="sort-arrow on">${sortDir==="desc"?"↓":"↑"}</span>`:`<span class="sort-arrow">↕</span>`;
+
+  const card=document.createElement("div");card.className="table-card";
+  // Header row
+  const hdr=document.createElement("div");hdr.className="table-hdr";
+  const activeLabel=activeCatFilter?` · ${CAT_LABEL[activeCatFilter]} only`:"";
+  hdr.innerHTML=`
+    <span class="table-hdr-title">Client Account Mirror${activeLabel}</span>
+    <span class="table-hdr-meta">${rows.length} client${rows.length!==1?"s":""} · click tile to filter · click column to sort</span>`;
   card.appendChild(hdr);
-  const body=document.createElement("div");body.className="section-body"+(isOpen?" open":"");body.id="body-"+cat;
-  body.appendChild(buildTable(cat,items,mA,mB,1));
-  card.appendChild(body);return card;
-}
 
-function buildTable(cat,items,mA,mB,pg){
-  const frag=document.createDocumentFragment();
-  if(!items.length){
-    const e=document.createElement("div");e.className="tbl-empty";
-    e.textContent="No clients in this category for the selected periods.";frag.appendChild(e);return frag;
-  }
-  const start=(pg-1)*PER,end=Math.min(start+PER,items.length);
-  const slice=items.slice(start,end);
-  const showDelta=cat==="increased"||cat==="decreased";
-  const lA=mA?.label||"Period A",lB=mB?.label||"Period B";
+  // Table
   const tbl=document.createElement("table");tbl.className="tbl";
   tbl.innerHTML=`<thead><tr>
     <th style="width:32px">#</th>
-    <th>Client</th><th>Owner</th><th>Region</th><th>Head</th>
-    <th class="num">${lA}</th>
-    <th class="num">${lB}</th>
-    ${showDelta?"<th class='num'>Δ Amount</th><th class='num'>Δ %</th>":""}
+    <th class="sortable" onclick="sortBy('client')">Client${sa("client")}</th>
+    <th class="sortable" onclick="sortBy('owner')">Owner${sa("owner")}</th>
+    <th class="sortable" onclick="sortBy('region')">Region${sa("region")}</th>
+    <th class="sortable" onclick="sortBy('head')">Head${sa("head")}</th>
+    <th class="num sortable" onclick="sortBy('revA')">${lA}${sa("revA")}</th>
+    <th class="num sortable" onclick="sortBy('revB')">${lB}${sa("revB")}</th>
+    <th class="sortable" onclick="sortBy('cat')">Mirror Status${sa("cat")}</th>
+    <th class="num sortable" onclick="sortBy('delta')">Δ Amount${sa("delta")}</th>
+    <th class="num sortable" onclick="sortBy('pct')">Δ %${sa("pct")}</th>
   </tr></thead>`;
   const tbody=document.createElement("tbody");
-  slice.forEach((c,i)=>{
+  slice.forEach((r,i)=>{
     const tr=document.createElement("tr");
-    const bh=(c.head||"").replace(" (UK)","").replace(" (US)","");
-    const geo=c.region||"null";
-    const dpc=c.delta>0?"d-pos-cell":c.delta<0?"d-neg-cell":"d-neu-cell";
+    const bh=(r.head||"").replace(" (UK)","").replace(" (US)","");
+    const geo=r.region||"null";
+    const dpc=r.adjDelta>0?"d-pos-cell":r.adjDelta<0?"d-neg-cell":"d-neu-cell";
+    const pctStr=r.adjPct!==null?`${r.adjDelta>0?"+":""}${r.adjPct.toFixed(1)}%`:"n/a";
+    const amtStr=(r.adjDelta>0?"+":"")+fmtShort(r.adjDelta);
     tr.innerHTML=`
       <td style="color:#9A9A9A;font-weight:600;font-size:10px">${start+i+1}</td>
-      <td class="td-name" title="${c.client||c.billing_id}">${c.client||c.billing_id||"—"}</td>
-      <td class="td-meta">${ownerName(c.owner_id)}</td>
-      <td><span class="geo-chip geo-${geo}">${c.region||"—"}</span></td>
+      <td class="td-name" title="${r.client||r.billing_id}">${r.client||r.billing_id||"—"}</td>
+      <td class="td-meta">${ownerName(r.owner_id)}</td>
+      <td><span class="geo-chip geo-${geo}">${r.region||"—"}</span></td>
       <td class="td-meta">${bh||"—"}</td>
-      <td class="td-num">${cat==="lost"?"—":fmtUSD(c.revA)}</td>
-      <td class="td-num" style="color:#9A9A9A">${cat==="new"?"—":fmtUSD(c.revB)}</td>
-      ${showDelta?`<td class="td-num ${dpc}">${(c.delta>0?"+":"")+fmtShort(c.delta)}</td>
-      <td class="td-num ${dpc}">${c.deltaPct!==null?(c.delta>0?"+":"")+c.deltaPct.toFixed(1)+"%":"—"}</td>`:""}`;
+      <td class="td-num">${r.cat==="lost"?"—":fmtUSD(r.revA)}</td>
+      <td class="td-num" style="color:#9A9A9A">${r.cat==="new"?"—":fmtUSD(r.revB)}</td>
+      <td><span class="ms-badge ms-${r.cat}">${CAT_LABEL[r.cat]}</span></td>
+      <td class="td-num ${dpc}">${amtStr}</td>
+      <td class="td-num ${dpc}">${pctStr}</td>`;
     tbody.appendChild(tr);
   });
-  tbl.appendChild(tbody);frag.appendChild(tbl);
-  if(items.length>PER){
-    const total=Math.ceil(items.length/PER);
+  tbl.appendChild(tbody);card.appendChild(tbl);
+
+  // Pagination
+  if(rows.length>PER){
     const pDiv=document.createElement("div");pDiv.className="pgs";
-    const prev=document.createElement("span");prev.className="pg-nav"+(pg===1?" dis":"");
-    prev.textContent="‹";prev.onclick=()=>{if(pg>1)rePage(cat,pg-1,items,mA,mB);};pDiv.appendChild(prev);
+    const prev=document.createElement("span");prev.className="pg-nav"+(tablePg===1?" dis":"");
+    prev.textContent="‹";prev.onclick=()=>{if(tablePg>1){tablePg--;renderTable();}};pDiv.appendChild(prev);
     for(let p=1;p<=total;p++){
-      if(total>7&&Math.abs(p-pg)>2&&p!==1&&p!==total)continue;
-      const btn=document.createElement("div");btn.className="pg"+(p===pg?" on":"");
-      btn.textContent=p;btn.onclick=(pp=>()=>rePage(cat,pp,items,mA,mB))(p);pDiv.appendChild(btn);
+      if(total>7&&Math.abs(p-tablePg)>2&&p!==1&&p!==total)continue;
+      const btn=document.createElement("div");btn.className="pg"+(p===tablePg?" on":"");
+      btn.textContent=p;btn.onclick=(pp=>()=>{tablePg=pp;renderTable();})(p);pDiv.appendChild(btn);
     }
-    const next=document.createElement("span");next.className="pg-nav"+(pg===total?" dis":"");
-    next.textContent="›";next.onclick=()=>{if(pg<total)rePage(cat,pg+1,items,mA,mB);};pDiv.appendChild(next);
-    frag.appendChild(pDiv);
+    const next=document.createElement("span");next.className="pg-nav"+(tablePg===total?" dis":"");
+    next.textContent="›";next.onclick=()=>{if(tablePg<total){tablePg++;renderTable();}};pDiv.appendChild(next);
+    card.appendChild(pDiv);
   }
-  return frag;
-}
 
-function rePage(cat,pg,items,mA,mB){
-  pageState[cat]=pg;const body=$("body-"+cat);if(!body)return;
-  body.innerHTML="";body.appendChild(buildTable(cat,items,mA,mB,pg));
-  body.scrollIntoView({behavior:"smooth",block:"start"});
-}
-
-function toggleSection(cat){
-  if(openSections.has(cat))openSections.delete(cat);else openSections.add(cat);
-  const body=$("body-"+cat),tog=$(`#section-${cat} .sec-toggle`);
-  if(body)body.classList.toggle("open",openSections.has(cat));
-  const secEl=$("section-"+cat);
-  if(secEl){const t=secEl.querySelector(".sec-toggle");if(t)t.classList.toggle("open",openSections.has(cat));}
-}
-
-function scrollToSection(cat){
-  const el=$("section-"+cat);if(!el)return;
-  if(!openSections.has(cat))toggleSection(cat);
-  setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),80);
+  wrap.innerHTML="";wrap.appendChild(card);
 }
 
 function onPeriodChange(){renderMirror();}
