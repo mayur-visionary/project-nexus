@@ -37,7 +37,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .hdr-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
 .hdr-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
-.hdr-eyebrow{margin-bottom:4px}
 .hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
 .hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
 .hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
@@ -54,19 +53,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.22);color:#FFDA30}
 
-/* ── Filter bar ── */
+/* ── Filter bar (no period selectors) ── */
 .fbar{background:#333}
 .fbar-in{max-width:1540px;margin:0 auto;padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .fbar-page-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#FFDA30;white-space:nowrap;flex-shrink:0}
 .fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
-.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:175px}
+.fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:115px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
 .fsel option{background:#333;color:#fff}
-.fsel.sm{max-width:115px}
 .vdiv{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0}
-.vs-badge{font-size:9px;font-weight:800;color:#FFDA30;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,218,48,.12);padding:3px 8px;border-radius:4px;flex-shrink:0}
 
-/* ── Multi-select (matches index.html exactly) ── */
+/* ── Multi-select — filter bar ── */
 .ms-wrap{position:relative}
 .ms-btn{display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;cursor:pointer;font-family:'Montserrat',sans-serif;white-space:nowrap;letter-spacing:.02em;transition:all .15s;user-select:none}
 .ms-btn:hover{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
@@ -85,26 +82,37 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .ms-item label{font-size:10px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;flex:1}
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
-/* ── Error bar ── */
+/* ── Period card embedded picker ── */
+.pc-selector-wrap{position:relative;margin-bottom:8px}
+.pc-selector-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:6px;border:1px solid #E2E2E2;background:#F7F7F7;cursor:pointer;font-size:12.5px;font-weight:800;color:#434343;user-select:none;transition:all .15s;width:100%}
+.pc-selector-btn:hover{border-color:#FFDA30;background:#FFFBEA}
+.pc-sel-arrow{font-size:9px;color:#9A9A9A;flex-shrink:0;transition:transform .2s}
+.pc-selector-btn.open .pc-sel-arrow{transform:rotate(180deg)}
+.pc-picker{display:none;position:absolute;top:calc(100% + 4px);left:0;width:100%;min-width:270px;background:#2A2A2A;border:1px solid rgba(255,255,255,.12);border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.5);z-index:950;overflow:hidden}
+.pc-picker.open{display:block}
+.pc-picker-list{max-height:280px;overflow-y:auto}
+
+/* ── Error / warnings ── */
 .err-wrap{max-width:1540px;margin:0 auto;padding:8px 28px 0}
 .err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500}
 .err-bar strong{color:#FFDA30}
+.overlap-warn{background:#FFFBEA;border:1px solid rgba(255,218,48,.4);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:11px;font-weight:600;color:#473400;display:none}
 
-/* ── Page layout (full-width, no sidebar) ── */
+/* ── Page layout ── */
 .page{max-width:1540px;margin:0 auto;padding:20px 28px 48px}
 
-/* ── Period summary ── */
-.period-bar{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;margin-bottom:18px;align-items:stretch}
-.period-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px}
+/* ── Period bar ── */
+.period-bar{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;margin-bottom:18px;align-items:start;position:relative;z-index:10}
+.period-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px;overflow:visible;position:relative}
 .period-card.wip{border-top:3px solid #FFDA30}
 .period-card.complete{border-top:3px solid #006E5E}
-.pc-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:4px}
-.pc-name{font-size:15px;font-weight:800;color:#434343;margin-bottom:2px}
+.period-card.empty{border-top:3px solid #E2E2E2}
+.pc-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#9A9A9A;margin-bottom:6px}
 .pc-range{font-size:9px;font-weight:600;color:#9A9A9A;margin-bottom:10px}
 .pc-total{font-size:22px;font-weight:800;color:#434343;line-height:1}
 .pc-count{font-size:10px;font-weight:600;color:#696969;margin-top:4px}
 .wip-badge{display:inline-block;font-size:8px;font-weight:800;background:#FFDA30;color:#111;padding:2px 6px;border-radius:3px;letter-spacing:.06em;text-transform:uppercase;margin-left:6px;vertical-align:middle}
-.delta-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:120px}
+.delta-card{background:#fff;border-radius:10px;border:1px solid #E2E2E2;padding:14px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:120px;align-self:center;margin-top:0}
 .delta-lbl{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;margin-bottom:6px}
 .delta-val{font-size:20px;font-weight:800;line-height:1}
 .delta-pct{font-size:11px;font-weight:700;margin-top:4px}
@@ -159,7 +167,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .geo-US{background:#FFDA30;color:#111}.geo-UK{background:#006E5E;color:#fff}
 .geo-AU{background:#473400;color:#FFDA30}.geo-null{background:#E2E2E2;color:#696969}
 .d-pos-cell{color:#006E5E;font-weight:800}.d-neg-cell{color:#E84040;font-weight:800}.d-neu-cell{color:#9A9A9A;font-weight:700}
-.tbl-empty{padding:28px;text-align:center;color:#9A9A9A;font-size:11px;font-weight:600}
 .pgs{display:flex;align-items:center;gap:5px;padding:10px 14px;border-top:1px solid #F2F2F2}
 .pg{width:27px;height:27px;border-radius:6px;border:1px solid #E2E2E2;background:#fff;font-size:10px;cursor:pointer;color:#696969;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Montserrat',sans-serif;transition:all .15s}
 .pg:hover{background:#FFFBEA;border-color:#FFDA30}
@@ -167,16 +174,14 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .pg-nav{font-size:14px;font-weight:800;color:#434343;width:27px;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
 .pg-nav.dis{color:#C0C0C0;cursor:not-allowed}
 
-/* ── Warnings / footer ── */
-.same-warn{background:#FFFBEA;border:1px solid rgba(255,218,48,.4);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:11px;font-weight:600;color:#473400;display:none}
+/* ── Footer ── */
 .footer{margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;text-align:center;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Responsive ── */
 @media(max-width:900px){
   .period-bar{grid-template-columns:1fr}
   .cat-tiles{grid-template-columns:repeat(3,1fr)}
-  .fbar-in{gap:8px}
-  .page,.hdr-in,.fbar-in,.err-wrap{padding-left:14px;padding-right:14px}
+  .fbar-in,.hdr-in,.page,.err-wrap{padding-left:14px;padding-right:14px}
 }
 @media(max-width:600px){.cat-tiles{grid-template-columns:repeat(2,1fr)}}
 </style>
@@ -208,7 +213,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <div class="hdr">
   <div class="hdr-in">
     <div class="hdr-top">
-      <a class="hdr-brand" href="/" title="Revenue Pulse">
+      <a class="hdr-brand" href="/">
         <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg">
           <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
           <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
@@ -221,7 +226,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
         </svg>
         <div>
-          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div style="margin-bottom:4px"><span class="hdr-el">Sales Operations</span></div>
           <div class="hdr-title">Project Nexus</div>
           <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
@@ -231,97 +236,79 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <div class="stxt"><div class="sdot" id="sdot" style="background:#696969"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
-        <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
-        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">⟳ Refresh</button>
-        <a class="nexus-btn" href="/" title="Back to Revenue Nexus">↗ Revenue Nexus</a>
+        <button class="reset-btn" id="resetbtn" onclick="resetAll()">&#8855; Reset All</button>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)">&#10227; Refresh</button>
+        <a class="nexus-btn" href="/">&#8599; Revenue Nexus</a>
       </div>
     </div>
   </div>
 
-  <!-- FILTER BAR — no nav tabs, straight into filters -->
+  <!-- FILTER BAR — period selectors removed, now live inside KPI cards -->
   <div class="fbar">
     <div class="fbar-in">
       <span class="fbar-page-lbl">Account Mirror</span>
       <div class="vdiv"></div>
-      <span class="fl">Period A</span>
-      <select class="fsel" id="period-a" onchange="onPeriodChange()"><option value="">Loading...</option></select>
-      <span class="vs-badge">vs</span>
-      <span class="fl">Period B</span>
-      <select class="fsel" id="period-b" onchange="onPeriodChange()"><option value="">Loading...</option></select>
-      <div class="vdiv"></div>
       <span class="fl">Business Unit</span>
-      <select class="fsel sm" id="bu-sel" onchange="onFilterChange()">
+      <select class="fsel" id="bu-sel" onchange="onFilterChange()">
         <option value="">All BUs</option>
         <option value="Digital">Digital</option>
         <option value="MarTech">MarTech</option>
       </select>
       <div class="vdiv"></div>
       <span class="fl">Region</span>
-      <div class="ms-wrap" id="geo-ms-wrap">
+      <div class="ms-wrap">
         <div class="ms-btn" onclick="toggleDropdown('geo',event)">
-          <span id="geo-ms-label">All Regions</span><span class="ms-arrow">▼</span>
+          <span id="geo-ms-label">All Regions</span><span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="geo-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Regions</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllGeo()">All</span>
-              <span class="ms-act" onclick="selectNoneGeo()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllGeo()">All</span><span class="ms-act" onclick="selectNoneGeo()">None</span></div>
           </div>
           <div class="ms-list-inner" id="geo-ms-list"></div>
         </div>
       </div>
       <div class="vdiv"></div>
       <span class="fl">Head</span>
-      <div class="ms-wrap" id="head-ms-wrap">
+      <div class="ms-wrap">
         <div class="ms-btn" onclick="toggleDropdown('head',event)">
-          <span id="head-ms-label">All Heads</span><span class="ms-arrow">▼</span>
+          <span id="head-ms-label">All Heads</span><span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="head-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Heads</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllHead()">All</span>
-              <span class="ms-act" onclick="selectNoneHead()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllHead()">All</span><span class="ms-act" onclick="selectNoneHead()">None</span></div>
           </div>
           <div class="ms-list-inner" id="head-ms-list"></div>
         </div>
       </div>
       <div class="vdiv"></div>
       <span class="fl">Owner</span>
-      <div class="ms-wrap" id="owner-ms-wrap">
+      <div class="ms-wrap">
         <div class="ms-btn" onclick="toggleDropdown('owner',event)">
-          <span id="owner-ms-label">All Owners</span><span class="ms-arrow">▼</span>
+          <span id="owner-ms-label">All Owners</span><span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="owner-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Deal Owners</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllOwners()">All</span>
-              <span class="ms-act" onclick="selectNoneOwners()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllOwners()">All</span><span class="ms-act" onclick="selectNoneOwners()">None</span></div>
           </div>
           <div class="ms-list-inner" id="owner-ms-list"></div>
         </div>
       </div>
       <div class="vdiv"></div>
       <span class="fl">Engagement</span>
-      <select class="fsel sm" id="itype-sel" onchange="onFilterChange()">
+      <select class="fsel" id="itype-sel" onchange="onFilterChange()">
         <option value="">All Types</option>
         <option value="P2P">P2P</option>
         <option value="Recurring">Recurring</option>
       </select>
       <div class="vdiv"></div>
       <span class="fl">Service</span>
-      <div class="ms-wrap" id="svc-ms-wrap">
+      <div class="ms-wrap">
         <div class="ms-btn" onclick="toggleDropdown('svc',event)">
-          <span id="svc-ms-label">All Services</span><span class="ms-arrow">▼</span>
+          <span id="svc-ms-label">All Services</span><span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="svc-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Services</span>
-            <div class="ms-actions">
-              <span class="ms-act" onclick="selectAllSvc()">All</span>
-              <span class="ms-act" onclick="selectNoneSvc()">None</span>
-            </div>
+            <div class="ms-actions"><span class="ms-act" onclick="selectAllSvc()">All</span><span class="ms-act" onclick="selectNoneSvc()">None</span></div>
           </div>
           <div class="ms-list-inner" id="svc-ms-list"></div>
         </div>
@@ -333,167 +320,103 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <div class="err-wrap"><div class="err-bar" id="err-bar"></div></div>
 
-<!-- FULL-WIDTH PAGE (no sidebar) -->
+<!-- PAGE -->
 <div class="page" id="page" style="display:none">
-  <div class="same-warn" id="same-warn">⚠️ Period A and Period B are the same — select two different periods to compare.</div>
 
+  <div class="overlap-warn" id="overlap-warn"></div>
+
+  <!-- Period summary bar — selectors embedded inside cards -->
   <div class="period-bar">
-    <div class="period-card complete" id="card-a">
+    <div class="period-card empty" id="card-a">
       <div class="pc-label">Period A</div>
-      <div class="pc-name" id="card-a-name">—</div>
+      <div class="pc-selector-wrap">
+        <div class="pc-selector-btn" id="card-a-btn" onclick="togglePeriodPicker('a',event)">
+          <span id="card-a-sel-label">Loading...</span>
+          <span class="pc-sel-arrow">&#9660;</span>
+        </div>
+        <div class="pc-picker" id="card-a-picker">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Select Week Periods</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllPicker('a')">All</span>
+              <span class="ms-act" onclick="selectNonePicker('a')">None</span>
+            </div>
+          </div>
+          <div class="pc-picker-list ms-list-inner" id="card-a-picker-list"></div>
+        </div>
+      </div>
       <div class="pc-range" id="card-a-range">—</div>
       <div class="pc-total" id="card-a-total">—</div>
       <div class="pc-count" id="card-a-count">—</div>
     </div>
+
     <div class="delta-card">
-      <div class="delta-lbl">Δ vs B</div>
+      <div class="delta-lbl">&#916; vs B</div>
       <div class="delta-val d-neu" id="delta-val">—</div>
       <div class="delta-pct d-neu" id="delta-pct">—</div>
     </div>
-    <div class="period-card complete" id="card-b">
+
+    <div class="period-card empty" id="card-b">
       <div class="pc-label">Period B (Comparison)</div>
-      <div class="pc-name" id="card-b-name">—</div>
+      <div class="pc-selector-wrap">
+        <div class="pc-selector-btn" id="card-b-btn" onclick="togglePeriodPicker('b',event)">
+          <span id="card-b-sel-label">Loading...</span>
+          <span class="pc-sel-arrow">&#9660;</span>
+        </div>
+        <div class="pc-picker" id="card-b-picker">
+          <div class="ms-ctrl">
+            <span class="ms-ctrl-lbl">Select Week Periods</span>
+            <div class="ms-actions">
+              <span class="ms-act" onclick="selectAllPicker('b')">All</span>
+              <span class="ms-act" onclick="selectNonePicker('b')">None</span>
+            </div>
+          </div>
+          <div class="pc-picker-list ms-list-inner" id="card-b-picker-list"></div>
+        </div>
+      </div>
       <div class="pc-range" id="card-b-range">—</div>
       <div class="pc-total" id="card-b-total">—</div>
       <div class="pc-count" id="card-b-count">—</div>
     </div>
   </div>
 
+  <!-- Category tiles -->
   <div class="cat-tiles">
-    <div class="cat-tile" data-cat="new" onclick="setTileFilter('new')">
-      <div class="cat-name">New</div>
-      <div class="cat-count" id="tile-new-count">0</div>
-      <div class="cat-rev" id="tile-new-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="lost" onclick="setTileFilter('lost')">
-      <div class="cat-name">Lost</div>
-      <div class="cat-count" id="tile-lost-count">0</div>
-      <div class="cat-rev" id="tile-lost-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="increased" onclick="setTileFilter('increased')">
-      <div class="cat-name">Increased</div>
-      <div class="cat-count" id="tile-increased-count">0</div>
-      <div class="cat-rev" id="tile-increased-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="decreased" onclick="setTileFilter('decreased')">
-      <div class="cat-name">Decreased</div>
-      <div class="cat-count" id="tile-decreased-count">0</div>
-      <div class="cat-rev" id="tile-decreased-rev">—</div>
-    </div>
-    <div class="cat-tile" data-cat="consistent" onclick="setTileFilter('consistent')">
-      <div class="cat-name">Consistent</div>
-      <div class="cat-count" id="tile-consistent-count">0</div>
-      <div class="cat-rev" id="tile-consistent-rev">—</div>
-    </div>
+    <div class="cat-tile" data-cat="new" onclick="setTileFilter('new')"><div class="cat-name">New</div><div class="cat-count" id="tile-new-count">0</div><div class="cat-rev" id="tile-new-rev">—</div></div>
+    <div class="cat-tile" data-cat="lost" onclick="setTileFilter('lost')"><div class="cat-name">Lost</div><div class="cat-count" id="tile-lost-count">0</div><div class="cat-rev" id="tile-lost-rev">—</div></div>
+    <div class="cat-tile" data-cat="increased" onclick="setTileFilter('increased')"><div class="cat-name">Increased</div><div class="cat-count" id="tile-increased-count">0</div><div class="cat-rev" id="tile-increased-rev">—</div></div>
+    <div class="cat-tile" data-cat="decreased" onclick="setTileFilter('decreased')"><div class="cat-name">Decreased</div><div class="cat-count" id="tile-decreased-count">0</div><div class="cat-rev" id="tile-decreased-rev">—</div></div>
+    <div class="cat-tile" data-cat="consistent" onclick="setTileFilter('consistent')"><div class="cat-name">Consistent</div><div class="cat-count" id="tile-consistent-count">0</div><div class="cat-rev" id="tile-consistent-rev">—</div></div>
   </div>
 
   <div id="table-wrap"></div>
-
-  <div class="footer">PROJECT NEXUS &nbsp;·&nbsp; ACCOUNT MIRROR &nbsp;·&nbsp; MAVLERS SALES-OPS</div>
+  <div class="footer">PROJECT NEXUS &nbsp;&middot;&nbsp; ACCOUNT MIRROR &nbsp;&middot;&nbsp; MAVLERS SALES-OPS</div>
 </div>
 
 <script>
-// ════ CONSTANTS & REGISTRY ════
+// ════ CONSTANTS ════
 const PIPELINE="115832232",STAGE="205348626";
 const MFULL=["january","february","march","april","may","june","july","august","september","october","november","december"];
 const MSHRT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const FY_FLOOR=new Date(2026,3,1);
 
 const OWNER_GROUPS={
-  "Leaders / Heads":[
-    {id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},
-    {id:"17738843",name:"Jaydeep Salla"},{id:"131779647",name:"Jiggyasa Agrawal"},
-    {id:"79217713",name:"Krunal Bakraniya"},{id:"34140174",name:"Mrugesh Dabhi"},
-    {id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}
-  ],
-  "Digital — US":[
-    {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
-    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},
-    {id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
-    {id:"557894666",name:"Sudarshan Damani"}
-  ],
-  "Digital — UK":[
-    {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
-    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
-  ],
-  "Digital — AU":[
-    {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
-    {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
-    {id:"263464861",name:"Saquib Khan"}
-  ],
-  "Nevilson — Team":[
-    {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
-    {id:"37762663",name:"Malav Modi"}
-  ],
-  "MarTech — US":[
-    {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
-    {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
-    {id:"89530815",name:"Vinita Raidu"}
-  ],
-  "MarTech — UK":[
-    {id:"82911376",name:"Divya S"},{id:"916030451",name:"Kamesh Biniwale"},
-    {id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
-  ],
+  "Leaders / Heads":[{id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},{id:"17738843",name:"Jaydeep Salla"},{id:"131779647",name:"Jiggyasa Agrawal"},{id:"79217713",name:"Krunal Bakraniya"},{id:"34140174",name:"Mrugesh Dabhi"},{id:"86940863",name:"Nevilson Christan"},{id:"17739173",name:"Tanuj Gupta"}],
+  "Digital — US":[{id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},{id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},{id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},{id:"557894666",name:"Sudarshan Damani"}],
+  "Digital — UK":[{id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},{id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}],
+  "Digital — AU":[{id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},{id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"}],
+  "Nevilson — Team":[{id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},{id:"37762663",name:"Malav Modi"}],
+  "MarTech — US":[{id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},{id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},{id:"89530815",name:"Vinita Raidu"}],
+  "MarTech — UK":[{id:"82911376",name:"Divya S"},{id:"916030451",name:"Kamesh Biniwale"},{id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}],
   "MarTech — AU":[{id:"467997340",name:"Karan Doshi"}],
   "Reactivation":[{id:"41490632",name:"Mukund Basita"}],
   "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
 };
-const OWNER_GEO={
-  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","19799470":"US","557894666":"US",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
-  "86813698":"AU","255830830":"UK","37762663":"US",
-  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
-  "82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"
-};
+const OWNER_GEO={"38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","19799470":"US","557894666":"US","37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK","176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU","86813698":"AU","255830830":"UK","37762663":"US","86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US","82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"};
 const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
-const OWNER_BU_MAP=(()=>{
-  const m={};
-  OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
-  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
-    if(g==="Leaders / Heads")return;
-    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
-    owners.forEach(o=>{m[o.id]=bu;});
-  });
-  m["107178262"]="MarTech";m["34140174"]="MarTech";m["17738843"]="MarTech";
-  m["17739173"]="Digital";m["86940863"]="Digital";m["17739548"]="Digital";
-  m["79217713"]="Digital";m["82663745"]="Digital";
-  return m;
-})();
-const OWNER_HEAD_MAP=(()=>{
-  const m={};
-  Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
-    if(grp==="Leaders / Heads"||grp==="Unclassified")return;
-    owners.forEach(o=>{
-      if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
-      if(grp==="Nevilson — Team"){m[o.id]="Nevilson Christan";return;}
-      if(grp==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}
-      if(grp==="Digital — UK"){m[o.id]="Tanuj Gupta (UK)";return;}
-      if(grp==="Digital — US"){m[o.id]="Tanuj Gupta (US)";return;}
-    });
-  });
-  return m;
-})();
-const ORDERED_OWNERS=[
-  {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},
-  {id:"34140174",name:"Mrugesh Dabhi"},{id:"467997340",name:"Karan Doshi"},
-  {id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},
-  {id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},
-  {id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
-  {id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},
-  {id:"41490632",name:"Mukund Basita"},{id:"17739548",name:"Darshan Modi"},
-  {id:"79217713",name:"Krunal Bakraniya"},{id:"17739173",name:"Tanuj Gupta"},
-  {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
-  {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},
-  {id:"263464861",name:"Saquib Khan"},{id:"46156316",name:"Flintoff Mehta"},
-  {id:"37344296",name:"Kalgi Shah"},{id:"24817892",name:"Sheldon Fernandes"},
-  {id:"31730801",name:"Vikram Sahi"},{id:"38568120",name:"Baspin Thomas"},
-  {id:"42663191",name:"Dhaval Damania"},{id:"240935328",name:"Hammad Bhaldar"},
-  {id:"19799470",name:"Jebin Joy"},{id:"34558123",name:"Kaustubh Agrawal"},
-  {id:"284770744",name:"Sourya Ghosh"},{id:"557894666",name:"Sudarshan Damani"},
-  {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
-  {id:"37762663",name:"Malav Modi"},{id:"82663745",name:"Prativa Dubey"}
-];
+const OWNER_BU_MAP=(()=>{const m={};OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{if(g==="Leaders / Heads")return;const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";owners.forEach(o=>{m[o.id]=bu;});});m["107178262"]="MarTech";m["34140174"]="MarTech";m["17738843"]="MarTech";m["17739173"]="Digital";m["86940863"]="Digital";m["17739548"]="Digital";m["79217713"]="Digital";m["82663745"]="Digital";return m;})();
+const OWNER_HEAD_MAP=(()=>{const m={};Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{if(grp==="Leaders / Heads"||grp==="Unclassified")return;owners.forEach(o=>{if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}if(grp==="Nevilson — Team"){m[o.id]="Nevilson Christan";return;}if(grp==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}if(grp==="Digital — UK"){m[o.id]="Tanuj Gupta (UK)";return;}if(grp==="Digital — US"){m[o.id]="Tanuj Gupta (US)";return;}});});return m;})();
+const ORDERED_OWNERS=[{id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},{id:"34140174",name:"Mrugesh Dabhi"},{id:"467997340",name:"Karan Doshi"},{id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},{id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},{id:"86147905",name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},{id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},{id:"41490632",name:"Mukund Basita"},{id:"17739548",name:"Darshan Modi"},{id:"79217713",name:"Krunal Bakraniya"},{id:"17739173",name:"Tanuj Gupta"},{id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},{id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"},{id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},{id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"},{id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},{id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},{id:"34558123",name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},{id:"557894666",name:"Sudarshan Damani"},{id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},{id:"37762663",name:"Malav Modi"},{id:"82663745",name:"Prativa Dubey"}];
 const OWN=(()=>{const m={};ORDERED_OWNERS.forEach(o=>{m[o.id]=o.name;});return m;})();
 const ALL_IDS=ORDERED_OWNERS.map(o=>o.id);
 const ALL_REGIONS=["US","UK","AU"];
@@ -507,14 +430,14 @@ const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).
 const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
 function effectiveDate(d){return d.closedate||d.createdate||"";}
 function weekOfMonth(ds){if(!ds)return null;try{const day=new Date(ds+"T00:00:00").getDate();return day<=7?1:day<=14?2:day<=21?3:4;}catch(e){return null;}}
-function weekDateRange(mI,yr,w){const s=[1,8,15,22][w-1];const e=w===4?new Date(yr,mI+1,0).getDate():[7,14,21][w-1];return`${MSHRT[mI]} ${s}–${e}, ${yr}`;}
 
 // ════ STATE ════
 let allDeals=[];let isSyncing=false;
 const PER=25;
 let activeCatFilter=null;
 let sortKey="delta";let sortDir="desc";let tablePg=1;
-let allRows=[];let _metaA=null,_metaB=null;
+let allRows=[];let _metaLabelA="",_metaLabelB="";
+let selectedA=[];let selectedB=[];// arrays of period value strings
 
 // ════ AUTH ════
 async function doLogin(){
@@ -523,10 +446,8 @@ async function doLogin(){
   try{
     const r=await fetch("/mirror-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
     const d=await r.json();
-    if(d.success){
-      $("login-overlay").style.display="none";$("page").style.display="block";
-      sessionStorage.setItem("nexus_mirror_auth","1");doSync();
-    }else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
+    if(d.success){$("login-overlay").style.display="none";$("page").style.display="block";sessionStorage.setItem("nexus_mirror_auth","1");doSync();}
+    else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
   }catch(e){$("login-err").textContent="Connection error";$("login-btn").disabled=false;}
 }
 
@@ -537,11 +458,7 @@ function attributeDeals(arr){
     d.bu=OWNER_BU_MAP[oid]||"Digital";
     d.region=OWNER_GEO[oid]||GEO_MAP[d.geo||""]||null;
     d.head=OWNER_HEAD_MAP[oid]||null;
-    if(!d.head){
-      if(d.bu==="MarTech")d.head="Jaydeep Salla";
-      else if(d.region==="AU")d.head="Jiggyasa Agrawal";
-      else if(d.region)d.head="Tanuj Gupta";
-    }
+    if(!d.head){if(d.bu==="MarTech")d.head="Jaydeep Salla";else if(d.region==="AU")d.head="Jiggyasa Agrawal";else if(d.region)d.head="Tanuj Gupta";}
   });
 }
 
@@ -553,21 +470,12 @@ async function doSync(force=false){
   $("lo").style.display="flex";$("rfbtn").disabled=true;$("resetbtn").disabled=true;
   $("err-bar").style.display="none";
   try{
-    const now=new Date();const fyMonths=[];
-    let c=new Date(FY_FLOOR);
-    while(c<=now){fyMonths.push(`${MFULL[c.getMonth()]}-${c.getFullYear()}`);c.setMonth(c.getMonth()+1);}
-    const props=["dealname","amount_in_home_currency","hubspot_owner_id","closedate","createdate",
-      "contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_",
-      "geo__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"];
+    const now=new Date();const fyM=[];let c=new Date(FY_FLOOR);
+    while(c<=now){fyM.push(`${MFULL[c.getMonth()]}-${c.getFullYear()}`);c.setMonth(c.getMonth()+1);}
+    const props=["dealname","amount_in_home_currency","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","geo__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"];
     const fetched=[];let after=null;
     do{
-      const body={filterGroups:[{filters:[
-        {propertyName:"pipeline",operator:"EQ",value:PIPELINE},
-        {propertyName:"dealstage",operator:"EQ",value:STAGE},
-        {propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyMonths},
-        {propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},
-        {propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}
-      ]}],properties:props,limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      const body={filterGroups:[{filters:[{propertyName:"pipeline",operator:"EQ",value:PIPELINE},{propertyName:"dealstage",operator:"EQ",value:STAGE},{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyM},{propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},{propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}]}],properties:props,limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
@@ -576,18 +484,7 @@ async function doSync(force=false){
         const cd=(r.properties?.closedate||"").split("T")[0];
         let mon=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
         if(!mon&&cd){try{const dt=new Date(cd+"T00:00:00");mon=`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}catch(e){}}
-        fetched.push({
-          id:String(r.id),dealname:r.properties?.dealname||"",
-          amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,
-          owner_id:String(r.properties?.hubspot_owner_id||""),
-          closedate:cd,createdate:(r.properties?.createdate||"").split("T")[0],
-          month:mon,
-          billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",
-          client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
-          geo:(r.properties?.geo__invoice_app_||"").trim(),
-          eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),
-          company_name:(r.properties?.company_name__invoice_app_||"").trim()
-        });
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,owner_id:String(r.properties?.hubspot_owner_id||""),closedate:cd,createdate:(r.properties?.createdate||"").split("T")[0],month:mon,billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",geo:(r.properties?.geo__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
       });
       after=data.paging?.next?.after||null;
     }while(after);
@@ -595,19 +492,16 @@ async function doSync(force=false){
     fetched.forEach(d=>{const k=d.dealname+"|"+d.amount+"|"+d.month;if(seen[k]){dupe.push(d.id);return;}seen[k]=d.id;});
     allDeals=dupe.length?fetched.filter(d=>!dupe.includes(d.id)):fetched;
     attributeDeals(allDeals);
-    $("sdot").style.background="#006E5E";
-    $("stxt").textContent=`LIVE \u00b7 ${allDeals.length} DEALS`;
+    $("sdot").style.background="#006E5E";$("stxt").textContent=`LIVE \u00b7 ${allDeals.length} DEALS`;
     $("last-sync").textContent="Synced "+new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     initPeriodSelectors();renderMirror();
   }catch(e){
     $("sdot").style.background="#696969";$("stxt").textContent="SYNC FAILED";
     $("err-bar").innerHTML=`<strong>Sync error:</strong> ${e.message}`;$("err-bar").style.display="block";
-  }finally{
-    isSyncing=false;$("lo").style.display="none";$("rfbtn").disabled=false;$("resetbtn").disabled=false;
-  }
+  }finally{isSyncing=false;$("lo").style.display="none";$("rfbtn").disabled=false;$("resetbtn").disabled=false;}
 }
 
-// ════ PERIOD SELECTORS ════
+// ════ PERIOD OPTIONS ════
 let _periodOpts=[];
 function buildPeriodOptions(){
   const opts=[];const now=new Date();
@@ -615,60 +509,124 @@ function buildPeriodOptions(){
   const cM=now.getMonth();const cY=now.getFullYear();
   let cursor=new Date(cY,cM,1);
   while(cursor>=FY_FLOOR){
-    const mI=cursor.getMonth();const yr=cursor.getFullYear();
-    const isCurr=mI===cM&&yr===cY;
+    const mI=cursor.getMonth();const yr=cursor.getFullYear();const isCurr=mI===cM&&yr===cY;
     for(let w=4;w>=1;w--){
       if(isCurr&&w>currWeek)continue;
       const isWIP=isCurr&&w===currWeek;
+      const startDay=[1,8,15,22][w-1];
+      const endDay=w===4?new Date(yr,mI+1,0).getDate():[7,14,21][w-1];
       opts.push({value:`${MFULL[mI]}-${yr}|${w}`,label:`${MSHRT[mI]} ${yr} \u00b7 W${w}${isWIP?" (WIP)":""}`,
-        monthIdx:mI,year:yr,week:w,isWIP,dateRange:weekDateRange(mI,yr,w)});
+        monthIdx:mI,year:yr,week:w,isWIP,
+        dateRange:`${MSHRT[mI]} ${startDay}\u2013${endDay}, ${yr}`,
+        startDate:new Date(yr,mI,startDay),endDate:new Date(yr,mI,endDay)});
     }
     cursor.setMonth(cursor.getMonth()-1);
   }
   return opts;
 }
-function initPeriodSelectors(){
-  _periodOpts=buildPeriodOptions();
-  const sA=$("period-a"),sB=$("period-b");
-  sA.innerHTML="";sB.innerHTML="";
-  _periodOpts.forEach(o=>{
-    sA.appendChild(Object.assign(document.createElement("option"),{value:o.value,textContent:o.label}));
-    sB.appendChild(Object.assign(document.createElement("option"),{value:o.value,textContent:o.label}));
-  });
-  const fc=_periodOpts.find(o=>!o.isWIP);
-  if(fc){
-    sA.value=fc.value;
-    const pM=fc.monthIdx===0?11:fc.monthIdx-1;const pY=fc.monthIdx===0?fc.year-1:fc.year;
-    const mb=_periodOpts.find(o=>o.monthIdx===pM&&o.year===pY&&o.week===fc.week);
-    sB.value=mb?mb.value:(_periodOpts[1]?.value||"");
-  }
-}
 function parsePeriodVal(val){
   if(!val)return null;
   const[mv,wStr]=val.split("|");const week=parseInt(wStr,10);
   const parts=mv.split("-");const year=parseInt(parts[parts.length-1],10);
-  const monName=parts.slice(0,-1).join("-");const monthIdx=MFULL.indexOf(monName);
+  const monthIdx=MFULL.indexOf(parts.slice(0,-1).join("-"));
   return(monthIdx===-1||isNaN(year)||isNaN(week))?null:{monthStr:mv,week,monthIdx,year};
 }
 function getPeriodMeta(val){return _periodOpts.find(o=>o.value===val)||null;}
 
+function initPeriodSelectors(){
+  _periodOpts=buildPeriodOptions();
+  const fc=_periodOpts.find(o=>!o.isWIP);
+  if(fc){
+    selectedA=[fc.value];
+    const pM=fc.monthIdx===0?11:fc.monthIdx-1;const pY=fc.monthIdx===0?fc.year-1:fc.year;
+    const mb=_periodOpts.find(o=>o.monthIdx===pM&&o.year===pY&&o.week===fc.week);
+    selectedB=mb?[mb.value]:(_periodOpts[1]?[_periodOpts[1].value]:[]);
+  }
+  initPeriodPickers();
+}
+
+function initPeriodPickers(){
+  ["a","b"].forEach(side=>{
+    const listEl=$(`card-${side}-picker-list`);if(!listEl)return;
+    const sel=side==="a"?selectedA:selectedB;
+    listEl.innerHTML=_periodOpts.map(o=>{
+      const safeId=`p${side}-${o.value.replace(/[|]/g,"-")}`;
+      return`<div class="ms-item"><input type="checkbox" id="${safeId}" data-val="${o.value}" ${sel.includes(o.value)?"checked":""} onchange="onPickerChange('${side}')"><label for="${safeId}">${o.label}</label></div>`;
+    }).join("");
+  });
+  updateCardLabels();
+}
+
+// ════ PERIOD CARD LABEL HELPERS ════
+function buildPeriodSelLabel(selVals){
+  if(!selVals.length)return"No periods selected";
+  if(selVals.length===1)return getPeriodMeta(selVals[0])?.label||selVals[0];
+  if(selVals.length>4)return`${selVals.length} weeks selected`;
+  const byMonth={};
+  selVals.forEach(v=>{
+    const m=getPeriodMeta(v);if(!m)return;
+    const k=`${m.year}-${String(m.monthIdx).padStart(2,"0")}`;
+    if(!byMonth[k])byMonth[k]={mI:m.monthIdx,yr:m.year,weeks:[]};
+    byMonth[k].weeks.push(m.week);
+  });
+  return Object.entries(byMonth).sort((a,b)=>b[0].localeCompare(a[0]))
+    .map(([,{mI,yr,weeks}])=>`${MSHRT[mI]} ${yr} \u00b7 W${weeks.sort((a,b)=>a-b).join("+W")}`).join(" + ");
+}
+function buildDateRange(selVals){
+  if(!selVals.length)return"";
+  const metas=selVals.map(getPeriodMeta).filter(Boolean);
+  if(metas.length===1)return metas[0].dateRange;
+  const starts=metas.map(m=>m.startDate);const ends=metas.map(m=>m.endDate);
+  const minS=starts.reduce((a,b)=>a<b?a:b);const maxE=ends.reduce((a,b)=>a>b?a:b);
+  const fmt=d=>`${MSHRT[d.getMonth()]} ${d.getDate()}`;
+  return`${fmt(minS)}\u2013${fmt(maxE)}, ${maxE.getFullYear()}`;
+}
+function isAnyWIP(selVals){return selVals.some(v=>getPeriodMeta(v)?.isWIP);}
+function cardClass(selVals){return"period-card "+(selVals.length===0?"empty":isAnyWIP(selVals)?"wip":"complete");}
+
+function updateCardLabels(){
+  ["a","b"].forEach(side=>{
+    const sel=side==="a"?selectedA:selectedB;
+    const lbl=$(`card-${side}-sel-label`);
+    if(lbl)lbl.textContent=buildPeriodSelLabel(sel);
+  });
+}
+
+// ════ PERIOD PICKER TOGGLE ════
+function togglePeriodPicker(side,e){
+  e.stopPropagation();
+  const picker=$(`card-${side}-picker`);
+  const btn=$(`card-${side}-btn`);
+  if(!picker)return;
+  const isOpen=picker.classList.contains("open");
+  // Close everything
+  ["a","b"].forEach(s=>{$(`card-${s}-picker`)?.classList.remove("open");$(`card-${s}-btn`)?.classList.remove("open");});
+  document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open"));
+  if(!isOpen){picker.classList.add("open");if(btn)btn.classList.add("open");}
+}
+function selectAllPicker(side){
+  const listEl=$(`card-${side}-picker-list`);
+  listEl?.querySelectorAll("input[type=checkbox]").forEach(el=>{el.checked=true;});
+  onPickerChange(side);
+}
+function selectNonePicker(side){
+  const listEl=$(`card-${side}-picker-list`);
+  listEl?.querySelectorAll("input[type=checkbox]").forEach(el=>{el.checked=false;});
+  onPickerChange(side);
+}
+function onPickerChange(side){
+  const listEl=$(`card-${side}-picker-list`);if(!listEl)return;
+  const checked=[...listEl.querySelectorAll("input[type=checkbox]:checked")].map(el=>el.dataset.val);
+  if(side==="a")selectedA=checked;else selectedB=checked;
+  updateCardLabels();
+  renderMirror();
+}
+
 // ════ FILTER INIT ════
-function initGeoList(){
-  $("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>`<div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="updateGeoLabel();onFilterChange()"><label for="geo-${r}">${r}</label></div>`).join("");
-  updateGeoLabel();
-}
-function initHeadList(){
-  $("head-ms-list").innerHTML=ALL_HEADS.map(h=>`<div class="ms-item"><input type="checkbox" id="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}" checked onchange="updateHeadLabel();onFilterChange()"><label for="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}">${h}</label></div>`).join("");
-  updateHeadLabel();
-}
-function initSvcList(){
-  $("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`<div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="updateSvcLabel();onFilterChange()"><label for="svc-${s}">${s}</label></div>`).join("");
-  updateSvcLabel();
-}
-function initOwnerList(){
-  $("owner-ms-list").innerHTML=ORDERED_OWNERS.map(o=>`<div class="ms-item"><input type="checkbox" id="own-${o.id}" checked onchange="updateOwnerLabel();onFilterChange()"><label for="own-${o.id}">${o.name}</label></div>`).join("");
-  updateOwnerLabel();
-}
+function initGeoList(){$("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>`<div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="updateGeoLabel();onFilterChange()"><label for="geo-${r}">${r}</label></div>`).join("");updateGeoLabel();}
+function initHeadList(){$("head-ms-list").innerHTML=ALL_HEADS.map(h=>`<div class="ms-item"><input type="checkbox" id="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}" checked onchange="updateHeadLabel();onFilterChange()"><label for="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}">${h}</label></div>`).join("");updateHeadLabel();}
+function initSvcList(){$("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`<div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="updateSvcLabel();onFilterChange()"><label for="svc-${s}">${s}</label></div>`).join("");updateSvcLabel();}
+function initOwnerList(){$("owner-ms-list").innerHTML=ORDERED_OWNERS.map(o=>`<div class="ms-item"><input type="checkbox" id="own-${o.id}" checked onchange="updateOwnerLabel();onFilterChange()"><label for="own-${o.id}">${o.name}</label></div>`).join("");updateOwnerLabel();}
 function updateGeoLabel(){const s=getSelGeo();$("geo-ms-label").textContent=s.length===ALL_REGIONS.length?"All Regions":s.length===0?"None":s.join(", ");}
 function updateHeadLabel(){const s=getSelHead();$("head-ms-label").textContent=s.length===ALL_HEADS.length?"All Heads":s.length===0?"None":s.length===1?s[0]:s.length+" Heads";}
 function updateSvcLabel(){const s=getSelSvc();$("svc-ms-label").textContent=s.length===ALL_SERVICES.length?"All Services":s.length===0?"None":s.length===1?s[0]:s.length+" Services";}
@@ -686,20 +644,23 @@ function selectNoneSvc(){ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.che
 function selectAllOwners(){ALL_IDS.forEach(id=>{const e=$("own-"+id);if(e)e.checked=true;});updateOwnerLabel();onFilterChange();}
 function selectNoneOwners(){ALL_IDS.forEach(id=>{const e=$("own-"+id);if(e)e.checked=false;});updateOwnerLabel();}
 
-// ════ DROPDOWN TOGGLE ════
+// ════ DROPDOWN TOGGLE (filter bar) ════
 function toggleDropdown(key,e){
   e.stopPropagation();
   const id={geo:"geo-ms-dropdown",head:"head-ms-dropdown",svc:"svc-ms-dropdown",owner:"owner-ms-dropdown"}[key];
   const dd=$(id);if(!dd)return;
   const open=dd.classList.contains("open");
-  document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open"));
+  closeAllDropdowns();
   if(!open)dd.classList.add("open");
 }
-document.addEventListener("click",()=>document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open")));
+function closeAllDropdowns(){
+  document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open"));
+  ["a","b"].forEach(s=>{$(`card-${s}-picker`)?.classList.remove("open");$(`card-${s}-btn`)?.classList.remove("open");});
+}
+document.addEventListener("click",closeAllDropdowns);
 
 // ════ FILTER APPLICATION ════
 function engGroup(em){if(!em)return null;const l=em.toLowerCase();if(l.includes("one time"))return"P2P";if(l.includes("recurring"))return"Recurring";return null;}
-
 function applyFilters(deals){
   const bu=$("bu-sel")?.value||"";
   const selGeo=getSelGeo();const geoFilt=selGeo.length<ALL_REGIONS.length;
@@ -709,15 +670,14 @@ function applyFilters(deals){
   return deals.filter(d=>{
     if(bu&&d.bu!==bu)return false;
     if(geoFilt&&(!d.region||!selGeo.includes(d.region)))return false;
-    if(headFilt){const bh=(d.head||"").replace(" (UK)","").replace(" (US)","");if(!selHead.includes(bh))return false;}
+    if(headFilt){const bh=(d.head||"").replace(/ \(.*\)/,"");if(!selHead.includes(bh))return false;}
     if(ownFilt&&!selOwn.includes(String(d.owner_id)))return false;
     if(itype){const eg=engGroup(d.eng_model);if(eg&&eg!==itype)return false;}
-    if(["InboxArmy","Uplers","Solomax"].includes(d.company_name||""))return false;
     return true;
   });
 }
 
-// ════ PERIOD → DEALS ════
+// ════ MULTI-PERIOD DEAL FETCH ════
 function dealsForPeriod(p){
   if(!p)return[];
   return allDeals.filter(d=>{
@@ -726,6 +686,14 @@ function dealsForPeriod(p){
     try{const dt=new Date(ed+"T00:00:00");return dt.getMonth()===p.monthIdx&&dt.getFullYear()===p.year;}
     catch(e){return false;}
   });
+}
+function dealsForMultiPeriod(selVals){
+  if(!selVals.length)return[];
+  const seen=new Set();const result=[];
+  selVals.map(parsePeriodVal).filter(Boolean).forEach(p=>{
+    dealsForPeriod(p).forEach(d=>{if(!seen.has(d.id)){seen.add(d.id);result.push(d);}});
+  });
+  return result;
 }
 
 // ════ CLIENT AGGREGATION ════
@@ -763,35 +731,53 @@ const CAT_ORDER=["new","lost","increased","decreased","consistent"];
 const CAT_LABEL={new:"New",lost:"Lost",increased:"Increased",decreased:"Decreased",consistent:"Consistent"};
 
 function renderMirror(){
-  const vA=$("period-a")?.value,vB=$("period-b")?.value;
-  $("same-warn").style.display=(vA&&vB&&vA===vB)?"block":"none";
-  if(vA===vB){$("table-wrap").innerHTML="";allRows=[];return;}
-  const pA=parsePeriodVal(vA),pB=parsePeriodVal(vB);
-  const mA=getPeriodMeta(vA),mB=getPeriodMeta(vB);
-  if(!pA||!pB)return;
-  _metaA=mA;_metaB=mB;
+  // Overlap check
+  const overlap=selectedA.filter(v=>selectedB.includes(v));
+  const warn=$("overlap-warn");
+  if(overlap.length){
+    const all=overlap.length===selectedA.length&&overlap.length===selectedB.length;
+    warn.textContent=all?"\u26a0\ufe0f All selected weeks are identical in Period A and Period B \u2014 results will be zero. Choose different periods.":"\u26a0\ufe0f Some weeks overlap between Period A and Period B \u2014 comparison may be distorted.";
+    warn.style.display="block";
+  }else{warn.style.display="none";}
 
-  const fA=applyFilters(dealsForPeriod(pA));
-  const fB=applyFilters(dealsForPeriod(pB));
+  // Update card borders
+  $("card-a").className=cardClass(selectedA);
+  $("card-b").className=cardClass(selectedB);
+
+  if(!selectedA.length||!selectedB.length){
+    $("card-a-total").textContent=selectedA.length?"—":"Select weeks";
+    $("card-b-total").textContent=selectedB.length?"—":"Select weeks";
+    $("table-wrap").innerHTML="";allRows=[];return;
+  }
+
+  const fA=applyFilters(dealsForMultiPeriod(selectedA));
+  const fB=applyFilters(dealsForMultiPeriod(selectedB));
   const cA=aggregateByClient(fA),cB=aggregateByClient(fB);
   const tA=Object.values(cA).reduce((s,c)=>s+c.rev,0);
   const tB=Object.values(cB).reduce((s,c)=>s+c.rev,0);
   const delta=tA-tB,deltaPct=tB>0?delta/tB*100:null;
 
-  $("card-a").className="period-card "+(mA?.isWIP?"wip":"complete");
-  $("card-b").className="period-card "+(mB?.isWIP?"wip":"complete");
-  $("card-a-name").innerHTML=(mA?.label||vA)+(mA?.isWIP?"<span class='wip-badge'>WIP</span>":"");
-  $("card-a-range").textContent=mA?.dateRange||"";$("card-a-total").textContent=fmtUSD(tA);
+  // Period cards
+  const wipA=isAnyWIP(selectedA),wipB=isAnyWIP(selectedB);
+  $("card-a-range").textContent=buildDateRange(selectedA);
+  $("card-a-total").innerHTML=fmtUSD(tA)+(wipA?"<span class='wip-badge'>WIP</span>":"");
   $("card-a-count").textContent=`${Object.keys(cA).length} clients \u00b7 ${fA.length} deals`;
-  $("card-b-name").innerHTML=(mB?.label||vB)+(mB?.isWIP?"<span class='wip-badge'>WIP</span>":"");
-  $("card-b-range").textContent=mB?.dateRange||"";$("card-b-total").textContent=fmtUSD(tB);
+  $("card-b-range").textContent=buildDateRange(selectedB);
+  $("card-b-total").innerHTML=fmtUSD(tB)+(wipB?"<span class='wip-badge'>WIP</span>":"");
   $("card-b-count").textContent=`${Object.keys(cB).length} clients \u00b7 ${fB.length} deals`;
 
+  // Delta
   const dc=delta>0?"d-pos":delta<0?"d-neg":"d-neu";
   $("delta-val").className="delta-val "+dc;$("delta-val").textContent=(delta>0?"+":"")+fmtShort(delta);
   $("delta-pct").className="delta-pct "+dc;
   $("delta-pct").textContent=deltaPct!==null?`${delta>0?"+":""}${deltaPct.toFixed(1)}% vs B`:"n/a";
 
+  // Status text
+  const lA=buildPeriodSelLabel(selectedA),lB=buildPeriodSelLabel(selectedB);
+  _metaLabelA=lA;_metaLabelB=lB;
+  $("stxt").textContent=`LIVE \u00b7 ${allDeals.length} DEALS \u00b7 ${lA.toUpperCase()} vs ${lB.toUpperCase()}`;
+
+  // Categorise + flat rows
   const cats=categorise(cA,cB);
   allRows=[];
   CAT_ORDER.forEach(cat=>{
@@ -803,14 +789,13 @@ function renderMirror(){
     });
   });
 
+  // Tiles
   CAT_ORDER.forEach(cat=>{
     const items=cats[cat];
     const rev=cat==="lost"?items.reduce((s,c)=>s+c.revB,0):items.reduce((s,c)=>s+c.revA,0);
     $(`tile-${cat}-count`).textContent=items.length;
     $(`tile-${cat}-rev`).textContent=fmtShort(rev);
   });
-
-  $("stxt").textContent=`LIVE \u00b7 ${allDeals.length} DEALS \u00b7 ${(mA?.label||"A").toUpperCase()} vs ${(mB?.label||"B").toUpperCase()}`;
 
   tablePg=1;renderTable();
 }
@@ -836,43 +821,28 @@ function renderTable(){
   const mult=sortDir==="asc"?1:-1;
   const catRank={new:0,lost:1,increased:2,decreased:3,consistent:4};
   rows.sort((a,b)=>{
-    let av,bv;
     switch(sortKey){
-      case"client":av=(a.client||"").toLowerCase();bv=(b.client||"").toLowerCase();return mult*(av<bv?-1:av>bv?1:0);
-      case"owner":av=ownerName(a.owner_id).toLowerCase();bv=ownerName(b.owner_id).toLowerCase();return mult*(av<bv?-1:av>bv?1:0);
-      case"region":av=a.region||"";bv=b.region||"";return mult*(av<bv?-1:av>bv?1:0);
-      case"head":av=(a.head||"").replace(/ \(.*\)/,"");bv=(b.head||"").replace(/ \(.*\)/,"");return mult*(av<bv?-1:av>bv?1:0);
+      case"client":return mult*((a.client||"").toLowerCase()<(b.client||"").toLowerCase()?-1:1);
+      case"owner":return mult*(ownerName(a.owner_id).toLowerCase()<ownerName(b.owner_id).toLowerCase()?-1:1);
+      case"region":return mult*((a.region||"")<(b.region||"")?-1:1);
+      case"head":return mult*((a.head||"").replace(/ \(.*\)/,"")<(b.head||"").replace(/ \(.*\)/,"")?-1:1);
       case"revA":return mult*(b.revA-a.revA);
       case"revB":return mult*(b.revB-a.revB);
-      case"cat":if(catRank[a.cat]!==catRank[b.cat])return mult*(catRank[a.cat]-catRank[b.cat]);return b.adjDelta-a.adjDelta;
-      case"pct":av=a.adjPct??-999;bv=b.adjPct??-999;return mult*(bv-av);
+      case"cat":return catRank[a.cat]!==catRank[b.cat]?mult*(catRank[a.cat]-catRank[b.cat]):b.adjDelta-a.adjDelta;
+      case"pct":return mult*((b.adjPct??-999)-(a.adjPct??-999));
       default:return mult*(b.adjDelta-a.adjDelta);
     }
   });
-  const total=Math.ceil(rows.length/PER);
-  if(tablePg>total)tablePg=1;
+  const total=Math.ceil(rows.length/PER);if(tablePg>total)tablePg=1;
   const start=(tablePg-1)*PER,end=Math.min(start+PER,rows.length);
-  const lA=_metaA?.label||"Period A",lB=_metaB?.label||"Period B";
-  const sa=k=>sortKey===k?` <span class="sort-arrow on">${sortDir==="desc"?"↓":"↑"}</span>`:`<span class="sort-arrow">\u2195</span>`;
+  const sa=k=>sortKey===k?` <span class="sort-arrow on">${sortDir==="desc"?"\u2193":"\u2191"}</span>`:`<span class="sort-arrow">\u2195</span>`;
   const activeLabel=activeCatFilter?` \u00b7 ${CAT_LABEL[activeCatFilter]} only`:"";
   const card=document.createElement("div");card.className="table-card";
   const hdr=document.createElement("div");hdr.className="table-hdr";
-  hdr.innerHTML=`<span class="table-hdr-title">Client Account Mirror${activeLabel}</span>
-    <span class="table-hdr-meta">${rows.length} client${rows.length!==1?"s":""} \u00b7 click tile to filter \u00b7 click column to sort</span>`;
+  hdr.innerHTML=`<span class="table-hdr-title">Client Account Mirror${activeLabel}</span><span class="table-hdr-meta">${rows.length} client${rows.length!==1?"s":""} \u00b7 click tile to filter \u00b7 click column to sort</span>`;
   card.appendChild(hdr);
   const tbl=document.createElement("table");tbl.className="tbl";
-  tbl.innerHTML=`<thead><tr>
-    <th style="width:32px">#</th>
-    <th class="sortable" onclick="sortBy('client')">Client${sa("client")}</th>
-    <th class="sortable" onclick="sortBy('owner')">Owner${sa("owner")}</th>
-    <th class="sortable" onclick="sortBy('region')">Region${sa("region")}</th>
-    <th class="sortable" onclick="sortBy('head')">Head${sa("head")}</th>
-    <th class="num sortable" onclick="sortBy('revA')">${lA}${sa("revA")}</th>
-    <th class="num sortable" onclick="sortBy('revB')">${lB}${sa("revB")}</th>
-    <th class="sortable" onclick="sortBy('cat')">Mirror Status${sa("cat")}</th>
-    <th class="num sortable" onclick="sortBy('delta')">\u0394 Amount${sa("delta")}</th>
-    <th class="num sortable" onclick="sortBy('pct')">\u0394 %${sa("pct")}</th>
-  </tr></thead>`;
+  tbl.innerHTML=`<thead><tr><th style="width:32px">#</th><th class="sortable" onclick="sortBy('client')">Client${sa("client")}</th><th class="sortable" onclick="sortBy('owner')">Owner${sa("owner")}</th><th class="sortable" onclick="sortBy('region')">Region${sa("region")}</th><th class="sortable" onclick="sortBy('head')">Head${sa("head")}</th><th class="num sortable" onclick="sortBy('revA')">${_metaLabelA||"Period A"}${sa("revA")}</th><th class="num sortable" onclick="sortBy('revB')">${_metaLabelB||"Period B"}${sa("revB")}</th><th class="sortable" onclick="sortBy('cat')">Mirror Status${sa("cat")}</th><th class="num sortable" onclick="sortBy('delta')">\u0394 Amount${sa("delta")}</th><th class="num sortable" onclick="sortBy('pct')">\u0394 %${sa("pct")}</th></tr></thead>`;
   const tbody=document.createElement("tbody");
   rows.slice(start,end).forEach((r,i)=>{
     const tr=document.createElement("tr");
@@ -880,17 +850,7 @@ function renderTable(){
     const geo=r.region||"null";
     const dpc=r.adjDelta>0?"d-pos-cell":r.adjDelta<0?"d-neg-cell":"d-neu-cell";
     const pctStr=r.adjPct!==null?`${r.adjDelta>0?"+":""}${r.adjPct.toFixed(1)}%`:"n/a";
-    tr.innerHTML=`
-      <td style="color:#9A9A9A;font-weight:600;font-size:10px">${start+i+1}</td>
-      <td class="td-name" title="${r.client||r.billing_id}">${r.client||r.billing_id||"\u2014"}</td>
-      <td class="td-meta">${ownerName(r.owner_id)}</td>
-      <td><span class="geo-chip geo-${geo}">${r.region||"\u2014"}</span></td>
-      <td class="td-meta">${bh||"\u2014"}</td>
-      <td class="td-num">${r.cat==="lost"?"\u2014":fmtUSD(r.revA)}</td>
-      <td class="td-num" style="color:#9A9A9A">${r.cat==="new"?"\u2014":fmtUSD(r.revB)}</td>
-      <td><span class="ms-badge ms-${r.cat}">${CAT_LABEL[r.cat]}</span></td>
-      <td class="td-num ${dpc}">${(r.adjDelta>0?"+":"")+fmtShort(r.adjDelta)}</td>
-      <td class="td-num ${dpc}">${pctStr}</td>`;
+    tr.innerHTML=`<td style="color:#9A9A9A;font-weight:600;font-size:10px">${start+i+1}</td><td class="td-name" title="${r.client||r.billing_id}">${r.client||r.billing_id||"\u2014"}</td><td class="td-meta">${ownerName(r.owner_id)}</td><td><span class="geo-chip geo-${geo}">${r.region||"\u2014"}</span></td><td class="td-meta">${bh||"\u2014"}</td><td class="td-num">${r.cat==="lost"?"\u2014":fmtUSD(r.revA)}</td><td class="td-num" style="color:#9A9A9A">${r.cat==="new"?"\u2014":fmtUSD(r.revB)}</td><td><span class="ms-badge ms-${r.cat}">${CAT_LABEL[r.cat]}</span></td><td class="td-num ${dpc}">${(r.adjDelta>0?"+":"")+fmtShort(r.adjDelta)}</td><td class="td-num ${dpc}">${pctStr}</td>`;
     tbody.appendChild(tr);
   });
   tbl.appendChild(tbody);card.appendChild(tbl);
@@ -923,7 +883,6 @@ function resetAll(){
   initPeriodSelectors();renderMirror();
 }
 
-function onPeriodChange(){renderMirror();}
 function onFilterChange(){renderMirror();}
 
 // ════ BOOT ════
