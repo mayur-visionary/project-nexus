@@ -56,7 +56,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Filter bar (no period selectors) ── */
 .fbar{background:#333}
 .fbar-in{max-width:1540px;margin:0 auto;padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.fbar-page-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#FFDA30;white-space:nowrap;flex-shrink:0}
+.fbar-page-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#fff;white-space:nowrap;flex-shrink:0}
 .fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
 .fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:115px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
@@ -888,6 +888,10 @@ function onFilterChange(){renderMirror();}
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",()=>{
   initGeoList();initHeadList();initSvcList();initOwnerList();
+  // Prevent clicks inside any dropdown from bubbling to document (which would close the dropdown)
+  document.querySelectorAll('.ms-dropdown,.pc-picker').forEach(el=>{
+    el.addEventListener('click',e=>e.stopPropagation());
+  });
   if(sessionStorage.getItem("nexus_mirror_auth")==="1"){
     $("login-overlay").style.display="none";$("page").style.display="block";doSync();
   }
