@@ -198,7 +198,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <div class="login-title">Account Mirror</div>
     <div class="login-sub">Week-on-Week Client Booking Analysis</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
     <div class="login-footer">Project Nexus · The Live Pulse of Mavlers Revenue</div>
   </div>
@@ -234,7 +234,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <div class="last-sync" id="last-sync"></div>
         </div>
         <a class="back-link" href="/" title="Back to Revenue Pulse">← Revenue Pulse</a>
-        <button class="refresh-btn" onclick="doSync(true)">⟳ Refresh</button>
+        <button class="refresh-btn" id="refresh-btn" onclick="doSync(true)">⟳ Refresh</button>
       </div>
     </div>
   </div>
