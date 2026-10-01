@@ -297,7 +297,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         <div class="gt-split">
           <div class="gt-split-lbl">Inter BU</div>
           <div class="gt-split-val" id="gt-interbu">—</div>
-          <div class="gt-split-sub">BU Total</div>
+          <div class="gt-split-sub">Incl. in Digital</div>
         </div>
         <div class="gt-split">
           <div class="gt-split-lbl">MarTech</div>
@@ -1041,16 +1041,29 @@ function computeSnapshot(deals, liMap, todayStr) {
 
       const amt = li.amount * scale;
 
-      // BU routing
-      let bucketKey;
-      if (isMarTech) { bucketKey = "martech"; }
-      else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
+      // ── Revenue BU routing: deal-level (mirrors index.html) ──
+      // Digital-owner deals → always "digital" regardless of LI service type.
+      // MarTech-owner deals → always "martech".
+      // This matches Krishna's benchmark which attributes revenue by AE team, not service type.
+      const revBucketKey = isMarTech ? "martech" : "digital";
 
-      const bRow = bkt[bucketKey].booking[rowKey];
-      const aRow = bkt[bucketKey].asof[rowKey];
+      const bRow = bkt[revBucketKey].booking[rowKey];
+      const aRow = bkt[revBucketKey].asof[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
       else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
+
+      // ── InterBU additive overlay (Campaign · Email · Design on Digital deals) ──
+      // Mirrors index.html: InterBU is a SUBSET of Digital, not deducted from it.
+      // These amounts are already counted in Digital above; also tracked in interbu for the column view.
+      if (!isMarTech && li.bu === "MarTech") {
+        const ibRow  = bkt.interbu.booking[rowKey];
+        const ibARow = bkt.interbu.asof[rowKey];
+        if (ibRow) {
+          if (et === "P2P") { ibRow.p2p += amt; if (isToday) ibARow.p2p += amt; }
+          else              { ibRow.rec += amt;  if (isToday) ibARow.rec += amt; }
+        }
+      }
 
       // ── New Addition: Status : New in description ──
       // ON-prefix deals are P2P → excluded
@@ -1059,8 +1072,11 @@ function computeSnapshot(deals, liMap, todayStr) {
       const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
 
-      const naRow   = bkt[bucketKey].naCount[rowKey];
-      const naAmt   = bkt[bucketKey].naAmt[rowKey];
+      // NA routing: LI-level (service type determines which BU column gets the NA)
+      const naBucketKey = isMarTech ? "martech" : (li.bu === "MarTech" ? "interbu" : "digital");
+
+      const naRow   = bkt[naBucketKey].naCount[rowKey];
+      const naAmt   = bkt[naBucketKey].naAmt[rowKey];
       if (!naRow) return;
 
       // Talent name for Managed, first Talent Name occurrence in description
@@ -1083,7 +1099,7 @@ function computeSnapshot(deals, liMap, todayStr) {
         naRow.rec += 1;
         naAmt.rec += amt;
       }
-      DRILL_STORE.NA[bucketKey][rowKey][naType].push({
+      DRILL_STORE.NA[naBucketKey][rowKey][naType].push({
         label, company: deal.company, amount: amt, dealId: deal.id
       });
     });
@@ -1249,7 +1265,7 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, todayStr);
   const mt = renderBU("martech", bkt.martech, MARTECH_ROWS, todayStr);
 
-  const grandTotal = d.bookTotal + ib.bookTotal + mt.bookTotal;
+  const grandTotal = d.bookTotal + mt.bookTotal; // InterBU is additive subset of Digital
   const totalNAAmt = d.naAmt + ib.naAmt + mt.naAmt;
 
   // Grand bar — Revenue row
