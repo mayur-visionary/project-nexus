@@ -1016,18 +1016,18 @@ function computeSnapshot(deals, liMap, todayStr) {
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
     const isToday    = deal.invoice_date === todayStr;
 
-    // ── Credit Note Deduct: deal-level attribution (mirrors Revenue Pulse) ──
-    // ── Credit Note Deduct: only net NEGATIVE amounts against owner BU ──
-    // Positive CND deals are skipped (original behaviour — LIs unclassifiable → no revenue impact).
-    // Negative CND deals reduce revenue in the owner's BU column.
+    // ── Credit Note Deduct ──
+    // MarTech CND: all amounts (+ and −) attributed to MarTech BU
+    // Digital CND: only negative amounts (revenue deductions) reduce Digital
+    //              positive Digital CND excluded — not attributed to any BU
     if ((deal.eng_model || "").toLowerCase().includes("credit note")) {
-      if (dealAmt < 0) {
+      if (isMarTech || dealAmt < 0) {
         const cndKey = isMarTech ? "martech" : "digital";
         const bRow = bkt[cndKey].booking[rowKey];
         const aRow = bkt[cndKey].asof[rowKey];
         if (bRow) { bRow.rec += dealAmt; if (isToday) aRow.rec += dealAmt; }
       }
-      return; // skip LI processing for all CND deals
+      return;
     }
 
     // ── No LIs: deal-level fallback for Revenue only ──
@@ -1055,7 +1055,7 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
       let et;
       if (isOnPrefix) { et = "P2P"; }
-      else if (deal.eng_model === "Multiple") { et = snapEngType(li.name); if (!et) return; }
+      else if (deal.eng_model === "Multiple") { et = snapEngType(li.name); if (!et) { if (li.bu) et = "P2P"; else return; } }
       else { et = snapEngType(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
 
       const amt = li.amount; // raw — mirrors Revenue Pulse (no deal-level scaling)
