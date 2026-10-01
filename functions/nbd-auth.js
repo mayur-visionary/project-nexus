@@ -6,7 +6,10 @@ export async function onRequestPost(context) {
     const { password, head } = await context.request.json();
 
     const CLONE_VAR_MAP = {
-      nbd: "NEXUS_PASSWORD_NBD"
+      nbd:      "NEXUS_PASSWORD_NBD",
+      jiggyasa: "NEXUS_PASSWORD_JIGGYASA",
+      jaydeep:  "NEXUS_PASSWORD_JAYDEEP",
+      tanuj:    "NEXUS_PASSWORD_TANUJ"
     };
 
     const isClone    = !!head && !!CLONE_VAR_MAP[head];
