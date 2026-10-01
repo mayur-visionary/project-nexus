@@ -262,6 +262,23 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 .nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
 .nav-tab-ext{color:rgba(255,218,48,.55);border-bottom-color:transparent!important;text-decoration:none}
 .nav-tab-ext:hover{color:#FFDA30;background:rgba(255,255,255,.04)}
+/* ── Waffle Module Launcher ── */
+.waffle-wrap{position:relative;display:inline-flex;align-items:center}
+.waffle-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);cursor:pointer;transition:all .2s;padding:0;flex-shrink:0}
+.waffle-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4)}
+.waffle-btn.waf-active{background:rgba(255,218,48,.15);border-color:rgba(255,218,48,.5)}
+.waffle-icon{display:grid;grid-template-columns:repeat(3,4px);gap:2.5px}
+.waffle-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.65);transition:background .2s}
+.waffle-btn.waf-active .waffle-dot{background:#FFDA30}
+.waffle-btn:hover .waffle-dot{background:rgba(255,255,255,.9)}
+.waffle-menu{position:absolute;top:calc(100% + 10px);right:0;background:#1E1E1E;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:14px;display:none;grid-template-columns:repeat(3,1fr);gap:8px;box-shadow:0 16px 48px rgba(0,0,0,.6);z-index:9000;min-width:270px}
+.waffle-menu.waf-open{display:grid}
+.waffle-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);cursor:pointer;text-decoration:none;transition:all .18s;color:rgba(255,255,255,.65);font-family:'Montserrat',sans-serif;font-size:7.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.3}
+.waffle-tile:hover{background:rgba(255,218,48,.1);border-color:rgba(255,218,48,.35);color:#FFDA30;transform:translateY(-1px)}
+.waffle-tile.waf-current{background:rgba(255,218,48,.14);border-color:rgba(255,218,48,.45);color:#FFDA30}
+.waffle-tile-icon{font-size:17px;line-height:1}
+.waffle-hdr{grid-column:1/-1;font-family:'Montserrat',sans-serif;font-size:8px;font-weight:800;color:rgba(255,255,255,.3);letter-spacing:.15em;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:2px}
+
 
 /* ── Clubs Filter Bar ── */
 .clubs-fbar{background:#333;border-top:1px solid rgba(255,255,255,.07);padding:10px 28px}
@@ -416,13 +433,25 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="nav-in">
       <button class="nav-tab active" data-screen="revenue" onclick="setScreen('revenue')">Revenue Pulse</button>
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
-      <a class="nav-tab nav-tab-ext" id="snapshot-link" href="/snapshot" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">BU Scorecard ↗</a>
-      <a class="nav-tab nav-tab-ext" id="nbd-link" href="/nbd" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Growth Ledger ↗</a>
-      <a class="nav-tab nav-tab-ext" id="radar-link" href="/radar" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Recurring Radar ↗</a>
-      <a class="nav-tab nav-tab-ext" id="funnel-link" href="/funnel" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Funnel Desk ↗</a>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
-      <a class="nav-tab nav-tab-ext" id="portfolio-link" href="/portfolio" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Portfolio Health ↗</a>
-      <a class="nav-tab nav-tab-ext" id="mirror-link" href="/mirror" target="_blank" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-bottom:2px solid transparent;">Account Mirror ↗</a>
+      <div style="margin-left:auto;display:flex;align-items:center;padding:0 6px"><div class="waffle-wrap" id="waffle-wrap">
+  <button class="waffle-btn" id="waffle-btn" title="All Modules" aria-label="Module launcher">
+    <div class="waffle-icon">
+      <div class="waffle-dot"></div><div class="waffle-dot"></div><div class="waffle-dot"></div>
+      <div class="waffle-dot"></div><div class="waffle-dot"></div><div class="waffle-dot"></div>
+      <div class="waffle-dot"></div><div class="waffle-dot"></div><div class="waffle-dot"></div>
+    </div>
+  </button>
+  <div class="waffle-menu" id="waffle-menu">
+    <div class="waffle-hdr">All Modules</div>
+    <a class="waffle-tile" href="/snapshot" target="_blank" data-mod="snapshot"><span class="waffle-tile-icon">📊</span>BU Scorecard</a>
+    <a class="waffle-tile" href="/nbd" target="_blank" data-mod="nbd"><span class="waffle-tile-icon">🌱</span>Growth Ledger</a>
+    <a class="waffle-tile" href="/radar" target="_blank" data-mod="radar"><span class="waffle-tile-icon">📡</span>Recurring Radar</a>
+    <a class="waffle-tile" href="/funnel" target="_blank" data-mod="funnel"><span class="waffle-tile-icon">🔽</span>Funnel Desk</a>
+    <a class="waffle-tile" href="/portfolio" target="_blank" data-mod="portfolio"><span class="waffle-tile-icon">💼</span>Portfolio Health</a>
+    <a class="waffle-tile" href="/mirror" target="_blank" data-mod="mirror"><span class="waffle-tile-icon">🔄</span>Account Mirror</a>
+  </div>
+</div></div>
     </div>
   </div>
   <div class="fbar" id="fbar">
@@ -3804,6 +3833,39 @@ function renderFunnelWaterfall(opening,predLoss,postPaid,pipeline,opp,expected,t
 // ════ END FUNNEL DESK ════
 
 // ════ END CLIENT CLUBS ════
+
+// ── Waffle Module Launcher ──
+(function(){
+  function toggleWaffle(){
+    var m=document.getElementById('waffle-menu');
+    var b=document.getElementById('waffle-btn');
+    if(!m||!b)return;
+    var open=m.classList.contains('waf-open');
+    m.classList.toggle('waf-open',!open);
+    b.classList.toggle('waf-active',!open);
+  }
+  document.addEventListener('click',function(e){
+    var w=document.getElementById('waffle-wrap');
+    if(w&&!w.contains(e.target)){
+      var m=document.getElementById('waffle-menu');
+      var b=document.getElementById('waffle-btn');
+      if(m)m.classList.remove('waf-open');
+      if(b)b.classList.remove('waf-active');
+    }
+  });
+  // Mark current page tile
+  var path=window.location.pathname.replace(/^\/|\//g,'').replace('.html','');
+  document.querySelectorAll('.waffle-tile[data-mod]').forEach(function(t){
+    if(t.getAttribute('data-mod')===path){
+      t.classList.add('waf-current');
+      var b=document.getElementById('waffle-btn');
+      if(b)b.classList.add('waf-active');
+    }
+  });
+  var wb=document.getElementById('waffle-btn');
+  if(wb)wb.addEventListener('click',function(e){e.stopPropagation();toggleWaffle();});
+})();
+
 </script>
 </body>
 </html>
