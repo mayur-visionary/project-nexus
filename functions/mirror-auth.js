@@ -1,9 +1,19 @@
 export async function onRequestPost(context) {
   try {
-    const { password } = await context.request.json();
-    const correct = context.env.NEXUS_PASSWORD;
+    const { password, head } = await context.request.json();
+
+    const CLONE_VAR_MAP = {
+      jiggyasa: "NEXUS_PASSWORD_JIGGYASA",
+      jaydeep:  "NEXUS_PASSWORD_JAYDEEP",
+      tanuj:    "NEXUS_PASSWORD_TANUJ"
+    };
+
+    const isClone    = !!head && !!CLONE_VAR_MAP[head];
+    const envVarName = isClone ? CLONE_VAR_MAP[head] : "NEXUS_PASSWORD";
+    const correct    = context.env[envVarName];
+
     if (!correct) {
-      return new Response(JSON.stringify({ error: "NEXUS_PASSWORD not configured" }), {
+      return new Response(JSON.stringify({ error: `${envVarName} not configured` }), {
         status: 500, headers: { "Content-Type": "application/json" }
       });
     }
