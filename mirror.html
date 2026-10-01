@@ -432,7 +432,60 @@ const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
 function effectiveDate(d){return d.closedate||d.createdate||"";}
 function weekOfMonth(ds){if(!ds)return null;try{const day=new Date(ds+"T00:00:00").getDate();return day<=7?1:day<=14?2:day<=21?3:4;}catch(e){return null;}}
 
-// ════ STATE ════
+// ════ CLONE ARCHITECTURE ════
+const MIRROR_HEADS_CFG={
+  jiggyasa:{name:"Jiggyasa Agrawal",firstName:"Jiggyasa"},
+  jaydeep: {name:"Jaydeep Salla",   firstName:"Jaydeep"},
+  tanuj:   {name:"Tanuj Gupta",     firstName:"Tanuj"}
+};
+function getAuthKey(head){return head?`nexus_auth_${head}`:"nexus_auth";}
+
+function checkSSO(){
+  const params=new URLSearchParams(location.search);
+  const head=(params.get("head")||"").toLowerCase().trim();
+  const tok=(params.get("tok")||"").toLowerCase().trim();
+  if(tok&&head&&tok===head){
+    localStorage.setItem(getAuthKey(head),"1");
+    const clean=new URL(location.href);clean.searchParams.delete("tok");
+    history.replaceState(null,"",clean.toString());
+    $("login-overlay").style.display="none";return true;
+  }
+  if(localStorage.getItem(getAuthKey(head))==="1"){
+    $("login-overlay").style.display="none";return true;
+  }
+  return false;
+}
+
+function bootCloneMode(){
+  const param=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
+  if(!param)return;
+  const cfg=MIRROR_HEADS_CFG[param];if(!cfg)return;
+  const eyebrow=$("login-eyebrow");
+  if(eyebrow)eyebrow.textContent=`Mavlers · ${cfg.firstName}'s Dashboard`;
+  const nb=document.querySelector(".nexus-btn");
+  if(nb)nb.href=`/?head=${param}`;
+  document.title=`${cfg.firstName} · Account Mirror · Mavlers`;
+  document.body.setAttribute("data-clone",param);
+}
+
+function lockHeadForClone(){
+  const param=document.body.getAttribute("data-clone");if(!param)return;
+  const cfg=MIRROR_HEADS_CFG[param];if(!cfg)return;
+  ALL_HEADS.forEach(h=>{
+    const el=$("head-"+h.replace(/ /g,"-").replace(/[()]/g,""));
+    if(el)el.checked=(h===cfg.name);
+  });
+  updateHeadLabel();
+  // Hide head multi-select + its label + preceding divider from filter bar
+  const headWrap=$("head-ms-wrap");
+  if(headWrap){
+    const headLabel=headWrap.previousElementSibling;
+    const prevVdiv=headLabel?.previousElementSibling;
+    headWrap.style.display="none";
+    if(headLabel&&headLabel.classList.contains("fl"))headLabel.style.display="none";
+    if(prevVdiv&&prevVdiv.classList.contains("vdiv"))prevVdiv.style.display="none";
+  }
+}
 let allDeals=[];let isSyncing=false;
 const PER=25;
 let activeCatFilter=null;
@@ -444,11 +497,15 @@ let selectedA=[];let selectedB=[];// arrays of period value strings
 async function doLogin(){
   const pw=$("pw-input").value.trim();if(!pw)return;
   $("login-btn").disabled=true;$("login-err").textContent="";
+  const _head=(new URLSearchParams(location.search).get("head")||"").toLowerCase().trim();
   try{
-    const r=await fetch("/mirror-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
+    const r=await fetch("/mirror-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:_head})});
     const d=await r.json();
-    if(d.success){$("login-overlay").style.display="none";$("page").style.display="block";localStorage.setItem("nexus_auth","1");doSync();}
-    else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
+    if(d.success){
+      $("login-overlay").style.display="none";$("page").style.display="block";
+      localStorage.setItem(getAuthKey(_head),"1");
+      lockHeadForClone();doSync();
+    }else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
   }catch(e){$("login-err").textContent="Connection error";$("login-btn").disabled=false;}
 }
 
@@ -891,8 +948,10 @@ function onFilterChange(){renderMirror();}
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",()=>{
   initGeoList();initHeadList();initSvcList();initOwnerList();
-  if(localStorage.getItem("nexus_auth")==="1"){
-    $("login-overlay").style.display="none";$("page").style.display="block";doSync();
+  bootCloneMode();
+  if(checkSSO()){
+    $("page").style.display="block";
+    lockHeadForClone();doSync();
   }
 });
 </script>
