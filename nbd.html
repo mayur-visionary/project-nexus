@@ -1664,7 +1664,7 @@ function resetAll() {
 }
 
 // ════ AUTH ════
-function getAuthKey(head){return head?"nexus_nbd_auth_"+head:"nexus_nbd_auth";}
+function getAuthKey(head){return head?"nexus_auth_"+head:"nexus_auth";}
 
 async function doLogin() {
   const btn=$("login-btn"), err=$("login-err"), pw=$("pw-input").value.trim();
@@ -1675,9 +1675,6 @@ async function doLogin() {
     const res = await fetch("/nbd-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw,head:_head})});
     const data = await res.json();
     if(data.success){
-      Object.keys(localStorage).filter(k=>k.startsWith("nexus_nbd_auth")).forEach(k=>{
-        if(k!==getAuthKey(_head))localStorage.removeItem(k);
-      });
       localStorage.setItem(getAuthKey(_head),"1");
       $("login-overlay").style.display="none";
       doSync(true);
