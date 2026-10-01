@@ -1010,6 +1010,20 @@ function computeSnapshot(deals, liMap, todayStr) {
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
     const isToday    = deal.invoice_date === todayStr;
 
+    // ── Credit Note Deduct: deal-level attribution (mirrors Revenue Pulse) ──
+    // CND LIs can't be classified, so they're silently skipped by the LI path.
+    // Route the deal amount directly to the owner's BU — positive adds, negative nets.
+    if ((deal.eng_model || "").toLowerCase().includes("credit note")) {
+      const cndKey = isMarTech ? "martech" : "digital";
+      const bRow = bkt[cndKey].booking[rowKey];
+      const aRow = bkt[cndKey].asof[rowKey];
+      if (bRow) {
+        bRow.rec += dealAmt;
+        if (isToday) aRow.rec += dealAmt;
+      }
+      return;
+    }
+
     // ── No LIs: deal-level fallback for Revenue only ──
     if (!lis.length) {
       let et;
