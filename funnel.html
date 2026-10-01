@@ -178,7 +178,7 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
 /* ── Login overlay (mirrors index.html) ── */
 .login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
 .login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
-.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
 .login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
@@ -196,12 +196,18 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
 <!-- ════ LOGIN OVERLAY ════ -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
+    <div style="margin-bottom:22px">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
     <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
     <div class="login-title">Funnel Desk</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-footer">The Live Pulse of Mavlers Revenue</div>
+    <div class="login-footer">Project Nexus · The Live Pulse of Mavlers Revenue</div>
   </div>
 </div>
 
@@ -236,7 +242,7 @@ tbody tr.row-gap:hover td,tbody tr.row-gap-pct:hover td{background:#F5F5F5!impor
         </div>
         <span class="month-badge" id="hdr-month" style="margin-bottom:0">📅 —</span>
         <button class="refresh-btn" id="rfbtn" onclick="refreshActive()">⟳ Refresh</button>
-        <a class="nexus-btn" href="/index.html">↗ Revenue Nexus</a>
+        <a class="nexus-btn" href="/">↗ Revenue Pulse</a>
       </div>
     </div>
 
