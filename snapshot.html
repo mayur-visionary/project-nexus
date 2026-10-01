@@ -635,7 +635,7 @@ const GEO_ROW_MAP = {
 
 // ── Established LI exclusion filter (mirrors HubSpot filter rule #4) ──
 // LIs whose names contain any of these strings are excluded from revenue.
-const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","other","discount","dot-net development","paypal fee"];
+const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","discount","dot-net development","paypal fee"];
 
 // ── Row key resolver ──
 function getDealRowKey(oid, isMarTech, dealGeo) {
@@ -1017,17 +1017,17 @@ function computeSnapshot(deals, liMap, todayStr) {
     const isToday    = deal.invoice_date === todayStr;
 
     // ── Credit Note Deduct: deal-level attribution (mirrors Revenue Pulse) ──
-    // CND LIs can't be classified, so they're silently skipped by the LI path.
-    // Route the deal amount directly to the owner's BU — positive adds, negative nets.
+    // ── Credit Note Deduct: only net NEGATIVE amounts against owner BU ──
+    // Positive CND deals are skipped (original behaviour — LIs unclassifiable → no revenue impact).
+    // Negative CND deals reduce revenue in the owner's BU column.
     if ((deal.eng_model || "").toLowerCase().includes("credit note")) {
-      const cndKey = isMarTech ? "martech" : "digital";
-      const bRow = bkt[cndKey].booking[rowKey];
-      const aRow = bkt[cndKey].asof[rowKey];
-      if (bRow) {
-        bRow.rec += dealAmt;
-        if (isToday) aRow.rec += dealAmt;
+      if (dealAmt < 0) {
+        const cndKey = isMarTech ? "martech" : "digital";
+        const bRow = bkt[cndKey].booking[rowKey];
+        const aRow = bkt[cndKey].asof[rowKey];
+        if (bRow) { bRow.rec += dealAmt; if (isToday) aRow.rec += dealAmt; }
       }
-      return;
+      return; // skip LI processing for all CND deals
     }
 
     // ── No LIs: deal-level fallback for Revenue only ──
