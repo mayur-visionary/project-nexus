@@ -1431,7 +1431,7 @@ async function doLogin() {
     const res  = await fetch("/snapshot-auth", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({password:pw})});
     const data = await res.json();
     if (data.success) {
-      localStorage.setItem("nexus_snapshot_auth", "1");
+      localStorage.setItem("nexus_auth", "1");
       $("login-overlay").style.display = "none";
       doSync(true);
     } else if (res.status === 500 || data.error) {
@@ -1445,7 +1445,7 @@ async function doLogin() {
 }
 
 function checkAuth() {
-  if (localStorage.getItem("nexus_snapshot_auth") === "1") {
+  if (localStorage.getItem("nexus_auth") === "1") {
     $("login-overlay").style.display = "none";
     return true;
   }
