@@ -1041,42 +1041,30 @@ function computeSnapshot(deals, liMap, todayStr) {
 
       const amt = li.amount * scale;
 
-      // ── Revenue BU routing: deal-level (mirrors index.html) ──
-      // Digital-owner deals → always "digital" regardless of LI service type.
-      // MarTech-owner deals → always "martech".
-      // This matches Krishna's benchmark which attributes revenue by AE team, not service type.
-      const revBucketKey = isMarTech ? "martech" : "digital";
-
-      const bRow = bkt[revBucketKey].booking[rowKey];
-      const aRow = bkt[revBucketKey].asof[rowKey];
+      // ── Revenue: deal-level BU (Revenue Pulse architecture) ──
+      const revKey = isMarTech ? "martech" : "digital";
+      const bRow = bkt[revKey].booking[rowKey];
+      const aRow = bkt[revKey].asof[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
       else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
 
       // ── InterBU additive overlay (Campaign · Email · Design on Digital deals) ──
-      // Mirrors index.html: InterBU is a SUBSET of Digital, not deducted from it.
-      // These amounts are already counted in Digital above; also tracked in interbu for the column view.
       if (!isMarTech && li.bu === "MarTech") {
-        const ibRow  = bkt.interbu.booking[rowKey];
-        const ibARow = bkt.interbu.asof[rowKey];
-        if (ibRow) {
-          if (et === "P2P") { ibRow.p2p += amt; if (isToday) ibARow.p2p += amt; }
-          else              { ibRow.rec += amt;  if (isToday) ibARow.rec += amt; }
+        const ib = bkt.interbu.booking[rowKey], ia = bkt.interbu.asof[rowKey];
+        if (ib) {
+          if (et === "P2P") { ib.p2p += amt; if (isToday) ia.p2p += amt; }
+          else              { ib.rec += amt;  if (isToday) ia.rec += amt; }
         }
       }
 
-      // ── New Addition: Status : New in description ──
-      // ON-prefix deals are P2P → excluded
+      // ── New Addition: LI-level BU routing ──
       if (isOnPrefix) return;
-
       const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
-
-      // NA routing: LI-level (service type determines which BU column gets the NA)
-      const naBucketKey = isMarTech ? "martech" : (li.bu === "MarTech" ? "interbu" : "digital");
-
-      const naRow   = bkt[naBucketKey].naCount[rowKey];
-      const naAmt   = bkt[naBucketKey].naAmt[rowKey];
+      const naKey = isMarTech ? "martech" : (li.bu === "MarTech" ? "interbu" : "digital");
+      const naRow = bkt[naKey].naCount[rowKey];
+      const naAmt = bkt[naKey].naAmt[rowKey];
       if (!naRow) return;
 
       // Talent name for Managed, first Talent Name occurrence in description
@@ -1099,7 +1087,7 @@ function computeSnapshot(deals, liMap, todayStr) {
         naRow.rec += 1;
         naAmt.rec += amt;
       }
-      DRILL_STORE.NA[naBucketKey][rowKey][naType].push({
+      DRILL_STORE.NA[naKey][rowKey][naType].push({
         label, company: deal.company, amount: amt, dealId: deal.id
       });
     });
@@ -1252,7 +1240,8 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const todayDate = new Date(todayStr + "T00:00:00");
   const monLabel  = MSHRT[todayDate.getMonth()] + " " + todayDate.getFullYear();
 
-  ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
+  ["digital","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
+  setText("interbu-rev-badge", "Additive · " + monLabel);
 
   // ── Stamp all six EL badges with the actual comparison month ──
   const elBadge = "vs " + (prevMonthLabel || "Prev Month");
@@ -1265,7 +1254,7 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, todayStr);
   const mt = renderBU("martech", bkt.martech, MARTECH_ROWS, todayStr);
 
-  const grandTotal = d.bookTotal + mt.bookTotal; // InterBU is additive subset of Digital
+  const grandTotal = d.bookTotal + mt.bookTotal; // InterBU is additive overlay (incl. in Digital)
   const totalNAAmt = d.naAmt + ib.naAmt + mt.naAmt;
 
   // Grand bar — Revenue row
