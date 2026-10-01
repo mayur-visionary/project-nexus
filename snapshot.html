@@ -633,6 +633,10 @@ const GEO_ROW_MAP = {
   "US":"US","Other":"US"
 };
 
+// ── Established LI exclusion filter (mirrors HubSpot filter rule #4) ──
+// LIs whose names contain any of these strings are excluded from revenue.
+const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","other","discount","dot-net development","paypal fee"];
+
 // ── Row key resolver ──
 function getDealRowKey(oid, isMarTech, dealGeo) {
   if (isMarTech) {
@@ -925,6 +929,8 @@ function buildLIKeyMap(deals, liMap) {
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
+      const liNameLower = (li.name || "").toLowerCase();
+      if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
       const n = li.name.toLowerCase();
       const isMgd = n.startsWith("dedicated fte") || n.startsWith("dedicated pte");
       // For EL Recurring: only named retainer projects tracked by Invoice App
@@ -1045,8 +1051,8 @@ function computeSnapshot(deals, liMap, todayStr) {
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
-
-      // ── Revenue MTD + Contribution ──
+      const liNameLower = (li.name || "").toLowerCase();
+      if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
       let et;
       if (isOnPrefix) { et = "P2P"; }
       else if (deal.eng_model === "Multiple") { et = snapEngType(li.name); if (!et) return; }
