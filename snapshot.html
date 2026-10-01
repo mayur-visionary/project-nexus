@@ -644,11 +644,11 @@ function getDealRowKey(oid, isMarTech, dealGeo) {
   }
 }
 
-// ── LI BU classifier (for Inter BU routing) ──
+// ── LI BU classifier — copied from Revenue Pulse (index.html) ──
 function classifyLineItem(name) {
   if (!name) return null;
   const n = name.toLowerCase();
-  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc") || n.includes("salesforce marketing cloud"))
+  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc"))
     return {bu:"MarTech"};
   if (n.includes("design - asset") || n.includes("design - digital"))
     return {bu:"Digital"};
@@ -661,7 +661,8 @@ function classifyLineItem(name) {
   if (n.includes("development - web") || n.includes("development - lp/hub") ||
       n.includes("development - mobile app") || n.includes("ai & automation - web") ||
       n.includes("dot-net development") || n.includes("operational service - data entry") ||
-      n.includes("landing page coding"))
+      n.includes("landing page coding and design") || n.includes("landing page coding") ||
+      n.includes("landing page only coding"))
     return {bu:"Digital"};
   if (n.includes("search -") || n.includes("consultancy fees"))
     return {bu:"Digital"};
