@@ -557,24 +557,22 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <script>
 // ════════════════════════════════════════════════════════════════
-// BU SCORECARD — MAVLERS · Project Nexus · Session 27
+// BU SCORECARD — MAVLERS · Project Nexus · Session 30
 //
 // WHAT THIS DOES:
 //   - Revenue MTD: full month, live & rolling, no cutoff
-//   - Contribution to MTD: yesterday's deals only (invoice date = yesterdayStr)
-//   - New Addition: LIs with Status : New in description
-//       Managed  = Dedicated FTE / Dedicated PTE + Status : New
-//       Recurring = Recurring Services / Recurring  + Status : New
-//       ON-prefix deals excluded. P2P excluded.
+//   - Contribution to MTD: today's invoiced deals (invoice_date = todayStr)
+//   - New Addition: status_1="New" (Managed) / project_type="New" (Recurring)
+//       + start_date in current booking month
 //   - Engagement Lost: prev month LI key comparison (Talent/Project Name + Company)
-//     Full loss: present Aug, absent Sep → count=headcount, amt=Aug amount
-//     Downgrade: FTE→PTE same talent → count=0.5, amt=Aug-Sep delta
+//     Full loss: present prev, absent cur → count=headcount, amt=prev amount
+//     Downgrade: FTE→PTE same talent → count=0.5, amt=prev-cur delta
 //
-// ATTRIBUTION MODEL (two-tier, mirrors index.html):
-//   Tier 1 — Registry: MARTECH_OWNER_IDS → BU.
-//             MARTECH/DIGITAL_OWNER_ROW → row key.
-//   Tier 2 — Leader geo fallback: MARTECH/DIGITAL_LEADERS use
-//             deal's geo__invoice_app_ to determine row key.
+// ATTRIBUTION ENGINE — ported verbatim from Revenue Pulse (index.html):
+//   attributeDeals() stamps .bu / .region / .head on every deal.
+//   All compute functions read stamps — zero re-derivation.
+//   getRowKey(d) maps deal → Scorecard row (AU/UK/US/NBD).
+//   LI amounts scaled to deal amount_in_home_currency (Revenue Pulse approach).
 // ════════════════════════════════════════════════════════════════
 
 const $ = id => document.getElementById(id);
@@ -585,7 +583,7 @@ const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"
 const EXCLUDED_COMPANIES  = ["InboxArmy","Uplers","Solomax"];
 const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement"];
 
-// ── Head-row definitions ──
+// ── Scorecard row definitions ──
 const DIGITAL_ROWS = [
   {key:"AU",  head:"Jiggyasa",  region:"AU"},
   {key:"UK",  head:"Tanuj UK",  region:"UK"},
@@ -599,53 +597,149 @@ const MARTECH_ROWS = [
   {key:"NBD", head:"Jaydeep", region:"NBD"}
 ];
 
-// ── Owner registry ──
-const MARTECH_OWNER_IDS = new Set([
-  "107178262","17738843","34140174",   // MarTech Leaders
-  "467997340",                          // Karan — MarTech AU
-  "82911376","82030736",                // MarTech UK
-  "93107638","46153051","86147905","85767516","89530815", // MarTech US
-  "916030451",                          // Kamesh — MarTech NBD
-  "41490632"                            // Mukund — Reactivation
-]);
-
-const DIGITAL_LEADERS = new Set(["17739548","79217713","17739173"]);
-const MARTECH_LEADERS = new Set(["107178262","17738843","34140174"]);
-
-const DIGITAL_OWNER_ROW = {
-  "131779647":"AU","78831011":"AU","94746500":"AU","176516495":"AU","263464861":"AU",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "38568120":"US","42663191":"US","240935328":"US","19799470":"US","34558123":"US","284770744":"US","557894666":"US",
-  "86813698":"NBD","255830830":"NBD","37762663":"NBD"
-};
-
-const MARTECH_OWNER_ROW = {
-  "467997340":"AU",
-  "82911376":"UK","82030736":"UK",
-  "93107638":"US","46153051":"US","86147905":"US","85767516":"US","89530815":"US",
-  "916030451":"NBD",
-  "41490632":"NBD"
-};
-
-const GEO_ROW_MAP = {
-  "AU":"AU","AU/NZ":"AU","India":"AU",
-  "UK":"UK","Netherlands":"UK",
-  "US":"US","Other":"US"
-};
-
-// ── Established LI exclusion filter (mirrors HubSpot filter rule #4) ──
-// LIs whose names contain any of these strings are excluded from revenue.
+// ── LI exclusion filter ──
 const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","discount","dot-net development","paypal fee"];
 
-// ── Row key resolver ──
-function getDealRowKey(oid, isMarTech, dealGeo) {
-  if (isMarTech) {
-    if (MARTECH_LEADERS.has(oid)) return GEO_ROW_MAP[dealGeo] || "US";
-    return MARTECH_OWNER_ROW[oid] || "NBD";
-  } else {
-    if (DIGITAL_LEADERS.has(oid)) return GEO_ROW_MAP[dealGeo] || "US";
-    return DIGITAL_OWNER_ROW[oid] || "NBD";
-  }
+// ════════════════════════════════════════════════════════════════
+// ATTRIBUTION ENGINE — verbatim from Revenue Pulse (index.html)
+// ════════════════════════════════════════════════════════════════
+
+const OWNER_GROUPS = {
+  "Leaders / Heads":[
+    {id:"107178262",name:"Chintan Doshi"},
+    {id:"17739548", name:"Darshan Modi"},
+    {id:"17738843", name:"Jaydeep Salla"},
+    {id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"79217713", name:"Krunal Bakraniya"},
+    {id:"34140174", name:"Mrugesh Dabhi"},
+    {id:"86940863", name:"Nevilson Christan"},
+    {id:"17739173", name:"Tanuj Gupta"}
+  ],
+  "Digital — US":[
+    {id:"38568120", name:"Baspin Thomas"},{id:"42663191", name:"Dhaval Damania"},
+    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470", name:"Jebin Joy"},
+    {id:"34558123", name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
+    {id:"557894666",name:"Sudarshan Damani"}
+  ],
+  "Digital — UK":[
+    {id:"46156316", name:"Flintoff Mehta"},
+    {id:"37344296", name:"Kalgi Shah"},{id:"24817892", name:"Sheldon Fernandes"},
+    {id:"31730801", name:"Vikram Sahi"}
+  ],
+  "Digital — AU":[
+    {id:"131779647",name:"Jiggyasa Agrawal"},
+    {id:"78831011", name:"Kunal Gohil"},{id:"94746500", name:"Manvi Choumal"},
+    {id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"}
+  ],
+  "Nevilson — Team":[
+    {id:"86813698", name:"Aman Acharya"},
+    {id:"255830830",name:"Devanshu Kumar"},
+    {id:"37762663", name:"Malav Modi"}
+  ],
+  "MarTech — US":[
+    {id:"46153051", name:"Ayush Rathi"},{id:"93107638", name:"Ayush Dhupar"},
+    {id:"86147905", name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
+    {id:"89530815", name:"Vinita Raidu"}
+  ],
+  "MarTech — UK":[
+    {id:"82911376", name:"Divya S"},
+    {id:"82030736", name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
+  ],
+  "MarTech — AU":[
+    {id:"467997340",name:"Karan Doshi"}
+  ],
+  "Reactivation":[
+    {id:"41490632", name:"Mukund Basita"}
+  ],
+  "Unclassified":[
+    {id:"82663745", name:"Prativa Dubey"}
+  ]
+};
+
+// Owner → BU (owner-based, CSV-confirmed)
+const OWNER_BU_MAP = (()=>{
+  const m = {};
+  OWNER_GROUPS["Leaders / Heads"].forEach(o => { m[o.id] = "Digital"; });
+  Object.entries(OWNER_GROUPS).forEach(([g, owners]) => {
+    if (g === "Leaders / Heads") return;
+    const bu = g.startsWith("MarTech") || g === "Reactivation" ? "MarTech" : "Digital";
+    owners.forEach(o => { m[o.id] = bu; });
+  });
+  m["107178262"] = "MarTech"; // Chintan Doshi
+  m["34140174"]  = "MarTech"; // Mrugesh Dabhi
+  m["17738843"]  = "MarTech"; // Jaydeep Salla
+  m["17739173"]  = "Digital"; // Tanuj Gupta
+  m["86940863"]  = "Digital"; // Nevilson Christan
+  m["17739548"]  = "Digital"; // Darshan Modi
+  m["79217713"]  = "Digital"; // Krunal Bakraniya
+  m["82663745"]  = "Digital"; // Prativa Dubey
+  return m;
+})();
+
+// Owner → fixed region (CSV-confirmed; leaders and Mukund fall through to GEO_MAP[d.geo])
+const OWNER_GEO = {
+  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
+  "19799470":"US","557894666":"US",
+  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
+  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
+  "86813698":"AU",   // Aman Acharya
+  "255830830":"UK",  // Devanshu Kumar
+  "37762663":"US",   // Malav Modi
+  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
+  "82030736":"UK","82911376":"UK",
+  "916030451":"US",  // Kamesh Biniwale — corrected UK→US
+  "467997340":"AU"
+};
+
+// geo__invoice_app_ → normalised region
+const GEO_MAP = {"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+
+// Owner → fixed head (registry owners only; leaders + Mukund + Prativa use headFromRegion fallback)
+const OWNER_HEAD_MAP = (()=>{
+  const m = {};
+  Object.entries(OWNER_GROUPS).forEach(([grp, owners]) => {
+    if (grp === "Leaders / Heads" || grp === "Unclassified") return;
+    owners.forEach(o => {
+      if (grp.startsWith("MarTech") || grp === "Reactivation") { m[o.id] = "Jaydeep Salla"; return; }
+      if (grp === "Nevilson — Team") { m[o.id] = "Nevilson Christan"; return; }
+      if (grp === "Digital — AU")   { m[o.id] = "Jiggyasa Agrawal"; return; }
+      if (grp === "Digital — UK")   { m[o.id] = "Tanuj Gupta (UK)"; return; }
+      if (grp === "Digital — US")   { m[o.id] = "Tanuj Gupta (US)"; return; }
+    });
+  });
+  return m;
+})();
+
+function headFromRegion(region, bu) {
+  if (bu === "MarTech") return "Jaydeep Salla";
+  if (region === "UK")  return "Tanuj Gupta (UK)";
+  if (region === "AU")  return "Jiggyasa Agrawal";
+  return "Tanuj Gupta (US)";
+}
+
+// Single-pass attribution — stamps .bu / .region / .head on every deal
+function attributeDeals(arr) {
+  arr.forEach(d => {
+    const oid = String(d.owner_id || "");
+    d.bu     = OWNER_BU_MAP[oid] || "Digital";
+    d.region = OWNER_GEO[oid]    || null;
+    d.head   = OWNER_HEAD_MAP[oid] || null;
+    if (!d.region) d.region = GEO_MAP[d.geo || ""] || null;
+    if (!d.head)   d.head   = headFromRegion(d.region, d.bu);
+  });
+}
+
+// ── NBD team sets — for Scorecard row placement only ──
+// These owners have real AU/UK/US regions in attribution but belong to the NBD row.
+const NBD_DIGITAL = new Set(["86813698","255830830","37762663"]); // Aman, Devanshu, Malav
+const NBD_MARTECH = new Set(["916030451","41490632"]);            // Kamesh, Mukund
+
+// Maps an attributed deal → Scorecard row key (AU / UK / US / NBD)
+function getRowKey(d) {
+  const oid = String(d.owner_id || "");
+  if (d.bu === "Digital" && NBD_DIGITAL.has(oid)) return "NBD";
+  if (d.bu === "MarTech" && NBD_MARTECH.has(oid)) return "NBD";
+  return d.region || "US"; // all other owners: their resolved region
 }
 
 // ── LI BU classifier — copied from Revenue Pulse (index.html) ──
@@ -673,21 +767,24 @@ function classifyLineItem(name) {
   return null;
 }
 
-// ── Revenue engagement type (Recurring broad / P2P) ──
-function snapEngType(liName) {
-  if (!liName) return null;
-  const n = liName.toLowerCase();
-  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Recurring";
-  if (n.startsWith("recurring services") || n.startsWith("recurring"))   return "Recurring";
-  if (n.startsWith("p2p") || n.startsWith("time and material") || n.startsWith("t&m") || n.includes("email coding")) return "P2P";
+// ── Engagement type from LI name prefix — verbatim from Revenue Pulse ──
+function engGroupFromLiName(name) {
+  if (!name) return null;
+  const n = name.toLowerCase();
+  if (n.startsWith("dedicated fte"))                              return "Recurring";
+  if (n.startsWith("dedicated pte"))                             return "Recurring";
+  if (n.startsWith("recurring"))                                 return "Recurring";
+  if (n.startsWith("p2p"))                                       return "P2P";
+  if (n.startsWith("time and material") || n.startsWith("t&m")) return "P2P";
+  if (n.includes("email coding"))                                return "P2P";
   return null;
 }
 
-// ── Deal-level eng_model fallback ──
+// ── Deal-level eng_model fallback — verbatim from Revenue Pulse ──
 function engGroup(val) {
   if (!val) return null;
-  if (["Dedicated FTE","Dedicated PTE","Multiple","Recurring Services","Recurring"].includes(val)) return "Recurring";
-  if (["P2P","Time and Material","T&M","Time"].includes(val)) return "P2P";
+  if (val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring") return "Recurring";
+  if (val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time") return "P2P";
   return null;
 }
 
@@ -809,16 +906,20 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
       if (company === "(blank)") return;
       const amount = parseFloat(p.amount_in_home_currency || 0) || 0;
       if (!amount) return; // skip zero-amount deals only
+      // ── Boundary normalisation (mirrors Revenue Pulse doFYSync) ──
+      // month: lowercase; geo/eng_model: trim — JS comparisons are case-sensitive.
+      const bm = (p.invoice_booking_month__invoice_app_ || "").toLowerCase();
       fetched.push({
-        id:        String(r.id),
-        owner_id:  String(p.hubspot_owner_id || ""),
-        billing_id: billing_id || company,
-        company:   company,
-        eng_model: (p.engagement_model__invoice_app_ || "").trim(),
-        dealname:  (p.dealname || "").trim(),
+        id:           String(r.id),
+        owner_id:     String(p.hubspot_owner_id || ""),
+        billing_id:   billing_id || company,
+        company:      company,
+        eng_model:    (p.engagement_model__invoice_app_ || "").trim(),
+        dealname:     (p.dealname || "").trim(),
+        month:        bm,
         // invoice_date: used for Contribution to MTD (today's bookings)
         invoice_date: (p.invoice_booking_date_formatted__invoice_app_ || "").split("T")[0],
-        geo:       (p.geo__invoice_app_ || "").trim(),
+        geo:          (p.geo__invoice_app_ || "").trim(),
         amount
       });
     });
@@ -913,19 +1014,20 @@ function extractLabel(liName, liDescription, company) {
 // ── Build LI key map for EL comparison ──
 // Returns Map: key → {amount, engType, bucketKey, rowKey, label, company, dealId}
 // Key = "TalentName|Company" for Managed, "ProjectName|Company" for Recurring
+// Amounts scaled to home currency (Revenue Pulse approach).
 function buildLIKeyMap(deals, liMap) {
   const map = new Map();
   deals.forEach(deal => {
-    const oid       = String(deal.owner_id || "");
-    const isMarTech = MARTECH_OWNER_IDS.has(oid);
-    const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
-    const lis       = liMap[deal.id] || [];
+    if (!deal.amount) return;
+    const lis = liMap[deal.id] || [];
     if (!lis.length) return;
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
     if (isOnPrefix) return; // P2P — skip
 
-    const liTotal = lis.reduce((s,li) => s + Math.abs(li.amount||0), 0);
+    const rowKey  = getRowKey(deal); // uses stamped .bu / .region
+    const liTotal = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
     if (liTotal === 0) return;
+    const scale = Math.abs(deal.amount) / liTotal; // Revenue Pulse scaling
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
@@ -933,22 +1035,20 @@ function buildLIKeyMap(deals, liMap) {
       if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
       const n = li.name.toLowerCase();
       const isMgd = n.startsWith("dedicated fte") || n.startsWith("dedicated pte");
-      // For EL Recurring: only named retainer projects tracked by Invoice App
-      // (project_type populated = Invoice App is tracking this project explicitly)
-      // Generic SEM/SEO/Social campaign LIs have no project_type and must be excluded
-      // as their project names change every invoice and would generate false EL signals
+      // For EL Recurring: only Invoice App-tracked projects (project_type populated)
+      // Generic campaign LIs have no project_type → false EL signals if included
       const isRec = (n.startsWith("recurring services") || n.startsWith("recurring"))
                     && (li.project_type || "").trim() !== "";
       if (!isMgd && !isRec) return;
 
-      const label    = extractLabel(li.name, li.description, deal.company);
-      const key      = label + "|" + deal.company;
-      const engType  = n.startsWith("dedicated fte") ? "FTE" : (n.startsWith("dedicated pte") ? "PTE" : "Recurring");
-      const amt      = Math.abs(li.amount); // raw — mirrors Revenue Pulse
+      const label   = extractLabel(li.name, li.description, deal.company);
+      const key     = label + "|" + deal.company;
+      const engType = n.startsWith("dedicated fte") ? "FTE" : (n.startsWith("dedicated pte") ? "PTE" : "Recurring");
+      const amt     = Math.abs(li.amount) * scale; // Revenue Pulse scaling
 
       let bucketKey;
-      if (isMarTech) { bucketKey = "martech"; }
-      else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
+      if (deal.bu === "MarTech") { bucketKey = "martech"; }
+      else                       { bucketKey = li.bu === "MarTech" ? "interbu" : "digital"; }
 
       if (!map.has(key)) {
         map.set(key, {amount:amt, engType, bucketKey, rowKey, label, company:deal.company, dealId:deal.id});
@@ -998,35 +1098,24 @@ function computeEL(prevMap, curMap, bkt) {
 }
 
 function computeSnapshot(deals, liMap, todayStr) {
-  const bkt = {
-    digital: emptyBU(),
-    interbu: emptyBU(),
-    martech: emptyBU()
-  };
+  const bkt = {digital: emptyBU(), interbu: emptyBU(), martech: emptyBU()};
   initDrillStore();
 
   deals.forEach(deal => {
-    const oid       = String(deal.owner_id || "");
-    const isMarTech = MARTECH_OWNER_IDS.has(oid);
-    const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
-    const lis       = liMap[deal.id] || [];
-    const dealAmt   = deal.amount;
-    if (!dealAmt || dealAmt === 0) return; // keep negatives — they net against revenue
+    if (!deal.amount || deal.amount === 0) return;
 
+    const rowKey     = getRowKey(deal);
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
     const isToday    = deal.invoice_date === todayStr;
+    const lis        = liMap[deal.id] || [];
+    const dealAmt    = deal.amount;
 
-    // ── Credit Note Deduct ──
-    // MarTech CND: all amounts (+ and −) attributed to MarTech BU
-    // Digital CND: only negative amounts (revenue deductions) reduce Digital
-    //              positive Digital CND excluded — not attributed to any BU
-    if ((deal.eng_model || "").toLowerCase().includes("credit note")) {
-      if (isMarTech || dealAmt < 0) {
-        const cndKey = isMarTech ? "martech" : "digital";
-        const bRow = bkt[cndKey].booking[rowKey];
-        const aRow = bkt[cndKey].asof[rowKey];
-        if (bRow) { bRow.rec += dealAmt; if (isToday) aRow.rec += dealAmt; }
-      }
+    // ── Negative deals (Credit Note Deduct) ──
+    if (dealAmt < 0) {
+      const bk = deal.bu === "MarTech" ? "martech" : "digital";
+      const bRow = bkt[bk].booking[rowKey];
+      const aRow = bkt[bk].asof[rowKey];
+      if (bRow) { bRow.rec += dealAmt; if (isToday) aRow.rec += dealAmt; }
       return;
     }
 
@@ -1035,38 +1124,39 @@ function computeSnapshot(deals, liMap, todayStr) {
       let et;
       if (isOnPrefix) { et = "P2P"; }
       else { et = engGroup(deal.eng_model); if (!et) return; }
-      const bucketKey = isMarTech ? "martech" : "digital";
-      const bRow = bkt[bucketKey].booking[rowKey];
-      const aRow = bkt[bucketKey].asof[rowKey];
+      const bk = deal.bu === "MarTech" ? "martech" : "digital";
+      const bRow = bkt[bk].booking[rowKey];
+      const aRow = bkt[bk].asof[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += dealAmt; if (isToday) aRow.p2p += dealAmt; }
       else              { bRow.rec += dealAmt;  if (isToday) aRow.rec += dealAmt; }
-      // No LIs = no Status:New signal available → skip NA
+      // No LIs = no NA signal
       return;
     }
 
-    // ── Has LIs ──
+    // ── Has LIs: Revenue Pulse scaling (li.amount * dealAmt / liTotal) ──
     const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
-    if (liTotal === 0) return;
+    if (!liTotal) return;
+    const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
       const liNameLower = (li.name || "").toLowerCase();
       if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
+
       let et;
       if (isOnPrefix) { et = "P2P"; }
-      else if (deal.eng_model === "Multiple") { et = snapEngType(li.name); if (!et) { if (li.bu) et = "P2P"; else return; } }
-      else { et = snapEngType(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
+      else { et = engGroupFromLiName(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
 
-      const amt = li.amount; // raw — mirrors Revenue Pulse (no deal-level scaling)
+      const amt = li.amount * scale; // Revenue Pulse approach: scale to home currency
 
-      // BU routing: LI-level (deductive — Digital + InterBU + MarTech = Total)
-      let bucketKey;
-      if (isMarTech) { bucketKey = "martech"; }
-      else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
+      // BU routing: deal-level for MarTech; LI-level for Digital vs InterBU split
+      let bk;
+      if (deal.bu === "MarTech") { bk = "martech"; }
+      else                       { bk = li.bu === "MarTech" ? "interbu" : "digital"; }
 
-      const bRow = bkt[bucketKey].booking[rowKey];
-      const aRow = bkt[bucketKey].asof[rowKey];
+      const bRow = bkt[bk].booking[rowKey];
+      const aRow = bkt[bk].asof[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
       else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
@@ -1075,31 +1165,24 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (isOnPrefix) return;
       const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
-      const naRow = bkt[bucketKey].naCount[rowKey];
-      const naAmt = bkt[bucketKey].naAmt[rowKey];
+      const naRow    = bkt[bk].naCount[rowKey];
+      const naAmtRow = bkt[bk].naAmt[rowKey];
       if (!naRow) return;
 
-      // Talent name for Managed, first Talent Name occurrence in description
-      // Project name for Recurring, first Project Name occurrence
       let label = deal.company;
       if (naType === "Managed") {
         const m = li.description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|$)/i);
         if (m) label = m[1].trim();
+        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
+        naRow.managed    += headcount;
+        naAmtRow.managed += amt;
       } else {
         const m = li.description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
         if (m) label = m[1].trim();
+        naRow.rec    += 1;
+        naAmtRow.rec += amt;
       }
-
-      if (naType === "Managed") {
-        // PTE = 0.5 headcount, FTE = 1 headcount (business rule)
-        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
-        naRow.managed += headcount;
-        naAmt.managed += amt;
-      } else {
-        naRow.rec += 1;
-        naAmt.rec += amt;
-      }
-      DRILL_STORE.NA[bucketKey][rowKey][naType].push({
+      DRILL_STORE.NA[bk][rowKey][naType].push({
         label, company: deal.company, amount: amt, dealId: deal.id
       });
     });
@@ -1459,6 +1542,7 @@ async function doSync(force = false) {
 
     $("stxt").textContent = "FETCHING DEALS…";
     const deals = await fetchDeals(curMonth);
+    attributeDeals(deals); // stamp .bu / .region / .head — single pass
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
@@ -1479,6 +1563,7 @@ async function doSync(force = false) {
 
     $("stxt").textContent = "FETCHING PREV MONTH…";
     const prevDeals = await fetchDeals(prevMonth, prevCutoffDay);
+    attributeDeals(prevDeals); // stamp prev month deals for EL key map
     const prevLiMap = await fetchLineItems(prevDeals);
 
     const bkt = computeSnapshot(deals, liMap, todayStr);
