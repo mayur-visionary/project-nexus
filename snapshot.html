@@ -62,6 +62,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .refresh-btn:hover{background:rgba(255,255,255,.12);color:#fff}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* ── Month Navigator ── */
+.month-nav{display:flex;align-items:center;gap:0}
+.month-nav-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
+.month-nav-btn:first-child{border-radius:6px 0 0 6px}
+.month-nav-btn:last-child{border-radius:0 6px 6px 0}
+.month-nav-btn:hover:not(:disabled){background:rgba(255,255,255,.14);color:#fff}
+.month-nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.month-nav-label{font-size:10px;font-weight:800;color:#fff;letter-spacing:.08em;text-transform:uppercase;padding:0 10px;background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);height:26px;display:flex;align-items:center;white-space:nowrap}
+.month-today-btn{padding:4px 10px;border-radius:6px;border:1px solid rgba(255,218,48,.4);background:rgba(255,218,48,.1);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.month-today-btn:hover{background:rgba(255,218,48,.2)}
+
 /* ── Loader ── */
 .lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
 .lo.show{display:flex}
@@ -255,6 +266,14 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <div class="nav-tabs">
       <div class="nav-tab-active">BU Scorecard</div>
     </div>
+    <div class="nav-strip-right">
+      <div class="month-nav">
+        <button class="month-nav-btn" id="month-prev" onclick="navigateMonth(-1)">&#8249;</button>
+        <div class="month-nav-label" id="month-label">—</div>
+        <button class="month-nav-btn" id="month-next" onclick="navigateMonth(1)" disabled>&#8250;</button>
+      </div>
+      <button class="month-today-btn" id="month-today-btn" onclick="navigateMonth(0,true)" style="display:none">Today</button>
+    </div>
   </div>
 </div>
 
@@ -381,7 +400,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge">vs Aug 2026</div>
+          <div class="metric-badge el-badge" id="digital-el-count-badge">vs Prev Month</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -391,7 +410,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge">vs Aug 2026</div>
+          <div class="metric-badge el-badge" id="digital-el-amt-badge">vs Prev Month</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -446,7 +465,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge">vs Aug 2026</div>
+          <div class="metric-badge el-badge" id="interbu-el-count-badge">vs Prev Month</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -456,7 +475,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge">vs Aug 2026</div>
+          <div class="metric-badge el-badge" id="interbu-el-amt-badge">vs Prev Month</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -511,7 +530,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="martech-el-badge">vs Aug 2026</div>
+          <div class="metric-badge el-badge" id="martech-el-count-badge">vs Prev Month</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -521,7 +540,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge">vs Aug 2026</div>
+          <div class="metric-badge el-badge" id="martech-el-amt-badge">vs Prev Month</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -1213,11 +1232,18 @@ function renderBU(prefix, buData, rowDefs, todayStr) {
   return {bookTotal, naAmt, elAmt};
 }
 
-function populateSnapshot(bkt, todayStr) {
+function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const todayDate = new Date(todayStr + "T00:00:00");
   const monLabel  = MSHRT[todayDate.getMonth()] + " " + todayDate.getFullYear();
 
   ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
+
+  // ── Stamp all six EL badges with the actual comparison month ──
+  const elBadge = "vs " + (prevMonthLabel || "Prev Month");
+  ["digital","interbu","martech"].forEach(p => {
+    setText(p + "-el-count-badge", elBadge);
+    setText(p + "-el-amt-badge",   elBadge);
+  });
 
   const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, todayStr);
   const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, todayStr);
@@ -1310,7 +1336,7 @@ function openDrill(type, buKey, rowKey, etFilter) {
   const kpiClr = isNA ? "#006E5E" : "#C13030";
   $("drill-eyebrow").textContent = buLabel + " · " + rkLabel;
   $("drill-title").textContent   = (isNA ? "New Addition" : "Engagement Lost") + " — " + etLabel;
-  $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs Aug 2026 equal window";
+  $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs " + (_prevMonthLabel || "Prev Month") + " equal window";
 
   const totalAmt = entries.reduce((s,e) => s + e.amount, 0);
   $("drill-kpi-count").textContent = entries.length || "—";
@@ -1356,6 +1382,32 @@ function closeDrill() {
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrill(); });
 
 // ══════════════════════════════════════════════
+// MONTH NAVIGATOR
+// ══════════════════════════════════════════════
+let selectedMonthOffset = 0; // 0 = current month, -1 = prev, etc.
+let _prevMonthLabel = "";
+
+function updateMonthNavUI() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
+  const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
+  const label = MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear();
+  setText("month-label", label);
+  const nextBtn = $("month-next");
+  if (nextBtn) nextBtn.disabled = isCurrentMonth;
+  const todayBtn = $("month-today-btn");
+  if (todayBtn) todayBtn.style.display = isCurrentMonth ? "none" : "";
+}
+
+function navigateMonth(delta, resetToToday) {
+  if (resetToToday) { selectedMonthOffset = 0; }
+  else { selectedMonthOffset = Math.min(0, selectedMonthOffset + delta); }
+  updateMonthNavUI();
+  doSync(true);
+}
+
+// ══════════════════════════════════════════════
 // SYNC
 // ══════════════════════════════════════════════
 let isSyncing = false;
@@ -1370,11 +1422,24 @@ async function doSync(force = false) {
   $("err-bar").classList.remove("show");
 
   try {
-    const pad      = n => String(n).padStart(2,"0");
-    const now      = new Date();
-    const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayStr    = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-    const curMonth    = getMonthStr(today);
+    const pad = n => String(n).padStart(2,"0");
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // ── View month (respects selectedMonthOffset) ──
+    const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
+    const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
+    const curMonth = getMonthStr(viewDate);
+
+    // todayStr drives both "Contribution to MTD" date gate and NA start_date gate:
+    //   Current month → today's actual date  |  Past month → last day of that month (full view)
+    let todayStr;
+    if (isCurrentMonth) {
+      todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+    } else {
+      const lastDay = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0);
+      todayStr = `${lastDay.getFullYear()}-${pad(lastDay.getMonth()+1)}-${pad(lastDay.getDate())}`;
+    }
 
     $("stxt").textContent = "FETCHING DEALS…";
     const deals = await fetchDeals(curMonth);
@@ -1382,11 +1447,20 @@ async function doSync(force = false) {
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
 
-    // ── Prev month fetch for Engagement Lost — equal window ──
-    // Equal window: if today = Sep 25, only fetch Aug deals up to Aug 25
-    const prevMonthDate  = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const prevMonth      = getMonthStr(prevMonthDate);
-    const prevCutoffDay  = `${prevMonthDate.getFullYear()}-${pad(prevMonthDate.getMonth()+1)}-${pad(today.getDate())}`;
+    // ── Prev month for EL comparison ──
+    const prevMonthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+    const prevMonth = getMonthStr(prevMonthDate);
+    // Equal window cutoff:
+    //   Current month → same day-of-month as today in prev month
+    //   Past month    → last day of prev month (full month comparison)
+    let prevCutoffDay;
+    if (isCurrentMonth) {
+      prevCutoffDay = `${prevMonthDate.getFullYear()}-${pad(prevMonthDate.getMonth()+1)}-${pad(today.getDate())}`;
+    } else {
+      const lastDayPrev = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0);
+      prevCutoffDay = `${lastDayPrev.getFullYear()}-${pad(lastDayPrev.getMonth()+1)}-${pad(lastDayPrev.getDate())}`;
+    }
+
     $("stxt").textContent = "FETCHING PREV MONTH…";
     const prevDeals = await fetchDeals(prevMonth, prevCutoffDay);
     const prevLiMap = await fetchLineItems(prevDeals);
@@ -1398,11 +1472,15 @@ async function doSync(force = false) {
     const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap);
     computeEL(prevLIKeyMap, curLIKeyMap, bkt);
 
-    populateSnapshot(bkt, todayStr);
+    _prevMonthLabel = MSHRT[prevMonthDate.getMonth()] + " " + prevMonthDate.getFullYear();
+    populateSnapshot(bkt, todayStr, _prevMonthLabel);
 
+    const navEl = $("nav-strip"); if (navEl) navEl.style.display = "";
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
-    $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
+    $("stxt").textContent = isCurrentMonth
+      ? "LIVE · " + deals.length + " DEALS"
+      : MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear() + " · " + deals.length + " DEALS";
     const syncedAt = new Date();
     const ts = syncedAt.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const el = $("sync-ts"); if (el) el.textContent = "Synced at " + ts;
@@ -1453,6 +1531,7 @@ function checkAuth() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
+  updateMonthNavUI();
   if (checkAuth()) doSync(true);
 });
 </script>
