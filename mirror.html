@@ -56,7 +56,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 /* ── Filter bar (no period selectors) ── */
 .fbar{background:#333}
 .fbar-in{max-width:1540px;margin:0 auto;padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.fbar-page-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#fff;white-space:nowrap;flex-shrink:0}
+.fbar-page-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.65);white-space:nowrap;flex-shrink:0}
 .fl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.65);white-space:nowrap}
 .fsel{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.28);color:#FFDA30;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.02em;transition:all .2s;max-width:115px}
 .fsel:hover,.fsel:focus{border-color:rgba(255,218,48,.6);background:rgba(255,218,48,.15)}
@@ -427,6 +427,7 @@ const ALL_SERVICES=["Campaign","Email","Design","Search","Web"];
 const $=id=>document.getElementById(id);
 const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
 const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).toFixed(1)+"M":a>=1e3?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
+const firstName=n=>n?n.split(" ")[0]:n;
 const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
 function effectiveDate(d){return d.closedate||d.createdate||"";}
 function weekOfMonth(ds){if(!ds)return null;try{const day=new Date(ds+"T00:00:00").getDate();return day<=7?1:day<=14?2:day<=21?3:4;}catch(e){return null;}}
@@ -624,11 +625,11 @@ function onPickerChange(side){
 
 // ════ FILTER INIT ════
 function initGeoList(){$("geo-ms-list").innerHTML=ALL_REGIONS.map(r=>`<div class="ms-item"><input type="checkbox" id="geo-${r}" checked onchange="updateGeoLabel();onFilterChange()"><label for="geo-${r}">${r}</label></div>`).join("");updateGeoLabel();}
-function initHeadList(){$("head-ms-list").innerHTML=ALL_HEADS.map(h=>`<div class="ms-item"><input type="checkbox" id="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}" checked onchange="updateHeadLabel();onFilterChange()"><label for="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}">${h}</label></div>`).join("");updateHeadLabel();}
+function initHeadList(){$("head-ms-list").innerHTML=ALL_HEADS.map(h=>`<div class="ms-item"><input type="checkbox" id="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}" checked onchange="updateHeadLabel();onFilterChange()"><label for="head-${h.replace(/ /g,"-").replace(/[()]/g,"")}">${firstName(h)}</label></div>`).join("");updateHeadLabel();}
 function initSvcList(){$("svc-ms-list").innerHTML=ALL_SERVICES.map(s=>`<div class="ms-item"><input type="checkbox" id="svc-${s}" checked onchange="updateSvcLabel();onFilterChange()"><label for="svc-${s}">${s}</label></div>`).join("");updateSvcLabel();}
 function initOwnerList(){$("owner-ms-list").innerHTML=ORDERED_OWNERS.map(o=>`<div class="ms-item"><input type="checkbox" id="own-${o.id}" checked onchange="updateOwnerLabel();onFilterChange()"><label for="own-${o.id}">${o.name}</label></div>`).join("");updateOwnerLabel();}
 function updateGeoLabel(){const s=getSelGeo();$("geo-ms-label").textContent=s.length===ALL_REGIONS.length?"All Regions":s.length===0?"None":s.join(", ");}
-function updateHeadLabel(){const s=getSelHead();$("head-ms-label").textContent=s.length===ALL_HEADS.length?"All Heads":s.length===0?"None":s.length===1?s[0]:s.length+" Heads";}
+function updateHeadLabel(){const s=getSelHead();$("head-ms-label").textContent=s.length===ALL_HEADS.length?"All Heads":s.length===0?"None":s.length===1?firstName(s[0]):s.length+" Heads";}
 function updateSvcLabel(){const s=getSelSvc();$("svc-ms-label").textContent=s.length===ALL_SERVICES.length?"All Services":s.length===0?"None":s.length===1?s[0]:s.length+" Services";}
 function updateOwnerLabel(){const s=getSelOwners();$("owner-ms-label").textContent=s.length===ALL_IDS.length?"All Owners":s.length===0?"None":s.length===1?ownerName(s[0]):s.length+" Owners";}
 function getSelGeo(){return ALL_REGIONS.filter(r=>{const e=$("geo-"+r);return!e||e.checked;});}
@@ -657,7 +658,9 @@ function closeAllDropdowns(){
   document.querySelectorAll(".ms-dropdown.open").forEach(el=>el.classList.remove("open"));
   ["a","b"].forEach(s=>{$(`card-${s}-picker`)?.classList.remove("open");$(`card-${s}-btn`)?.classList.remove("open");});
 }
-document.addEventListener("click",closeAllDropdowns);
+document.addEventListener("click",e=>{
+  if(!e.target.closest('.ms-dropdown,.pc-picker,.ms-btn,.pc-selector-btn'))closeAllDropdowns();
+});
 
 // ════ FILTER APPLICATION ════
 function engGroup(em){if(!em)return null;const l=em.toLowerCase();if(l.includes("one time"))return"P2P";if(l.includes("recurring"))return"Recurring";return null;}
@@ -846,7 +849,7 @@ function renderTable(){
   const tbody=document.createElement("tbody");
   rows.slice(start,end).forEach((r,i)=>{
     const tr=document.createElement("tr");
-    const bh=(r.head||"").replace(/ \(.*\)/,"");
+    const bh=firstName((r.head||"").replace(/ \(.*\)/,""));
     const geo=r.region||"null";
     const dpc=r.adjDelta>0?"d-pos-cell":r.adjDelta<0?"d-neg-cell":"d-neu-cell";
     const pctStr=r.adjPct!==null?`${r.adjDelta>0?"+":""}${r.adjPct.toFixed(1)}%`:"n/a";
@@ -888,10 +891,6 @@ function onFilterChange(){renderMirror();}
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",()=>{
   initGeoList();initHeadList();initSvcList();initOwnerList();
-  // Prevent clicks inside any dropdown from bubbling to document (which would close the dropdown)
-  document.querySelectorAll('.ms-dropdown,.pc-picker').forEach(el=>{
-    el.addEventListener('click',e=>e.stopPropagation());
-  });
   if(sessionStorage.getItem("nexus_mirror_auth")==="1"){
     $("login-overlay").style.display="none";$("page").style.display="block";doSync();
   }
