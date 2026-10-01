@@ -15,7 +15,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
 .login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
 .login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
-.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-sub{font-size:10px;color:#9A9A9A;font-weight:600;margin-bottom:22px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
@@ -446,7 +446,7 @@ async function doLogin(){
   try{
     const r=await fetch("/mirror-auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
     const d=await r.json();
-    if(d.success){$("login-overlay").style.display="none";$("page").style.display="block";sessionStorage.setItem("nexus_mirror_auth","1");doSync();}
+    if(d.success){$("login-overlay").style.display="none";$("page").style.display="block";localStorage.setItem("nexus_auth","1");doSync();}
     else{$("login-err").textContent="Incorrect password";$("login-btn").disabled=false;}
   }catch(e){$("login-err").textContent="Connection error";$("login-btn").disabled=false;}
 }
@@ -890,7 +890,7 @@ function onFilterChange(){renderMirror();}
 // ════ BOOT ════
 window.addEventListener("DOMContentLoaded",()=>{
   initGeoList();initHeadList();initSvcList();initOwnerList();
-  if(sessionStorage.getItem("nexus_mirror_auth")==="1"){
+  if(localStorage.getItem("nexus_auth")==="1"){
     $("login-overlay").style.display="none";$("page").style.display="block";doSync();
   }
 });
