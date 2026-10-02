@@ -557,7 +557,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <script>
 // ════════════════════════════════════════════════════════════════
-// BU SCORECARD — MAVLERS · Project Nexus · Session 30
+// BU SCORECARD — MAVLERS · Project Nexus · Session 31
 //
 // WHAT THIS DOES:
 //   - Revenue MTD: full month, live & rolling, no cutoff
@@ -568,9 +568,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 //     Full loss: present prev, absent cur → count=headcount, amt=prev amount
 //     Downgrade: FTE→PTE same talent → count=0.5, amt=prev-cur delta
 //
-// ATTRIBUTION ENGINE — ported verbatim from Revenue Pulse (index.html):
-//   attributeDeals() stamps .bu / .region / .head on every deal.
-//   All compute functions read stamps — zero re-derivation.
+// BU ATTRIBUTION — 3-tier hierarchy, resolved inline at ingestion in fetchDeals():
+//   Tier 1: business_unit_invoice_app (Invoice App stamp — authoritative)
+//   Tier 2: OWNER_BU_MAP[oid] (owner registry fallback)
+//   Tier 3: geo_head__invoice_app_ derivation (unregistered owner fallback)
 //   getRowKey(d) maps deal → Scorecard row (AU/UK/US/NBD).
 //   LI amounts scaled to deal amount_in_home_currency (Revenue Pulse approach).
 // ════════════════════════════════════════════════════════════════
@@ -694,40 +695,8 @@ const OWNER_GEO = {
 // geo__invoice_app_ → normalised region
 const GEO_MAP = {"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
 
-// Owner → fixed head (registry owners only; leaders + Mukund + Prativa use headFromRegion fallback)
-const OWNER_HEAD_MAP = (()=>{
-  const m = {};
-  Object.entries(OWNER_GROUPS).forEach(([grp, owners]) => {
-    if (grp === "Leaders / Heads" || grp === "Unclassified") return;
-    owners.forEach(o => {
-      if (grp.startsWith("MarTech") || grp === "Reactivation") { m[o.id] = "Jaydeep Salla"; return; }
-      if (grp === "Nevilson — Team") { m[o.id] = "Nevilson Christan"; return; }
-      if (grp === "Digital — AU")   { m[o.id] = "Jiggyasa Agrawal"; return; }
-      if (grp === "Digital — UK")   { m[o.id] = "Tanuj Gupta (UK)"; return; }
-      if (grp === "Digital — US")   { m[o.id] = "Tanuj Gupta (US)"; return; }
-    });
-  });
-  return m;
-})();
-
-function headFromRegion(region, bu) {
-  if (bu === "MarTech") return "Jaydeep Salla";
-  if (region === "UK")  return "Tanuj Gupta (UK)";
-  if (region === "AU")  return "Jiggyasa Agrawal";
-  return "Tanuj Gupta (US)";
-}
-
-// Single-pass attribution — stamps .bu / .region / .head on every deal
-function attributeDeals(arr) {
-  arr.forEach(d => {
-    const oid = String(d.owner_id || "");
-    d.bu     = OWNER_BU_MAP[oid] || "Digital";
-    d.region = OWNER_GEO[oid]    || null;
-    d.head   = OWNER_HEAD_MAP[oid] || null;
-    if (!d.region) d.region = GEO_MAP[d.geo || ""] || null;
-    if (!d.head)   d.head   = headFromRegion(d.region, d.bu);
-  });
-}
+// ── BU + Region resolved inline at ingestion in fetchDeals() ──
+// No post-fetch attribution pass needed for the Scorecard.
 
 // ── NBD team sets — for Scorecard row placement only ──
 // These owners have real AU/UK/US regions in attribution but belong to the NBD row.
@@ -875,7 +844,9 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
     "zoho_display_name__invoice_app_",
     "zoho_billing_id__invoice_app_",
     "contact_name__invoice_app_",
-    "geo__invoice_app_"
+    "geo__invoice_app_",
+    "geo_head__invoice_app_",        // tier 3 BU fallback for unregistered owners
+    "business_unit_invoice_app"      // tier 1 BU — authoritative Invoice App stamp
   ];
   const filters = [
     {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
@@ -908,18 +879,41 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
       if (!amount) return; // skip zero-amount deals only
       // ── Boundary normalisation (mirrors Revenue Pulse doFYSync) ──
       // month: lowercase; geo/eng_model: trim — JS comparisons are case-sensitive.
-      const bm = (p.invoice_booking_month__invoice_app_ || "").toLowerCase();
+      const bm      = (p.invoice_booking_month__invoice_app_ || "").toLowerCase();
+      const oid     = String(p.hubspot_owner_id     || "");
+      const rawBU   = (p.business_unit_invoice_app  || "").trim();
+      const geoHead = (p.geo_head__invoice_app_     || "").trim();
+
+      // ── BU — 3-tier hierarchy ──
+      // Tier 1: Invoice App property (authoritative, set by Invoice App at invoicing time)
+      // Tier 2: Owner registry fallback (OWNER_BU_MAP — for missing/blank Invoice App stamp)
+      // Tier 3: geo_head derivation (for genuinely unregistered owners)
+      let bu;
+      if      (rawBU === "MarTech BU")                                         bu = "MarTech";
+      else if (rawBU === "Digital BU")                                         bu = "Digital";
+      else if (OWNER_BU_MAP[oid])                                              bu = OWNER_BU_MAP[oid];
+      else if (geoHead === "Jaydeep Salla" ||
+               (geoHead && geoHead.toLowerCase().includes("mrugesh")))         bu = "MarTech";
+      else if (geoHead === "Jiggyasa Agrawal" ||
+               geoHead === "Tanuj Gupta"      ||
+               geoHead === "Nevilson Christan")                                bu = "Digital";
+      else                                                                      bu = "Digital"; // true last resort
+
+      // ── Region — owner registry + geo property fallback ──
+      const region = OWNER_GEO[oid] || GEO_MAP[(p.geo__invoice_app_ || "").trim()] || null;
+
       fetched.push({
         id:           String(r.id),
-        owner_id:     String(p.hubspot_owner_id || ""),
+        owner_id:     oid,
         billing_id:   billing_id || company,
-        company:      company,
+        company,
         eng_model:    (p.engagement_model__invoice_app_ || "").trim(),
         dealname:     (p.dealname || "").trim(),
         month:        bm,
-        // invoice_date: used for Contribution to MTD (today's bookings)
         invoice_date: (p.invoice_booking_date_formatted__invoice_app_ || "").split("T")[0],
         geo:          (p.geo__invoice_app_ || "").trim(),
+        bu,      // resolved: Invoice App → owner registry → geo_head
+        region,  // resolved: owner registry → geo property
         amount
       });
     });
@@ -1541,8 +1535,7 @@ async function doSync(force = false) {
     }
 
     $("stxt").textContent = "FETCHING DEALS…";
-    const deals = await fetchDeals(curMonth);
-    attributeDeals(deals); // stamp .bu / .region / .head — single pass
+    const deals = await fetchDeals(curMonth); // .bu and .region resolved inline at ingestion
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
@@ -1562,8 +1555,7 @@ async function doSync(force = false) {
     }
 
     $("stxt").textContent = "FETCHING PREV MONTH…";
-    const prevDeals = await fetchDeals(prevMonth, prevCutoffDay);
-    attributeDeals(prevDeals); // stamp prev month deals for EL key map
+    const prevDeals = await fetchDeals(prevMonth, prevCutoffDay); // .bu and .region resolved inline
     const prevLiMap = await fetchLineItems(prevDeals);
 
     const bkt = computeSnapshot(deals, liMap, todayStr);
