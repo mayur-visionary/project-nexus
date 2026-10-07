@@ -52,26 +52,15 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
 /* ── Nav tab strip (below header, above main) ── */
-.nav-strip{background:#333;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-strip{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-strip-in{max-width:1480px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .nav-tabs{display:flex;align-items:stretch;gap:0}
-.nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:11px 18px;border-bottom:3px solid transparent;cursor:default}
+.nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#FFDA30;padding:11px 18px;border-bottom:3px solid #FFDA30;cursor:default}
 .nav-strip-right{display:flex;align-items:center;gap:12px;padding:8px 0}
 .sync-ts{font-size:9px;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase}
 .refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
 .refresh-btn:hover{background:rgba(255,255,255,.12);color:#fff}
 .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-
-/* ── Month Navigator ── */
-.month-nav{display:flex;align-items:center;gap:0}
-.month-nav-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
-.month-nav-btn:first-child{border-radius:6px 0 0 6px}
-.month-nav-btn:last-child{border-radius:0 6px 6px 0}
-.month-nav-btn:hover:not(:disabled){background:rgba(255,255,255,.14);color:#fff}
-.month-nav-btn:disabled{opacity:.3;cursor:not-allowed}
-.month-nav-label{font-size:10px;font-weight:800;color:#fff;letter-spacing:.08em;text-transform:uppercase;padding:0 10px;background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);height:26px;display:flex;align-items:center;white-space:nowrap}
-.month-today-btn{padding:4px 10px;border-radius:6px;border:1px solid rgba(255,218,48,.4);background:rgba(255,218,48,.1);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
-.month-today-btn:hover{background:rgba(255,218,48,.2)}
 
 /* ── Loader ── */
 .lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
@@ -266,14 +255,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <div class="nav-tabs">
       <div class="nav-tab-active">BU Scorecard</div>
     </div>
-    <div class="nav-strip-right">
-      <div class="month-nav">
-        <button class="month-nav-btn" id="month-prev" onclick="navigateMonth(-1)">&#8249;</button>
-        <div class="month-nav-label" id="month-label">—</div>
-        <button class="month-nav-btn" id="month-next" onclick="navigateMonth(1)" disabled>&#8250;</button>
-      </div>
-      <button class="month-today-btn" id="month-today-btn" onclick="navigateMonth(0,true)" style="display:none">Today</button>
-    </div>
   </div>
 </div>
 
@@ -400,7 +381,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="digital-el-count-badge">vs Prev Month</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -410,7 +391,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge" id="digital-el-amt-badge">vs Prev Month</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -465,7 +446,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="interbu-el-count-badge">vs Prev Month</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -475,7 +456,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge" id="interbu-el-amt-badge">vs Prev Month</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -530,7 +511,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Count</div>
-          <div class="metric-badge el-badge" id="martech-el-count-badge">vs Prev Month</div>
+          <div class="metric-badge el-badge" id="martech-el-badge">vs Aug 2026</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -540,7 +521,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       <div class="metric-card eng-lost">
         <div class="metric-card-hdr">
           <div class="metric-card-ttl">Engagement Lost — Amount</div>
-          <div class="metric-badge el-badge" id="martech-el-amt-badge">vs Prev Month</div>
+          <div class="metric-badge el-badge">vs Aug 2026</div>
         </div>
         <table class="snap-tbl">
           <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
@@ -557,23 +538,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 <script>
 // ════════════════════════════════════════════════════════════════
-// BU SCORECARD — MAVLERS · Project Nexus · Session 31
+// BU SCORECARD — MAVLERS · Project Nexus · Session 27
 //
 // WHAT THIS DOES:
 //   - Revenue MTD: full month, live & rolling, no cutoff
-//   - Contribution to MTD: today's invoiced deals (invoice_date = todayStr)
-//   - New Addition: status_1="New" (Managed) / project_type="New" (Recurring)
-//       + start_date in current booking month
+//   - Contribution to MTD: yesterday's deals only (invoice date = yesterdayStr)
+//   - New Addition: LIs with Status : New in description
+//       Managed  = Dedicated FTE / Dedicated PTE + Status : New
+//       Recurring = Recurring Services / Recurring  + Status : New
+//       ON-prefix deals excluded. P2P excluded.
 //   - Engagement Lost: prev month LI key comparison (Talent/Project Name + Company)
-//     Full loss: present prev, absent cur → count=headcount, amt=prev amount
-//     Downgrade: FTE→PTE same talent → count=0.5, amt=prev-cur delta
+//     Full loss: present Aug, absent Sep → count=headcount, amt=Aug amount
+//     Downgrade: FTE→PTE same talent → count=0.5, amt=Aug-Sep delta
 //
-// BU ATTRIBUTION — 3-tier hierarchy, resolved inline at ingestion in fetchDeals():
-//   Tier 1: business_unit_invoice_app (Invoice App stamp — authoritative)
-//   Tier 2: OWNER_BU_MAP[oid] (owner registry fallback)
-//   Tier 3: geo_head__invoice_app_ derivation (unregistered owner fallback)
-//   getRowKey(d) maps deal → Scorecard row (AU/UK/US/NBD).
-//   LI amounts scaled to deal amount_in_home_currency (Revenue Pulse approach).
+// ATTRIBUTION MODEL (two-tier, mirrors index.html):
+//   Tier 1 — Registry: MARTECH_OWNER_IDS → BU.
+//             MARTECH/DIGITAL_OWNER_ROW → row key.
+//   Tier 2 — Leader geo fallback: MARTECH/DIGITAL_LEADERS use
+//             deal's geo__invoice_app_ to determine row key.
 // ════════════════════════════════════════════════════════════════
 
 const $ = id => document.getElementById(id);
@@ -584,7 +566,7 @@ const MSHRT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"
 const EXCLUDED_COMPANIES  = ["InboxArmy","Uplers","Solomax"];
 const EXCLUDED_ENG_MODELS = ["Wallet","Special Engagement"];
 
-// ── Scorecard row definitions ──
+// ── Head-row definitions ──
 const DIGITAL_ROWS = [
   {key:"AU",  head:"Jiggyasa",  region:"AU"},
   {key:"UK",  head:"Tanuj UK",  region:"UK"},
@@ -598,124 +580,56 @@ const MARTECH_ROWS = [
   {key:"NBD", head:"Jaydeep", region:"NBD"}
 ];
 
-// ── LI exclusion filter ──
-const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","discount","dot-net development","paypal fee"];
+// ── Owner registry ──
+const MARTECH_OWNER_IDS = new Set([
+  "107178262","17738843","34140174",   // MarTech Leaders
+  "467997340",                          // Karan — MarTech AU
+  "82911376","82030736",                // MarTech UK
+  "93107638","46153051","86147905","85767516","89530815", // MarTech US
+  "916030451",                          // Kamesh — MarTech NBD
+  "41490632"                            // Mukund — Reactivation
+]);
 
-// ════════════════════════════════════════════════════════════════
-// ATTRIBUTION ENGINE — verbatim from Revenue Pulse (index.html)
-// ════════════════════════════════════════════════════════════════
+const DIGITAL_LEADERS = new Set(["17739548","79217713","17739173"]);
+const MARTECH_LEADERS = new Set(["107178262","17738843","34140174"]);
 
-const OWNER_GROUPS = {
-  "Leaders / Heads":[
-    {id:"107178262",name:"Chintan Doshi"},
-    {id:"17739548", name:"Darshan Modi"},
-    {id:"17738843", name:"Jaydeep Salla"},
-    {id:"131779647",name:"Jiggyasa Agrawal"},
-    {id:"79217713", name:"Krunal Bakraniya"},
-    {id:"34140174", name:"Mrugesh Dabhi"},
-    {id:"86940863", name:"Nevilson Christan"},
-    {id:"17739173", name:"Tanuj Gupta"}
-  ],
-  "Digital — US":[
-    {id:"38568120", name:"Baspin Thomas"},{id:"42663191", name:"Dhaval Damania"},
-    {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470", name:"Jebin Joy"},
-    {id:"34558123", name:"Kaustubh Agrawal"},{id:"284770744",name:"Sourya Ghosh"},
-    {id:"557894666",name:"Sudarshan Damani"}
-  ],
-  "Digital — UK":[
-    {id:"46156316", name:"Flintoff Mehta"},
-    {id:"37344296", name:"Kalgi Shah"},{id:"24817892", name:"Sheldon Fernandes"},
-    {id:"31730801", name:"Vikram Sahi"}
-  ],
-  "Digital — AU":[
-    {id:"131779647",name:"Jiggyasa Agrawal"},
-    {id:"78831011", name:"Kunal Gohil"},{id:"94746500", name:"Manvi Choumal"},
-    {id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"}
-  ],
-  "Nevilson — Team":[
-    {id:"86813698", name:"Aman Acharya"},
-    {id:"255830830",name:"Devanshu Kumar"},
-    {id:"37762663", name:"Malav Modi"}
-  ],
-  "MarTech — US":[
-    {id:"46153051", name:"Ayush Rathi"},{id:"93107638", name:"Ayush Dhupar"},
-    {id:"86147905", name:"Preeti Thapliyal"},{id:"85767516",name:"Rupali Sindhu"},
-    {id:"89530815", name:"Vinita Raidu"}
-  ],
-  "MarTech — UK":[
-    {id:"82911376", name:"Divya S"},
-    {id:"82030736", name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
-  ],
-  "MarTech — AU":[
-    {id:"467997340",name:"Karan Doshi"}
-  ],
-  "Reactivation":[
-    {id:"41490632", name:"Mukund Basita"}
-  ],
-  "Unclassified":[
-    {id:"82663745", name:"Prativa Dubey"}
-  ]
-};
-
-// Owner → BU (owner-based, CSV-confirmed)
-const OWNER_BU_MAP = (()=>{
-  const m = {};
-  OWNER_GROUPS["Leaders / Heads"].forEach(o => { m[o.id] = "Digital"; });
-  Object.entries(OWNER_GROUPS).forEach(([g, owners]) => {
-    if (g === "Leaders / Heads") return;
-    const bu = g.startsWith("MarTech") || g === "Reactivation" ? "MarTech" : "Digital";
-    owners.forEach(o => { m[o.id] = bu; });
-  });
-  m["107178262"] = "MarTech"; // Chintan Doshi
-  m["34140174"]  = "MarTech"; // Mrugesh Dabhi
-  m["17738843"]  = "MarTech"; // Jaydeep Salla
-  m["17739173"]  = "Digital"; // Tanuj Gupta
-  m["86940863"]  = "Digital"; // Nevilson Christan
-  m["17739548"]  = "Digital"; // Darshan Modi
-  m["79217713"]  = "Digital"; // Krunal Bakraniya
-  m["82663745"]  = "Digital"; // Prativa Dubey
-  return m;
-})();
-
-// Owner → fixed region (CSV-confirmed; leaders and Mukund fall through to GEO_MAP[d.geo])
-const OWNER_GEO = {
-  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US",
-  "19799470":"US","557894666":"US",
+const DIGITAL_OWNER_ROW = {
+  "131779647":"AU","78831011":"AU","94746500":"AU","176516495":"AU","263464861":"AU",
   "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
-  "86813698":"AU",   // Aman Acharya
-  "255830830":"UK",  // Devanshu Kumar
-  "37762663":"US",   // Malav Modi
-  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
-  "82030736":"UK","82911376":"UK",
-  "916030451":"US",  // Kamesh Biniwale — corrected UK→US
-  "467997340":"AU"
+  "38568120":"US","42663191":"US","240935328":"US","19799470":"US","34558123":"US","284770744":"US","557894666":"US",
+  "86813698":"NBD","255830830":"NBD","37762663":"NBD"
 };
 
-// geo__invoice_app_ → normalised region
-const GEO_MAP = {"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
+const MARTECH_OWNER_ROW = {
+  "467997340":"AU",
+  "82911376":"UK","82030736":"UK",
+  "93107638":"US","46153051":"US","86147905":"US","85767516":"US","89530815":"US",
+  "916030451":"NBD",
+  "41490632":"NBD"
+};
 
-// ── BU + Region resolved inline at ingestion in fetchDeals() ──
-// No post-fetch attribution pass needed for the Scorecard.
+const GEO_ROW_MAP = {
+  "AU":"AU","AU/NZ":"AU","India":"AU",
+  "UK":"UK","Netherlands":"UK",
+  "US":"US","Other":"US"
+};
 
-// ── NBD team sets — for Scorecard row placement only ──
-// These owners have real AU/UK/US regions in attribution but belong to the NBD row.
-const NBD_DIGITAL = new Set(["86813698","255830830","37762663"]); // Aman, Devanshu, Malav
-const NBD_MARTECH = new Set(["916030451","41490632"]);            // Kamesh, Mukund
-
-// Maps an attributed deal → Scorecard row key (AU / UK / US / NBD)
-function getRowKey(d) {
-  const oid = String(d.owner_id || "");
-  if (d.bu === "Digital" && NBD_DIGITAL.has(oid)) return "NBD";
-  if (d.bu === "MarTech" && NBD_MARTECH.has(oid)) return "NBD";
-  return d.region || "US"; // all other owners: their resolved region
+// ── Row key resolver ──
+function getDealRowKey(oid, isMarTech, dealGeo) {
+  if (isMarTech) {
+    if (MARTECH_LEADERS.has(oid)) return GEO_ROW_MAP[dealGeo] || "US";
+    return MARTECH_OWNER_ROW[oid] || "NBD";
+  } else {
+    if (DIGITAL_LEADERS.has(oid)) return GEO_ROW_MAP[dealGeo] || "US";
+    return DIGITAL_OWNER_ROW[oid] || "NBD";
+  }
 }
 
-// ── LI BU classifier — copied from Revenue Pulse (index.html) ──
+// ── LI BU classifier (for Inter BU routing) ──
 function classifyLineItem(name) {
   if (!name) return null;
   const n = name.toLowerCase();
-  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc"))
+  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc") || n.includes("salesforce marketing cloud"))
     return {bu:"MarTech"};
   if (n.includes("design - asset") || n.includes("design - digital"))
     return {bu:"Digital"};
@@ -728,32 +642,28 @@ function classifyLineItem(name) {
   if (n.includes("development - web") || n.includes("development - lp/hub") ||
       n.includes("development - mobile app") || n.includes("ai & automation - web") ||
       n.includes("dot-net development") || n.includes("operational service - data entry") ||
-      n.includes("landing page coding and design") || n.includes("landing page coding") ||
-      n.includes("landing page only coding"))
+      n.includes("landing page coding"))
     return {bu:"Digital"};
   if (n.includes("search -") || n.includes("consultancy fees"))
     return {bu:"Digital"};
   return null;
 }
 
-// ── Engagement type from LI name prefix — verbatim from Revenue Pulse ──
-function engGroupFromLiName(name) {
-  if (!name) return null;
-  const n = name.toLowerCase();
-  if (n.startsWith("dedicated fte"))                              return "Recurring";
-  if (n.startsWith("dedicated pte"))                             return "Recurring";
-  if (n.startsWith("recurring"))                                 return "Recurring";
-  if (n.startsWith("p2p"))                                       return "P2P";
-  if (n.startsWith("time and material") || n.startsWith("t&m")) return "P2P";
-  if (n.includes("email coding"))                                return "P2P";
+// ── Revenue engagement type (Recurring broad / P2P) ──
+function snapEngType(liName) {
+  if (!liName) return null;
+  const n = liName.toLowerCase();
+  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) return "Recurring";
+  if (n.startsWith("recurring services") || n.startsWith("recurring"))   return "Recurring";
+  if (n.startsWith("p2p") || n.startsWith("time and material") || n.startsWith("t&m") || n.includes("email coding")) return "P2P";
   return null;
 }
 
-// ── Deal-level eng_model fallback — verbatim from Revenue Pulse ──
+// ── Deal-level eng_model fallback ──
 function engGroup(val) {
   if (!val) return null;
-  if (val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring") return "Recurring";
-  if (val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time") return "P2P";
+  if (["Dedicated FTE","Dedicated PTE","Multiple","Recurring Services","Recurring"].includes(val)) return "Recurring";
+  if (["P2P","Time and Material","T&M","Time"].includes(val)) return "P2P";
   return null;
 }
 
@@ -844,9 +754,7 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
     "zoho_display_name__invoice_app_",
     "zoho_billing_id__invoice_app_",
     "contact_name__invoice_app_",
-    "geo__invoice_app_",
-    "geo_head__invoice_app_",        // tier 3 BU fallback for unregistered owners
-    "business_unit_invoice_app"      // tier 1 BU — authoritative Invoice App stamp
+    "geo__invoice_app_"
   ];
   const filters = [
     {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
@@ -877,43 +785,16 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
       if (company === "(blank)") return;
       const amount = parseFloat(p.amount_in_home_currency || 0) || 0;
       if (!amount) return; // skip zero-amount deals only
-      // ── Boundary normalisation (mirrors Revenue Pulse doFYSync) ──
-      // month: lowercase; geo/eng_model: trim — JS comparisons are case-sensitive.
-      const bm      = (p.invoice_booking_month__invoice_app_ || "").toLowerCase();
-      const oid     = String(p.hubspot_owner_id     || "");
-      const rawBU   = (p.business_unit_invoice_app  || "").trim();
-      const geoHead = (p.geo_head__invoice_app_     || "").trim();
-
-      // ── BU — 3-tier hierarchy ──
-      // Tier 1: Invoice App property (authoritative, set by Invoice App at invoicing time)
-      // Tier 2: Owner registry fallback (OWNER_BU_MAP — for missing/blank Invoice App stamp)
-      // Tier 3: geo_head derivation (for genuinely unregistered owners)
-      let bu;
-      if      (rawBU === "MarTech BU")                                         bu = "MarTech";
-      else if (rawBU === "Digital BU")                                         bu = "Digital";
-      else if (OWNER_BU_MAP[oid])                                              bu = OWNER_BU_MAP[oid];
-      else if (geoHead === "Jaydeep Salla" ||
-               (geoHead && geoHead.toLowerCase().includes("mrugesh")))         bu = "MarTech";
-      else if (geoHead === "Jiggyasa Agrawal" ||
-               geoHead === "Tanuj Gupta"      ||
-               geoHead === "Nevilson Christan")                                bu = "Digital";
-      else                                                                      bu = "Digital"; // true last resort
-
-      // ── Region — owner registry + geo property fallback ──
-      const region = OWNER_GEO[oid] || GEO_MAP[(p.geo__invoice_app_ || "").trim()] || null;
-
       fetched.push({
-        id:           String(r.id),
-        owner_id:     oid,
-        billing_id:   billing_id || company,
-        company,
-        eng_model:    (p.engagement_model__invoice_app_ || "").trim(),
-        dealname:     (p.dealname || "").trim(),
-        month:        bm,
+        id:        String(r.id),
+        owner_id:  String(p.hubspot_owner_id || ""),
+        billing_id: billing_id || company,
+        company:   company,
+        eng_model: (p.engagement_model__invoice_app_ || "").trim(),
+        dealname:  (p.dealname || "").trim(),
+        // invoice_date: used for Contribution to MTD (today's bookings)
         invoice_date: (p.invoice_booking_date_formatted__invoice_app_ || "").split("T")[0],
-        geo:          (p.geo__invoice_app_ || "").trim(),
-        bu,      // resolved: Invoice App → owner registry → geo_head
-        region,  // resolved: owner registry → geo property
+        geo:       (p.geo__invoice_app_ || "").trim(),
         amount
       });
     });
@@ -1005,49 +886,57 @@ function extractLabel(liName, liDescription, company) {
   return company;
 }
 
-// ── Build LI key map for EL comparison ──
-// Returns Map: key → {amount, engType, bucketKey, rowKey, label, company, dealId}
-// Key = "TalentName|Company" for Managed, "ProjectName|Company" for Recurring
-// Amounts scaled to home currency (Revenue Pulse approach).
+// ── Build LI client slot map for EL comparison ──
+// Key structure:
+//   "FTE|zBid"                   → {fteCount, fteAmt, ...}  — all FTE slots aggregated per client
+//   "PTE|zBid"                   → {pteCount, pteAmt, ...}  — all PTE slots aggregated per client
+//   "Recurring|projName|zBid"    → {amount, ...}            — per named retainer project
+// zBid = zoho_billing_id — stable across months, immune to company name variations
 function buildLIKeyMap(deals, liMap) {
   const map = new Map();
   deals.forEach(deal => {
-    if (!deal.amount) return;
-    const lis = liMap[deal.id] || [];
+    const oid        = String(deal.owner_id || "");
+    const isMarTech  = MARTECH_OWNER_IDS.has(oid);
+    const rowKey     = getDealRowKey(oid, isMarTech, deal.geo);
+    const lis        = liMap[deal.id] || [];
     if (!lis.length) return;
-    const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
-    if (isOnPrefix) return; // P2P — skip
+    if (deal.dealname.toUpperCase().startsWith("ON")) return;
 
-    const rowKey  = getRowKey(deal); // uses stamped .bu / .region
-    const liTotal = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
+    const zBid        = (deal.billing_id || deal.company || "").trim();
+    const displayName = deal.company;
+    const liTotal     = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
     if (liTotal === 0) return;
-    const scale = Math.abs(deal.amount) / liTotal; // Revenue Pulse scaling
+    const scale = Math.abs(deal.amount) / liTotal;
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
-      const liNameLower = (li.name || "").toLowerCase();
-      if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
-      const n = li.name.toLowerCase();
-      const isMgd = n.startsWith("dedicated fte") || n.startsWith("dedicated pte");
-      // For EL Recurring: only Invoice App-tracked projects (project_type populated)
-      // Generic campaign LIs have no project_type → false EL signals if included
+      const n     = li.name.toLowerCase();
+      const isFTE = n.startsWith("dedicated fte");
+      const isPTE = n.startsWith("dedicated pte");
       const isRec = (n.startsWith("recurring services") || n.startsWith("recurring"))
                     && (li.project_type || "").trim() !== "";
-      if (!isMgd && !isRec) return;
-
-      const label   = extractLabel(li.name, li.description, deal.company);
-      const key     = label + "|" + deal.company;
-      const engType = n.startsWith("dedicated fte") ? "FTE" : (n.startsWith("dedicated pte") ? "PTE" : "Recurring");
-      const amt     = Math.abs(li.amount) * scale; // Revenue Pulse scaling
+      if (!isFTE && !isPTE && !isRec) return;
 
       let bucketKey;
-      if (deal.bu === "MarTech") { bucketKey = "martech"; }
-      else                       { bucketKey = li.bu === "MarTech" ? "interbu" : "digital"; }
+      if (isMarTech) { bucketKey = "martech"; }
+      else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
 
-      if (!map.has(key)) {
-        map.set(key, {amount:amt, engType, bucketKey, rowKey, label, company:deal.company, dealId:deal.id});
+      const amt = Math.abs(li.amount * scale);
+
+      if (isFTE) {
+        const key = `FTE|${zBid}`;
+        if (!map.has(key)) map.set(key, {fteCount:0, fteAmt:0, slotType:"FTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
+        map.get(key).fteCount += 1;
+        map.get(key).fteAmt   += amt;
+      } else if (isPTE) {
+        const key = `PTE|${zBid}`;
+        if (!map.has(key)) map.set(key, {pteCount:0, pteAmt:0, slotType:"PTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
+        map.get(key).pteCount += 1;
+        map.get(key).pteAmt   += amt;
       } else {
-        // Accumulate if same talent appears on multiple deals (e.g. Tanium 2 deals)
+        const projName = extractLabel(li.name, li.description, displayName);
+        const key = `Recurring|${projName}|${zBid}`;
+        if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
         map.get(key).amount += amt;
       }
     });
@@ -1056,127 +945,198 @@ function buildLIKeyMap(deals, liMap) {
 }
 
 // ── Compute Engagement Lost ──
-// Compares Aug LI key map vs Sep LI key map
-// Full loss: key in Aug, absent in Sep
-// Downgrade: key in both, FTE→PTE — count delta 0.5, amount delta Aug-Sep
+// Net slot model — compare FTE/PTE slot counts per client between months:
+//
+//   fteLost = max(0, prevFTE - curFTE)
+//   pteGained = max(0, curPTE - prevPTE)
+//   fteConvertedToPTE = min(fteLost, pteGained)  ← FTE slots absorbed by new PTE slots
+//   pureFTELost = fteLost - fteConvertedToPTE     ← fully gone FTE slots
+//   rawPTELost  = max(0, prevPTE - curPTE)
+//   pteLost     = max(0, rawPTELost - fteConvertedToPTE)  ← net PTE loss after absorbing conversions
+//
+//   Pure FTE lost:      count=1 per slot,   amount=avg Aug FTE amt per slot
+//   FTE→PTE converted:  count=0.5 per slot, amount=avg Aug FTE amt - avg Sep PTE amt (delta)
+//   Net PTE lost:       count=0.5 per slot, amount=avg Aug PTE amt per slot
+//   Recurring gone:     count=1,            amount=full Aug amount
 function computeEL(prevMap, curMap, bkt) {
-  prevMap.forEach((prev, key) => {
-    const cur = curMap.get(key);
-    const {bucketKey, rowKey, engType, label, company, dealId} = prev;
-    const row  = bkt[bucketKey];
+  // Collect all zBids from prevMap
+  const zBids = new Set();
+  prevMap.forEach(v => { if (v.zBid) zBids.add(v.zBid); });
+
+  zBids.forEach(zBid => {
+    const prevFTEe = prevMap.get(`FTE|${zBid}`);
+    const prevPTEe = prevMap.get(`PTE|${zBid}`);
+    const curFTEe  = curMap.get(`FTE|${zBid}`);
+    const curPTEe  = curMap.get(`PTE|${zBid}`);
+
+    const entry = prevFTEe || prevPTEe;
+    if (!entry) return;
+    const {bucketKey, rowKey, displayName, dealId} = entry;
+    const row = bkt[bucketKey];
     if (!row) return;
 
-    let lostCount = 0, lostAmt = 0;
+    const prevFTE = prevFTEe ? prevFTEe.fteCount : 0;
+    const prevPTE = prevPTEe ? prevPTEe.pteCount : 0;
+    const curFTE  = curFTEe  ? curFTEe.fteCount  : 0;
+    const curPTE  = curPTEe  ? curPTEe.pteCount  : 0;
 
-    if (!cur) {
-      // Full loss — talent/project absent in current month
-      lostCount = (engType === "PTE") ? 0.5 : (engType === "FTE" ? 1 : 1);
-      lostAmt   = prev.amount;
-    } else if (prev.engType === "FTE" && cur.engType === "PTE") {
-      // Downgrade FTE→PTE: 0.5 headcount delta, revenue delta
-      lostCount = 0.5;
-      lostAmt   = prev.amount - cur.amount;
-      if (lostAmt <= 0) return; // No net loss
-    } else {
-      return; // Same or upgrade — not a loss
+    const avgPrevFTE = prevFTE > 0 ? prevFTEe.fteAmt / prevFTE : 0;
+    const avgPrevPTE = prevPTE > 0 ? prevPTEe.pteAmt / prevPTE : 0;
+    const avgCurPTE  = curPTE  > 0 ? curPTEe.pteAmt  / curPTE  : 0;
+
+    const fteLost           = Math.max(0, prevFTE - curFTE);
+    const pteGained         = Math.max(0, curPTE  - prevPTE);
+    const fteConvertedToPTE = Math.min(fteLost, pteGained);
+    const pureFTELost       = fteLost - fteConvertedToPTE;
+    const rawPTELost        = Math.max(0, prevPTE - curPTE);
+    const pteLost           = Math.max(0, rawPTELost - fteConvertedToPTE);
+
+    // Pure FTE fully gone: count=1 each, full avg Aug FTE amount
+    if (pureFTELost > 0) {
+      const c = pureFTELost * 1;
+      const a = pureFTELost * avgPrevFTE;
+      row.elCount[rowKey].managed += c;
+      row.elAmt[rowKey].managed   += a;
+      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
+        label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE"
+      });
     }
 
-    const naElType = (prev.engType === "Recurring") ? "rec" : "managed";
-    row.elCount[rowKey][naElType] += lostCount;
-    row.elAmt[rowKey][naElType]   += lostAmt;
+    // FTE→PTE conversion: count=0.5 each, amount=delta (avg Aug FTE - avg Sep PTE)
+    if (fteConvertedToPTE > 0) {
+      const delta = avgPrevFTE - avgCurPTE;
+      if (delta > 0) {
+        const c = fteConvertedToPTE * 0.5;
+        const a = fteConvertedToPTE * delta;
+        row.elCount[rowKey].managed += c;
+        row.elAmt[rowKey].managed   += a;
+        DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
+          label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE→PTE"
+        });
+      }
+    }
 
-    DRILL_STORE.EL[bucketKey][rowKey][naElType === "managed" ? "Managed" : "Recurring"].push({
-      label, company, amount: lostAmt, count: lostCount, dealId, engType: prev.engType
+    // Net PTE fully lost: count=0.5 each, full avg Aug PTE amount
+    if (pteLost > 0) {
+      const c = pteLost * 0.5;
+      const a = pteLost * avgPrevPTE;
+      row.elCount[rowKey].managed += c;
+      row.elAmt[rowKey].managed   += a;
+      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
+        label:displayName, company:displayName, amount:a, count:c, dealId, engType:"PTE"
+      });
+    }
+  });
+
+  // Recurring — project level
+  prevMap.forEach((prev, key) => {
+    if (prev.slotType !== "Recurring") return;
+    if (curMap.has(key)) return;
+    const {bucketKey, rowKey, displayName, dealId, amount} = prev;
+    const row = bkt[bucketKey];
+    if (!row) return;
+    row.elCount[rowKey].rec += 1;
+    row.elAmt[rowKey].rec   += amount;
+    DRILL_STORE.EL[bucketKey][rowKey]["Recurring"].push({
+      label:displayName, company:displayName, amount, count:1, dealId, engType:"Recurring"
     });
   });
 }
 
+
 function computeSnapshot(deals, liMap, todayStr) {
-  const bkt = {digital: emptyBU(), interbu: emptyBU(), martech: emptyBU()};
+  const bkt = {
+    digital: emptyBU(),
+    interbu: emptyBU(),
+    martech: emptyBU()
+  };
   initDrillStore();
 
   deals.forEach(deal => {
-    if (!deal.amount || deal.amount === 0) return;
+    const oid       = String(deal.owner_id || "");
+    const isMarTech = MARTECH_OWNER_IDS.has(oid);
+    const rowKey    = getDealRowKey(oid, isMarTech, deal.geo);
+    const lis       = liMap[deal.id] || [];
+    const dealAmt   = deal.amount;
+    if (!dealAmt || dealAmt === 0) return; // keep negatives — they net against revenue
 
-    const rowKey     = getRowKey(deal);
     const isOnPrefix = deal.dealname.toUpperCase().startsWith("ON");
     const isToday    = deal.invoice_date === todayStr;
-    const lis        = liMap[deal.id] || [];
-    const dealAmt    = deal.amount;
-
-    // ── Negative deals (Credit Note Deduct) ──
-    if (dealAmt < 0) {
-      const bk = deal.bu === "MarTech" ? "martech" : "digital";
-      const bRow = bkt[bk].booking[rowKey];
-      const aRow = bkt[bk].asof[rowKey];
-      if (bRow) { bRow.rec += dealAmt; if (isToday) aRow.rec += dealAmt; }
-      return;
-    }
 
     // ── No LIs: deal-level fallback for Revenue only ──
     if (!lis.length) {
       let et;
       if (isOnPrefix) { et = "P2P"; }
       else { et = engGroup(deal.eng_model); if (!et) return; }
-      const bk = deal.bu === "MarTech" ? "martech" : "digital";
-      const bRow = bkt[bk].booking[rowKey];
-      const aRow = bkt[bk].asof[rowKey];
+      const bucketKey = isMarTech ? "martech" : "digital";
+      const bRow = bkt[bucketKey].booking[rowKey];
+      const aRow = bkt[bucketKey].asof[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += dealAmt; if (isToday) aRow.p2p += dealAmt; }
       else              { bRow.rec += dealAmt;  if (isToday) aRow.rec += dealAmt; }
-      // No LIs = no NA signal
+      // No LIs = no Status:New signal available → skip NA
       return;
     }
 
-    // ── Has LIs: Revenue Pulse scaling (li.amount * dealAmt / liTotal) ──
+    // ── Has LIs ──
     const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
-    if (!liTotal) return;
+    if (liTotal === 0) return;
     const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
-      const liNameLower = (li.name || "").toLowerCase();
-      if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
 
+      // ── Revenue MTD + Contribution ──
       let et;
       if (isOnPrefix) { et = "P2P"; }
-      else { et = engGroupFromLiName(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
+      else if (deal.eng_model === "Multiple") { et = snapEngType(li.name); if (!et) return; }
+      else { et = snapEngType(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
 
-      const amt = li.amount * scale; // Revenue Pulse approach: scale to home currency
+      const amt = li.amount * scale;
 
-      // BU routing: deal-level for MarTech; LI-level for Digital vs InterBU split
-      let bk;
-      if (deal.bu === "MarTech") { bk = "martech"; }
-      else                       { bk = li.bu === "MarTech" ? "interbu" : "digital"; }
+      // BU routing
+      let bucketKey;
+      if (isMarTech) { bucketKey = "martech"; }
+      else           { bucketKey = (li.bu === "MarTech") ? "interbu" : "digital"; }
 
-      const bRow = bkt[bk].booking[rowKey];
-      const aRow = bkt[bk].asof[rowKey];
+      const bRow = bkt[bucketKey].booking[rowKey];
+      const aRow = bkt[bucketKey].asof[rowKey];
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
       else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
 
-      // ── New Addition ──
+      // ── New Addition: Status : New in description ──
+      // ON-prefix deals are P2P → excluded
       if (isOnPrefix) return;
+
       const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
-      const naRow    = bkt[bk].naCount[rowKey];
-      const naAmtRow = bkt[bk].naAmt[rowKey];
+
+      const naRow   = bkt[bucketKey].naCount[rowKey];
+      const naAmt   = bkt[bucketKey].naAmt[rowKey];
       if (!naRow) return;
 
+      // Talent name for Managed, first Talent Name occurrence in description
+      // Project name for Recurring, first Project Name occurrence
       let label = deal.company;
       if (naType === "Managed") {
         const m = li.description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|$)/i);
         if (m) label = m[1].trim();
-        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
-        naRow.managed    += headcount;
-        naAmtRow.managed += amt;
       } else {
         const m = li.description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
         if (m) label = m[1].trim();
-        naRow.rec    += 1;
-        naAmtRow.rec += amt;
       }
-      DRILL_STORE.NA[bk][rowKey][naType].push({
+
+      if (naType === "Managed") {
+        // PTE = 0.5 headcount, FTE = 1 headcount (business rule)
+        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
+        naRow.managed += headcount;
+        naAmt.managed += amt;
+      } else {
+        naRow.rec += 1;
+        naAmt.rec += amt;
+      }
+      DRILL_STORE.NA[bucketKey][rowKey][naType].push({
         label, company: deal.company, amount: amt, dealId: deal.id
       });
     });
@@ -1325,18 +1285,11 @@ function renderBU(prefix, buData, rowDefs, todayStr) {
   return {bookTotal, naAmt, elAmt};
 }
 
-function populateSnapshot(bkt, todayStr, prevMonthLabel) {
+function populateSnapshot(bkt, todayStr) {
   const todayDate = new Date(todayStr + "T00:00:00");
   const monLabel  = MSHRT[todayDate.getMonth()] + " " + todayDate.getFullYear();
 
   ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
-
-  // ── Stamp all six EL badges with the actual comparison month ──
-  const elBadge = "vs " + (prevMonthLabel || "Prev Month");
-  ["digital","interbu","martech"].forEach(p => {
-    setText(p + "-el-count-badge", elBadge);
-    setText(p + "-el-amt-badge",   elBadge);
-  });
 
   const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, todayStr);
   const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, todayStr);
@@ -1429,7 +1382,7 @@ function openDrill(type, buKey, rowKey, etFilter) {
   const kpiClr = isNA ? "#006E5E" : "#C13030";
   $("drill-eyebrow").textContent = buLabel + " · " + rkLabel;
   $("drill-title").textContent   = (isNA ? "New Addition" : "Engagement Lost") + " — " + etLabel;
-  $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs " + (_prevMonthLabel || "Prev Month") + " equal window";
+  $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs Aug 2026 equal window";
 
   const totalAmt = entries.reduce((s,e) => s + e.amount, 0);
   $("drill-kpi-count").textContent = entries.length || "—";
@@ -1475,32 +1428,6 @@ function closeDrill() {
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrill(); });
 
 // ══════════════════════════════════════════════
-// MONTH NAVIGATOR
-// ══════════════════════════════════════════════
-let selectedMonthOffset = 0; // 0 = current month, -1 = prev, etc.
-let _prevMonthLabel = "";
-
-function updateMonthNavUI() {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
-  const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
-  const label = MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear();
-  setText("month-label", label);
-  const nextBtn = $("month-next");
-  if (nextBtn) nextBtn.disabled = isCurrentMonth;
-  const todayBtn = $("month-today-btn");
-  if (todayBtn) todayBtn.style.display = isCurrentMonth ? "none" : "";
-}
-
-function navigateMonth(delta, resetToToday) {
-  if (resetToToday) { selectedMonthOffset = 0; }
-  else { selectedMonthOffset = Math.min(0, selectedMonthOffset + delta); }
-  updateMonthNavUI();
-  doSync(true);
-}
-
-// ══════════════════════════════════════════════
 // SYNC
 // ══════════════════════════════════════════════
 let isSyncing = false;
@@ -1515,47 +1442,25 @@ async function doSync(force = false) {
   $("err-bar").classList.remove("show");
 
   try {
-    const pad = n => String(n).padStart(2,"0");
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    // ── View month (respects selectedMonthOffset) ──
-    const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
-    const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
-    const curMonth = getMonthStr(viewDate);
-
-    // todayStr drives both "Contribution to MTD" date gate and NA start_date gate:
-    //   Current month → today's actual date  |  Past month → last day of that month (full view)
-    let todayStr;
-    if (isCurrentMonth) {
-      todayStr = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-    } else {
-      const lastDay = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0);
-      todayStr = `${lastDay.getFullYear()}-${pad(lastDay.getMonth()+1)}-${pad(lastDay.getDate())}`;
-    }
+    const pad      = n => String(n).padStart(2,"0");
+    const now      = new Date();
+    const today    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStr    = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+    const curMonth    = getMonthStr(today);
 
     $("stxt").textContent = "FETCHING DEALS…";
-    const deals = await fetchDeals(curMonth); // .bu and .region resolved inline at ingestion
+    const deals = await fetchDeals(curMonth);
 
     $("stxt").textContent = "FETCHING LINE ITEMS…";
     const liMap = await fetchLineItems(deals);
 
-    // ── Prev month for EL comparison ──
-    const prevMonthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
-    const prevMonth = getMonthStr(prevMonthDate);
-    // Equal window cutoff:
-    //   Current month → same day-of-month as today in prev month
-    //   Past month    → last day of prev month (full month comparison)
-    let prevCutoffDay;
-    if (isCurrentMonth) {
-      prevCutoffDay = `${prevMonthDate.getFullYear()}-${pad(prevMonthDate.getMonth()+1)}-${pad(today.getDate())}`;
-    } else {
-      const lastDayPrev = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0);
-      prevCutoffDay = `${lastDayPrev.getFullYear()}-${pad(lastDayPrev.getMonth()+1)}-${pad(lastDayPrev.getDate())}`;
-    }
-
+    // ── Prev month fetch for Engagement Lost — equal window ──
+    // Equal window: if today = Sep 25, only fetch Aug deals up to Aug 25
+    const prevMonthDate  = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const prevMonth      = getMonthStr(prevMonthDate);
+    const prevCutoffDay  = `${prevMonthDate.getFullYear()}-${pad(prevMonthDate.getMonth()+1)}-${pad(today.getDate())}`;
     $("stxt").textContent = "FETCHING PREV MONTH…";
-    const prevDeals = await fetchDeals(prevMonth, prevCutoffDay); // .bu and .region resolved inline
+    const prevDeals = await fetchDeals(prevMonth, prevCutoffDay);
     const prevLiMap = await fetchLineItems(prevDeals);
 
     const bkt = computeSnapshot(deals, liMap, todayStr);
@@ -1565,15 +1470,11 @@ async function doSync(force = false) {
     const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap);
     computeEL(prevLIKeyMap, curLIKeyMap, bkt);
 
-    _prevMonthLabel = MSHRT[prevMonthDate.getMonth()] + " " + prevMonthDate.getFullYear();
-    populateSnapshot(bkt, todayStr, _prevMonthLabel);
+    populateSnapshot(bkt, todayStr);
 
-    const navEl = $("nav-strip"); if (navEl) navEl.style.display = "";
     $("main-content").style.display = "block";
     $("sdot").style.background = "#FFDA30";
-    $("stxt").textContent = isCurrentMonth
-      ? "LIVE · " + deals.length + " DEALS"
-      : MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear() + " · " + deals.length + " DEALS";
+    $("stxt").textContent = "LIVE · " + deals.length + " DEALS";
     const syncedAt = new Date();
     const ts = syncedAt.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const el = $("sync-ts"); if (el) el.textContent = "Synced at " + ts;
@@ -1602,7 +1503,7 @@ async function doLogin() {
     const res  = await fetch("/snapshot-auth", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({password:pw})});
     const data = await res.json();
     if (data.success) {
-      localStorage.setItem("nexus_auth", "1");
+      localStorage.setItem("nexus_snapshot_auth", "1");
       $("login-overlay").style.display = "none";
       doSync(true);
     } else if (res.status === 500 || data.error) {
@@ -1616,7 +1517,7 @@ async function doLogin() {
 }
 
 function checkAuth() {
-  if (localStorage.getItem("nexus_auth") === "1") {
+  if (localStorage.getItem("nexus_snapshot_auth") === "1") {
     $("login-overlay").style.display = "none";
     return true;
   }
@@ -1624,7 +1525,6 @@ function checkAuth() {
 }
 
 window.addEventListener("DOMContentLoaded", function() {
-  updateMonthNavUI();
   if (checkAuth()) doSync(true);
 });
 </script>
