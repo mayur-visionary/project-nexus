@@ -1057,7 +1057,7 @@ function buildLIKeyMap(deals, liMap) {
         map.get(key).pteCount += 1;
         map.get(key).pteAmt   += amt;
       } else {
-        const projName = extractLabel(li.name, li.description, deal.company);
+        const projName = extractLabel(li.name, li.description, deal.zoho_display || deal.company);
         const key = `Recurring|${projName}|${zBid}`;
         if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
         map.get(key).amount += amt;
@@ -1239,7 +1239,7 @@ function computeSnapshot(deals, liMap, todayStr) {
       const naAmtRow = bkt[bk].naAmt[rowKey];
       if (!naRow) return;
 
-      let label = deal.company;
+      let label = deal.zoho_display || deal.company;
       if (naType === "Managed") {
         const m = li.description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|$)/i);
         if (m) label = m[1].trim();
@@ -1253,7 +1253,7 @@ function computeSnapshot(deals, liMap, todayStr) {
         naAmtRow.rec += amt;
       }
       DRILL_STORE.NA[bk][rowKey][naType].push({
-        label, company: deal.company, amount: amt, dealId: deal.id
+        label, company: deal.zoho_display || deal.company, amount: amt, dealId: deal.id
       });
     });
   });
