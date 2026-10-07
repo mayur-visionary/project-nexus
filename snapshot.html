@@ -1495,6 +1495,21 @@ function openDrill(type, buKey, rowKey, etFilter) {
       });
     });
   });
+  // Merge duplicate labels (same client appearing as both FTE loss + PTE loss)
+  // Option A: combine into one row per label, summing count and amount
+  if (type === "EL") {
+    const merged = new Map();
+    entries.forEach(e => {
+      const k = e.label + "|" + e.et;
+      if (!merged.has(k)) {
+        merged.set(k, {...e});
+      } else {
+        merged.get(k).amount += e.amount;
+        merged.get(k).count  += e.count || 0;
+      }
+    });
+    entries = Array.from(merged.values());
+  }
   entries.sort((a,b) => b.amount - a.amount);
 
   const buLabel = buKey === "ALL_BU" ? "All BUs" : BU_LABELS[buKey] || buKey;
@@ -1507,8 +1522,11 @@ function openDrill(type, buKey, rowKey, etFilter) {
   $("drill-title").textContent   = (isNA ? "New Addition" : "Engagement Lost") + " — " + etLabel;
   $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs " + (_prevMonthLabel || "Prev Month") + " equal window";
 
-  const totalAmt = entries.reduce((s,e) => s + e.amount, 0);
-  $("drill-kpi-count").textContent = entries.length || "—";
+  const totalAmt   = entries.reduce((s,e) => s + e.amount, 0);
+  const totalCount = type === "EL"
+    ? entries.reduce((s,e) => s + (e.count || 0), 0)
+    : entries.length;
+  $("drill-kpi-count").textContent = totalCount || "—";
   $("drill-kpi-count").style.color = kpiClr;
   $("drill-kpi-amt").textContent   = entries.length ? fmtUSD(totalAmt) : "—";
   $("drill-kpi-amt").style.color   = kpiClr;
