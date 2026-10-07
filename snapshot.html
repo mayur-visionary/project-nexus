@@ -902,11 +902,13 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
       // ── Region — owner registry + geo property fallback ──
       const region = OWNER_GEO[oid] || GEO_MAP[(p.geo__invoice_app_ || "").trim()] || null;
 
+      const zohoDisplay = (p.zoho_display_name__invoice_app_ || "").trim();
       fetched.push({
         id:           String(r.id),
         owner_id:     oid,
         billing_id:   billing_id || company,
         company,
+        zoho_display: zohoDisplay || company, // Zoho Display Name — used as EL drill label
         eng_model:    (p.engagement_model__invoice_app_ || "").trim(),
         dealname:     (p.dealname || "").trim(),
         month:        bm,
@@ -1021,7 +1023,8 @@ function buildLIKeyMap(deals, liMap) {
     if (deal.dealname.toUpperCase().startsWith("ON")) return;
 
     const rowKey  = getRowKey(deal);
-    const zBid    = (deal.billing_id || deal.company || "").trim();
+    const zBid        = (deal.billing_id || deal.company || "").trim();
+    const displayName = deal.zoho_display || deal.company;
     const liTotal = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
     if (liTotal === 0) return;
     const scale = Math.abs(deal.amount) / liTotal;
@@ -1045,18 +1048,18 @@ function buildLIKeyMap(deals, liMap) {
 
       if (isFTE) {
         const key = `FTE|${zBid}`;
-        if (!map.has(key)) map.set(key, {fteCount:0, fteAmt:0, slotType:"FTE", bucketKey, rowKey, displayName:deal.company, dealId:deal.id, zBid});
+        if (!map.has(key)) map.set(key, {fteCount:0, fteAmt:0, slotType:"FTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
         map.get(key).fteCount += 1;
         map.get(key).fteAmt   += amt;
       } else if (isPTE) {
         const key = `PTE|${zBid}`;
-        if (!map.has(key)) map.set(key, {pteCount:0, pteAmt:0, slotType:"PTE", bucketKey, rowKey, displayName:deal.company, dealId:deal.id, zBid});
+        if (!map.has(key)) map.set(key, {pteCount:0, pteAmt:0, slotType:"PTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
         map.get(key).pteCount += 1;
         map.get(key).pteAmt   += amt;
       } else {
         const projName = extractLabel(li.name, li.description, deal.company);
         const key = `Recurring|${projName}|${zBid}`;
-        if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName:deal.company, dealId:deal.id, zBid});
+        if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
         map.get(key).amount += amt;
       }
     });
