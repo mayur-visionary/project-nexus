@@ -1496,16 +1496,18 @@ function openDrill(type, buKey, rowKey, etFilter) {
     });
   });
   // Merge duplicate labels (same client appearing as both FTE loss + PTE loss)
-  // Option A: combine into one row per label, summing count and amount
+  // Combine into one row per label, summing count and amount, tracking composition
   if (type === "EL") {
     const merged = new Map();
     entries.forEach(e => {
       const k = e.label + "|" + e.et;
       if (!merged.has(k)) {
-        merged.set(k, {...e});
+        merged.set(k, {...e, _composition: [{engType: e.engType, count: e.count || 0, amount: e.amount}]});
       } else {
-        merged.get(k).amount += e.amount;
-        merged.get(k).count  += e.count || 0;
+        const m = merged.get(k);
+        m.amount += e.amount;
+        m.count  += e.count || 0;
+        m._composition.push({engType: e.engType, count: e.count || 0, amount: e.amount});
       }
     });
     entries = Array.from(merged.values());
@@ -1543,10 +1545,23 @@ function openDrill(type, buKey, rowKey, etFilter) {
       if (!grp.length) return;
       if (etFilter === "Both") html += `<div class="drill-section">${etName} (${grp.length})</div>`;
       grp.forEach(e => {
+        // For EL entries — build composition sub-line e.g. "1 FTE lost · 0.5 PTE lost"
+        let subLine = e.company || "—";
+        if (type === "EL" && e._composition && e._composition.length > 0) {
+          const parts = [];
+          const comp = e._composition;
+          const ftePure  = comp.filter(c => c.engType === "FTE");
+          const fteConv  = comp.filter(c => c.engType === "FTE→PTE");
+          const pte      = comp.filter(c => c.engType === "PTE");
+          if (ftePure.length)  parts.push(ftePure.reduce((s,c)=>s+c.count,0) + " FTE lost");
+          if (fteConv.length)  parts.push(fteConv.reduce((s,c)=>s+c.count,0) + " FTE→PTE");
+          if (pte.length)      parts.push(pte.reduce((s,c)=>s+c.count,0) + " PTE lost");
+          if (parts.length) subLine = parts.join(" · ");
+        }
         html += `<div class="drill-row">
           <div class="drill-row-left">
             <div class="drill-row-name" title="${e.label}">${e.label}</div>
-            <div class="drill-row-sub">${e.company || "—"}</div>
+            <div class="drill-row-sub">${subLine}</div>
           </div>
           <div class="drill-row-amt" style="color:${kpiClr}">${fmtUSD(e.amount)}</div>
         </div>`;
