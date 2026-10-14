@@ -1702,13 +1702,13 @@ async function doFYSync(force=false){
 
     const fetched=[];let after=null;
     do{
-      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
+      const body={filterGroups:fGroups,properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","invoice_date_formatted__invoice_app_","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),invoice_date:(r.properties?.invoice_date_formatted__invoice_app_||"").split("T")[0],closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
           billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           month:(()=>{
@@ -3312,8 +3312,8 @@ let wkBuChart=null,wkRegChart=null,wkHeadChart=null; // 3 grouped bar charts
 let wsk='amount',wsd='desc',wpg=1;
 const WPER=10;
 
-// ── Effective date: closedate with createdate fallback (Krishna-confirmed) ──
-function effectiveDate(d){return d.closedate||d.createdate||'';}
+// ── Effective date: invoice_date (primary) → closedate → createdate (Krishna-confirmed fallbacks) ──
+function effectiveDate(d){return d.invoice_date||d.closedate||d.createdate||'';}
 
 // ── Week classifier — uses effectiveDate ──
 function weekOfMonth(dateStr){
@@ -3545,7 +3545,7 @@ function renderWeeklyTable(v){
     const geo=d.region||'',gc=geo==='AU'?'geo-AU':'geo-'+geo;
     const rh=(d.head||'').replace(' Gupta (UK)','').replace(' Gupta (US)','').replace(' Agrawal','').replace(' Salla','').replace(' Christan','');
     const ed=effectiveDate(d);
-    const dateNote=(!d.closedate&&d.createdate)?` <span title="No closedate — using createdate" style="font-size:8px;color:#C0C0C0">cd</span>`:'';
+    const dateNote=(!d.invoice_date&&!d.closedate&&d.createdate)?` <span title="No invoice date or closedate — using createdate" style="font-size:8px;color:#C0C0C0">cd</span>`:'';
     return`<tr${neg?' class="cred"':''}>
       <td style="background:${bg}"><span class="mono">${d.dealname}</span></td>
       <td style="background:${bg};font-size:10.5px;font-weight:600;color:#434343">${d.client}</td>
@@ -3589,7 +3589,7 @@ function renderWeekly(){
   const monthTotal=monthDeals.reduce((s,d)=>s+d.amount,0);
 
   // Diagnostic status — count createdate fallbacks
-  const usingCD=base.filter(d=>!d.closedate&&d.createdate&&d.month===selectedMonth).length;
+  const usingCD=base.filter(d=>!d.invoice_date&&!d.closedate&&d.createdate&&d.month===selectedMonth).length;
   const statusEl=$('weekly-status');
   if(statusEl){
     const note=usingCD>0?` · ${usingCD} using createdate`:'';
