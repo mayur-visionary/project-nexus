@@ -269,7 +269,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
       <div class="vdiv"></div>
       <span class="fl">Head</span>
-      <div class="ms-wrap">
+      <div class="ms-wrap" id="head-ms-wrap">
         <div class="ms-btn" onclick="toggleDropdown('head',event)">
           <span id="head-ms-label">All Heads</span><span class="ms-arrow">&#9660;</span>
         </div>
@@ -429,7 +429,8 @@ const fmtUSD=n=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",m
 const fmtShort=n=>{const a=Math.abs(n),s=n<0?"-":"";return a>=1e6?s+"$"+(a/1e6).toFixed(1)+"M":a>=1e3?s+"$"+(a/1e3).toFixed(1)+"k":s+"$"+Math.round(a);};
 const firstName=n=>n?n.split(" ")[0]:n;
 const ownerName=id=>OWN[String(id)]||("Mbr-"+String(id).slice(-4));
-function effectiveDate(d){return d.closedate||d.createdate||"";}
+// ── Effective date: invoice_date (primary) → closedate → createdate (Krishna-confirmed fallbacks) ──
+function effectiveDate(d){return d.invoice_date||d.closedate||d.createdate||"";}
 function weekOfMonth(ds){if(!ds)return null;try{const day=new Date(ds+"T00:00:00").getDate();return day<=7?1:day<=14?2:day<=21?3:4;}catch(e){return null;}}
 
 // ════ CLONE ARCHITECTURE ════
@@ -530,7 +531,8 @@ async function doSync(force=false){
   try{
     const now=new Date();const fyM=[];let c=new Date(FY_FLOOR);
     while(c<=now){fyM.push(`${MFULL[c.getMonth()]}-${c.getFullYear()}`);c.setMonth(c.getMonth()+1);}
-    const props=["dealname","amount_in_home_currency","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","geo__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"];
+    // ── CHANGE 1: invoice_date_formatted__invoice_app_ added as primary date property ──
+    const props=["dealname","amount_in_home_currency","hubspot_owner_id","closedate","createdate","invoice_date_formatted__invoice_app_","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","geo__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"];
     const fetched=[];let after=null;
     do{
       const body={filterGroups:[{filters:[{propertyName:"pipeline",operator:"EQ",value:PIPELINE},{propertyName:"dealstage",operator:"EQ",value:STAGE},{propertyName:"invoice_booking_month__invoice_app_",operator:"IN",values:fyM},{propertyName:"engagement_model__invoice_app_",operator:"NOT_IN",values:["Wallet","Special Engagement"]},{propertyName:"company_name__invoice_app_",operator:"NOT_IN",values:["InboxArmy","Uplers","Solomax"]}]}],properties:props,limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
@@ -542,7 +544,8 @@ async function doSync(force=false){
         const cd=(r.properties?.closedate||"").split("T")[0];
         let mon=(r.properties?.invoice_booking_month__invoice_app_||"").toLowerCase();
         if(!mon&&cd){try{const dt=new Date(cd+"T00:00:00");mon=`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}catch(e){}}
-        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,owner_id:String(r.properties?.hubspot_owner_id||""),closedate:cd,createdate:(r.properties?.createdate||"").split("T")[0],month:mon,billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",geo:(r.properties?.geo__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
+        // ── CHANGE 2: invoice_date stamped as primary; closedate and createdate remain as fallbacks ──
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,owner_id:String(r.properties?.hubspot_owner_id||""),invoice_date:(r.properties?.invoice_date_formatted__invoice_app_||"").split("T")[0],closedate:cd,createdate:(r.properties?.createdate||"").split("T")[0],month:mon,billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",geo:(r.properties?.geo__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
       });
       after=data.paging?.next?.after||null;
     }while(after);
