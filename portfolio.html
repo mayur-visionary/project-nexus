@@ -171,7 +171,6 @@ tbody td.num{text-align:right;font-weight:700}
 .cnt-silent{color:#A07A00;font-weight:800}
 .cnt-inactive{color:#C0143C;font-weight:800}
 .cnt-lost{color:#696969;font-weight:700}
-.cnt-never{color:#5B3B8C;font-weight:700}
 .cnt-total{color:#434343;font-weight:800}
 
 /* ── Expand arrow ── */
@@ -355,7 +354,6 @@ tbody td.num{text-align:right;font-weight:700}
       </div>
     </div>
   </div>
-  <!-- ── Sub nav ── -->
   <!-- ══ FILTER BAR ══ -->
   <div class="fbar">
     <div class="fbar-in">
@@ -446,7 +444,8 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="kpi k-lost" id="kpi-lost" onclick="openDrill('lost')">
       <div class="kpi-lbl">Organic Lost</div>
       <div class="kpi-val" id="k-lost">—</div>
-      <div class="kpi-sub">365+ days no revenue</div>
+      <!-- CHANGE 8a: updated sub-label to reflect merged Never Active -->
+      <div class="kpi-sub">365+ days or no history</div>
     </div>
     <div class="kpi k-interbu" id="kpi-interbu" onclick="openDrill('interbu')">
       <div class="kpi-lbl">Inter BU</div>
@@ -458,13 +457,12 @@ tbody td.num{text-align:right;font-weight:700}
   <!-- ══ KPI DRILL PANEL ══ -->
   <div id="drill-panel" style="display:none"></div>
 
-  <!-- Legend -->
+  <!-- Legend — CHANGE 7: Never Active item removed; Organic Lost label updated -->
   <div class="legend">
     <div class="leg-item"><div class="leg-dot" style="background:#006E5E"></div>Active (≤90 days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#FFDA30"></div>Silent (91–180 days)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#EF2D56"></div>Inactive (181–365 days)</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (366+ days)</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#5B3B8C"></div>Never Active</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#696969"></div>Organic Lost (366+ days / no history)</div>
   </div>
 
   <!-- ══ PORTFOLIO HEALTH DONUT ══ -->
@@ -509,6 +507,7 @@ tbody td.num{text-align:right;font-weight:700}
   </div>
 
   <!-- Head-level table — hidden until further notice -->
+  <!-- CHANGE 8b: Never Active column removed from table header -->
   <div style="display:none">
   <div class="tcard">
     <div class="tcard-hdr">
@@ -528,12 +527,11 @@ tbody td.num{text-align:right;font-weight:700}
             <th class="num">Silent</th>
             <th class="num">Inactive</th>
             <th class="num">Organic Lost</th>
-            <th class="num">Never Active</th>
             <th style="min-width:120px">Health</th>
           </tr>
         </thead>
         <tbody id="portfolio-tbody">
-          <tr><td colspan="9" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
+          <tr><td colspan="8" style="text-align:center;padding:40px;color:#9A9A9A;font-weight:600">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -561,7 +559,7 @@ const ANCHOR_STR=(()=>{
 const D_ACTIVE  =90;   // ≤90 days → Active
 const D_SILENT  =180;  // 91–180 days → Silent
 const D_INACTIVE=365;  // 181–365 days → Inactive
-                        // 366+ days → Organic Lost
+                        // 366+ days OR no date → Organic Lost
 
 // HubSpot pipeline constants
 const PIPELINE="115832232",STAGE="205348626",PORTAL="2700725";
@@ -729,12 +727,13 @@ function fmtDate(d){
 }
 
 // ── Classification ──
-// Uses recent_deal_close_date from Company record — no deal fetch needed.
+// CHANGE 1: Never Active (null date) now classifies as "lost" (Organic Lost).
+// This clubs companies with no deal history into the Organic Lost bucket per SalesOps request.
 function classifyCompany(company){
   const dateStr=company.recent_deal_close_date||"";
-  if(!dateStr)return"never";
+  if(!dateStr)return"lost";
   const lastDate=new Date(dateStr+"T00:00:00");
-  if(isNaN(lastDate))return"never";
+  if(isNaN(lastDate))return"lost";
   const diffDays=Math.floor((ANCHOR-lastDate)/(1000*60*60*24));
   if(diffDays<0)         return"active"; // future-dated
   if(diffDays<=D_ACTIVE)   return"active";
@@ -744,10 +743,6 @@ function classifyCompany(company){
 }
 
 // ════ LOGIN ════
-// SSO key strategy:
-//   Master login → localStorage["nexus_auth"] = "1"
-//   Clone login  → localStorage["nexus_auth_<head>"] = "1"
-// On boot, if the relevant key exists, skip overlay entirely.
 function getAuthKey(head){return head?`nexus_auth_${head}`:"nexus_auth";}
 
 async function doLogin(){
@@ -773,34 +768,22 @@ async function doLogin(){
   }finally{btn.disabled=false;btn.textContent="Access Dashboard";}
 }
 
-// Check SSO — called before showing overlay
 function checkSSO(){
   const params=new URLSearchParams(location.search);
-  const head=( params.get("head")||"").toLowerCase().trim();
+  const head=(params.get("head")||"").toLowerCase().trim();
   const tok=(params.get("tok")||"").toLowerCase().trim();
-
-  // ── Token carry-through from Revenue Pulse ──
-  // tok = clone key set by index.html (e.g. "tanuj", "jiggyasa")
-  // Valid only if tok matches the head param exactly — no cross-clone bypass
-  if(tok && head && tok===head){
+  if(tok&&head&&tok===head){
     localStorage.setItem(getAuthKey(head),"1");
-    // Clean tok from URL
     const clean=new URL(location.href);
     clean.searchParams.delete("tok");
     history.replaceState(null,"",clean.toString());
-    $("login-overlay").style.display="none";
-    return true;
+    $("login-overlay").style.display="none";return true;
   }
-
-  // ── Stored token check — strict: clone token only for clone, no master bypass ──
   if(head&&localStorage.getItem(getAuthKey(head))==="1"){
-    $("login-overlay").style.display="none";
-    return true;
+    $("login-overlay").style.display="none";return true;
   }
-  // Master (no head param): master token only
   if(!head&&localStorage.getItem("nexus_auth")==="1"){
-    $("login-overlay").style.display="none";
-    return true;
+    $("login-overlay").style.display="none";return true;
   }
   return false;
 }
@@ -813,32 +796,22 @@ function bootCloneMode(){
   if(!cfg){console.warn(`[Portfolio] Unknown ?head= param: "${param}"`);return;}
   cloneHead=cfg.name;
   const firstName=cfg.name.split(" ")[0];
-  // ── Browser tab: Firstname · Project Nexus · Mavlers ──
   document.title=`${firstName} · Project Nexus · Mavlers`;
-  // ── Header title: stays PROJECT NEXUS (master brand unchanged) ──
-  // $("hdr-title") left as-is
-  // ── Header subtitle: same as master — consistent brand across all views ──
   $("hdr-sub").textContent=`The Live Pulse of Mavlers Revenue`;
-  // ── Login screen ──
   $("login-eyebrow").textContent=`Mavlers · ${firstName}'s Dashboard`;
   $("login-title").textContent=`Project Nexus`;
   $("login-footer").textContent=`Project Nexus · The Live Pulse of Mavlers Revenue`;
   $("nexus-link").href=`/?head=${param}`;
   document.body.setAttribute("data-clone",param);
-
-  // Lock Head filter to this head only — hide Head dropdown from filter bar
   ALL_HEADS_P.forEach(h=>{
     const el=$(`phead-${h.replace(/\s/g,"_")}`);
     if(el)el.checked=(h===cfg.name);
   });
   activeHeads=new Set([cfg.name]);
   updatePHeadLabel();
-  // Hide head filter UI elements
   const hw=$("p-head-wrap");if(hw)hw.style.display="none";
   const hl=$("p-head-lbl");if(hl)hl.style.display="none";
-  // Cascade owners to match this head
   cascadeOwnersByHead();
-  // Lock BU if single-BU head (MarTech → hide Digital option)
   if(cfg.bu==="MarTech"){
     const buSel=$("p-bu-sel");
     if(buSel){buSel.value="MarTech";activeBU="MarTech";}
@@ -848,53 +821,27 @@ function bootCloneMode(){
 
 // ════ RESET ALL ════
 function resetAll(){
-  // BU select
-  const buSel=$("p-bu-sel");
-  if(buSel)buSel.value="";
-  activeBU="";
-
-  // Inter BU toggle
-  interBUOnly=false;
-  const ibuBtn=$("interbu-btn");
-  if(ibuBtn)ibuBtn.classList.remove("active");
-
-  // Region — restore all
+  const buSel=$("p-bu-sel");if(buSel)buSel.value="";activeBU="";
+  interBUOnly=false;const ibuBtn=$("interbu-btn");if(ibuBtn)ibuBtn.classList.remove("active");
   ALL_REGIONS_P.forEach(r=>{const el=$(`pgeo-${r}`);if(el)el.checked=true;});
-  activeRegions=new Set(ALL_REGIONS_P);
-  updatePGeoLabel();
-
-  // Head — restore all (unless clone mode locks it)
+  activeRegions=new Set(ALL_REGIONS_P);updatePGeoLabel();
   if(!cloneHead){
     ALL_HEADS_P.forEach(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);if(el)el.checked=true;});
-    activeHeads=new Set(ALL_HEADS_P);
-    updatePHeadLabel();
+    activeHeads=new Set(ALL_HEADS_P);updatePHeadLabel();
   }
-
-  // Owner — restore all
   ORDERED_OWNERS_P.forEach(o=>{const el=$(`pown-${o.id}`);if(el)el.checked=true;});
-  activeOwners=new Set(ORDERED_OWNERS_P.map(o=>o.id));
-  ownerFilterActive=false;
-  updatePOwnerLabel();
-
-  // Drill panel
-  closeDrill();
-
-  reRender();
+  activeOwners=new Set(ORDERED_OWNERS_P.map(o=>o.id));ownerFilterActive=false;updatePOwnerLabel();
+  closeDrill();reRender();
 }
 
-// ════ BU FILTER (updated — uses select, not buttons) ════
-function onPortfolioBUChange(){
-  activeBU=$("p-bu-sel").value;
-  reRender();
-}
+// ════ BU FILTER ════
+function onPortfolioBUChange(){activeBU=$("p-bu-sel").value;reRender();}
 
 // ════ INTER BU TOGGLE ════
 function toggleInterBU(){
   interBUOnly=!interBUOnly;
-  const btn=$("interbu-btn");
-  if(btn)btn.classList.toggle("active",interBUOnly);
-  closeDrill(); // reset drill on filter change
-  reRender();
+  const btn=$("interbu-btn");if(btn)btn.classList.toggle("active",interBUOnly);
+  closeDrill();reRender();
 }
 
 // ════ KPI DRILL PANEL ════
@@ -906,16 +853,17 @@ const DRILL_CFG={
   active: {label:"Active",        color:"#006E5E", filter:c=>c.status==="active"},
   silent: {label:"Silent",        color:"#FFDA30", filter:c=>c.status==="silent"},
   inactive:{label:"Inactive",     color:"#EF2D56", filter:c=>c.status==="inactive"},
+  // CHANGE 2: "lost" drill now includes former Never Active clients (null date → "lost")
   lost:   {label:"Organic Lost",  color:"#696969", filter:c=>c.status==="lost"},
   interbu:{label:"Inter BU",      color:"#3B3561", filter:c=>c.inter_bu}
 };
 
+// CHANGE 3: STATUS_CFG — "never" entry removed
 const STATUS_CFG={
   active:  {label:"Active",       color:"#006E5E"},
   silent:  {label:"Silent",       color:"#FFDA30"},
   inactive:{label:"Inactive",     color:"#EF2D56"},
-  lost:    {label:"Org. Lost",    color:"#696969"},
-  never:   {label:"Never Active", color:"#5B3B8C"}
+  lost:    {label:"Org. Lost",    color:"#696969"}
 };
 
 function formatDrillDate(dateStr){
@@ -927,13 +875,10 @@ function formatDrillDate(dateStr){
 }
 
 function openDrill(card){
-  // toggle off if same card clicked
   if(drillState.card===card){closeDrill();return;}
   drillState={card,page:1};
-  // update KPI card selected states
   ["total","active","silent","inactive","lost","interbu"].forEach(k=>{
-    const el=$(`kpi-${k}`);
-    if(el)el.classList.toggle("kpi-active-card",k===card);
+    const el=$(`kpi-${k}`);if(el)el.classList.toggle("kpi-active-card",k===card);
   });
   renderDrill();
   const panel=$("drill-panel");
@@ -946,14 +891,12 @@ function closeDrill(){
   const panel=$("drill-panel");
   if(panel){panel.style.display="none";panel.innerHTML="";}
   ["total","active","silent","inactive","lost","interbu"].forEach(k=>{
-    const el=$(`kpi-${k}`);
-    if(el)el.classList.remove("kpi-active-card");
+    const el=$(`kpi-${k}`);if(el)el.classList.remove("kpi-active-card");
   });
 }
 
 function renderDrill(){
-  const {card,page}=drillState;
-  if(!card)return;
+  const {card,page}=drillState;if(!card)return;
   const cfg=DRILL_CFG[card];
   const fc=filteredCompanies().map(c=>({...c,status:classifyCompany(c)}));
   const rows=fc.filter(cfg.filter);
@@ -1002,8 +945,6 @@ function renderDrill(){
       </tr>`;
     });
     html+=`</tbody></table>`;
-
-    // pagination
     if(totalPages>1){
       html+=`
       <div class="drill-pagination">
@@ -1020,14 +961,11 @@ function renderDrill(){
 }
 
 function drillPage(page){
-  drillState.page=page;
-  renderDrill();
+  drillState.page=page;renderDrill();
   $("drill-panel").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
 // ════ DATA FETCHING ════
-
-// Step 1: Kitty companies from /portfolio endpoint
 async function fetchKittyCompanies(){
   const ownerIds=cloneHead?HEAD_OWNERS[cloneHead]||[]:REGISTRY_IDS;
   const res=await fetch("/portfolio",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ownerIds})});
@@ -1046,9 +984,7 @@ async function doSync(force=false){
   $("rfbtn").disabled=true;
   $("err-bar").style.display="none";
   ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
-
   try{
-    // Parallel fetch: kitty companies + this month's deals (for recovery revenue)
     $("stxt").textContent="SYNCING...";
     kittyCompanies=await fetchKittyCompanies();
     console.log(`[Portfolio] ${kittyCompanies.length} kitty companies loaded`);
@@ -1056,9 +992,9 @@ async function doSync(force=false){
     $("sdot").style.background="#FFDA30";
     $("last-sync").textContent=`Synced ${fmtDate(new Date())} · ${new Date().toLocaleTimeString()}`;
     $("stxt").textContent=`LIVE · ${kittyCompanies.length} KITTY CLIENTS`;
-    // Note: recent_deal_close_date null count logged for data quality awareness
+    // CHANGE 9: console log updated — null dates now classified as Organic Lost
     const nullCount=kittyCompanies.filter(c=>!c.recent_deal_close_date).length;
-    if(nullCount)console.log(`[Portfolio] ${nullCount} companies with no recent_deal_close_date → classified as Never Active`);
+    if(nullCount)console.log(`[Portfolio] ${nullCount} companies with no recent_deal_close_date → classified as Organic Lost`);
   }catch(e){
     console.error(e);
     $("err-msg").textContent=e.message;
@@ -1074,11 +1010,9 @@ async function doSync(force=false){
 
 // ════ RENDER ════
 function renderAll(){
-  attributeCompanies(kittyCompanies); // stamp .bu/.region/.head on every company
-
+  attributeCompanies(kittyCompanies);
   const fc=filteredCompanies();
   const classified=fc.map(c=>({...c,status:classifyCompany(c)}));
-
   const total=classified.length;
   const n=s=>classified.filter(c=>c.status===s).length;
   const interBUCount=fc.filter(c=>c.inter_bu).length;
@@ -1091,24 +1025,19 @@ function renderAll(){
   $("k-interbu-sub").textContent=`of ${total.toLocaleString()} kitty`;
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
-
-  // Intelligence features — use filtered universe
   renderHealthDonuts(classified);
   renderAtRisk(fc);
   renderHealthScores(classified);
-  // renderRevenueAtRisk — hidden per management
-
   renderTable(classified);
 }
 
+// CHANGE 8c: renderTable — "never" removed from agg, ownerRows, totals, and HTML cells
 function renderTable(classified){
-  // classified is always passed from renderAll/reRender — both use filteredCompanies()
-  // Fallback should also use filteredCompanies(), not the old activeBU pattern
   if(!classified){
     classified=filteredCompanies().map(c=>({...c,status:classifyCompany(c)}));
   }
   const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
-  let totals={kitty:0,active:0,silent:0,inactive:0,lost:0,never:0};
+  let totals={kitty:0,active:0,silent:0,inactive:0,lost:0};
   let html="";
 
   headsToShow.forEach((hcfg,ri)=>{
@@ -1119,12 +1048,10 @@ function renderTable(classified){
       active:hc.filter(c=>c.status==="active").length,
       silent:hc.filter(c=>c.status==="silent").length,
       inactive:hc.filter(c=>c.status==="inactive").length,
-      lost:hc.filter(c=>c.status==="lost").length,
-      never:hc.filter(c=>c.status==="never").length
+      lost:hc.filter(c=>c.status==="lost").length
     };
     Object.keys(totals).forEach(k=>totals[k]+=agg[k]);
 
-    // Owner drilldown rows
     const ownerRows=[];
     (HEAD_OWNERS[hcfg.name]||[]).forEach(oid=>{
       const oc=hc.filter(c=>c.owner_id===oid);
@@ -1135,8 +1062,7 @@ function renderTable(classified){
         active:oc.filter(c=>c.status==="active").length,
         silent:oc.filter(c=>c.status==="silent").length,
         inactive:oc.filter(c=>c.status==="inactive").length,
-        lost:oc.filter(c=>c.status==="lost").length,
-        never:oc.filter(c=>c.status==="never").length
+        lost:oc.filter(c=>c.status==="lost").length
       });
     });
     ownerRows.sort((a,b)=>b.kitty-a.kitty);
@@ -1153,7 +1079,6 @@ function renderTable(classified){
       <td class="num" style="color:#434343;font-weight:700">${agg.silent}</td>
       <td class="num" style="color:#434343;font-weight:700">${agg.inactive}</td>
       <td class="num" style="color:#434343;font-weight:700">${agg.lost}</td>
-      <td class="num" style="color:#434343;font-weight:700">${agg.never}</td>
       <td>${healthBar(agg)}</td>
     </tr>`;
 
@@ -1167,7 +1092,6 @@ function renderTable(classified){
           <td class="num" style="color:#434343;font-weight:600">${o.silent||"—"}</td>
           <td class="num" style="color:#434343;font-weight:600">${o.inactive||"—"}</td>
           <td class="num" style="color:#434343;font-weight:600">${o.lost||"—"}</td>
-          <td class="num" style="color:#434343;font-weight:600">${o.never||"—"}</td>
           <td>${healthBar(o)}</td>
         </tr>`;
       });
@@ -1175,7 +1099,6 @@ function renderTable(classified){
     }
   });
 
-  // Grand total
   html+=`<tr class="total-row">
     <td style="font-size:10px;letter-spacing:.06em;text-transform:uppercase">Grand Total</td><td></td>
     <td class="num" style="color:#434343;font-weight:800">${totals.kitty}</td>
@@ -1183,13 +1106,13 @@ function renderTable(classified){
     <td class="num" style="color:#434343;font-weight:700">${totals.silent}</td>
     <td class="num" style="color:#434343;font-weight:700">${totals.inactive}</td>
     <td class="num" style="color:#434343;font-weight:700">${totals.lost}</td>
-    <td class="num" style="color:#434343;font-weight:700">${totals.never}</td>
     <td>${healthBar(totals)}</td>
   </tr>`;
 
   $("portfolio-tbody").innerHTML=html;
 }
 
+// CHANGE 6: healthBar — "never" purple segment removed
 function healthBar(agg){
   const t=agg.kitty||1;
   const pct=k=>((agg[k]||0)/t*100).toFixed(1);
@@ -1198,7 +1121,6 @@ function healthBar(agg){
     <div class="hbar-seg" style="width:${pct("silent")}%;background:#FFDA30" title="Silent ${pct("silent")}%"></div>
     <div class="hbar-seg" style="width:${pct("inactive")}%;background:#EF2D56" title="Inactive ${pct("inactive")}%"></div>
     <div class="hbar-seg" style="width:${pct("lost")}%;background:#696969" title="Lost ${pct("lost")}%"></div>
-    <div class="hbar-seg" style="width:${pct("never")}%;background:#5B3B8C" title="Never ${pct("never")}%"></div>
   </div>`;
 }
 
@@ -1211,14 +1133,8 @@ function toggleOwners(rowId){
   document.getElementById("row-"+rowId)?.classList.toggle("expanded",open);
 }
 
-
 // ════ AT-RISK RADAR ════
-// Active clients whose recent_deal_close_date is 61–90 days ago.
-// They are currently Active but will tip to Silent within 30 days if no deal closes.
-// Zero API calls — pure client-side from kittyCompanies.
-
-let radarOpen=false;
-let radarClients=[];
+let radarOpen=false;let radarClients=[];
 
 function buildAtRisk(companies){
   const now=ANCHOR;
@@ -1235,27 +1151,22 @@ function buildAtRisk(companies){
       const diff=Math.floor((now-last)/(1000*60*60*24));
       return{...c,daysSinceDeal:diff,daysLeft:90-diff};
     })
-    .sort((a,b)=>b.daysSinceDeal-a.daysSinceDeal); // most urgent first
+    .sort((a,b)=>b.daysSinceDeal-a.daysSinceDeal);
 }
 
 function renderAtRisk(companies){
   radarClients=buildAtRisk(companies);
   const count=radarClients.length;
   $("radar-count").textContent=count;
-
-  // Escalation thresholds
-  const isAlert=count>20;
-  const isCritical=count>40;
+  const isAlert=count>20;const isCritical=count>40;
   const borderColor=isCritical?"#EF2D56":isAlert?"#EF8C2D":"#FFDA30";
   const countColor=isCritical?"#C0143C":isAlert?"#A05A00":"#A07A00";
   const bgColor=isCritical?"#FFF5F7":isAlert?"#FFFBF0":"#fff";
-
   $("radar-banner").style.borderLeftColor=borderColor;
   $("radar-banner").style.borderLeftWidth=isCritical?"5px":"4px";
   $("radar-banner").style.background=bgColor;
   $("radar-count").style.color=countColor;
   $("radar-count").style.fontSize=isCritical?"40px":isAlert?"36px":"32px";
-
   if(count===0){
     $("radar-sub").textContent="No active clients approaching Silent — portfolio is healthy";
     $("radar-btn").style.display="none";
@@ -1265,9 +1176,7 @@ function renderAtRisk(companies){
   } else {
     $("radar-sub").textContent=`${count} client${count!==1?"s":""} will go Silent within 30 days unless a deal closes`;
     $("radar-btn").style.display="";
-    if(isCritical){
-      $("radar-sub").textContent=`⚠️ Critical — ${count} clients approaching Silent. Immediate owner action required.`;
-    }
+    if(isCritical)$("radar-sub").textContent=`⚠️ Critical — ${count} clients approaching Silent. Immediate owner action required.`;
   }
 }
 
@@ -1310,47 +1219,37 @@ function renderRadarDetail(){
 }
 
 // ════ PORTFOLIO HEALTH SCORE ════
-// Weighted score per head — translates mixed status counts into one actionable number.
 // Formula: (Active×4 + Silent×2 + Inactive×1 + Lost×0) ÷ (Total×4) × 100
-// Interpretation: 100% = all clients Active. 0% = all clients Organic Lost or Never Active.
 
 // ════ PORTFOLIO HEALTH DONUT ════
-// Multi-segment SVG donut per head showing Active/Silent/Inactive/Lost/Never split.
-// Each arc is rendered using stroke-dasharray + stroke-dashoffset to position
-// segments sequentially around the circle. Zero dependencies — pure SVG.
-
+// CHANGE 4 & 5: DONUT_COLORS and DONUT_LABELS — "never" entries removed
 const DONUT_COLORS={
   active:"#006E5E",
   silent:"#FFDA30",
   inactive:"#EF2D56",
-  lost:"#696969",
-  never:"#5B3B8C"
+  lost:"#696969"
 };
-const DONUT_LABELS={active:"Active",silent:"Silent",inactive:"Inactive",lost:"Org. Lost",never:"Never"};
+const DONUT_LABELS={active:"Active",silent:"Silent",inactive:"Inactive",lost:"Org. Lost"};
 
 function buildDonutArcs(segments,r){
-  // segments = [{key,count}] in display order
   const circ=2*Math.PI*r;
   const total=segments.reduce((s,g)=>s+g.count,0);
   if(!total)return[];
-  const GAP=2; // px gap between segments
-  let offset=0;
+  const GAP=2;let offset=0;
   return segments.map(seg=>{
     if(!seg.count)return null;
     const frac=seg.count/total;
     const len=Math.max(0,(frac*circ)-GAP);
     const arc={key:seg.key,color:DONUT_COLORS[seg.key],len,offset,circ,frac};
-    offset+=frac*circ;
-    return arc;
+    offset+=frac*circ;return arc;
   }).filter(Boolean);
 }
 
+// CHANGE 5: renderHealthDonuts — "never" removed from counts and STATUS_ORDER
 function renderHealthDonuts(classified){
   const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
-  // Geometry: larger ring, thinner stroke for elegance
   const R=66,CX=82,CY=82,SW=9;
   const VIEWBOX=`0 0 ${CX*2} ${CY*2}`;
-  // Head badge styling
   const HEAD_BADGE={
     "jaydeep": {bg:"#EEE8FF",color:"#3B3561"},
     "jiggyasa":{bg:"#FFFBEA",color:"#A07A00"},
@@ -1367,21 +1266,17 @@ function renderHealthDonuts(classified){
       active  :hc.filter(c=>c.status==="active").length,
       silent  :hc.filter(c=>c.status==="silent").length,
       inactive:hc.filter(c=>c.status==="inactive").length,
-      lost    :hc.filter(c=>c.status==="lost").length,
-      never   :hc.filter(c=>c.status==="never").length
+      lost    :hc.filter(c=>c.status==="lost").length
     };
 
     const score=Math.round(((counts.active*4)+(counts.silent*2)+(counts.inactive*1))/(total*4)*100);
     const badge=HEAD_BADGE[hcfg.id]||{bg:"#F2F2F2",color:"#696969"};
 
-    // Build arcs — thinner stroke, small gap
-    const CIRC=2*Math.PI*R;
-    const GAP=1.5;
-    let offset=0;
-    const STATUS_ORDER=["active","silent","inactive","lost","never"];
+    const CIRC=2*Math.PI*R;const GAP=1.5;let offset=0;
+    // CHANGE 5b: STATUS_ORDER — "never" removed
+    const STATUS_ORDER=["active","silent","inactive","lost"];
     const arcsSVG=STATUS_ORDER.map(key=>{
-      const count=counts[key];
-      if(!count)return"";
+      const count=counts[key];if(!count)return"";
       const frac=count/total;
       const len=Math.max(0,(frac*CIRC)-GAP);
       const dashOffset=(-offset).toFixed(2);
@@ -1399,10 +1294,10 @@ function renderHealthDonuts(classified){
         style="cursor:pointer;transition:opacity .2s,stroke-width .2s"/>`;
     }).join("");
 
-    // Legend rows — interactive, aligned grid
+    // CHANGE 5c: label map — "never" entry removed
     const legendRows=STATUS_ORDER.filter(k=>counts[k]>0).map(key=>{
       const pct=total>0?((counts[key]/total)*100).toFixed(1):"0";
-      const label={active:"Active",silent:"Silent",inactive:"Inactive",lost:"Org. Lost",never:"Never"}[key];
+      const label={active:"Active",silent:"Silent",inactive:"Inactive",lost:"Org. Lost"}[key];
       return`<div class="donut-legend-row" id="leg-${hcfg.id}-${key}"
         onclick="donutSegClick('${hcfg.id}','${key}',null)"
         title="Click to highlight ${label}">
@@ -1436,57 +1331,44 @@ function renderHealthDonuts(classified){
   $("donut-grid").innerHTML=cards.join("")||
     `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A;font-size:11px;font-weight:500">No data for selected filters.</div>`;
 
-  // Animate score count-up after render
   requestAnimationFrame(()=>animateScores());
 }
 
-// Animate health score from 0 → target on each render — preserves inline colour
 function animateScores(){
   document.querySelectorAll(".donut-score[data-target]").forEach(el=>{
     const target=parseInt(el.getAttribute("data-target"),10);
-    let current=0;
-    const step=Math.max(1,Math.ceil(target/30));
+    let current=0;const step=Math.max(1,Math.ceil(target/30));
     el.textContent="0%";
     const timer=setInterval(()=>{
-      current=Math.min(current+step,target);
-      el.textContent=current+"%";
+      current=Math.min(current+step,target);el.textContent=current+"%";
       if(current>=target)clearInterval(timer);
     },22);
   });
 }
 
-// Interactive segment click — highlights arc + legend row, dims others
 const _donutActiveSegs={};
 function donutSegClick(headId,key,arcEl){
-  const card=$(`dcard-${headId}`);
-  if(!card)return;
+  const card=$(`dcard-${headId}`);if(!card)return;
   const prev=_donutActiveSegs[headId];
-  // Toggle off if same segment clicked again
   if(prev===key){
     delete _donutActiveSegs[headId];
-    // Reset all arcs and legend rows for this card
     card.querySelectorAll(".donut-arc-group").forEach(c=>{c.style.opacity="1";c.style.strokeWidth="";});
     card.querySelectorAll(".donut-legend-row").forEach(r=>r.classList.remove("seg-highlight"));
     return;
   }
   _donutActiveSegs[headId]=key;
-  // Highlight selected arc, dim others
   card.querySelectorAll(".donut-arc-group").forEach(c=>{
     const isSelected=c.id===`arc-${headId}-${key}`;
     c.style.opacity=isSelected?"1":"0.22";
     c.style.strokeWidth=isSelected?String(parseFloat(c.getAttribute("stroke-width")||9)+2):"";
   });
-  // Highlight selected legend row
   card.querySelectorAll(".donut-legend-row").forEach(r=>{
     r.classList.toggle("seg-highlight",r.id===`leg-${headId}-${key}`);
   });
 }
 
 function scoreColor(pct){
-  if(pct>=75)return"#006E5E";
-  if(pct>=50)return"#FFDA30";
-  if(pct>=25)return"#EF2D56";
-  return"#696969";
+  if(pct>=75)return"#006E5E";if(pct>=50)return"#FFDA30";if(pct>=25)return"#EF2D56";return"#696969";
 }
 
 function renderHealthScores(classified){
@@ -1494,8 +1376,7 @@ function renderHealthScores(classified){
   const cards=headsToShow.map(hcfg=>{
     const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
     const hc=classified.filter(c=>ownerSet.has(c.owner_id));
-    const total=hc.length;
-    if(!total)return null;
+    const total=hc.length;if(!total)return null;
     const active=hc.filter(c=>c.status==="active").length;
     const silent=hc.filter(c=>c.status==="silent").length;
     const inactive=hc.filter(c=>c.status==="inactive").length;
@@ -1527,32 +1408,18 @@ function renderHealthScores(classified){
 }
 
 // ════ REVENUE AT RISK ════
-// For Silent + Inactive clients: what was their last deal value?
-// Uses recent_deal_close_date gap to confirm status, but revenue requires
-// fetching last deal amount per company name from the deals API.
-// Approximation: we use the THIS month deal fetch (revMap) to identify
-// known recent deal values; for at-risk clients with no current month deal,
-// we surface the count and flag them as "revenue pending recovery."
-// Full accuracy requires a per-company last-deal fetch — flagged for Krishna.
-
 function renderRevenueAtRisk(classified,revMap){
   const headsToShow=cloneHead?HEADS_CFG.filter(h=>h.name===cloneHead):HEADS_CFG;
-  // Estimate avg deal value from revMap — average of all matched clients this month
   const revVals=Object.values(revMap||{}).filter(v=>v>0);
-  const avgDeal=revVals.length?revVals.reduce((s,v)=>s+v,0)/revVals.length:3500; // fallback ~$3.5k
-
+  const avgDeal=revVals.length?revVals.reduce((s,v)=>s+v,0)/revVals.length:3500;
   $("risk-strip").innerHTML=headsToShow.map(hcfg=>{
     const ownerSet=new Set(HEAD_OWNERS[hcfg.name]||[]);
     const hc=classified.filter(c=>ownerSet.has(c.owner_id));
     const silent=hc.filter(c=>c.status==="silent");
     const inactive=hc.filter(c=>c.status==="inactive");
     const atRisk=[...silent,...inactive];
-    const silentCount=silent.length;
-    const inactiveCount=inactive.length;
-    // Estimated revenue at risk = at-risk clients × avg deal size this month
     const estRev=atRisk.length*avgDeal;
     const fmtRisk=estRev>=1000?`~$${(estRev/1000).toFixed(0)}k`:"—";
-
     return`<div class="risk-card">
       <div class="risk-head">${hcfg.name.split(" ")[0]}</div>
       <div class="risk-rev">${fmtRisk}</div>
@@ -1560,24 +1427,15 @@ function renderRevenueAtRisk(classified,revMap){
       <div style="font-size:18px;font-weight:800;color:#434343;margin-bottom:2px">${atRisk.length}</div>
       <div style="font-size:9px;color:#9A9A9A;font-weight:500;margin-bottom:8px">clients silent or inactive</div>
       <div class="risk-breakdown">
-        <span class="risk-seg risk-seg-silent">◆ ${silentCount} Silent</span>
-        <span class="risk-seg risk-seg-inactive">◆ ${inactiveCount} Inactive</span>
+        <span class="risk-seg risk-seg-silent">◆ ${silent.length} Silent</span>
+        <span class="risk-seg risk-seg-inactive">◆ ${inactive.length} Inactive</span>
       </div>
     </div>`;
   }).join("");
 }
 
-// renderReactivationRate — removed per management (feature pending data infrastructure)
-
 // ════ FILTER BAR — PORTFOLIO ════
-// BU / Region / Head / Owner — all client-side, zero API calls.
-// filteredCompanies() is the single view gate for all render functions.
-
-// ── BU ──
-function onPortfolioBUChange(){
-  activeBU=$("p-bu-sel").value;
-  reRender();
-}
+function onPortfolioBUChange(){activeBU=$("p-bu-sel").value;reRender();}
 
 // ── Region ──
 function initPGeo(){
@@ -1588,8 +1446,7 @@ function initPGeo(){
 function togglePGeo(e){e.stopPropagation();$("p-geo-dropdown").classList.toggle("open");}
 function onPGeoChange(){
   activeRegions=new Set(ALL_REGIONS_P.filter(r=>{const el=$(`pgeo-${r}`);return!el||el.checked;}));
-  updatePGeoLabel();
-  reRender();
+  updatePGeoLabel();reRender();
 }
 function updatePGeoLabel(){
   const sel=[...activeRegions];
@@ -1607,9 +1464,7 @@ function initPHeads(){
 function togglePHead(e){e.stopPropagation();$("p-head-dropdown").classList.toggle("open");}
 function onPHeadChange(){
   activeHeads=new Set(ALL_HEADS_P.filter(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);return!el||el.checked;}));
-  updatePHeadLabel();
-  cascadeOwnersByHead();
-  reRender();
+  updatePHeadLabel();cascadeOwnersByHead();reRender();
 }
 function updatePHeadLabel(){
   const sel=[...activeHeads];
@@ -1618,19 +1473,15 @@ function updatePHeadLabel(){
 function selectAllPHeads(){ALL_HEADS_P.forEach(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);if(el)el.checked=true;});activeHeads=new Set(ALL_HEADS_P);updatePHeadLabel();cascadeOwnersByHead();reRender();}
 function deselectAllPHeads(){ALL_HEADS_P.forEach(h=>{const el=$(`phead-${h.replace(/\s/g,"_")}`);if(el)el.checked=false;});activeHeads=new Set();updatePHeadLabel();reRender();}
 
-// Cascade owners when head changes (uncheck owners not under selected heads)
 function cascadeOwnersByHead(){
   if(activeHeads.size===ALL_HEADS_P.length){
-    // All heads — restore all owners
     REGISTRY_IDS.forEach(id=>{const el=$(`pown-${id}`);if(el)el.checked=true;});
-    activeOwners=new Set(REGISTRY_IDS);
-    ownerFilterActive=false;
+    activeOwners=new Set(REGISTRY_IDS);ownerFilterActive=false;
   } else {
     const validOwners=new Set();
     [...activeHeads].forEach(h=>(HEAD_OWNERS[h]||[]).forEach(id=>validOwners.add(id)));
     REGISTRY_IDS.forEach(id=>{const el=$(`pown-${id}`);if(el)el.checked=validOwners.has(id);});
-    activeOwners=validOwners;
-    ownerFilterActive=true;
+    activeOwners=validOwners;ownerFilterActive=true;
   }
   updatePOwnerLabel();
 }
@@ -1663,8 +1514,7 @@ function togglePOwner(e){e.stopPropagation();$("p-owner-dropdown").classList.tog
 function onPOwnerChange(){
   activeOwners=new Set(ORDERED_OWNERS_P.filter(o=>{const el=$(`pown-${o.id}`);return!el||el.checked;}).map(o=>o.id));
   ownerFilterActive=activeOwners.size<ORDERED_OWNERS_P.length;
-  updatePOwnerLabel();
-  reRender();
+  updatePOwnerLabel();reRender();
 }
 function updatePOwnerLabel(){
   const count=activeOwners.size;const total=ORDERED_OWNERS_P.length;
@@ -1673,21 +1523,14 @@ function updatePOwnerLabel(){
 function selectAllPOwners(){ORDERED_OWNERS_P.forEach(o=>{const el=$(`pown-${o.id}`);if(el)el.checked=true;});activeOwners=new Set(ORDERED_OWNERS_P.map(o=>o.id));ownerFilterActive=false;updatePOwnerLabel();reRender();}
 function deselectAllPOwners(){ORDERED_OWNERS_P.forEach(o=>{const el=$(`pown-${o.id}`);if(el)el.checked=false;});activeOwners=new Set();ownerFilterActive=true;updatePOwnerLabel();reRender();}
 
-// Close all dropdowns on outside click
 document.addEventListener("click",e=>{
   [["p-geo-wrap","p-geo-dropdown"],["p-head-wrap","p-head-dropdown"],["p-owner-wrap","p-owner-dropdown"]].forEach(([wrap,dd])=>{
     if(!$(wrap)?.contains(e.target))$(dd)?.classList.remove("open");
   });
 });
 
-// ── Init all filters ──
-function initPortfolioFilters(){
-  initPGeo();
-  initPHeads();
-  initPOwners();
-}
+function initPortfolioFilters(){initPGeo();initPHeads();initPOwners();}
 
-// ── Re-render: re-runs all sections with current filter state ──
 function reRender(){
   const fc=filteredCompanies();
   const classified=fc.map(c=>({...c,status:classifyCompany(c)}));
@@ -1709,16 +1552,15 @@ function reRender(){
   renderHealthScores(classified);
   renderRevenueAtRisk(classified,revMap);
   renderTable(classified);
-  // refresh drill panel if open with updated filter data
   if(drillState.card){drillState.page=1;renderDrill();}
 }
+
 window.addEventListener("DOMContentLoaded",function(){
   $("anchor-chip").textContent=ANCHOR_STR;
   const _authed=checkSSO();
   initPortfolioFilters();
   bootCloneMode();
   if(_authed)doSync(true);
-  // Not authed: overlay stays, doSync fired by doLogin on success
 });
 </script>
 </body>
