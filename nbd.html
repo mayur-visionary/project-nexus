@@ -526,6 +526,19 @@ const NBD_OWNER_IDS = ["37762663","255830830","86813698","916030451"];
 // NBD owners who also serve as growth owners (Karan Doshi, Divya S)
 const NBD_IS_GROWTH = new Set(["467997340","82911376"]);
 
+// ── Pre-FY NBD acquisition overrides ──
+// Companies whose actual NBD acquisition predates the FY 26-27 fetch window (April 2026).
+// The fetch only covers invoice_booking_month IN [april-2026 … march-2027], so any deal
+// booked before April 2026 is invisible to identifyNBDCohort() and the system falls back
+// to the earliest in-window deal as the acquisition month — which is incorrect.
+// Key   : company_name__invoice_app_ value exactly as it appears in the Growth Ledger table.
+//         If the row shows a different name, update the key to match.
+// Value : correct acquisition month in "monthname-yyyy" lowercase format.
+// Ref   : HubSpot company IDs are noted in comments for traceability.
+const PRE_FY_NBD_OVERRIDE = {
+  "The NDC Institute Pty Ltd": "march-2026"  // HS ID: 52027539540 · NBD owner: Devanshu Kumar · actual acquisition Mar'26
+};
+
 // ── Attribution registry (verbatim from Revenue Pulse) ──
 const OWNER_GROUPS={
   "Leaders / Heads":[
@@ -864,6 +877,15 @@ function identifyNBDCohort(deals) {
     if(!info[d.company_name] || monthNum(d.month) < monthNum(info[d.company_name].nbdMonth)) {
       info[d.company_name] = { nbdOwnerId: d.owner_id, nbdMonth: d.month, dealId: d.id };
     }
+  });
+  // Apply pre-FY acquisition overrides.
+  // The FY fetch window (april-2026 onwards) excludes deals booked before FY start,
+  // so identifyNBDCohort() falls back to the earliest in-window deal as the acquisition
+  // month for clients actually acquired earlier. PRE_FY_NBD_OVERRIDE corrects this on a
+  // per-company basis. The company must already exist in the cohort (i.e. have at least
+  // one in-window NBD deal) for the override to fire.
+  Object.entries(PRE_FY_NBD_OVERRIDE).forEach(([co, m]) => {
+    if (info[co]) info[co].nbdMonth = m;
   });
   return info;
 }
