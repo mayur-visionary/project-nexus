@@ -486,32 +486,32 @@ tbody td.num{text-align:right;font-weight:700}
 
   <!-- ══ MOVEMENT KPI STRIP ══ -->
   <div class="kpi-strip" id="mvt-kpi-strip" style="margin-top:10px">
-    <div class="kpi k-sToA">
+    <div class="kpi k-sToA" id="kpi-sToA" onclick="openDrill('sToA')" style="cursor:pointer">
       <div class="kpi-lbl">Silent &rarr; Active</div>
       <div class="kpi-val" id="k-sToA" style="color:#006E5E">—</div>
       <div class="kpi-sub">Silent Sep 30 &middot; Active today</div>
     </div>
-    <div class="kpi k-iToA">
+    <div class="kpi k-iToA" id="kpi-iToA" onclick="openDrill('iToA')" style="cursor:pointer">
       <div class="kpi-lbl">Inactive &rarr; Active</div>
       <div class="kpi-val" id="k-iToA" style="color:#006E5E">—</div>
       <div class="kpi-sub">Inactive Sep 30 &middot; Active today</div>
     </div>
-    <div class="kpi k-lToA">
+    <div class="kpi k-lToA" id="kpi-lToA" onclick="openDrill('lToA')" style="cursor:pointer">
       <div class="kpi-lbl">Lost &rarr; Active</div>
       <div class="kpi-val" id="k-lToA" style="color:#006E5E">—</div>
       <div class="kpi-sub">Org. Lost Sep 30 &middot; Active today</div>
     </div>
-    <div class="kpi k-aToS">
+    <div class="kpi k-aToS" id="kpi-aToS" onclick="openDrill('aToS')" style="cursor:pointer">
       <div class="kpi-lbl">Active &rarr; Silent</div>
       <div class="kpi-val" id="k-aToS" style="color:#A07A00">—</div>
       <div class="kpi-sub">Active Sep 30 &middot; Silent today</div>
     </div>
-    <div class="kpi k-sToI">
+    <div class="kpi k-sToI" id="kpi-sToI" onclick="openDrill('sToI')" style="cursor:pointer">
       <div class="kpi-lbl">Silent &rarr; Inactive</div>
       <div class="kpi-val" id="k-sToI" style="color:#C0143C">—</div>
       <div class="kpi-sub">Silent Sep 30 &middot; Inactive today</div>
     </div>
-    <div class="kpi k-iToL">
+    <div class="kpi k-iToL" id="kpi-iToL" onclick="openDrill('iToL')" style="cursor:pointer">
       <div class="kpi-lbl">Inactive &rarr; Lost</div>
       <div class="kpi-val" id="k-iToL" style="color:#696969">—</div>
       <div class="kpi-sub">Inactive Sep 30 &middot; Org. Lost today</div>
@@ -925,7 +925,14 @@ const DRILL_CFG={
   inactive:{label:"Inactive",     color:"#EF2D56", filter:c=>c.status==="inactive"},
   // CHANGE 2: "lost" drill now includes former Never Active clients (null date → "lost")
   lost:   {label:"Organic Lost",  color:"#696969", filter:c=>c.status==="lost"},
-  interbu:{label:"Inter BU",      color:"#3B3561", filter:c=>c.inter_bu}
+  interbu:{label:"Inter BU",      color:"#3B3561", filter:c=>c.inter_bu},
+  // ── Movement transitions (require baselineMap) ──
+  sToA:{label:"Silent → Active",   color:"#006E5E", isMovement:true, filter:c=>baselineMap[c.id]==="silent"   &&c.status==="active"},
+  iToA:{label:"Inactive → Active", color:"#006E5E", isMovement:true, filter:c=>baselineMap[c.id]==="inactive" &&c.status==="active"},
+  lToA:{label:"Lost → Active",     color:"#006E5E", isMovement:true, filter:c=>baselineMap[c.id]==="lost"     &&c.status==="active"},
+  aToS:{label:"Active → Silent",   color:"#FFDA30", isMovement:true, filter:c=>baselineMap[c.id]==="active"   &&c.status==="silent"},
+  sToI:{label:"Silent → Inactive", color:"#EF2D56", isMovement:true, filter:c=>baselineMap[c.id]==="silent"   &&c.status==="inactive"},
+  iToL:{label:"Inactive → Lost",   color:"#696969", isMovement:true, filter:c=>baselineMap[c.id]==="inactive" &&c.status==="lost"}
 };
 
 // CHANGE 3: STATUS_CFG — "never" entry removed
@@ -947,7 +954,7 @@ function formatDrillDate(dateStr){
 function openDrill(card){
   if(drillState.card===card){closeDrill();return;}
   drillState={card,page:1};
-  ["total","active","silent","inactive","lost","interbu"].forEach(k=>{
+  ["total","active","silent","inactive","lost","interbu","sToA","iToA","lToA","aToS","sToI","iToL"].forEach(k=>{
     const el=$(`kpi-${k}`);if(el)el.classList.toggle("kpi-active-card",k===card);
   });
   renderDrill();
@@ -960,7 +967,7 @@ function closeDrill(){
   drillState={card:null,page:1};
   const panel=$("drill-panel");
   if(panel){panel.style.display="none";panel.innerHTML="";}
-  ["total","active","silent","inactive","lost","interbu"].forEach(k=>{
+  ["total","active","silent","inactive","lost","interbu","sToA","iToA","lToA","aToS","sToI","iToL"].forEach(k=>{
     const el=$(`kpi-${k}`);if(el)el.classList.remove("kpi-active-card");
   });
 }
@@ -968,6 +975,7 @@ function closeDrill(){
 function renderDrill(){
   const {card,page}=drillState;if(!card)return;
   const cfg=DRILL_CFG[card];
+  const isMovement=!!cfg.isMovement;
   const fc=filteredCompanies().map(c=>({...c,status:classifyCompany(c)}));
   const rows=fc.filter(cfg.filter);
   const total=rows.length;
@@ -996,7 +1004,8 @@ function renderDrill(){
       <thead><tr>
         <th style="width:40px">#</th>
         <th>Client</th>
-        <th>Status</th>
+        ${isMovement?'<th>Sep 30</th>':''}
+        <th>Today</th>
         <th>Owner</th>
         <th>Last Deal</th>
       </tr></thead>
@@ -1009,6 +1018,7 @@ function renderDrill(){
       html+=`<tr>
         <td class="num" style="color:#9A9A9A;font-size:10px">${rowNum}</td>
         <td style="font-weight:700;color:#434343">${c.name||"—"}</td>
+        ${isMovement?(()=>{const b=STATUS_CFG[baselineMap[c.id]]||{label:"—",color:"#9A9A9A"};return`<td><span class="drill-status"><span class="drill-dot" style="background:${b.color}"></span>${b.label}</span></td>`;})():""}
         <td><span class="drill-status"><span class="drill-dot" style="background:${sCfg.color}"></span>${sCfg.label}</span></td>
         <td style="color:#696969;font-weight:500">${ownerName}</td>
         <td class="drill-date">${lastDeal}</td>
