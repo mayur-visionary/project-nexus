@@ -297,23 +297,6 @@ tbody td.num{text-align:right;font-weight:700}
 @media(max-width:700px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}.fbar{padding:8px 18px}}
 @media(max-width:400px){.kpi-strip{grid-template-columns:1fr}}
 
-/* ── Status Movement Table ── */
-.mvt-card{background:#fff;border-radius:12px;border:1px solid #E2E2E2;overflow:hidden;margin-bottom:14px}
-.mvt-card-hdr{padding:9px 16px;background:#F7F7F7;border-bottom:1px solid #E8E8E8;display:flex;align-items:center;gap:10px}
-.mvt-section-lbl{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#434343}
-.mvt-section-sub{font-size:9px;font-weight:600;color:#9A9A9A;margin-left:4px}
-.mvt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.mvt-tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:860px}
-.mvt-tbl thead th{padding:8px 12px;background:#FAFAFA;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#9A9A9A;border-bottom:1px solid #E8E8E8;white-space:nowrap;text-align:right}
-.mvt-tbl thead th.l{text-align:left}
-.mvt-tbl thead th.g{color:#006E5E}.mvt-tbl thead th.r{color:#EF2D56}
-.mvt-tbl tbody td{padding:8px 12px;border-bottom:1px solid #F5F5F5;text-align:right;font-weight:700;font-size:11px;white-space:nowrap;color:#434343}
-.mvt-tbl tbody td.l{text-align:left}.mvt-tbl tbody td.s{color:#696969;font-weight:600;font-size:10px}
-.mvt-tbl tbody tr:hover td{background:#FFFBEA}
-.mvt-tbl tfoot td{padding:8px 12px;background:#F7F7F7;border-top:2px solid #E8E8E8;text-align:right;font-weight:800;font-size:11px}
-.mvt-tbl tfoot td.l{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#696969}
-.mvt-g{color:#006E5E}.mvt-r{color:#EF2D56}.mvt-0{color:#C0C0C0}
-.mvt-no-baseline{background:#FFFBEA;border:1px solid rgba(255,218,48,.4);border-radius:8px;padding:11px 16px;font-size:10px;font-weight:600;color:#A07A00;margin-bottom:16px}
 
 
 /* ── Movement KPI cards ── */
@@ -536,9 +519,6 @@ tbody td.num{text-align:right;font-weight:700}
   </div>
 
 
-  <!-- ══ STATUS MOVEMENT ══ -->
-  <div class="sec" style="margin-top:24px">Status Movement <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· Sept 30, 2026 baseline &rarr; today</span></div>
-  <div id="movement-wrap"></div>
 
   <!-- ══ AT-RISK RADAR ══ -->
   <div class="sec" style="margin-top:24px">At-Risk Radar <span style="font-weight:600;color:#9A9A9A;font-size:9px;letter-spacing:.04em;text-transform:none">· Active clients approaching Silent in ≤30 days</span></div>
@@ -1094,106 +1074,6 @@ function buildBaselineMap(snapshotCompanies){
 }
 
 // ════ STATUS MOVEMENT ════
-const MVT_HEADS=["Jaydeep Salla","Jiggyasa Agrawal","Tanuj Gupta"];
-
-function computeMovement(companies){
-  const r={total:0,active:0,silent:0,inactive:0,lost:0,sToA:0,iToA:0,lToA:0,aToS:0};
-  companies.forEach(c=>{
-    r.total++;
-    if(c.status==="active")   r.active++;
-    if(c.status==="silent")   r.silent++;
-    if(c.status==="inactive") r.inactive++;
-    if(c.status==="lost")     r.lost++;
-    const base=baselineMap[c.id]||null;
-    if(base&&base!==c.status){
-      if(base==="silent"   &&c.status==="active") r.sToA++;
-      if(base==="inactive" &&c.status==="active") r.iToA++;
-      if(base==="lost"     &&c.status==="active") r.lToA++;
-      if(base==="active"   &&c.status==="silent") r.aToS++;
-    }
-  });
-  return r;
-}
-
-function mvtRowsForSection(companies){
-  const rows=[];
-  const jd=companies.filter(c=>c.head==="Jaydeep Salla");
-  if(jd.length) rows.push({lead:"Jaydeep Salla",region:"US / UK / AU",...computeMovement(jd)});
-  const jg=companies.filter(c=>c.head==="Jiggyasa Agrawal");
-  if(jg.length) rows.push({lead:"Jiggyasa Agrawal",region:"AU",...computeMovement(jg)});
-  const tUK=companies.filter(c=>c.head==="Tanuj Gupta"&&c.region==="UK");
-  if(tUK.length) rows.push({lead:"Tanuj Gupta",region:"UK",...computeMovement(tUK)});
-  const tUS=companies.filter(c=>c.head==="Tanuj Gupta"&&c.region==="US");
-  if(tUS.length) rows.push({lead:"Tanuj Gupta",region:"US",...computeMovement(tUS)});
-  return rows;
-}
-
-function renderMovementSection(classified){
-  const wrap=$("movement-wrap");if(!wrap)return;
-  const hasBaseline=Object.keys(baselineMap).length>0;
-
-  // Only include companies under the 3 portfolio heads
-  const scoped=classified.filter(c=>MVT_HEADS.includes(c.head));
-
-  const SECTIONS=[
-    {label:"Overall",          filter:c=>true},
-    {label:"MarTech",          filter:c=>c.bu==="MarTech"},
-    {label:"Digital + Inter BU",filter:c=>c.bu==="Digital"},
-    {label:"Inter BU",         filter:c=>c.inter_bu===true},
-    {label:"Digital BU",       filter:c=>c.bu==="Digital"&&!c.inter_bu}
-  ];
-
-  function num(n,cls){return`<td class="${cls||""}">${n!==undefined?n:"—"}</td>`;}
-  function gain(n){if(!hasBaseline)return"";return`<td class="${n>0?"mvt-g":"mvt-0"}">${n>0?"+"+n:"—"}</td>`;}
-  function loss(n){if(!hasBaseline)return"";return`<td class="${n>0?"mvt-r":"mvt-0"}">${n>0?"+"+n:"—"}</td>`;}
-  const mvCols=hasBaseline?`<th class="g">Silent → Active</th><th class="g">Inactive → Active</th><th class="g">Lost → Active</th><th class="r">Active → Silent</th>`:"";
-
-  function buildSection(label,sectionCompanies){
-    if(!sectionCompanies.length)return"";
-    const rows=mvtRowsForSection(sectionCompanies);
-    if(!rows.length)return"";
-    const tot=computeMovement(sectionCompanies);
-    const rowsHtml=rows.map(r=>`<tr>
-      <td class="l">${r.lead}</td>
-      <td class="l s">${r.region}</td>
-      <td>${r.total}</td>
-      <td class="mvt-g">${r.active}</td>
-      <td style="color:#A07A00">${r.silent}</td>
-      <td style="color:#C0143C">${r.inactive}</td>
-      ${gain(r.sToA)}${gain(r.iToA)}${gain(r.lToA)}${loss(r.aToS)}
-      <td class="mvt-0" style="color:#696969">${r.lost}</td>
-    </tr>`).join("");
-    return`<div class="mvt-card">
-      <div class="mvt-card-hdr">
-        <span class="mvt-section-lbl">Client Status · ${label}</span>
-        <span class="mvt-section-sub">${sectionCompanies.length.toLocaleString()} clients</span>
-      </div>
-      <div class="mvt-wrap"><table class="mvt-tbl">
-        <thead><tr>
-          <th class="l">Team Lead</th><th class="l">Team</th>
-          <th>Total Kitty</th><th class="g">Active</th>
-          <th>Silent</th><th>Inactive</th>
-          ${mvCols}
-          <th>Org. Lost</th>
-        </tr></thead>
-        <tbody>${rowsHtml}</tbody>
-        <tfoot><tr>
-          <td class="l">Total</td><td></td>
-          <td>${tot.total}</td>
-          <td class="mvt-g">${tot.active}</td>
-          <td>${tot.silent}</td>
-          <td>${tot.inactive}</td>
-          ${gain(tot.sToA)}${gain(tot.iToA)}${gain(tot.lToA)}${loss(tot.aToS)}
-          <td>${tot.lost}</td>
-        </tr></tfoot>
-      </table></div>
-    </div>`;
-  }
-
-  const noBaselineWarn=!hasBaseline?`<div class="mvt-no-baseline">&#9888; Sept 30 baseline unavailable — movement columns (Silent → Active, etc.) hidden. Check /portfolio-snapshot endpoint.</div>`:"";
-  const sections=SECTIONS.map(s=>buildSection(s.label,scoped.filter(s.filter))).join("");
-  wrap.innerHTML=noBaselineWarn+sections;
-}
 
 // ════ DATA FETCHING ════
 async function fetchKittyCompanies(){
@@ -1262,7 +1142,6 @@ function renderAll(){
   renderHealthDonuts(classified);
   renderAtRisk(fc);
   renderHealthScores(classified);
-  renderMovementSection(classified);
   renderTable(classified);
 }
 
@@ -1786,7 +1665,6 @@ function reRender(){
   renderAtRisk(fc);
   if(radarOpen)renderRadarDetail();
   renderHealthScores(classified);
-  renderMovementSection(classified);
   renderRevenueAtRisk(classified,revMap);
   renderTable(classified);
   if(drillState.card){drillState.page=1;renderDrill();}
