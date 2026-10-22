@@ -1708,7 +1708,7 @@ async function doFYSync(force=false){
       if(!res.ok)throw new Error("API "+res.status);
       const data=await res.json();
       (data.results||[]).forEach(r=>{
-        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),invoice_date:(r.properties?.invoice_date_formatted__invoice_app_||"").split("T")[0],closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
+        fetched.push({id:String(r.id),dealname:r.properties?.dealname||"",amount:parseFloat(r.properties?.amount_in_home_currency||0)||0,currency:r.properties?.deal_currency_code||"USD",owner_id:String(r.properties?.hubspot_owner_id||""),invoice_date:(r.properties?.invoice_date_formatted__invoice_app_||"").split("T")[0],invoice_date:(()=>{const raw=(r.properties?.invoice_date_formatted__invoice_app_||"").trim();if(!raw)return"";const pts=raw.split("/");return pts.length===3?`${pts[2]}-${pts[1].padStart(2,"0")}-${pts[0].padStart(2,"0")}`:"";})(),closedate:(r.properties?.closedate||"").split("T")[0],createdate:(r.properties?.createdate||"").split("T")[0],
           billing_id:r.properties?.zoho_billing_id__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           client:r.properties?.zoho_display_name__invoice_app_||r.properties?.contact_name__invoice_app_||"",
           month:(()=>{
