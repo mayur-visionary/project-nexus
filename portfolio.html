@@ -315,6 +315,16 @@ tbody td.num{text-align:right;font-weight:700}
 .mvt-g{color:#006E5E}.mvt-r{color:#EF2D56}.mvt-0{color:#C0C0C0}
 .mvt-no-baseline{background:#FFFBEA;border:1px solid rgba(255,218,48,.4);border-radius:8px;padding:11px 16px;font-size:10px;font-weight:600;color:#A07A00;margin-bottom:16px}
 
+
+/* ── Movement KPI cards ── */
+.kpi.k-sToA{border-top-color:#006E5E}
+.kpi.k-iToA{border-top-color:#006E5E}
+.kpi.k-lToA{border-top-color:#006E5E}
+.kpi.k-aToS{border-top-color:#FFDA30}
+.kpi.k-sToI{border-top-color:#EF2D56}
+.kpi.k-iToL{border-top-color:#696969}
+.kpi-baseline-note{font-size:8.5px;color:#9A9A9A;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:4px}
+
 </style>
 </head>
 <body>
@@ -470,6 +480,41 @@ tbody td.num{text-align:right;font-weight:700}
       <div class="kpi-lbl">Inter BU</div>
       <div class="kpi-val" id="k-interbu">—</div>
       <div class="kpi-sub" id="k-interbu-sub">Cross-BU kitty clients</div>
+    </div>
+  </div>
+
+
+  <!-- ══ MOVEMENT KPI STRIP ══ -->
+  <div class="kpi-strip" id="mvt-kpi-strip" style="margin-top:10px">
+    <div class="kpi k-sToA">
+      <div class="kpi-lbl">Silent &rarr; Active</div>
+      <div class="kpi-val" id="k-sToA" style="color:#006E5E">—</div>
+      <div class="kpi-sub">Silent Sep 30 &middot; Active today</div>
+    </div>
+    <div class="kpi k-iToA">
+      <div class="kpi-lbl">Inactive &rarr; Active</div>
+      <div class="kpi-val" id="k-iToA" style="color:#006E5E">—</div>
+      <div class="kpi-sub">Inactive Sep 30 &middot; Active today</div>
+    </div>
+    <div class="kpi k-lToA">
+      <div class="kpi-lbl">Lost &rarr; Active</div>
+      <div class="kpi-val" id="k-lToA" style="color:#006E5E">—</div>
+      <div class="kpi-sub">Org. Lost Sep 30 &middot; Active today</div>
+    </div>
+    <div class="kpi k-aToS">
+      <div class="kpi-lbl">Active &rarr; Silent</div>
+      <div class="kpi-val" id="k-aToS" style="color:#A07A00">—</div>
+      <div class="kpi-sub">Active Sep 30 &middot; Silent today</div>
+    </div>
+    <div class="kpi k-sToI">
+      <div class="kpi-lbl">Silent &rarr; Inactive</div>
+      <div class="kpi-val" id="k-sToI" style="color:#C0143C">—</div>
+      <div class="kpi-sub">Silent Sep 30 &middot; Inactive today</div>
+    </div>
+    <div class="kpi k-iToL">
+      <div class="kpi-lbl">Inactive &rarr; Lost</div>
+      <div class="kpi-val" id="k-iToL" style="color:#696969">—</div>
+      <div class="kpi-sub">Inactive Sep 30 &middot; Org. Lost today</div>
     </div>
   </div>
 
@@ -991,6 +1036,33 @@ function drillPage(page){
 }
 
 
+
+// ════ MOVEMENT KPI STRIP ════
+// Computes 6 movement transitions from Sept 30 baseline → current status.
+// Requires baselineMap to be populated by buildBaselineMap() after snapshot fetch.
+function renderMovementKPIs(classified){
+  const ids=["k-sToA","k-iToA","k-lToA","k-aToS","k-sToI","k-iToL"];
+  const hasBaseline=Object.keys(baselineMap).length>0;
+  if(!hasBaseline){
+    ids.forEach(id=>{const el=$(id);if(el)el.textContent="—";});
+    return;
+  }
+  let sToA=0,iToA=0,lToA=0,aToS=0,sToI=0,iToL=0;
+  classified.forEach(c=>{
+    const base=baselineMap[c.id]||null;
+    if(!base||base===c.status)return;
+    if(base==="silent"   &&c.status==="active")  sToA++;
+    if(base==="inactive" &&c.status==="active")  iToA++;
+    if(base==="lost"     &&c.status==="active")  lToA++;
+    if(base==="active"   &&c.status==="silent")  aToS++;
+    if(base==="silent"   &&c.status==="inactive")sToI++;
+    if(base==="inactive" &&c.status==="lost")    iToL++;
+  });
+  const set=(id,val)=>{const el=$(id);if(el)el.textContent=val.toLocaleString();};
+  set("k-sToA",sToA);set("k-iToA",iToA);set("k-lToA",lToA);
+  set("k-aToS",aToS);set("k-sToI",sToI);set("k-iToL",iToL);
+}
+
 // ════ BASELINE SNAPSHOT ════
 async function fetchBaselineSnapshot(){
   try{
@@ -1176,6 +1248,7 @@ function renderAll(){
   $("k-interbu-sub").textContent=`of ${total.toLocaleString()} kitty`;
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
+  renderMovementKPIs(classified);
   renderHealthDonuts(classified);
   renderAtRisk(fc);
   renderHealthScores(classified);
@@ -1698,6 +1771,7 @@ function reRender(){
   $("k-interbu-sub").textContent=interBUOnly?`of ${total.toLocaleString()} shown`:`of ${total.toLocaleString()} kitty`;
   $("k-active-sub").textContent=`Revenue in last 90 days`;
   $("table-meta").textContent=`${total.toLocaleString()} clients · as of ${ANCHOR_STR}`;
+  renderMovementKPIs(classified);
   renderHealthDonuts(classified);
   renderAtRisk(fc);
   if(radarOpen)renderRadarDetail();
