@@ -3312,10 +3312,15 @@ let wkBuChart=null,wkRegChart=null,wkHeadChart=null; // 3 grouped bar charts
 let wsk='amount',wsd='desc',wpg=1;
 const WPER=10;
 
-// ── Effective date: invoice_date (primary) → closedate → createdate (Krishna-confirmed fallbacks) ──
-// ON-prefix deals (online orders) bypass invoice_date — closedate → createdate only.
+// ── Effective date — three-branch priority (Weekly Sprint only) ──
+// ON-prefix  (online orders) : closedate → createdate
+// Negative amount (adjustments): closedate → invoice_date → createdate
+// Standard positive deals     : invoice_date → closedate → createdate
 function effectiveDate(d){
-  if((d.dealname||"").toUpperCase().startsWith("ON-"))return d.closedate||d.createdate||'';
+  if((d.dealname||"").toUpperCase().startsWith("ON-"))
+    return d.closedate||d.createdate||'';
+  if(d.amount<0)
+    return d.closedate||d.invoice_date||d.createdate||'';
   return d.invoice_date||d.closedate||d.createdate||'';
 }
 
