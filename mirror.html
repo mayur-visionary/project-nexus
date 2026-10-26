@@ -495,7 +495,7 @@ function lockHeadForClone(){
 }
 
 // ════ STATE ════
-let allDeals=[];let isSyncing=false;
+let allDeals=[];let dealServiceMap={};let isSyncing=false;
 const PER=25;
 let activeCatFilter=null;
 let sortKey="delta";let sortDir="desc";let tablePg=1;
@@ -573,6 +573,21 @@ async function doSync(force=false){
     const seen={};const dupe=[];
     fetched.forEach(d=>{const k=d.dealname+"|"+d.amount+"|"+d.month;if(seen[k]){dupe.push(d.id);return;}seen[k]=d.id;});
     allDeals=dupe.length?fetched.filter(d=>!dupe.includes(d.id)):fetched;
+    // ── Line items fetch — required for LI-majority engagement classification ──
+    $("stxt").textContent="FETCHING LINE ITEMS...";
+    dealServiceMap={};
+    for(let i=0;i<allDeals.length;i+=500){
+      const chunk=allDeals.slice(i,i+500).map(d=>d.id);
+      try{
+        const liRes=await fetch("/lineItems",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dealIds:chunk})});
+        if(liRes.ok){
+          const liData=await liRes.json();
+          Object.entries(liData.items||{}).forEach(([did,lis])=>{
+            dealServiceMap[did]=(lis||[]).map(li=>({amount:li.amount||0,name:li.name||""})).filter(li=>li.amount!==0);
+          });
+        }
+      }catch(e){console.warn("Line items chunk error:",e.message);}
+    }
     attributeDeals(allDeals);
     $("sdot").style.background="#006E5E";$("stxt").textContent=`LIVE \u00b7 ${allDeals.length} DEALS`;
     $("last-sync").textContent="Synced "+new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
@@ -740,17 +755,26 @@ document.addEventListener("click",e=>{
 });
 
 // ════ FILTER APPLICATION ════
-// ── FIX 1: engGroup now accepts dealname and applies the ON-prefix rule first.
-//    ON-prefix deals are always P2P — canonical Nexus rule.
-// ── FIX 2: null pass-through removed. Deals with unclassifiable eng_model
-//    are now correctly excluded when a filter is active (see applyFilters below).
-function engGroup(em,dealname){
-  // ON-prefix deals are always P2P regardless of engagement_model property
-  if(dealname&&/^ON-/i.test(String(dealname)))return"P2P";
-  if(!em)return null;
-  const l=em.toLowerCase();
-  if(l.includes("one time"))return"P2P";
-  if(l.includes("recurring"))return"Recurring";
+// engGroup and engGroupFromLiName ported verbatim from index.html.
+// applyFilters engagement logic mirrors index.html view() exactly:
+//   LI-majority wins → engGroup(eng_model) fallback → exclude if unresolved.
+// Dropdown values ("P2P", "Recurring") match what both functions return — no translation needed.
+function engGroup(val){
+  if(!val)return null;
+  if(val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring")return"Recurring";
+  if(val==="P2P"||val==="Time and Material"||val==="T&M"||val==="Time")return"P2P";
+  return null;
+}
+function engGroupFromLiName(name){
+  if(!name)return null;
+  const n=name.toLowerCase();
+  if(n.startsWith("dedicated fte"))return"Recurring";
+  if(n.startsWith("dedicated pte"))return"Recurring";
+  if(n.startsWith("recurring"))return"Recurring";
+  if(n.startsWith("p2p"))return"P2P";
+  if(n.startsWith("time and material")||n.startsWith("t&m"))return"P2P";
+  // EMail Coding has no engagement prefix in HubSpot — hardcoded P2P (permanent fix, Session 14)
+  if(n.includes("email coding"))return"P2P";
   return null;
 }
 function applyFilters(deals){
@@ -764,8 +788,19 @@ function applyFilters(deals){
     if(geoFilt&&(!d.region||!selGeo.includes(d.region)))return false;
     if(headFilt){const bh=(d.head||"").replace(/ \(.*\)/,"");if(!selHead.includes(bh))return false;}
     if(ownFilt&&!selOwn.includes(String(d.owner_id)))return false;
-    // ── FIXED: pass dealname for ON-prefix check; exclude unclassifiable deals when filter active
-    if(itype){const eg=engGroup(d.eng_model,d.dealname);if(!eg||eg!==itype)return false;}
+    // ── Engagement filter — LI-majority pattern verbatim from index.html view() ──
+    if(itype){
+      const _lis=dealServiceMap[d.id]||[];
+      if(_lis.length){
+        let classified=false,matchAmt=0;
+        _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){classified=true;if(eg===itype)matchAmt+=li.amount;}});
+        if(!classified){const eg=engGroup(d.eng_model);if(!eg||eg!==itype)return false;}
+        else{if(matchAmt===0)return false;}
+      }else{
+        // No LIs — fall back to eng_model property
+        const eg=engGroup(d.eng_model);if(!eg||eg!==itype)return false;
+      }
+    }
     return true;
   });
 }
