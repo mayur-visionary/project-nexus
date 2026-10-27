@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievement Desk · Mavlers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+
+/* ── Login ── */
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── Spinner ── */
+.lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
+.lo.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid #FFDA30;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Header ── */
+.hdr{background:#473400}
+.hdr-in{max-width:1480px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-brand svg{transition:opacity .2s}
+.hdr-brand:hover svg{opacity:.85}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;background:#666;flex-shrink:0;transition:background .4s}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.sync-ts{font-size:9px;color:rgba(255,255,255,.45);font-weight:500}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+
+/* ── Nav strip ── */
+.nav-strip{background:#333;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-strip-in{max-width:1480px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:11px 18px;border-bottom:3px solid transparent;cursor:default}
+.nav-strip-right{display:flex;align-items:center;gap:10px;padding:6px 0}
+.period-sel{border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:5px 24px 5px 9px;font-size:10px;font-weight:700;color:#fff;background:#444;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.04em;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23fff'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.rfbtn{padding:5px 12px;border-radius:5px;border:1px solid rgba(255,218,48,.4);background:rgba(255,218,48,.12);color:#FFDA30;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s}
+.rfbtn:hover{background:rgba(255,218,48,.22)}
+.rfbtn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── Main ── */
+.main{max-width:1480px;margin:0 auto;padding:22px 28px 48px}
+.err-bar{display:none;background:#E84040;color:#fff;font-size:10px;font-weight:700;padding:8px 28px;letter-spacing:.04em}
+.err-bar.show{display:block}
+
+/* ── BU section ── */
+.bu-section{margin-bottom:28px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.bu-label{background:#473400;color:#FFDA30;font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;padding:7px 18px}
+.bu-panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);align-items:start}
+.panel{border-right:1px solid #E2E2E2}
+.panel:last-child{border-right:none}
+.panel-title{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:#006E5E;padding:6px 14px}
+
+/* ── Achievement table ── */
+.ach-table{width:100%;border-collapse:collapse;font-size:12px}
+.ach-table th{background:#f5f0e4;color:#473400;padding:7px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1.5px solid #E2E2E2}
+.ach-table th.rev-th{text-align:right}
+.ach-table td{padding:7px 12px;border-bottom:1px solid #f0ebe0;color:#434343;vertical-align:middle}
+.ach-table tbody tr:last-child td{border-bottom:none}
+.ach-table tbody tr:hover td{background:#fafaf5}
+/* Group header row */
+.ach-table tr.grp-hdr td{background:#473400;color:#FFDA30;font-weight:800;font-size:10px;letter-spacing:.07em;padding:6px 12px}
+.ach-table tr.grp-hdr:hover td{background:#473400}
+/* Subtotal */
+.ach-table tr.sub-row td{background:#faf5e6;color:#473400;font-weight:700;font-size:11px;border-top:1px solid #d8cf9a;border-bottom:1.5px solid #d8cf9a}
+.ach-table tr.sub-row:hover td{background:#faf5e6}
+/* Grand total */
+.ach-table tr.grand-row td{background:#FFDA30;color:#473400;font-weight:800;font-size:12px;border-top:2px solid #473400}
+.ach-table tr.grand-row:hover td{background:#FFDA30}
+/* Cell helpers */
+.rev-cell{text-align:right!important;font-variant-numeric:tabular-nums;font-weight:700}
+.owner-cell{padding-left:22px!important;color:#666}
+.sub-lbl{font-size:9px;letter-spacing:.07em;text-transform:uppercase}
+/* Loading */
+.ph{padding:40px 20px;text-align:center;color:#bbb;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
+@media(max-width:860px){.bu-panels{grid-template-columns:1fr}.panel{border-right:none;border-bottom:1px solid #E2E2E2}.panel:last-child{border-bottom:none}}
+@media(max-width:600px){.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}}
+</style>
+</head>
+<body>
+
+<!-- ════ LOGIN OVERLAY ════ -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div style="margin-bottom:22px">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow" id="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title" id="login-title">Achievement Desk</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">Project Nexus · The Live Pulse of Mavlers Revenue</div>
+  </div>
+</div>
+
+<div class="lo" id="lo"><div class="spin"></div></div>
+
+<!-- ════ HEADER ════ -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" onclick="location.reload()" title="Reload Achievement Desk" role="button">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+          <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+          <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+          <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+          <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+          <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+          <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title" id="hdr-title">Achievement Desk</div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><span class="sdot" id="sdot"></span>&nbsp;<span id="stxt">—</span></div>
+          <div class="sync-ts" id="sync-ts"></div>
+        </div>
+        <a class="nexus-btn" href="/" id="nexus-link">← Revenue Pulse</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="yellow-rule"></div>
+
+<!-- ════ NAV STRIP ════ -->
+<div class="nav-strip" id="nav-strip" style="display:none">
+  <div class="nav-strip-in">
+    <span class="nav-tab-active" id="nav-label">Achievement Desk</span>
+    <div class="nav-strip-right">
+      <select class="period-sel" id="month-sel"></select>
+      <button class="rfbtn" id="rfbtn" onclick="doSync()">⟳ Sync</button>
+    </div>
+  </div>
+</div>
+
+<div class="err-bar" id="err-bar"></div>
+
+<!-- ════ MAIN ════ -->
+<div class="main" id="main-content" style="display:none">
+
+  <!-- DIGITAL BU -->
+  <section class="bu-section" id="section-digital">
+    <div class="bu-label">Digital BU</div>
+    <div class="bu-panels">
+      <div class="panel" id="digital-overall"><div class="ph">Syncing…</div></div>
+      <div class="panel" id="digital-individual"><div class="ph">Syncing…</div></div>
+      <div class="panel" id="digital-service"><div class="ph">Syncing…</div></div>
+    </div>
+  </section>
+
+  <!-- MARTECH BU -->
+  <section class="bu-section" id="section-martech">
+    <div class="bu-label">MarTech BU</div>
+    <div class="bu-panels">
+      <div class="panel" id="martech-overall"><div class="ph">Syncing…</div></div>
+      <div class="panel" id="martech-individual"><div class="ph">Syncing…</div></div>
+      <div class="panel" id="martech-service"><div class="ph">Syncing…</div></div>
+    </div>
+  </section>
+
+</div><!-- /main -->
+
+<script src="/registry-client.js"></script>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function $(id){ return document.getElementById(id); }
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH — localStorage pattern, matches portfolio.html exactly
+═══════════════════════════════════════════════════════════════ */
+const CLONE_HEAD = (new URLSearchParams(location.search).get('head') || '').toLowerCase().trim();
+
+function getAuthKey(head) {
+  return head ? `nexus_auth_${head}` : 'nexus_auth';
+}
+
+function checkSSO() {
+  const key = getAuthKey(CLONE_HEAD);
+  if (localStorage.getItem(key) === '1') { $('login-overlay').style.display = 'none'; return true; }
+  // Nevilson uses master password — also accept master auth token
+  if (CLONE_HEAD === 'nevilson' && localStorage.getItem('nexus_auth') === '1') {
+    $('login-overlay').style.display = 'none'; return true;
+  }
+  return false;
+}
+
+async function doLogin() {
+  const btn = $('login-btn'), err = $('login-err'), pw = $('pw-input').value.trim();
+  if (!pw) { err.textContent = 'Please enter the access password.'; return; }
+  btn.disabled = true; btn.textContent = 'Verifying…'; err.textContent = '';
+  try {
+    const res  = await fetch('/achievement-desk-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw, head: CLONE_HEAD })
+    });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem(getAuthKey(CLONE_HEAD), '1');
+      $('login-overlay').style.display = 'none';
+      doSync(true);
+    } else if (res.status === 500 || data.error) {
+      err.textContent = 'Server config error. Contact Mayur.';
+    } else {
+      err.textContent = 'Incorrect password. Please try again.';
+      $('pw-input').value = ''; $('pw-input').focus();
+    }
+  } catch(e) {
+    err.textContent = 'Connection error. Check your network.';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Access Dashboard';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════════ */
+const FY_YEAR  = 2026;
+const FY_MONTH = 3; // April = index 3
+const PRATIVA_ID = 82663745;
+
+const OWNER_DISPLAY = {
+  107178262:'Chintan',   17738843:'Jaydeep',    34140174:'Mrugesh',
+  90736668:'Matt Kelly', 41490632:'Mukund',
+  467997340:'Karan',     82911376:'Divya',       82030736:'Sakshi',
+  93107638:'Ayush D',    46153051:'Ayush R',     86147905:'Preeti',
+  85767516:'Rupali',     89530815:'Vinita',
+  916030451:'Kamesh',
+  131779647:'Jiggyasa',  78831011:'Kunal',       94746500:'Manvi',
+  176516495:'Prachi',    263464861:'Saquib',
+  46156316:'Flintoff',   37344296:'Kalgi',        31730801:'Vikram',
+  38568120:'Baspin',     42663191:'Dhaval',       240935328:'Hammad',
+  19799470:'Jebin',      34558123:'Kaustubh',     284770744:'Sourya',
+  557894666:'Sudarshan',
+  86813698:'Aman',       255830830:'Devanshu',    1360061595:'Dhruti',
+  37762663:'Malav',
+  17739548:'Darshan',    79217713:'Krunal',        17739173:'Tanuj',
+  82663745:'Prativa'
+};
+
+const DIGITAL_GROUPS = [
+  { key:'Jiggyasa Agrawal',  label:'Jiggyasa' },
+  { key:'Tanuj Gupta (UK)',  label:'Tanuj UK'  },
+  { key:'Tanuj Gupta (US)',  label:'Tanuj US'  },
+  { key:'Nevilson Christan', label:'Nevilson'  }
+];
+
+const MARTECH_GROUPS = [
+  { key:'Jaydeep AU',  label:'Jaydeep AU'  },
+  { key:'Jaydeep UK',  label:'Jaydeep UK'  },
+  { key:'Jaydeep US',  label:'Jaydeep US'  },
+  { key:'Jaydeep NBD', label:'Jaydeep NBD' }
+];
+
+const CLONE_VISIBLE = {
+  jiggyasa: { digital:['Jiggyasa Agrawal'],                          martech:null },
+  tanuj:    { digital:['Tanuj Gupta (UK)','Tanuj Gupta (US)'],        martech:null },
+  nevilson: { digital:['Nevilson Christan'],                          martech:null },
+  jaydeep:  { digital:null, martech:['Jaydeep AU','Jaydeep UK','Jaydeep US','Jaydeep NBD'] }
+};
+
+const EXCL_RE = /wallet|special engagement|inboxarmy|uplers|solomax/i;
+
+/* ═══════════════════════════════════════════════════════════════
+   CLONE MODE
+═══════════════════════════════════════════════════════════════ */
+function bootCloneMode() {
+  if (!CLONE_HEAD) return;
+  if (CLONE_HEAD === 'jaydeep') {
+    const el = $('section-digital'); if (el) el.style.display = 'none';
+  } else {
+    const el = $('section-martech'); if (el) el.style.display = 'none';
+  }
+  const LABELS = {
+    jiggyasa:'Jiggyasa · Achievement Desk',
+    tanuj:'Tanuj · Achievement Desk',
+    nevilson:'Nevilson · Achievement Desk',
+    jaydeep:'Jaydeep · Achievement Desk'
+  };
+  const label = LABELS[CLONE_HEAD] || 'Achievement Desk';
+  const first = CLONE_HEAD.charAt(0).toUpperCase() + CLONE_HEAD.slice(1);
+  document.title = label + ' · Mavlers';
+  const ht = $('hdr-title'); if (ht) ht.textContent = label;
+  const nl = $('nav-label'); if (nl) nl.textContent = label;
+  const le = $('login-eyebrow'); if (le) le.textContent = `Mavlers · ${first}'s Dashboard`;
+  const nx = $('nexus-link'); if (nx && CLONE_HEAD) nx.href = `/?head=${CLONE_HEAD}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MONTH SELECTOR
+═══════════════════════════════════════════════════════════════ */
+function populateMonthSelector() {
+  const sel = $('month-sel');
+  const now = new Date();
+  const months = [];
+  const cursor = new Date(FY_YEAR, FY_MONTH, 1);
+  while (cursor.getFullYear() < now.getFullYear() ||
+    (cursor.getFullYear() === now.getFullYear() && cursor.getMonth() <= now.getMonth())) {
+    const mn  = cursor.toLocaleString('en-US',{month:'long'});
+    months.push({ val:`${mn.toLowerCase()}-${cursor.getFullYear()}`, lbl:`${mn} ${cursor.getFullYear()}` });
+    cursor.setMonth(cursor.getMonth()+1);
+  }
+  months.forEach(m => {
+    const o = document.createElement('option');
+    o.value = m.val; o.textContent = m.lbl; sel.appendChild(o);
+  });
+  // Default: last closed month
+  const prev = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const prevVal = `${prev.toLocaleString('en-US',{month:'long'}).toLowerCase()}-${prev.getFullYear()}`;
+  sel.value = months.find(m => m.val === prevVal) ? prevVal : months[months.length-1].val;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LINE ITEM CLASSIFIER
+═══════════════════════════════════════════════════════════════ */
+function classifyLI(raw) {
+  const n = (raw||'').toLowerCase().trim();
+  if (/^campaign\s*-/.test(n)||n.includes('campaign manager')||n.includes('campaign operation specialist')||n.includes('sfmc'))
+    return {svc:'Campaign'};
+  if (n==='design - email') return {svc:'Design'};
+  if (n.includes('development - email')||n.includes('email coding')) return {svc:'Email'};
+  if (n==='design - asset'||/^development\s*-\s*(web|lp|hub|mobile app)/.test(n)||
+      n.includes('ai & automation - web')||n.includes('dot-net development')||
+      n.includes('operational service - data entry')||/^landing page/.test(n))
+    return {svc:'Web'};
+  if (/^search\s*-/.test(n)||n.includes('consultancy fees')) return {svc:'Search'};
+  if (/^design\s*-/.test(n)) return {svc:'Design'};
+  return {svc:null};
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORMAT
+═══════════════════════════════════════════════════════════════ */
+function fmt(n){ return '$'+Math.round(n||0).toLocaleString('en-US'); }
+
+/* ═══════════════════════════════════════════════════════════════
+   API CALLS
+═══════════════════════════════════════════════════════════════ */
+async function fetchDeals(month) {
+  const resp = await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({filters:[{propertyName:'invoice_booking_month',operator:'EQ',value:month}]})});
+  if (!resp.ok) throw new Error(`/api ${resp.status}`);
+  const data = await resp.json();
+  return data.deals||data.results||[];
+}
+async function fetchLineItems(dealIds) {
+  if (!dealIds.length) return {};
+  const resp = await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({dealIds})});
+  if (!resp.ok) return {};
+  return await resp.json();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTRIBUTION
+═══════════════════════════════════════════════════════════════ */
+function resolveMartechBucket(deal, ownerId) {
+  if (ownerId===916030451) return 'Jaydeep NBD';
+  if (typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)) {
+    if ((deal.user_role_invoice_app||'').trim()==='NBD') return 'Jaydeep NBD';
+  }
+  const rawGeo=(deal.geo__invoice_app_||'').trim();
+  const geo=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||
+            (typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
+  if (geo==='AU') return 'Jaydeep AU';
+  if (geo==='UK') return 'Jaydeep UK';
+  return 'Jaydeep US';
+}
+function attributeDeals(deals) {
+  const seen=new Set();
+  deals.forEach(d=>{
+    const amt=parseFloat(d.amount||0);
+    const name=(d.dealname||'');
+    if (amt<=0||EXCL_RE.test(name)){d._excl=true;return;}
+    const monthVal=(d.invoice_booking_month||'').toLowerCase();
+    const dupKey=`${name}|${amt}|${monthVal}`;
+    if (seen.has(dupKey)){d._excl=true;return;}
+    seen.add(dupKey);
+    const ownerId=parseInt(d.hubspot_owner_id||0);
+    if (ownerId===PRATIVA_ID){
+      d.bu=(d.business_unit_invoice_app||'').trim()==='MarTech'?'MarTech':'Digital';
+    } else {
+      d.bu=(typeof MARTECH_OWNER_IDS!=='undefined'&&MARTECH_OWNER_IDS.has(ownerId))?'MarTech':'Digital';
+    }
+    const rawGeo=(d.geo__invoice_app_||'').trim();
+    d.region=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||
+             (typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
+    d.head=(typeof OWNER_HEAD_MAP!=='undefined'?OWNER_HEAD_MAP[ownerId]:null)||
+           (typeof headFromRegion!=='undefined'?headFromRegion(d.region,d.bu):null)||'';
+    if (d.bu==='MarTech') d.martechBucket=resolveMartechBucket(d,ownerId);
+    d._amt=amt;
+    d._owner=OWNER_DISPLAY[ownerId]||'Other';
+    d._excl=false;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DATA BUILDERS
+═══════════════════════════════════════════════════════════════ */
+function emptyGroups(defs){ const g={}; defs.forEach(({key,label})=>{g[key]={label,owners:{},total:0};}); return g; }
+
+function buildBUData(deals, liMap, groupDefs, buVal, keyFn) {
+  const groups=emptyGroups(groupDefs);
+  const svcs={Campaign:0,Design:0,Email:0,Search:0,Web:0};
+  deals.filter(d=>!d._excl&&d.bu===buVal).forEach(d=>{
+    const gKey=keyFn(d);
+    if (!gKey||!groups[gKey]) return;
+    const grp=groups[gKey];
+    grp.owners[d._owner]=(grp.owners[d._owner]||0)+d._amt;
+    grp.total+=d._amt;
+    (liMap[d.id]||liMap[String(d.id)]||[]).forEach(li=>{
+      const liAmt=parseFloat(li.amount||0); if (liAmt<=0) return;
+      const {svc}=classifyLI(li.name||li.description||'');
+      if (svc&&Object.prototype.hasOwnProperty.call(svcs,svc)) svcs[svc]+=liAmt;
+    });
+  });
+  return {groups,svcs};
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════════════ */
+function visKeys(buId){
+  if (!CLONE_HEAD) return null;
+  const cfg=CLONE_VISIBLE[CLONE_HEAD]; if (!cfg) return null;
+  return cfg[buId]||null;
+}
+
+function renderOverall(buId,groups,defs,vis){
+  let grand=0,rows='';
+  defs.forEach(({key,label})=>{
+    if (vis&&!vis.includes(key)) return;
+    const g=groups[key]; grand+=g.total;
+    rows+=`<tr><td>${label}</td><td class="rev-cell">${fmt(g.total)}</td></tr>`;
+  });
+  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fmt(grand)}</td></tr>`;
+  $(buId+'-overall').innerHTML=
+    `<div class="panel-title">Overall Achievement</div>
+     <table class="ach-table"><thead><tr><th>Head</th><th class="rev-th">Revenue</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderIndividual(buId,groups,defs,vis){
+  let grand=0,tbody='';
+  defs.forEach(({key,label})=>{
+    if (vis&&!vis.includes(key)) return;
+    const g=groups[key]; grand+=g.total;
+    tbody+=`<tr class="grp-hdr"><td colspan="3">${label}</td></tr>`;
+    Object.entries(g.owners).sort((a,b)=>b[1]-a[1]).forEach(([n,r])=>{
+      tbody+=`<tr><td></td><td class="owner-cell">${n}</td><td class="rev-cell">${fmt(r)}</td></tr>`;
+    });
+    tbody+=`<tr class="sub-row"><td></td><td class="sub-lbl">Subtotal</td><td class="rev-cell">${fmt(g.total)}</td></tr>`;
+  });
+  tbody+=`<tr class="grand-row"><td colspan="2">Grand Total</td><td class="rev-cell">${fmt(grand)}</td></tr>`;
+  $(buId+'-individual').innerHTML=
+    `<div class="panel-title">Individual Owner Achievement</div>
+     <table class="ach-table"><thead><tr><th>Head</th><th>Owner</th><th class="rev-th">Revenue</th></tr></thead><tbody>${tbody}</tbody></table>`;
+}
+
+function renderService(buId,svcs){
+  const ORDER=['Campaign','Design','Email','Search','Web'];
+  let grand=0,rows='';
+  ORDER.forEach(s=>{ grand+=svcs[s]; rows+=`<tr><td>${s}</td><td class="rev-cell">${fmt(svcs[s])}</td></tr>`; });
+  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fmt(grand)}</td></tr>`;
+  $(buId+'-service').innerHTML=
+    `<div class="panel-title">Service Vertical Achievement</div>
+     <table class="ach-table"><thead><tr><th>Service</th><th class="rev-th">Revenue</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderBU(buId,data,defs){
+  const vis=visKeys(buId);
+  renderOverall(buId,data.groups,defs,vis);
+  renderIndividual(buId,data.groups,defs,vis);
+  renderService(buId,data.svcs);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SYNC
+═══════════════════════════════════════════════════════════════ */
+let isSyncing=false;
+
+async function doSync(initial) {
+  if (isSyncing) return;
+  isSyncing=true;
+  const rfbtn2=$('rfbtn'); if (rfbtn2) rfbtn2.disabled=true;
+  $('lo').classList.add('show');
+  $('sdot').style.background='#FFDA30';
+  $('stxt').textContent='FETCHING…';
+  $('err-bar').classList.remove('show');
+
+  const month=$('month-sel').value;
+  try {
+    const deals=await fetchDeals(month);
+    attributeDeals(deals);
+    const validIds=deals.filter(d=>!d._excl).map(d=>String(d.id));
+    const liMap=validIds.length?await fetchLineItems(validIds):{};
+
+    const digitalData=buildBUData(deals,liMap,DIGITAL_GROUPS,'Digital',d=>d.head);
+    const martechData=buildBUData(deals,liMap,MARTECH_GROUPS,'MarTech',d=>d.martechBucket);
+
+    renderBU('digital',digitalData,DIGITAL_GROUPS);
+    renderBU('martech',martechData,MARTECH_GROUPS);
+
+    $('main-content').style.display='block';
+    $('nav-strip').style.display='';
+    $('sdot').style.background='#FFDA30';
+    const validCount=deals.filter(d=>!d._excl).length;
+    const monthLabel=month.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
+    $('stxt').textContent=monthLabel+' · '+validCount+' DEALS';
+    const ts=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    $('sync-ts').textContent='Synced at '+ts;
+  } catch(e) {
+    console.error('[Achievement Desk]',e);
+    $('sdot').style.background='#E84040';
+    $('stxt').textContent='SYNC FAILED';
+    $('err-bar').textContent='Failed to load: '+e.message;
+    $('err-bar').classList.add('show');
+    $('main-content').style.display='block';
+    $('nav-strip').style.display='';
+  } finally {
+    isSyncing=false;
+    $('lo').classList.remove('show');
+    if (rfbtn2) rfbtn2.disabled=false;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', async ()=>{
+  bootCloneMode();
+  populateMonthSelector();
+  $('month-sel').addEventListener('change', ()=>doSync());
+
+  const authed=checkSSO();
+  if (!authed) return; // Wait for manual login
+
+  await initRegistry();
+  await doSync(true);
+});
+</script>
+</body>
+</html>
