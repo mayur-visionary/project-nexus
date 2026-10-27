@@ -94,7 +94,7 @@ async function initRegistry() {
   for (const [id, o] of Object.entries(reg)) {
     OWNER_BU_MAP[id]   = o.bu;
     OWNER_GEO[id]      = o.region === "geo" ? null : o.region;
-    OWNER_HEAD_MAP[id] = o.head   === "geo" ? null : o.head;
+    OWNER_HEAD_MAP[id] = o.head   === "geo" ? null : _fullHead(o.head);
     OWNER_NAMES[id]    = o.name;
     if (o.isNBD)                    NBD_OWNER_IDS.add(id);
     if (o.nature === "User Role")   USER_ROLE_IDS.add(id);
@@ -105,16 +105,31 @@ async function initRegistry() {
   }
 }
 
+// ── Head name mapping ─────────────────────────────────────────────────────────
+// Registry stores shortcodes; modules use full display names.
+// All consumers of registry-client.js receive full names via OWNER_HEAD_MAP
+// and headFromRegion() — no per-module conversion needed.
+const _HEAD_FULL = {
+  "Jaydeep":    "Jaydeep Salla",
+  "Jiggyasa":   "Jiggyasa Agrawal",
+  "Nevilson":   "Nevilson Christan",
+  "Tanuj - UK": "Tanuj Gupta (UK)",
+  "Tanuj - US": "Tanuj Gupta (US)"
+};
+function _fullHead(shortcode) {
+  return _HEAD_FULL[shortcode] || shortcode;
+}
+
 // ── headFromRegion ────────────────────────────────────────────────────────────
 // Resolves head for owners whose head === "geo" in the registry
-// (Leaders: Darshan, Krunal, Tanuj, Prativa)
-// Mirrors the logic previously hardcoded per-module
+// (Leaders: Darshan, Krunal, Tanuj, Prativa, Digital Leaders)
+// Returns full display names consistent with OWNER_HEAD_MAP
 function headFromRegion(region, bu) {
-  if (bu === "MarTech") return "Jaydeep";
-  if (bu === "Digital" || bu === "dynamic") {
-    if (region === "AU") return "Jiggyasa";
-    if (region === "UK") return "Tanuj - UK";
-    if (region === "US") return "Tanuj - US";
+  if (bu === "MarTech" || bu === "dynamic") return "Jaydeep Salla";
+  if (bu === "Digital") {
+    if (region === "AU") return "Jiggyasa Agrawal";
+    if (region === "UK") return "Tanuj Gupta (UK)";
+    if (region === "US") return "Tanuj Gupta (US)";
   }
   return null;
 }
@@ -123,4 +138,24 @@ function headFromRegion(region, bu) {
 // Applies GEO_MAP to a raw geo__invoice_app_ deal property value
 function resolveGeo(raw) {
   return GEO_MAP[raw] ?? null;
+}
+
+// ── Quick-filter helpers (used by index.html and any module with AM/NBD toggles) ──
+// Tier 1: registry nature (AM / NBD) decides immediately
+// Tier 2: user_role_invoice_app deal property consulted for User Role owners only
+function dealIsAM(d) {
+  const o = OWNER_REGISTRY[String(d.owner_id || "")];
+  if (!o) return false;
+  if (o.nature === "AM")        return true;
+  if (o.nature === "NBD")       return false;
+  if (o.nature === "User Role") return (d.user_role_invoice_app || "").toUpperCase() === "AM";
+  return false;
+}
+function dealIsNBD(d) {
+  const o = OWNER_REGISTRY[String(d.owner_id || "")];
+  if (!o) return false;
+  if (o.nature === "NBD")       return true;
+  if (o.nature === "AM")        return false;
+  if (o.nature === "User Role") return (d.user_role_invoice_app || "").toUpperCase() === "NBD";
+  return false;
 }
