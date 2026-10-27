@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Nexus · Mavlers</title>
+<title>Project Nexus &middot; Mavlers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -287,7 +287,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
       </svg>
     </div>
-    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-eyebrow">Mavlers &middot; Sales-Ops</div>
     <div class="login-title">Project Nexus</div>
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
@@ -323,8 +323,8 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
           <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
-        <button class="reset-btn" id="resetbtn" onclick="resetAll()">⊗ Reset All</button>
-        <button class="refresh-btn" id="rfbtn" onclick="doFYSync(true)">⟳ Refresh</button>
+        <button class="reset-btn" id="resetbtn" onclick="resetAll()">&#8855; Reset All</button>
+        <button class="refresh-btn" id="rfbtn" onclick="doFYSync(true)">&#10227; Refresh</button>
       </div>
     </div>
   </div>
@@ -334,7 +334,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <button class="nav-tab" data-screen="weekly" onclick="setScreen('weekly')">Weekly Sprint</button>
       <button class="nav-tab" data-screen="clubs" onclick="setScreen('clubs')">Client Club</button>
       <div style="margin-left:auto;display:flex;align-items:center;padding:0 6px"><div class="waffle-wrap" id="waffle-wrap">
-  <button class="waffle-btn" id="waffle-btn" title="All Modules" aria-label="Module launcher">⊞ Modules</button>
+  <button class="waffle-btn" id="waffle-btn" title="All Modules" aria-label="Module launcher">&#8862; Modules</button>
   <div class="waffle-menu" id="waffle-menu">
     <div class="waffle-hdr">All Modules</div>
     <a class="waffle-tile" href="/snapshot" target="_blank" data-mod="snapshot">BU Scorecard</a>
@@ -358,11 +358,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
             <option value="this-quarter">This Quarter (FY)</option>
             <option value="last-quarter" id="opt-last-quarter">Last Quarter (FY)</option>
             <option value="this-fy">This FY (Apr 2026)</option>
-            <option value="custom">Custom ▾</option>
+            <option value="custom">Custom &#9662;</option>
           </select>
           <div class="custom-range" id="custom-range">
             <select class="fsel sm" id="from-sel" onchange="onFilterChange()"></select>
-            <span class="range-sep">→</span>
+            <span class="range-sep">&#8594;</span>
             <select class="fsel sm" id="to-sel" onchange="onFilterChange()"></select>
           </div>
         </div>
@@ -373,11 +373,11 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
             <option value="this-quarter">This Quarter (FY)</option>
             <option value="last-quarter" id="clubs-opt-last-quarter">Last Quarter (FY)</option>
             <option value="this-fy">This FY (Apr 2026)</option>
-            <option value="custom">Custom ▾</option>
+            <option value="custom">Custom &#9662;</option>
           </select>
           <div class="custom-range" id="clubs-custom-range">
             <select class="fsel sm" id="clubs-from-sel" onchange="onClubsPeriodChange()"></select>
-            <span class="range-sep">→</span>
+            <span class="range-sep">&#8594;</span>
             <select class="fsel sm" id="clubs-to-sel" onchange="onClubsPeriodChange()"></select>
           </div>
         </div>
@@ -397,7 +397,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div class="ms-wrap" id="geo-ms-wrap">
         <div class="ms-btn" id="geo-ms-btn" onclick="toggleGeoMS(event)">
           <span id="geo-ms-label">All Regions</span>
-          <span class="ms-arrow">▼</span>
+          <span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="geo-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Regions</span><div class="ms-actions"><span class="ms-act" onclick="selectAllGeo()">All</span><span class="ms-act" onclick="deselectAllGeo()">None</span></div></div>
@@ -409,7 +409,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div class="ms-wrap" id="head-ms-wrap">
         <div class="ms-btn" id="head-ms-btn" onclick="toggleHeadMS(event)">
           <span id="head-ms-label">All Heads</span>
-          <span class="ms-arrow">▼</span>
+          <span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="head-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Heads</span><div class="ms-actions"><span class="ms-act" onclick="selectAllHeads()">All</span><span class="ms-act" onclick="deselectAllHeads()">None</span></div></div>
@@ -421,7 +421,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div class="ms-wrap" id="svc-ms-wrap">
         <div class="ms-btn" id="svc-ms-btn" onclick="toggleSvcMS(event)">
           <span id="svc-ms-label">All Services</span>
-          <span class="ms-arrow">▼</span>
+          <span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="svc-ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Services</span><div class="ms-actions"><span class="ms-act" onclick="selectAllSvc()">All</span><span class="ms-act" onclick="deselectAllSvc()">None</span></div></div>
@@ -442,7 +442,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div class="ms-wrap" id="ms-wrap" style="width:100%">
         <div class="ms-btn sb-ms-btn" id="ms-btn" onclick="toggleMS(event)">
           <span id="ms-label">All Owners</span>
-          <span class="ms-arrow">▼</span>
+          <span class="ms-arrow">&#9660;</span>
         </div>
         <div class="ms-dropdown" id="ms-dropdown">
           <div class="ms-ctrl"><span class="ms-ctrl-lbl">Deal Owners</span><div class="ms-actions"><span class="ms-act" onclick="selectAll()">All</span><span class="ms-act" onclick="deselectAll()">None</span></div></div>
@@ -456,7 +456,6 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
       <div style="display:flex;gap:5px;flex-wrap:wrap">
         <button class="nbd-toggle" id="existing-toggle" onclick="toggleExisting()" style="flex:1;min-width:60px">Existing</button>
         <button class="nbd-toggle" id="nbd-toggle" onclick="toggleNBD()" style="flex:1;min-width:45px">NBD</button>
-        <button class="nbd-toggle" id="react-toggle" onclick="toggleReactivation()" style="flex:1;min-width:50px">React.</button>
       </div>
     </div>
     <div class="sb-divider"></div>
@@ -509,7 +508,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
   <div class="kpi-grid" id="kpi-grid"></div>
   <div class="sec">Revenue Performance Breakdown</div>
   <div class="chart-row">
-    <div class="card"><div class="card-ttl">Business Unit</div><div class="card-sub" id="bu-chart-sub">Digital · MarTech · click to drill</div><div id="bu-bars"></div></div>
+    <div class="card"><div class="card-ttl">Business Unit</div><div class="card-sub" id="bu-chart-sub">Digital &middot; MarTech &middot; click to drill</div><div id="bu-bars"></div></div>
     <div class="card"><div class="card-ttl">Region</div><div class="card-sub" id="geo-sub">Click any region to drill down</div><div id="geo-bars"></div></div>
   </div>
   <div class="chart-row">
@@ -517,7 +516,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="card"><div class="card-ttl">Service</div><div class="card-sub" id="svc-chart-sub">Net revenue by service category</div><div id="svc-bars"></div></div>
   </div>
   <div class="chart-row">
-    <div class="card"><div class="card-ttl">Engagement Model</div><div class="card-sub" id="it-sub">Recurring · P2P · click to drill</div><div style="position:relative;height:210px"><canvas id="itc"></canvas></div></div>
+    <div class="card"><div class="card-ttl">Engagement Model</div><div class="card-sub" id="it-sub">Recurring &middot; P2P &middot; click to drill</div><div style="position:relative;height:210px"><canvas id="itc"></canvas></div></div>
     <div class="card"><div class="card-ttl">Top Clients</div><div class="card-sub" id="cl-sub">Click any client to drill down</div><div id="cl-bars"></div></div>
   </div>
   <div id="trends-section">
@@ -525,19 +524,19 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <span id="trend-section-hdr">Revenue Trends</span>
     <span id="trend-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase">Loading...</span>
   </div>
-  <div class="chart-row"><div class="card" style="grid-column:1/-1"><div class="card-ttl">Revenue &amp; Unique Clients</div><div class="card-sub" id="trend-sub-rev">Monthly Net Revenue (bars) · Unique Clients (line)</div><div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div></div></div>
+  <div class="chart-row"><div class="card" style="grid-column:1/-1"><div class="card-ttl">Revenue &amp; Unique Clients</div><div class="card-sub" id="trend-sub-rev">Monthly Net Revenue (bars) &middot; Unique Clients (line)</div><div style="position:relative;height:240px"><canvas id="trc-rev"></canvas></div></div></div>
   <div class="chart-row">
-    <div class="card"><div class="card-ttl">Business Unit Trend</div><div class="card-sub" id="trend-sub-bu">Digital (Pure) · Inter BU · MarTech bars</div><div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div></div>
-    <div class="card"><div class="card-ttl">Engagement Model Trend</div><div class="card-sub" id="trend-sub-eng">P2P · Recurring monthly revenue</div><div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div></div>
+    <div class="card"><div class="card-ttl">Business Unit Trend</div><div class="card-sub" id="trend-sub-bu">Digital (Pure) &middot; Inter BU &middot; MarTech bars</div><div style="position:relative;height:220px"><canvas id="trc-bu"></canvas></div></div>
+    <div class="card"><div class="card-ttl">Engagement Model Trend</div><div class="card-sub" id="trend-sub-eng">P2P &middot; Recurring monthly revenue</div><div style="position:relative;height:220px"><canvas id="trc-eng"></canvas></div></div>
   </div>
-  <div class="chart-row"><div class="card" style="grid-column:1/-1"><div class="card-ttl">Avg Revenue per Unique Client</div><div class="card-sub" id="trend-sub-avg">Net Revenue ÷ Unique Clients per month</div><div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div></div></div>
+  <div class="chart-row"><div class="card" style="grid-column:1/-1"><div class="card-ttl">Avg Revenue per Unique Client</div><div class="card-sub" id="trend-sub-avg">Net Revenue &divide; Unique Clients per month</div><div style="position:relative;height:200px"><canvas id="trc-avg"></canvas></div></div></div>
   </div>
   <div id="deal-records-section">
   <div class="sec">Deal Records</div>
   <div class="tcard">
     <div class="tcard-hdr">
       <div class="tcard-ttl"><h3>All Deals</h3><p id="tmeta"></p></div>
-      <button class="radar-toggle" id="deals-toggle-btn" onclick="toggleDealsTable()">Show Deals ▾</button>
+      <button class="radar-toggle" id="deals-toggle-btn" onclick="toggleDealsTable()">Show Deals &#9662;</button>
     </div>
     <div id="deals-table-body" style="display:none">
       <div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"><tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Loading live data from HubSpot...</td></tr></tbody></table></div>
@@ -545,29 +544,29 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     </div>
   </div>
   </div>
-  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+  <div class="footer">PROJECT NEXUS &nbsp;&bull;&nbsp; BY MAYUR DADLANI &nbsp;&bull;&nbsp; A JAM-STACK APPLICATION</div>
 </div><!-- /rev-main -->
 
 <!-- WEEKLY SPRINT -->
 <div class="weekly-layout" id="weekly-layout">
   <div class="weekly-main">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="sec" style="margin-bottom:0">Weekly Sprint &nbsp;·&nbsp; <span id="weekly-month-hdr" style="font-weight:600;color:#434343;text-transform:none;letter-spacing:0;font-size:11px"></span></div>
+      <div class="sec" style="margin-bottom:0">Weekly Sprint &nbsp;&middot;&nbsp; <span id="weekly-month-hdr" style="font-weight:600;color:#434343;text-transform:none;letter-spacing:0;font-size:11px"></span></div>
       <div id="weekly-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
     </div>
     <div class="wk-tiles" id="wk-tiles"><div style="grid-column:1/-1;text-align:center;padding:28px;color:#9A9A9A;font-weight:600">Loading sprint data...</div></div>
     <div class="chart-row">
-      <div class="card"><div class="card-ttl">Business Unit by Week</div><div class="card-sub" id="wbu-sub">Digital (Pure) · Inter BU · MarTech — all 4 weeks</div><div style="position:relative;height:200px"><canvas id="wkBuChart"></canvas></div></div>
-      <div class="card"><div class="card-ttl">Region by Week</div><div class="card-sub" id="wgeo-sub">US · UK · AU — all 4 weeks</div><div style="position:relative;height:200px"><canvas id="wkRegChart"></canvas></div></div>
+      <div class="card"><div class="card-ttl">Business Unit by Week</div><div class="card-sub" id="wbu-sub">Digital (Pure) &middot; Inter BU &middot; MarTech &mdash; all 4 weeks</div><div style="position:relative;height:200px"><canvas id="wkBuChart"></canvas></div></div>
+      <div class="card"><div class="card-ttl">Region by Week</div><div class="card-sub" id="wgeo-sub">US &middot; UK &middot; AU &mdash; all 4 weeks</div><div style="position:relative;height:200px"><canvas id="wkRegChart"></canvas></div></div>
     </div>
-    <div class="card" style="margin-bottom:14px"><div class="card-ttl">Head by Week</div><div class="card-sub" id="whead-sub">Net revenue per head · all 4 weeks compared</div><div style="position:relative;height:230px"><canvas id="wkHeadChart"></canvas></div></div>
+    <div class="card" style="margin-bottom:14px"><div class="card-ttl">Head by Week</div><div class="card-sub" id="whead-sub">Net revenue per head &middot; all 4 weeks compared</div><div style="position:relative;height:230px"><canvas id="wkHeadChart"></canvas></div></div>
     <div class="wk-tbl-hdr"><div class="sec" style="margin-bottom:0">Deal Records</div><span id="wk-active-lbl" style="font-size:9px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.08em"></span></div>
     <div class="tcard">
       <div class="tcard-hdr"><div class="tcard-ttl"><h3>All Deals</h3><p id="wtmeta"></p></div></div>
       <div class="twrap"><table><thead id="wdth"></thead><tbody id="wdtb"><tr><td colspan="9" style="text-align:center;padding:32px;color:#9A9A9A;font-weight:500">Select a week tile above</td></tr></tbody></table></div>
       <div class="pgs" id="wpgs"></div>
     </div>
-    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+    <div class="footer">PROJECT NEXUS &nbsp;&bull;&nbsp; BY MAYUR DADLANI &nbsp;&bull;&nbsp; A JAM-STACK APPLICATION</div>
   </div>
 </div><!-- /weekly-layout -->
 
@@ -579,15 +578,15 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
     <div class="sec">Revenue Waterfall</div>
     <div class="card" style="margin-bottom:18px">
       <div class="card-ttl" id="funnel-wf-title">Recurring Revenue Waterfall</div>
-      <div class="card-sub" id="funnel-wf-sub">Opening → adjustments → Expected Closing</div>
+      <div class="card-sub" id="funnel-wf-sub">Opening &rarr; adjustments &rarr; Expected Closing</div>
       <div id="funnel-wf-chart" style="height:210px;position:relative;margin-top:16px"></div>
     </div>
-    <div class="sec">Sales Funnel · by Owner</div>
+    <div class="sec">Sales Funnel &middot; by Owner</div>
     <div class="card" style="padding:0;overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #F2F2F2">
-        <div><div class="card-ttl" style="margin-bottom:0">Funnel Desk</div><div class="card-sub" style="margin-bottom:0" id="funnel-tbl-sub">Green cells = manual inputs · Auto rows computed from HubSpot</div></div>
+        <div><div class="card-ttl" style="margin-bottom:0">Funnel Desk</div><div class="card-sub" style="margin-bottom:0" id="funnel-tbl-sub">Green cells = manual inputs &middot; Auto rows computed from HubSpot</div></div>
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:9px;font-weight:700;color:#006E5E;letter-spacing:.04em;opacity:0;transition:opacity .3s" id="funnel-saved">Saved ✓</span>
+          <span style="font-size:9px;font-weight:700;color:#006E5E;letter-spacing:.04em;opacity:0;transition:opacity .3s" id="funnel-saved">Saved &#10003;</span>
           <button onclick="saveFunnelInputs()" style="padding:5px 14px;background:#FFDA30;border:none;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;color:#111;transition:background .2s" onmouseover="this.style.background='#FFE870'" onmouseout="this.style.background='#FFDA30'">Save Inputs</button>
         </div>
       </div>
@@ -598,7 +597,7 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         </table>
       </div>
     </div>
-    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+    <div class="footer">PROJECT NEXUS &nbsp;&bull;&nbsp; BY MAYUR DADLANI &nbsp;&bull;&nbsp; A JAM-STACK APPLICATION</div>
   </div>
 </div><!-- /funnel-layout -->
 
@@ -606,15 +605,15 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
 <div class="clubs-layout" id="clubs-layout">
   <div class="clubs-main">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A">Tier Overview &nbsp;·&nbsp; <span id="clubs-month-display"></span></div>
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A">Tier Overview &nbsp;&middot;&nbsp; <span id="clubs-month-display"></span></div>
       <div id="clubs-sync-status" style="font-size:8px;font-weight:600;color:#C0C0C0;letter-spacing:.06em;text-transform:uppercase"></div>
     </div>
     <div class="tier-grid" id="tier-grid"></div>
-    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">Tier Membership Trend · FY 2026 (Apr–present)</div>
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">Tier Membership Trend &middot; FY 2026 (Apr&ndash;present)</div>
     <div class="chart-row" style="margin-bottom:20px">
-      <div class="card" style="grid-column:1/-1"><div class="card-ttl">Client Count by Tier</div><div class="card-sub">Monthly Premier · Select · Core · Base membership · stacked · all filters applied</div><div style="position:relative;height:220px"><canvas id="clubs-trend-chart"></canvas></div></div>
+      <div class="card" style="grid-column:1/-1"><div class="card-ttl">Client Count by Tier</div><div class="card-sub">Monthly Premier &middot; Select &middot; Core &middot; Base membership &middot; stacked &middot; all filters applied</div><div style="position:relative;height:220px"><canvas id="clubs-trend-chart"></canvas></div></div>
     </div>
-    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">Club Members &nbsp;·&nbsp; <span id="clubs-roster-period"></span></div>
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#9A9A9A;margin-bottom:10px">Club Members &nbsp;&middot;&nbsp; <span id="clubs-roster-period"></span></div>
     <div class="tcard">
       <div class="tcard-hdr"><div class="tcard-ttl"><h3>Client Roster</h3><p id="clubs-roster-meta"></p></div></div>
       <div class="twrap">
@@ -624,15 +623,17 @@ tbody td{padding:8px 12px;overflow:hidden;text-overflow:ellipsis;white-space:now
         </table>
       </div>
     </div>
-    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+    <div class="footer">PROJECT NEXUS &nbsp;&bull;&nbsp; BY MAYUR DADLANI &nbsp;&bull;&nbsp; A JAM-STACK APPLICATION</div>
   </div>
 </div><!-- /clubs-layout -->
 
 </div><!-- /app-layout -->
-
+<script src="/registry-client.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ════ OWNER REGISTRY ════
+// OWNER_GROUPS — kept for smart filter UI (HEAD_BU_MAP, HEAD_OWNER_GROUPS, BU_HEADS)
+// Attribution maps (OWNER_BU_MAP, OWNER_GEO, OWNER_HEAD_MAP, GEO_MAP) now provided by registry-client.js
 const OWNER_GROUPS={
   "Leaders / Heads":[
     {id:"107178262",name:"Chintan Doshi"},{id:"17739548",name:"Darshan Modi"},
@@ -648,7 +649,8 @@ const OWNER_GROUPS={
   ],
   "Digital — UK":[
     {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
-    {id:"24817892",name:"Sheldon Fernandes"},{id:"31730801",name:"Vikram Sahi"}
+    // Sheldon Fernandes (24817892) removed — historical-only (Recurring Radar only)
+    {id:"31730801",name:"Vikram Sahi"}
   ],
   "Digital — AU":[
     {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
@@ -657,7 +659,7 @@ const OWNER_GROUPS={
   ],
   "Nevilson — Team":[
     {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},
-    {id:"37762663",name:"Malav Modi"}
+    {id:"37762663",name:"Malav Modi"},{id:"1360061595",name:"Dhruti Dave"}  // NEW Oct 2026
   ],
   "MarTech — US":[
     {id:"46153051",name:"Ayush Rathi"},{id:"93107638",name:"Ayush Dhupar"},
@@ -669,14 +671,17 @@ const OWNER_GROUPS={
     {id:"82030736",name:"Sakshi Bissa"},{id:"107178262",name:"Chintan Doshi"}
   ],
   "MarTech — AU":[{id:"467997340",name:"Karan Doshi"}],
-  "Reactivation":[{id:"41490632",name:"Mukund Basita"}],
+  "User Role":[  // renamed from "Reactivation" Oct 2026; Mukund reclassified; Matt Kelly added
+    {id:"90736668",name:"Matt Kelly"},   // NEW Oct 2026 (matt@mavlers.com)
+    {id:"41490632",name:"Mukund Basita"}
+  ],
   "Unclassified":[{id:"82663745",name:"Prativa Dubey"}]
 };
 const BU_HEADS={Digital:["Tanuj Gupta","Jiggyasa Agrawal","Nevilson Christan"],MarTech:["Jaydeep Salla"]};
 const ALL_HEADS=["Jaydeep Salla","Jiggyasa Agrawal","Nevilson Christan","Tanuj Gupta"];
 const HEAD_BU_MAP={"Jiggyasa Agrawal":"Digital","Jaydeep Salla":"MarTech","Nevilson Christan":"Digital","Tanuj Gupta":"Digital"};
 const HEAD_REGIONS={"Jiggyasa Agrawal":["AU"],"Tanuj Gupta":["US","UK"],"Nevilson Christan":["AU","UK","US"],"Jaydeep Salla":["AU","UK","US"]};
-const HEAD_OWNER_GROUPS={"Jiggyasa Agrawal":["Digital — AU"],"Tanuj Gupta":["Digital — US","Digital — UK"],"Nevilson Christan":["Nevilson — Team"],"Jaydeep Salla":["MarTech — US","MarTech — UK","MarTech — AU","Reactivation"]};
+const HEAD_OWNER_GROUPS={"Jiggyasa Agrawal":["Digital — AU"],"Tanuj Gupta":["Digital — US","Digital — UK"],"Nevilson Christan":["Nevilson — Team"],"Jaydeep Salla":["MarTech — US","MarTech — UK","MarTech — AU","User Role"]};
 const HEADS_CONFIG=[
   {id:"jiggyasa",name:"Jiggyasa Agrawal",bu:"Digital"},
   {id:"jaydeep",name:"Jaydeep Salla",bu:"MarTech"},
@@ -685,52 +690,40 @@ const HEADS_CONFIG=[
   {id:"digital",name:"Digital BU",bu:"Digital",buClone:true},
   {id:"interbu",name:"Inter BU",bu:null,interbuClone:true}
 ];
-const OWNER_GEO={
-  "38568120":"US","34558123":"US","284770744":"US","42663191":"US","240935328":"US","19799470":"US","557894666":"US",
-  "37344296":"UK","31730801":"UK","46156316":"UK","24817892":"UK",
-  "176516495":"AU","263464861":"AU","78831011":"AU","131779647":"AU","94746500":"AU",
-  "86813698":"AU","255830830":"UK","37762663":"US",
-  "86147905":"US","85767516":"US","89530815":"US","46153051":"US","93107638":"US",
-  "82030736":"UK","82911376":"UK","916030451":"US","467997340":"AU"
-};
-const REACTIVATION_IDS=["41490632"];
-const OWNER_BU_MAP=(()=>{
-  const m={};
-  OWNER_GROUPS["Leaders / Heads"].forEach(o=>{m[o.id]="Digital";});
-  Object.entries(OWNER_GROUPS).forEach(([g,owners])=>{
-    if(g==="Leaders / Heads")return;
-    const bu=g.startsWith("MarTech")||g==="Reactivation"?"MarTech":"Digital";
-    owners.forEach(o=>{m[o.id]=bu;});
-  });
-  m["107178262"]="MarTech";m["34140174"]="MarTech";m["17738843"]="MarTech";
-  m["17739173"]="Digital";m["86940863"]="Digital";m["17739548"]="Digital";m["79217713"]="Digital";
-  m["82663745"]="Digital";
-  return m;
-})();
-const GEO_MAP={"US":"US","UK":"UK","AU/NZ":"AU","AU":"AU","India":"AU","Netherlands":"UK","Other":null};
-const OWNER_GEO_EXT=OWNER_GEO;
+// OWNER_GEO — provided by registry-client.js via initRegistry()
+// OWNER_BU_MAP — provided by registry-client.js via initRegistry()
+// GEO_MAP — provided by registry-client.js via initRegistry()
+const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#006E5E","Digital — AU":"#473400","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#006E5E","MarTech — AU":"#473400","User Role":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
+const GEO_COLORS={US:"#FFDA30",UK:"#006E5E",AU:"#473400"};
 function geoFromDeal(d){
   const g=d.geo||"";
   if(g&&GEO_MAP[g]!==undefined){if(GEO_MAP[g])return GEO_MAP[g];}
   const id=String(d.owner_id||"");
-  if(OWNER_GEO_EXT[id])return OWNER_GEO_EXT[id];
+  if(OWNER_GEO[id])return OWNER_GEO[id];  // OWNER_GEO from registry-client.js
   return null;
 }
-const GEO_DOTS={"Digital — US":"#FFDA30","Digital — UK":"#006E5E","Digital — AU":"#473400","Nevilson — Team":"#26A69A","MarTech — US":"#FFDA30","MarTech — UK":"#006E5E","MarTech — AU":"#473400","Reactivation":"#9A9A9A","Unclassified":"#C0C0C0","Leaders / Heads":"#3B3561"};
-const GEO_COLORS={US:"#FFDA30",UK:"#006E5E",AU:"#473400"};
 const ORDERED_OWNERS=[
+  // ── MarTech ─────────────────────────────────────────────────────────────
   {id:"107178262",name:"Chintan Doshi"},{id:"17738843",name:"Jaydeep Salla"},{id:"34140174",name:"Mrugesh Dabhi"},
-  {id:"467997340",name:"Karan Doshi"},{id:"82911376",name:"Divya S"},{id:"82030736",name:"Sakshi Bissa"},
+  {id:"90736668",name:"Matt Kelly"},   // NEW Oct 2026
+  {id:"467997340",name:"Karan Doshi"},{id:"82911376",name:"Divya S"},{id:"41490632",name:"Mukund Basita"},
+  {id:"82030736",name:"Sakshi Bissa"},
   {id:"93107638",name:"Ayush Dhupar"},{id:"46153051",name:"Ayush Rathi"},{id:"86147905",name:"Preeti Thapliyal"},
-  {id:"85767516",name:"Rupali Sindhu"},{id:"89530815",name:"Vinita Raidu"},{id:"916030451",name:"Kamesh Biniwale"},
-  {id:"41490632",name:"Mukund Basita"},{id:"17739548",name:"Darshan Modi"},{id:"79217713",name:"Krunal Bakraniya"},
-  {id:"17739173",name:"Tanuj Gupta"},{id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
+  {id:"85767516",name:"Rupali Sindhu"},{id:"89530815",name:"Vinita Raidu"},
+  {id:"916030451",name:"Kamesh Biniwale"},
+  // ── Digital ─────────────────────────────────────────────────────────────
+  {id:"17739548",name:"Darshan Modi"},{id:"79217713",name:"Krunal Bakraniya"},{id:"17739173",name:"Tanuj Gupta"},
+  {id:"131779647",name:"Jiggyasa Agrawal"},{id:"78831011",name:"Kunal Gohil"},
   {id:"94746500",name:"Manvi Choumal"},{id:"176516495",name:"Prachi Porwal"},{id:"263464861",name:"Saquib Khan"},
-  {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},{id:"24817892",name:"Sheldon Fernandes"},
-  {id:"31730801",name:"Vikram Sahi"},{id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
+  {id:"46156316",name:"Flintoff Mehta"},{id:"37344296",name:"Kalgi Shah"},
+  // Sheldon Fernandes (24817892) removed — historical-only
+  {id:"31730801",name:"Vikram Sahi"},
+  {id:"38568120",name:"Baspin Thomas"},{id:"42663191",name:"Dhaval Damania"},
   {id:"240935328",name:"Hammad Bhaldar"},{id:"19799470",name:"Jebin Joy"},{id:"34558123",name:"Kaustubh Agrawal"},
   {id:"284770744",name:"Sourya Ghosh"},{id:"557894666",name:"Sudarshan Damani"},
   {id:"86813698",name:"Aman Acharya"},{id:"255830830",name:"Devanshu Kumar"},{id:"37762663",name:"Malav Modi"},
+  {id:"1360061595",name:"Dhruti Dave"}, // NEW Oct 2026
+  // ── Dynamic BU ──────────────────────────────────────────────────────────
   {id:"82663745",name:"Prativa Dubey"}
 ];
 const ALL_OWNERS=(()=>{const seen=new Set();return ORDERED_OWNERS.filter(o=>{if(!o.id)return false;if(seen.has(o.id))return false;seen.add(o.id);return true;});})();
@@ -752,7 +745,7 @@ function headFromDeal(d){
   const oid=String(d.owner_id||"");
   for(const[grp,owners]of Object.entries(OWNER_GROUPS)){
     if(owners.some(o=>o.id===oid)){
-      if(grp.startsWith("MarTech")||grp==="Reactivation")return"Jaydeep Salla";
+      if(grp.startsWith("MarTech")||grp==="User Role")return"Jaydeep Salla";  // "Reactivation" → "User Role"
       if(grp.includes("AU"))return"Jiggyasa Agrawal";
       return"Tanuj Gupta";
     }
@@ -957,22 +950,17 @@ function onBUChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll(
 function toggleBUFilter(bu){const sel=$("bu-sel");if(sel.value===bu){sel.value="";}else{sel.value=bu;}renderAll();}
 function onGeoChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>{renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}},100);}
 // ════ QUICK FILTERS ════
-const NBD_OWNERS=["37762663","255830830","86813698","916030451"];
-const REACTIVATION_OWNERS=["41490632"];
-const EXISTING_EXCLUDE=[...NBD_OWNERS,...REACTIVATION_OWNERS];
-let nbdActive=false,reactivationActive=false,existingActive=false;
-function _clearQuickFilters(){nbdActive=false;reactivationActive=false;existingActive=false;$("nbd-toggle").classList.remove("active");$("react-toggle").classList.remove("active");$("existing-toggle").classList.remove("active");}
+// dealIsAM() and dealIsNBD() provided by registry-client.js
+// Tier 1: registry nature (AM/NBD) → immediate.
+// Tier 2: user_role_invoice_app consulted for User Role owners only.
+let nbdActive=false,existingActive=false;
+function _clearQuickFilters(){nbdActive=false;existingActive=false;$("nbd-toggle").classList.remove("active");$("existing-toggle").classList.remove("active");}
 function toggleExisting(){const wasActive=existingActive;_clearQuickFilters();if(!wasActive){existingActive=true;$("existing-toggle").classList.add("active");}renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}}
 function toggleNBD(){const wasActive=nbdActive;_clearQuickFilters();if(!wasActive){nbdActive=true;$("nbd-toggle").classList.add("active");}renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}}
-function toggleReactivation(){const wasActive=reactivationActive;_clearQuickFilters();if(!wasActive){reactivationActive=true;$("react-toggle").classList.add("active");}renderAll();if(currentScreen==='clubs'){clubDataCache={};renderClubs();}}
+// toggleReactivation() — RETIRED Oct 2026. React. button removed from sidebar. Mukund reclassified to User Role.
 function onFilterChange(){clearTimeout(debTimer);debTimer=setTimeout(()=>renderAll(),100);}
 // ════ ATTRIBUTION PRE-PASS ════
-function headFromRegion(region,bu){
-  if(bu==="MarTech")return"Jaydeep Salla";
-  if(region==="UK")return"Tanuj Gupta (UK)";
-  if(region==="AU")return"Jiggyasa Agrawal";
-  return"Tanuj Gupta (US)";
-}
+// headFromRegion() provided by registry-client.js (returns full names: "Tanuj Gupta (UK)" etc.)
 function attributeDeals(arr){
   arr.forEach(d=>{
     const oid=String(d.owner_id||"");
@@ -1014,9 +1002,8 @@ function view(src,liMap){
         else{if(matchAmt===0)return null;d=Object.assign({},d,{amount:matchAmt});}
       }else{const eg=engGroup(d.eng_model);if(!eg||eg!==_itypeGroup)return null;}
     }
-    if(nbdActive&&!NBD_OWNERS.includes(String(d.owner_id)))return null;
-    if(reactivationActive&&!REACTIVATION_OWNERS.includes(String(d.owner_id)))return null;
-    if(existingActive&&EXISTING_EXCLUDE.includes(String(d.owner_id)))return null;
+    if(nbdActive&&!dealIsNBD(d))return null;
+    if(existingActive&&!dealIsAM(d))return null;
     if(drill.eng_model){
       const _drillGroup=drill.eng_model;const _dlis=liMap[d.id]||[];
       if(_dlis.length){
@@ -1070,7 +1057,7 @@ async function doFYSync(force=false){
     const fetched=[];let after=null;
     do{
       const body={filterGroups:fGroups,
-        properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_"],
+        properties:["dealname","amount_in_home_currency","deal_currency_code","hubspot_owner_id","closedate","createdate","contact_name__invoice_app_","zoho_display_name__invoice_app_","zoho_billing_id__invoice_app_","invoice_number","invoice_type__invoice_app_","invoicing_pattern__invoice_app_","order_type","payment_mode__invoice_app_","payment_process_via_wallet_yes___no__invoice_app_","geo__invoice_app_","geo_head__invoice_app_","invoice_booking_month__invoice_app_","engagement_model__invoice_app_","company_name__invoice_app_","user_role_invoice_app"],
         limit:200,sorts:[{propertyName:"invoice_booking_month__invoice_app_",direction:"ASCENDING"}]};
       if(after)body.after=after;
       const res=await fetch("/api",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -1087,7 +1074,8 @@ async function doFYSync(force=false){
             if(!cd)return"";
             try{const dt=new Date(cd+"T00:00:00");return`${MFULL[dt.getMonth()]}-${dt.getFullYear()}`;}catch(e){return"";}
           })(),
-          inv_type:r.properties?.invoice_type__invoice_app_||"",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"",order_type:r.properties?.order_type||"",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:(r.properties?.geo__invoice_app_||"").trim(),geo_head:(r.properties?.geo_head__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim()});
+          inv_type:r.properties?.invoice_type__invoice_app_||"",inv_pattern:r.properties?.invoicing_pattern__invoice_app_||"",order_type:r.properties?.order_type||"",wallet:r.properties?.payment_process_via_wallet_yes___no__invoice_app_||"No",geo:(r.properties?.geo__invoice_app_||"").trim(),geo_head:(r.properties?.geo_head__invoice_app_||"").trim(),eng_model:(r.properties?.engagement_model__invoice_app_||"").trim(),company_name:(r.properties?.company_name__invoice_app_||"").trim(),
+          user_role_invoice_app:(r.properties?.user_role_invoice_app||"").trim().toUpperCase()});
       });
       after=data.paging?.next?.after||null;
     }while(after);
@@ -1160,20 +1148,7 @@ function bustats(v){
   v.forEach(d=>{const bu=d.bu||"Digital";if(!bmap[bu])bmap[bu]={rev:0,count:0};bmap[bu].rev+=d.amount;bmap[bu].count++;});
   return["Digital","MarTech"].map(bu=>{const s=bmap[bu]||{rev:0,count:0};return{bu,rev:s.rev,count:s.count,share:g>0?s.rev/g*100:0};}).filter(b=>b.rev>0);
 }
-const OWNER_HEAD_MAP=(()=>{
-  const m={};
-  Object.entries(OWNER_GROUPS).forEach(([grp,owners])=>{
-    if(grp==="Leaders / Heads"||grp==="Unclassified")return;
-    owners.forEach(o=>{
-      if(grp.startsWith("MarTech")||grp==="Reactivation"){m[o.id]="Jaydeep Salla";return;}
-      if(grp==="Nevilson — Team"){m[o.id]="Nevilson Christan";return;}
-      if(grp==="Digital — AU"){m[o.id]="Jiggyasa Agrawal";return;}
-      if(grp==="Digital — UK"){m[o.id]="Tanuj Gupta (UK)";return;}
-      if(grp==="Digital — US"){m[o.id]="Tanuj Gupta (US)";return;}
-    });
-  });
-  return m;
-})();
+// OWNER_HEAD_MAP — provided by registry-client.js via initRegistry()
 function headstats(v){
   if(!v)v=view();const g=v.reduce((s,d)=>s+d.amount,0);const hmap={};
   v.forEach(d=>{const h=d.head||null;if(!h)return;if(!hmap[h])hmap[h]={rev:0,count:0};hmap[h].rev+=d.amount;hmap[h].count++;});
@@ -1249,11 +1224,11 @@ function renderKPIs(_v){
   const cards=[
     {lbl:"Net Revenue",val:(()=>{
       const _hasDrill=Object.keys(drill).length>0,_hasGeo=getSelectedRegions().length<ALL_REGIONS.length,_hasItype=$("itype-sel")?.value||"",_hasBU=$("bu-sel")?.value||"",_notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length,_hasSvc=getSelectedServices().length<ALL_SERVICES.length,_hasHead=getSelectedHeads().length<ALL_HEADS.length;
-      const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive||existingActive;
+      const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||existingActive;
       return fmtUSD(_isFiltered?m.net:(netRevTotal||m.net));
     })(),sub:(()=>{
       const _hasDrill=Object.keys(drill).length>0,_hasGeo=getSelectedRegions().length<ALL_REGIONS.length,_hasItype=$("itype-sel")?.value||"",_hasBU=$("bu-sel")?.value||"",_notAllOwners=ownerManuallyFiltered&&selOwners().length<ALL_IDS.length,_hasSvc=getSelectedServices().length<ALL_SERVICES.length,_hasHead=getSelectedHeads().length<ALL_HEADS.length;
-      const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||reactivationActive||existingActive;
+      const _isFiltered=_hasDrill||_hasGeo||_hasItype||_hasBU||_notAllOwners||_hasSvc||_hasHead||nbdActive||existingActive;
       return _isFiltered?`${m.count} deal${m.count!==1?"s":""} · filtered view`:`${m.count} deal${m.count!==1?"s":""} · all owners`;
     })(),tip:"Company net revenue · updates with every filter",action:"sortTable()"},
     {lbl:"Avg Deal Size",val:fmtUSD(m.avg),sub:`${m.clients} unique clients`,tip:"Net revenue ÷ unique clients"},
@@ -1450,7 +1425,6 @@ function resetAll(){
   ALL_HEADS.forEach(h=>{const e=$("head-"+h.replace(/\s/g,"_"));if(e)e.checked=true;});updateHeadLabel();updateSmartFilters();
   const gh=$("geohead-sel");if(gh)gh.value="";const it=$("itype-sel");if(it)it.value="";
   const nb=$("nbd-toggle");if(nb){nbdActive=false;nb.classList.remove("active");}
-  const rt=$("react-toggle");if(rt){reactivationActive=false;rt.classList.remove("active");}
   const ex=$("existing-toggle");if(ex){existingActive=false;ex.classList.remove("active");}
   ALL_SERVICES.forEach(s=>{const e=$("svc-"+s);if(e)e.checked=true;});updateSvcLabel();
   ALL_IDS.forEach(id=>{const e=$("ow-"+id);if(e)e.checked=true;});ownerManuallyFiltered=false;updateOwnerLabel();
@@ -1513,8 +1487,9 @@ function bootCloneMode(){
   console.log(`[Nexus] Clone mode: ${cfg.name} (${param})`);
 }
 // ════ BOOT ════
-window.addEventListener("DOMContentLoaded",function(){
+window.addEventListener("DOMContentLoaded",async function(){
   try{
+    await initRegistry(); // fetch /registry → populate OWNER_REGISTRY, OWNER_BU_MAP, OWNER_GEO, OWNER_HEAD_MAP, GEO_MAP etc.
     initMonthSelects();initPeriodOptions();initOwners();initHeadFilter();initRegionFilter();initServiceFilter();
     initClubsPeriodSel();initClubsPeriodOptions();initWeeklyPeriodSel();loadFunnelInputs();
     const ps=$("period-sel");if(ps)ps.value="this-month";const cr=$("custom-range");if(cr)cr.classList.remove("show");
@@ -1654,9 +1629,6 @@ function renderClubsRosterOnly(){if(!_lastClubsArgs)return;const{data,clubsMonth
 // ═══════════════════════════════════════════════════
 // ════ WEEKLY SPRINT — NEXUS 3.0 ════
 // ═══════════════════════════════════════════════════
-// Effective date: d.closedate || d.createdate (Krishna-confirmed fallback).
-// All 4 weeks rendered simultaneously.
-
 const WK_COLORS=['','#FFDA30','#006E5E','#3B3561','#473400'];
 const WK_TC    =['','#111','#fff','#fff','#FFDA30'];
 const WK_DATES =['','1–7','8–14','15–21','22–end'];
@@ -1664,10 +1636,7 @@ let weeklyActiveWeek=1;
 let wkBuChart=null,wkRegChart=null,wkHeadChart=null;
 let wsk='amount',wsd='desc',wpg=1;
 const WPER=10;
-
-// ── Effective date: closedate → createdate (Krishna-confirmed fallback) ──
 function effectiveDate(d){return d.closedate||d.createdate||'';}
-
 function weekOfMonth(dateStr){
   if(!dateStr)return null;
   try{const day=new Date(dateStr+'T00:00:00').getDate();if(day<=7)return 1;if(day<=14)return 2;if(day<=21)return 3;return 4;}catch(e){return null;}
@@ -1753,7 +1722,6 @@ function renderWeeklyTable(v){
   if(start>2)pages.push('...');for(let i=start;i<=end;i++)pages.push(i);if(end<tot-1)pages.push('...');if(tot>1)pages.push(tot);
   $('wpgs').innerHTML=prev+pages.map(p=>p==='...'?`<span class="pg-ellipsis">…</span>`:`<button class="pg${wpg===p?' on':''}" onclick="goWPg(${p})">${p}</button>`).join('')+next;
 }
-// ════ MAIN: renderWeekly ════
 function renderWeekly(){
   const tilesEl=$('wk-tiles');if(!tilesEl)return;const selectedMonth=getWeeklyMonth();
   if(!selectedMonth){tilesEl.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9A9A9A">Select a month above.</div>`;return;}
@@ -1773,7 +1741,6 @@ function renderWeekly(){
   const lbl=$('wk-active-lbl');if(lbl)lbl.textContent=`W${weeklyActiveWeek} · ${WK_DATES[weeklyActiveWeek]}`;
   renderWeeklyTable(monthDeals.filter(d=>weekOfMonth(effectiveDate(d))===weeklyActiveWeek));
 }
-// ════ END WEEKLY SPRINT ════
 // ════ FUNNEL DESK ════
 function loadFunnelInputs(){try{const r=localStorage.getItem(FUNNEL_LS_KEY);funnelInputs=r?JSON.parse(r):{};} catch(e){funnelInputs={};}}
 function saveFunnelInputs(){
@@ -1832,9 +1799,7 @@ function renderFunnelWaterfall(opening,predLoss,postPaid,pipeline,opp,expected,t
   if(targetPx!==null&&targetPx>0&&targetPx<=H)html+=`<div style="position:absolute;left:0;right:0;bottom:${targetPx.toFixed(0)}px;height:2px;background:#FFDA30;opacity:.85;pointer-events:none"><span style="position:absolute;right:4px;top:-11px;font-size:8px;font-weight:700;color:#473400;background:#FFDA30;padding:1px 4px;border-radius:2px">Target ${fmtShort(target)}</span></div>`;
   html+=`</div>`;$('funnel-wf-chart').innerHTML=html;
 }
-// ════ END FUNNEL DESK ════
-
-// ── Waffle Module Launcher ──
+// ════ Waffle Module Launcher ════
 (function(){
   function toggleWaffle(){var m=document.getElementById('waffle-menu'),b=document.getElementById('waffle-btn');if(!m||!b)return;var open=m.classList.contains('waf-open');m.classList.toggle('waf-open',!open);b.classList.toggle('waf-active',!open);}
   document.addEventListener('click',function(e){var w=document.getElementById('waffle-wrap');if(w&&!w.contains(e.target)){var m=document.getElementById('waffle-menu'),b=document.getElementById('waffle-btn');if(m)m.classList.remove('waf-open');if(b)b.classList.remove('waf-active');}});
