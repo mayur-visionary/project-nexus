@@ -379,11 +379,42 @@ function fmt(n){ return '$'+Math.round(n||0).toLocaleString('en-US'); }
    API CALLS
 ═══════════════════════════════════════════════════════════════ */
 async function fetchDeals(month) {
-  const resp = await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({filters:[{propertyName:'invoice_booking_month',operator:'EQ',value:month}]})});
-  if (!resp.ok) throw new Error(`/api ${resp.status}`);
-  const data = await resp.json();
-  return data.deals||data.results||[];
+  const props = [
+    'dealname','amount_in_home_currency','hubspot_owner_id',
+    'invoice_booking_month__invoice_app_','geo__invoice_app_',
+    'user_role_invoice_app','business_unit_invoice_app',
+    'closedate','createdate'
+  ];
+  const filters = [
+    {propertyName:'pipeline',  operator:'EQ', value:'115832232'},
+    {propertyName:'dealstage', operator:'EQ', value:'205348626'},
+    {propertyName:'invoice_booking_month__invoice_app_', operator:'EQ', value:month},
+    {propertyName:'engagement_model__invoice_app_', operator:'NOT_IN', values:['Wallet','Special Engagement']},
+    {propertyName:'company_name__invoice_app_',     operator:'NOT_IN', values:['InboxArmy','Uplers','Solomax']}
+  ];
+  const fetched=[]; let after=null;
+  do {
+    const body={filterGroups:[{filters}],properties:props,limit:200};
+    if (after) body.after=after;
+    const res=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if (!res.ok) throw new Error('/api '+res.status);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      const p=r.properties||{};
+      fetched.push({
+        id:                        String(r.id),
+        dealname:                  p.dealname||'',
+        amount:                    parseFloat(p.amount_in_home_currency||0)||0,
+        hubspot_owner_id:          p.hubspot_owner_id||'',
+        invoice_booking_month:     (p.invoice_booking_month__invoice_app_||'').toLowerCase().trim(),
+        geo__invoice_app_:         (p.geo__invoice_app_||'').trim(),
+        user_role_invoice_app:     (p.user_role_invoice_app||'').trim(),
+        business_unit_invoice_app: (p.business_unit_invoice_app||'').trim()
+      });
+    });
+    after=data.paging?.next?.after||null;
+  } while(after);
+  return fetched;
 }
 async function fetchLineItems(dealIds) {
   if (!dealIds.length) return {};
@@ -411,9 +442,9 @@ function resolveMartechBucket(deal, ownerId) {
 function attributeDeals(deals) {
   const seen=new Set();
   deals.forEach(d=>{
-    const amt=parseFloat(d.amount||0);
+    const amt=d.amount||0;  // pre-parsed float from fetchDeals
     const name=(d.dealname||'');
-    if (amt<=0||EXCL_RE.test(name)){d._excl=true;return;}
+    if (amt<=0){d._excl=true;return;}  // Wallet/SE/InboxArmy/Uplers/Solomax excluded at API level
     const monthVal=(d.invoice_booking_month||'').toLowerCase();
     const dupKey=`${name}|${amt}|${monthVal}`;
     if (seen.has(dupKey)){d._excl=true;return;}
