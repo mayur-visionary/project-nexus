@@ -1775,7 +1775,6 @@ function renderWeekly(){
 }
 // ════ END WEEKLY SPRINT ════
 // ════ FUNNEL DESK ════
-const FUNNEL_LS_KEY='nexus_funnel_desk_inputs';
 function loadFunnelInputs(){try{const r=localStorage.getItem(FUNNEL_LS_KEY);funnelInputs=r?JSON.parse(r):{};} catch(e){funnelInputs={};}}
 function saveFunnelInputs(){
   document.querySelectorAll('.fd-input').forEach(el=>{if(el.dataset.key)funnelInputs[el.dataset.key]=parseFloat(el.value)||0;});
