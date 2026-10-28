@@ -289,24 +289,7 @@ async function doLogin(){
 ═══════════════════════════════════════════════════════════════ */
 const FY_YEAR=2026,FY_MONTH=3,PRATIVA_ID='82663745';
 
-const OWNER_DISPLAY={
-  107178262:'Chintan',  17738843:'Jaydeep',   34140174:'Mrugesh',
-  90736668:'Matt Kelly',41490632:'Mukund',
-  467997340:'Karan',    82911376:'Divya',      82030736:'Sakshi',
-  93107638:'Ayush D',   46153051:'Ayush R',    86147905:'Preeti',
-  85767516:'Rupali',    89530815:'Vinita',
-  916030451:'Kamesh',
-  131779647:'Jiggyasa', 78831011:'Kunal',      94746500:'Manvi',
-  176516495:'Prachi',   263464861:'Saquib',
-  46156316:'Flintoff',  37344296:'Kalgi',      31730801:'Vikram',
-  38568120:'Baspin',    42663191:'Dhaval',     240935328:'Hammad',
-  19799470:'Jebin',     34558123:'Kaustubh',   284770744:'Sourya',
-  557894666:'Sudarshan',
-  86813698:'Aman',      255830830:'Devanshu',  1360061595:'Dhruti',
-  37762663:'Malav',
-  17739548:'Darshan',   79217713:'Krunal',     17739173:'Tanuj',
-  82663745:'Prativa'
-};
+// OWNER_NAMES populated by initRegistry() from registry-client.js — no local map needed
 
 const DIGITAL_GROUPS=[
   {key:'Jiggyasa Agrawal', label:'Jiggyasa'},
@@ -474,30 +457,7 @@ async function fetchLineItems(dealIds){
 /* ═══════════════════════════════════════════════════════════════
    LINE ITEM CLASSIFIER
 ═══════════════════════════════════════════════════════════════ */
-// Verbatim copy of classifyLineItem from index.html — do not modify from memory
-function classifyLI(name){
-  if(!name)return{svc:null};
-  const n=name.toLowerCase();
-  if(n.includes("campaign -")||n.includes("campaign manager")||n.includes("campaign operation specialist")||n.includes("sfmc"))
-    return{svc:"Campaign",bu:"MarTech"};
-  if(n.includes("design - asset")||n.includes("design - digital"))
-    return{svc:"Web",bu:"Digital"};
-  if(n.includes("design - "))
-    return{svc:"Design",bu:"MarTech"};
-  if(n.includes("development - email")||n.includes("email coding"))
-    return{svc:"Email",bu:"MarTech"};
-  if(n.includes("email design and coding"))
-    return{svc:"Design",bu:"MarTech"};
-  if(n.includes("development - web")||n.includes("development - lp/hub")||
-     n.includes("development - mobile app")||n.includes("ai & automation - web")||
-     n.includes("dot-net development")||n.includes("operational service - data entry")||
-     n.includes("landing page coding and design")||n.includes("landing page coding")||
-     n.includes("landing page only coding"))
-    return{svc:"Web",bu:"Digital"};
-  if(n.includes("search -")||n.includes("consultancy fees"))
-    return{svc:"Search",bu:"Digital"};
-  return{svc:null};
-}
+// classifyLineItem() is provided by registry-client.js — single source of truth
 
 /* ═══════════════════════════════════════════════════════════════
    ATTRIBUTION
@@ -505,7 +465,7 @@ function classifyLI(name){
 function resolveMartechBucket(deal,ownerId){
   if(ownerId==='916030451')return'Jaydeep NBD';
   if(typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)){
-    if(deal.user_role_invoice_app==='NBD')return'Jaydeep NBD';
+    if((deal.user_role_invoice_app||'').toUpperCase()==='NBD')return'Jaydeep NBD';
   }
   const rawGeo=deal.geo__invoice_app_;
   const geo=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||(typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
@@ -535,7 +495,7 @@ function attributeDeals(deals){
     d.head=(typeof OWNER_HEAD_MAP!=='undefined'?OWNER_HEAD_MAP[ownerId]:null)||(typeof headFromRegion!=='undefined'?headFromRegion(d.region,d.bu):null)||'';
     if(d.bu==='MarTech')d.martechBucket=resolveMartechBucket(d,ownerId);
     d._amt=amt;
-    d._owner=OWNER_DISPLAY[ownerId]||OWNER_DISPLAY[parseInt(ownerId)]||(typeof OWNER_NAMES!=='undefined'?OWNER_NAMES[ownerId]:null)||'Other';
+    d._owner=OWNER_NAMES[ownerId]||'Other'; // OWNER_NAMES populated by initRegistry() from registry-client.js
     d._excl=false;
   });
 }
@@ -555,7 +515,7 @@ function buildBUData(deals,liMap,groupDefs,buVal,keyFn){
     grp.total+=d._amt;
     (liMap[d.id]||[]).forEach(li=>{
       const liAmt=parseFloat(li.amount||0);if(!liAmt)return;
-      const{svc}=classifyLI(li.name||li.description||'');
+      const{svc}=classifyLineItem(li.name||li.description||'')||{svc:null};
       if(svc&&Object.prototype.hasOwnProperty.call(svcs,svc))svcs[svc]+=liAmt;
     });
   });
