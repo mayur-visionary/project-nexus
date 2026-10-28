@@ -259,7 +259,7 @@ async function doLogin() {
 ═══════════════════════════════════════════════════════════════ */
 const FY_YEAR  = 2026;
 const FY_MONTH = 3; // April = index 3
-const PRATIVA_ID = 82663745;
+const PRATIVA_ID = '82663745'; // string — registry-client.js keys are strings
 
 const OWNER_DISPLAY = {
   107178262:'Chintan',   17738843:'Jaydeep',    34140174:'Mrugesh',
@@ -418,18 +418,28 @@ async function fetchDeals(month) {
 }
 async function fetchLineItems(dealIds) {
   if (!dealIds.length) return {};
-  const resp = await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({dealIds})});
-  if (!resp.ok) return {};
-  return await resp.json();
+  const liMap={};
+  // Chunk at 500 — matches snapshot.html pattern
+  for (let i=0;i<dealIds.length;i+=500) {
+    const chunk=dealIds.slice(i,i+500);
+    const resp=await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({dealIds:chunk})});
+    if (!resp.ok) continue;
+    const data=await resp.json();
+    // lineItems.js returns { items: { "dealId": [{name,amount,description,...}] } }
+    Object.entries(data.items||{}).forEach(([did,lis])=>{
+      liMap[did]=lis||[];
+    });
+  }
+  return liMap;
 }
 
 /* ═══════════════════════════════════════════════════════════════
    ATTRIBUTION
 ═══════════════════════════════════════════════════════════════ */
 function resolveMartechBucket(deal, ownerId) {
-  if (ownerId===916030451) return 'Jaydeep NBD';
-  if (typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)) {
+  if (ownerId==='916030451') return 'Jaydeep NBD'; // Kamesh — string comparison
+  if (typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)) { // ownerId is string, Set has strings
     if ((deal.user_role_invoice_app||'').trim()==='NBD') return 'Jaydeep NBD';
   }
   const rawGeo=(deal.geo__invoice_app_||'').trim();
@@ -444,12 +454,14 @@ function attributeDeals(deals) {
   deals.forEach(d=>{
     const amt=d.amount||0;  // pre-parsed float from fetchDeals
     const name=(d.dealname||'');
-    if (amt<=0){d._excl=true;return;}  // Wallet/SE/InboxArmy/Uplers/Solomax excluded at API level
+    // Zero-amount deals excluded; negative-amount deals pass through and net against owner revenue
+    // Wallet / SE / InboxArmy / Uplers / Solomax excluded at API level — no client-side name check needed
+    if (amt===0){d._excl=true;return;}
     const monthVal=(d.invoice_booking_month||'').toLowerCase();
     const dupKey=`${name}|${amt}|${monthVal}`;
     if (seen.has(dupKey)){d._excl=true;return;}
     seen.add(dupKey);
-    const ownerId=parseInt(d.hubspot_owner_id||0);
+    const ownerId=String(d.hubspot_owner_id||''); // string — matches registry-client.js Set/map keys
     if (ownerId===PRATIVA_ID){
       d.bu=(d.business_unit_invoice_app||'').trim()==='MarTech'?'MarTech':'Digital';
     } else {
@@ -462,7 +474,9 @@ function attributeDeals(deals) {
            (typeof headFromRegion!=='undefined'?headFromRegion(d.region,d.bu):null)||'';
     if (d.bu==='MarTech') d.martechBucket=resolveMartechBucket(d,ownerId);
     d._amt=amt;
-    d._owner=OWNER_DISPLAY[ownerId]||'Other';
+    // Name resolution: hardcoded display map → registry OWNER_NAMES → 'Other'
+    d._owner=OWNER_DISPLAY[ownerId]||OWNER_DISPLAY[parseInt(ownerId)]||
+             (typeof OWNER_NAMES!=='undefined'?OWNER_NAMES[ownerId]:null)||'Other';
     d._excl=false;
   });
 }
@@ -481,7 +495,7 @@ function buildBUData(deals, liMap, groupDefs, buVal, keyFn) {
     const grp=groups[gKey];
     grp.owners[d._owner]=(grp.owners[d._owner]||0)+d._amt;
     grp.total+=d._amt;
-    (liMap[d.id]||liMap[String(d.id)]||[]).forEach(li=>{
+    (liMap[d.id]||[]).forEach(li=>{  // d.id is String, liMap keyed by String — direct match
       const liAmt=parseFloat(li.amount||0); if (liAmt<=0) return;
       const {svc}=classifyLI(li.name||li.description||'');
       if (svc&&Object.prototype.hasOwnProperty.call(svcs,svc)) svcs[svc]+=liAmt;
