@@ -816,7 +816,7 @@ async function fetchLineItems(deals) {
           project_type: li.project_type || "",
           status_1:     li.status_1 || ""
         };
-      }).filter(li => li.amount > 0);
+      }).filter(li => li.amount !== 0);
     });
   }
   return liMap;
