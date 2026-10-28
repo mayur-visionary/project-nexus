@@ -159,3 +159,31 @@ function dealIsNBD(d) {
   if (o.nature === "User Role") return (d.user_role_invoice_app || "").toUpperCase() === "NBD";
   return false;
 }
+
+// ── classifyLineItem ──────────────────────────────────────────────────────────
+// Service + BU classifier for HubSpot line item names.
+// Single source of truth for all Nexus modules — do not redefine per-module.
+// To update classification rules, edit here only; all modules pick up on next load.
+function classifyLineItem(name) {
+  if (!name) return null;
+  const n = name.toLowerCase();
+  if (n.includes("campaign -") || n.includes("campaign manager") || n.includes("campaign operation specialist") || n.includes("sfmc"))
+    return { svc: "Campaign", bu: "MarTech" };
+  if (n.includes("design - asset") || n.includes("design - digital"))
+    return { svc: "Web",      bu: "Digital" };
+  if (n.includes("design - "))
+    return { svc: "Design",   bu: "MarTech" };
+  if (n.includes("development - email") || n.includes("email coding"))
+    return { svc: "Email",    bu: "MarTech" };
+  if (n.includes("email design and coding"))
+    return { svc: "Design",   bu: "MarTech" };
+  if (n.includes("development - web")        || n.includes("development - lp/hub")          ||
+      n.includes("development - mobile app") || n.includes("ai & automation - web")         ||
+      n.includes("dot-net development")      || n.includes("operational service - data entry") ||
+      n.includes("landing page coding and design") || n.includes("landing page coding")     ||
+      n.includes("landing page only coding"))
+    return { svc: "Web",      bu: "Digital" };
+  if (n.includes("search -") || n.includes("consultancy fees"))
+    return { svc: "Search",   bu: "Digital" };
+  return null;
+}
