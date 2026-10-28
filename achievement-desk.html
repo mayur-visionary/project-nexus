@@ -83,41 +83,62 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
-/* ── View bar ── */
-.view-bar{display:flex;align-items:center;gap:12px;padding:16px 0 14px}
-.view-lbl{font-size:9px;font-weight:800;color:#999;letter-spacing:.14em;text-transform:uppercase}
-.toggle-group{display:flex;gap:6px}
-.toggle-btn{padding:6px 16px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;border:1.5px solid #473400;background:transparent;color:#473400;border-radius:20px;transition:all .2s}
-.toggle-btn:hover:not(.active){background:rgba(71,52,0,.07)}
-.toggle-btn.active{background:#473400;color:#FFDA30;border-color:#473400}
+/* ── Segment control (VIEW toggle) — verbatim from Funnel Desk ── */
+.seg-wrap{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;padding-top:20px}
+.seg-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#696969}
+.seg{display:inline-flex;background:#fff;border:1px solid #E2E2E2;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.seg-btn{padding:6px 18px;background:transparent;border:none;font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;cursor:pointer;transition:all .18s;white-space:nowrap;border-right:1px solid #E2E2E2}
+.seg-btn:last-child{border-right:none}
+.seg-btn:hover{background:#FFFBEA;color:#473400}
+.seg-btn.active{background:#473400;color:#FFDA30}
 
-/* ── Section card ── */
-.ach-card{background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.ach-card-title{background:#473400;color:#FFDA30;font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;padding:7px 18px}
+/* ── Table card — verbatim from Funnel Desk ── */
+.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 12px rgba(67,52,0,.06)}
+.tcard-hdr{padding:14px 18px 12px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tcard-ttl{font-size:11px;font-weight:800;color:#2E2E2E;text-transform:uppercase;letter-spacing:.06em}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
-/* ── Achievement table ── */
-.ach-table{width:100%;border-collapse:collapse;font-size:12px}
-.ach-table th{background:#f5f0e4;color:#473400;padding:7px 16px;text-align:left;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1.5px solid #E2E2E2}
-.ach-table th.rev-th{text-align:right}
-.ach-table td{padding:8px 16px;border-bottom:1px solid #f0ebe0;color:#434343;vertical-align:middle}
+/* ── Achievement table — Funnel Desk type scale + colours ── */
+.ach-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif}
+
+/* Table header — Space Indigo + Gold (Funnel Desk premier colours) */
+.ach-table thead th{padding:9px 14px;background:#3B3561;text-align:left;font-size:10px;font-weight:800;color:#FFDA30;text-transform:uppercase;letter-spacing:.06em;border-bottom:none;white-space:nowrap}
+.ach-table thead th.rev-th{text-align:right}
+
+/* Body rows */
+.ach-table tbody tr{border-bottom:1px solid #F5F5F5}
+.ach-table tbody td{padding:8px 14px;color:#434343;font-weight:600;font-size:10.5px;vertical-align:middle}
 .ach-table tbody tr:last-child td{border-bottom:none}
-.ach-table tbody tr:hover td{background:#fafaf5}
-.ach-table tr.grp-hdr td{background:#473400;color:#FFDA30;font-weight:800;font-size:10px;letter-spacing:.07em;padding:6px 16px}
-.ach-table tr.grp-hdr:hover td{background:#473400}
-.ach-table tr.sub-row td{background:#faf5e6;color:#473400;font-weight:700;font-size:11px;border-top:1px solid #d8cf9a;border-bottom:1.5px solid #d8cf9a}
-.ach-table tr.sub-row:hover td{background:#faf5e6}
-.ach-table tr.grand-row td{background:#FFDA30;color:#473400;font-weight:800;font-size:12px;border-top:2px solid #473400}
-.ach-table tr.grand-row:hover td{background:#FFDA30}
+.ach-table tbody tr:hover td{background:#FFFBEA!important}
+
+/* Group header rows (Jiggyasa / Tanuj UK / etc.) — Funnel Desk sec-hdr */
+.ach-table tr.grp-hdr td{background:#F7F7F7;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.14em;padding:5px 14px;border-top:2px solid #E8E8E8;border-bottom:1px solid #E8E8E8}
+.ach-table tr.grp-hdr:hover td{background:#F7F7F7!important}
+
+/* Subtotal rows — warm gold tint (Funnel Desk recurring-total style) */
+.ach-table tr.sub-row td{background:#FFFBEA;font-weight:800;color:#2E2E2E;border-top:1px solid #FFE870;font-size:10.5px}
+.ach-table tr.sub-row:hover td{background:#FFF3CC!important}
+.ach-table tr.sub-row td.rev-cell{background:#FFDA30;color:#2E2000}
+
+/* Grand total rows — Funnel Desk row-grand-total */
+.ach-table tr.grand-row td{background:#473400!important;font-weight:800;color:#FFDA30!important;font-size:12px;border-top:2px solid #FFDA30}
+.ach-table tr.grand-row:hover td{background:#5A4200!important}
+.ach-table tr.grand-row td.rev-cell{background:#2E2000!important;color:#FFDA30!important;border-left:1px solid #FFDA30}
+
+/* Cell helpers */
 .rev-cell{text-align:right!important;font-variant-numeric:tabular-nums;font-weight:700}
-.neg{color:#E84040}
-.owner-cell{padding-left:28px!important;color:#666}
-.sub-lbl{font-size:9px;letter-spacing:.07em;text-transform:uppercase}
-.ph{padding:48px 20px;text-align:center;color:#bbb;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.neg{color:#CC0033!important;font-weight:800!important}
+.owner-cell{padding-left:32px!important;color:#696969;font-weight:600}
+.sub-lbl{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#A07A00}
+
+/* Loading state — Funnel Desk state-msg */
+.ph{text-align:center;padding:60px 20px;color:#9A9A9A;font-weight:600;font-size:11px}
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
 
-@media(max-width:700px){.hdr-in{padding:14px 18px 0}.main{padding:0 18px 40px}.nav-in{padding:0 18px}.view-bar{padding:12px 0 10px}}
+@media(max-width:900px){.hdr-in,.main{padding-left:18px;padding-right:18px}}
+@media(max-width:600px){.hdr-top{flex-direction:column}.hdr-title{font-size:17px}.nav-tab{padding:8px 12px;font-size:8.5px}}
 </style>
 </head>
 <body>
@@ -199,49 +220,55 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
   <!-- ── OVERALL TAB ── -->
   <div class="tab-panel active" id="panel-overall">
-    <div class="view-bar">
-      <span class="view-lbl">View</span>
-      <div class="toggle-group">
-        <button class="toggle-btn active" id="tog-ov-digital" onclick="setOverallToggle('digital')">Digital BU</button>
-        <button class="toggle-btn"        id="tog-ov-martech" onclick="setOverallToggle('martech')">MarTech BU</button>
+    <div class="seg-wrap">
+      <span class="seg-label">View</span>
+      <div class="seg">
+        <button class="seg-btn active" id="tog-ov-digital" onclick="setOverallToggle('digital')">Digital BU</button>
+        <button class="seg-btn"        id="tog-ov-martech" onclick="setOverallToggle('martech')">MarTech BU</button>
       </div>
     </div>
-    <div class="ach-card">
-      <div class="ach-card-title">Overall Achievement</div>
-      <div id="ov-digital-view"><div class="ph">Syncing…</div></div>
-      <div id="ov-martech-view" style="display:none"><div class="ph">Syncing…</div></div>
+    <div class="tcard">
+      <div class="tcard-hdr"><span class="tcard-ttl">Overall Achievement</span></div>
+      <div class="twrap">
+        <div id="ov-digital-view"><div class="ph">Syncing…</div></div>
+        <div id="ov-martech-view" style="display:none"><div class="ph">Syncing…</div></div>
+      </div>
     </div>
   </div>
 
   <!-- ── DIGITAL BU TAB ── -->
   <div class="tab-panel" id="panel-digital">
-    <div class="view-bar">
-      <span class="view-lbl">View</span>
-      <div class="toggle-group">
-        <button class="toggle-btn active" id="tog-dig-owners"  onclick="setDigitalToggle('owners')">Owners</button>
-        <button class="toggle-btn"        id="tog-dig-service" onclick="setDigitalToggle('service')">Service</button>
+    <div class="seg-wrap">
+      <span class="seg-label">View</span>
+      <div class="seg">
+        <button class="seg-btn active" id="tog-dig-owners"  onclick="setDigitalToggle('owners')">Owners</button>
+        <button class="seg-btn"        id="tog-dig-service" onclick="setDigitalToggle('service')">Service</button>
       </div>
     </div>
-    <div class="ach-card">
-      <div class="ach-card-title" id="dig-card-title">Individual Owner Achievement · Digital BU</div>
-      <div id="dig-owners-view"><div class="ph">Syncing…</div></div>
-      <div id="dig-service-view" style="display:none"><div class="ph">Syncing…</div></div>
+    <div class="tcard">
+      <div class="tcard-hdr"><span class="tcard-ttl" id="dig-card-title">Individual Owner Achievement · Digital BU</span></div>
+      <div class="twrap">
+        <div id="dig-owners-view"><div class="ph">Syncing…</div></div>
+        <div id="dig-service-view" style="display:none"><div class="ph">Syncing…</div></div>
+      </div>
     </div>
   </div>
 
   <!-- ── MARTECH BU TAB ── -->
   <div class="tab-panel" id="panel-martech">
-    <div class="view-bar">
-      <span class="view-lbl">View</span>
-      <div class="toggle-group">
-        <button class="toggle-btn active" id="tog-mt-owners"  onclick="setMartechToggle('owners')">Owners</button>
-        <button class="toggle-btn"        id="tog-mt-service" onclick="setMartechToggle('service')">Service</button>
+    <div class="seg-wrap">
+      <span class="seg-label">View</span>
+      <div class="seg">
+        <button class="seg-btn active" id="tog-mt-owners"  onclick="setMartechToggle('owners')">Owners</button>
+        <button class="seg-btn"        id="tog-mt-service" onclick="setMartechToggle('service')">Service</button>
       </div>
     </div>
-    <div class="ach-card">
-      <div class="ach-card-title" id="mt-card-title">Individual Owner Achievement · MarTech BU</div>
-      <div id="mt-owners-view"><div class="ph">Syncing…</div></div>
-      <div id="mt-service-view" style="display:none"><div class="ph">Syncing…</div></div>
+    <div class="tcard">
+      <div class="tcard-hdr"><span class="tcard-ttl" id="mt-card-title">Individual Owner Achievement · MarTech BU</span></div>
+      <div class="twrap">
+        <div id="mt-owners-view"><div class="ph">Syncing…</div></div>
+        <div id="mt-service-view" style="display:none"><div class="ph">Syncing…</div></div>
+      </div>
     </div>
   </div>
 
@@ -384,6 +411,7 @@ function setMartechToggle(val){
     ?'Individual Owner Achievement · MarTech BU'
     :'Service Vertical Achievement · MarTech BU';
 }
+// Note: seg-btn.active class toggled above — no separate toggle-btn references remain
 
 /* ═══════════════════════════════════════════════════════════════
    MONTH SELECTOR
