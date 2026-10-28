@@ -50,7 +50,10 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sdot{width:7px;height:7px;border-radius:50%;background:#C0C0C0;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.45);font-weight:500}
-.period-sel{appearance:none;background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.35);color:#FFDA30;padding:5px 24px 5px 10px;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23FFDA30'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.month-badge{display:inline-flex;align-items:center;background:#5c4200;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:20px;min-width:140px;justify-content:center}
+.nav-arrow{padding:5px 9px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:13px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;line-height:1}
+.nav-arrow:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.nav-arrow:disabled{opacity:.3;cursor:not-allowed}
 .refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
 .refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .refresh-btn:disabled{opacity:.35;cursor:not-allowed}
@@ -190,7 +193,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <div class="stxt"><div class="sdot" id="sdot"></div>&nbsp;<span id="stxt">Ready</span></div>
           <div class="last-sync" id="last-sync"></div>
         </div>
-        <select class="period-sel" id="month-sel"></select>
+        <button class="nav-arrow" id="month-prev" onclick="navigateMonth(-1)">&#8249;</button>
+        <span class="month-badge" id="month-badge">—</span>
+        <button class="nav-arrow" id="month-next" onclick="navigateMonth(1)">&#8250;</button>
         <button class="refresh-btn" id="rfbtn" onclick="doSync()">⟳ Refresh</button>
         <a class="nexus-btn" href="/" id="nexus-link">↗ Revenue Pulse</a>
       </div>
@@ -416,18 +421,50 @@ function setMartechToggle(val){
 /* ═══════════════════════════════════════════════════════════════
    MONTH SELECTOR
 ═══════════════════════════════════════════════════════════════ */
-function populateMonthSelector(){
-  const sel=$('month-sel'),now=new Date(),months=[];
+// FY month navigation — replaces native <select> with badge + arrows
+let FY_MONTHS=[];   // [{val:'april-2026', lbl:'April 2026'}]
+let MONTH_IDX=0;    // current index into FY_MONTHS
+
+function buildFYMonths(){
+  const now=new Date(),months=[];
   const cursor=new Date(FY_YEAR,FY_MONTH,1);
-  while(cursor.getFullYear()<now.getFullYear()||(cursor.getFullYear()===now.getFullYear()&&cursor.getMonth()<=now.getMonth())){
+  while(cursor.getFullYear()<now.getFullYear()||
+       (cursor.getFullYear()===now.getFullYear()&&cursor.getMonth()<=now.getMonth())){
     const mn=cursor.toLocaleString('en-US',{month:'long'});
     months.push({val:`${mn.toLowerCase()}-${cursor.getFullYear()}`,lbl:`${mn} ${cursor.getFullYear()}`});
     cursor.setMonth(cursor.getMonth()+1);
   }
-  months.forEach(m=>{const o=document.createElement('option');o.value=m.val;o.textContent=m.lbl;sel.appendChild(o);});
+  return months;
+}
+
+function updateMonthBadge(){
+  const m=FY_MONTHS[MONTH_IDX];
+  $('month-badge').textContent=m.lbl;
+  $('month-prev').disabled=(MONTH_IDX===0);
+  $('month-next').disabled=(MONTH_IDX===FY_MONTHS.length-1);
+}
+
+function navigateMonth(dir){
+  const next=MONTH_IDX+dir;
+  if(next<0||next>=FY_MONTHS.length)return;
+  MONTH_IDX=next;
+  updateMonthBadge();
+  doSync();
+}
+
+function getCurrentMonth(){
+  return FY_MONTHS[MONTH_IDX]?.val||'';
+}
+
+function initMonthNav(){
+  FY_MONTHS=buildFYMonths();
+  // Default: last closed month
+  const now=new Date();
   const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
   const prevVal=`${prev.toLocaleString('en-US',{month:'long'}).toLowerCase()}-${prev.getFullYear()}`;
-  sel.value=months.find(m=>m.val===prevVal)?prevVal:months[months.length-1].val;
+  MONTH_IDX=FY_MONTHS.findIndex(m=>m.val===prevVal);
+  if(MONTH_IDX<0)MONTH_IDX=FY_MONTHS.length-1;
+  updateMonthBadge();
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -491,23 +528,27 @@ async function fetchLineItems(dealIds){
    ATTRIBUTION
 ═══════════════════════════════════════════════════════════════ */
 function resolveMartechBucket(deal,ownerId){
-  // Tier 1: Fixed NBD owner
-  if(ownerId==='916030451') return 'Jaydeep NBD'; // Kamesh Biniwale
+  // Tier 1: Kamesh — fixed NBD, hardcoded
+  if(ownerId==='916030451') return 'Jaydeep NBD';
 
-  // Tier 2: User Role owners — nature per deal, geo from deal property
-  // (registry OWNER_GEO is null for User Role owners — deal geo is authoritative)
-  if(typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)){
-    if((deal.user_role_invoice_app||'').toUpperCase()==='NBD') return 'Jaydeep NBD';
-    const geo=(typeof resolveGeo!=='undefined'?resolveGeo((deal.geo__invoice_app_||'').trim()):null)||'US';
-    if(geo==='AU') return 'Jaydeep AU';
-    if(geo==='UK') return 'Jaydeep UK';
-    return 'Jaydeep US';
+  // Tier 2: Registry fixed-region owners — OWNER_GEO non-null means region is explicit
+  // in the registry (applies to AM owners AND User Role owners with a fixed region,
+  // e.g. Karan Doshi region:"AU", Divya S region:"UK").
+  // Deal geo property is never consulted for these owners.
+  const fixedGeo=(typeof OWNER_GEO!=='undefined')?OWNER_GEO[ownerId]:null;
+  if(fixedGeo){
+    if(fixedGeo==='AU') return 'Jaydeep AU';
+    if(fixedGeo==='UK') return 'Jaydeep UK';
+    if(fixedGeo==='US') return 'Jaydeep US';
   }
 
-  // Tier 3: Fixed AM owners — OWNER_GEO is authoritative, deal geo ignored
-  const geo=(typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
-  if(geo==='AU') return 'Jaydeep AU';
-  if(geo==='UK') return 'Jaydeep UK';
+  // Tier 3: Dynamic owners — OWNER_GEO is null (region:"geo" in registry:
+  // Chintan, Jaydeep Salla, Mrugesh, Matt Kelly, Mukund).
+  // Consult deal properties: NBD flag first, then geo__invoice_app_.
+  if((deal.user_role_invoice_app||'').toUpperCase()==='NBD') return 'Jaydeep NBD';
+  const dealGeo=(typeof resolveGeo!=='undefined')?resolveGeo((deal.geo__invoice_app_||'').trim()):null;
+  if(dealGeo==='AU') return 'Jaydeep AU';
+  if(dealGeo==='UK') return 'Jaydeep UK';
   return 'Jaydeep US';
 }
 
@@ -625,7 +666,7 @@ async function doSync(initial){
   $('lo').classList.add('show');
   $('sdot').style.background='#FFDA30';$('stxt').textContent='FETCHING…';
   $('err-bar').style.display='none';
-  const month=$('month-sel').value;
+  const month=getCurrentMonth();
   try{
     const deals=await fetchDeals(month);
     attributeDeals(deals);
@@ -657,8 +698,7 @@ async function doSync(initial){
 ═══════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded',async()=>{
   bootCloneMode();
-  populateMonthSelector();
-  $('month-sel').addEventListener('change',()=>doSync());
+  initMonthNav();
   const authed=checkSSO();
   if(!authed)return;
   await initRegistry();
