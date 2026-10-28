@@ -35,7 +35,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Header ── */
 .hdr{background:#473400}
-.hdr-in{max-width:1480px;margin:0 auto;padding:16px 28px 0}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
 .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
 .hdr-brand:hover .hdr-title{color:#FFDA30}
@@ -47,61 +47,77 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
 .hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
 .h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-.sdot{width:7px;height:7px;border-radius:50%;background:#666;flex-shrink:0;transition:background .4s}
+.sdot{width:7px;height:7px;border-radius:50%;background:#C0C0C0;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
-.sync-ts{font-size:9px;color:rgba(255,255,255,.45);font-weight:500}
+.last-sync{font-size:9px;color:rgba(255,255,255,.45);font-weight:500}
+.period-sel{appearance:none;background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.35);color:#FFDA30;padding:5px 24px 5px 10px;border-radius:6px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23FFDA30'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
 .nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* ── Nav tabs bar ── */
+.nav-tabs-bar{background:#333;border-top:1px solid rgba(255,255,255,.07)}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
+.nav-left{display:flex;align-items:center;gap:0}
+.module-lbl{color:rgba(255,255,255,.45);font-size:9.5px;font-weight:700;letter-spacing:.08em;padding:9px 16px 9px 0;white-space:nowrap;text-transform:uppercase}
+.nav-divider{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0;margin:0 4px}
+.nav-tab{padding:9px 22px;background:transparent;border:none;border-bottom:2px solid transparent;color:rgba(255,255,255,.45);font-size:9.5px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-tab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:#FFDA30;border-bottom-color:#FFDA30}
+.nav-right{display:flex;align-items:center;gap:8px;padding:6px 0}
+
+/* ── Yellow rule ── */
 .yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
-/* ── Nav strip ── */
-.nav-strip{background:#333;border-bottom:1px solid rgba(255,255,255,.08)}
-.nav-strip-in{max-width:1480px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:11px 18px;border-bottom:3px solid transparent;cursor:default}
-.nav-strip-right{display:flex;align-items:center;gap:10px;padding:6px 0}
-.period-sel{border:1px solid rgba(255,255,255,.2);border-radius:5px;padding:5px 24px 5px 9px;font-size:10px;font-weight:700;color:#fff;background:#444;cursor:pointer;outline:none;font-family:'Montserrat',sans-serif;letter-spacing:.04em;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23fff'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
-.rfbtn{padding:5px 12px;border-radius:5px;border:1px solid rgba(255,218,48,.4);background:rgba(255,218,48,.12);color:#FFDA30;font-size:9px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s}
-.rfbtn:hover{background:rgba(255,218,48,.22)}
-.rfbtn:disabled{opacity:.4;cursor:not-allowed}
+/* ── Error ── */
+.err-wrap{max-width:1440px;margin:0 auto;padding:8px 28px 0}
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500;margin-bottom:8px}
+.err-bar strong{color:#FFDA30}
 
 /* ── Main ── */
-.main{max-width:1480px;margin:0 auto;padding:22px 28px 48px}
-.err-bar{display:none;background:#E84040;color:#fff;font-size:10px;font-weight:700;padding:8px 28px;letter-spacing:.04em}
-.err-bar.show{display:block}
+.main{max-width:1440px;margin:0 auto;padding:0 28px 60px}
 
-/* ── BU section ── */
-.bu-section{margin-bottom:28px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.bu-label{background:#473400;color:#FFDA30;font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;padding:7px 18px}
-.bu-panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);align-items:start}
-.panel{border-right:1px solid #E2E2E2}
-.panel:last-child{border-right:none}
-.panel-title{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:#006E5E;padding:6px 14px}
+/* ── Tab panels ── */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── View bar ── */
+.view-bar{display:flex;align-items:center;gap:12px;padding:16px 0 14px}
+.view-lbl{font-size:9px;font-weight:800;color:#999;letter-spacing:.14em;text-transform:uppercase}
+.toggle-group{display:flex;gap:6px}
+.toggle-btn{padding:6px 16px;font-size:9px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;border:1.5px solid #473400;background:transparent;color:#473400;border-radius:20px;transition:all .2s}
+.toggle-btn:hover:not(.active){background:rgba(71,52,0,.07)}
+.toggle-btn.active{background:#473400;color:#FFDA30;border-color:#473400}
+
+/* ── Section card ── */
+.ach-card{background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E2E2E2;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.ach-card-title{background:#473400;color:#FFDA30;font-size:9px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;padding:7px 18px}
 
 /* ── Achievement table ── */
 .ach-table{width:100%;border-collapse:collapse;font-size:12px}
-.ach-table th{background:#f5f0e4;color:#473400;padding:7px 12px;text-align:left;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1.5px solid #E2E2E2}
+.ach-table th{background:#f5f0e4;color:#473400;padding:7px 16px;text-align:left;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1.5px solid #E2E2E2}
 .ach-table th.rev-th{text-align:right}
-.ach-table td{padding:7px 12px;border-bottom:1px solid #f0ebe0;color:#434343;vertical-align:middle}
+.ach-table td{padding:8px 16px;border-bottom:1px solid #f0ebe0;color:#434343;vertical-align:middle}
 .ach-table tbody tr:last-child td{border-bottom:none}
 .ach-table tbody tr:hover td{background:#fafaf5}
-/* Group header row */
-.ach-table tr.grp-hdr td{background:#473400;color:#FFDA30;font-weight:800;font-size:10px;letter-spacing:.07em;padding:6px 12px}
+.ach-table tr.grp-hdr td{background:#473400;color:#FFDA30;font-weight:800;font-size:10px;letter-spacing:.07em;padding:6px 16px}
 .ach-table tr.grp-hdr:hover td{background:#473400}
-/* Subtotal */
 .ach-table tr.sub-row td{background:#faf5e6;color:#473400;font-weight:700;font-size:11px;border-top:1px solid #d8cf9a;border-bottom:1.5px solid #d8cf9a}
 .ach-table tr.sub-row:hover td{background:#faf5e6}
-/* Grand total */
 .ach-table tr.grand-row td{background:#FFDA30;color:#473400;font-weight:800;font-size:12px;border-top:2px solid #473400}
 .ach-table tr.grand-row:hover td{background:#FFDA30}
-/* Cell helpers */
 .rev-cell{text-align:right!important;font-variant-numeric:tabular-nums;font-weight:700}
-.owner-cell{padding-left:22px!important;color:#666}
+.neg{color:#E84040}
+.owner-cell{padding-left:28px!important;color:#666}
 .sub-lbl{font-size:9px;letter-spacing:.07em;text-transform:uppercase}
-/* Loading */
-.ph{padding:40px 20px;text-align:center;color:#bbb;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.ph{padding:48px 20px;text-align:center;color:#bbb;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 
-@media(max-width:860px){.bu-panels{grid-template-columns:1fr}.panel{border-right:none;border-bottom:1px solid #E2E2E2}.panel:last-child{border-bottom:none}}
-@media(max-width:600px){.hdr-in{padding:14px 18px 0}.main{padding:16px 18px 40px}}
+/* ── Footer ── */
+.footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+
+@media(max-width:700px){.hdr-in{padding:14px 18px 0}.main{padding:0 18px 40px}.nav-in{padding:0 18px}.view-bar{padding:12px 0 10px}}
 </style>
 </head>
 <body>
@@ -144,339 +160,368 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
         </svg>
         <div>
           <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
-          <div class="hdr-title" id="hdr-title">Achievement Desk</div>
+          <div class="hdr-title">Project Nexus</div>
           <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
         </div>
       </a>
       <div class="hdr-right">
         <div class="h-status">
-          <div class="stxt"><span class="sdot" id="sdot"></span>&nbsp;<span id="stxt">—</span></div>
-          <div class="sync-ts" id="sync-ts"></div>
+          <div class="stxt"><div class="sdot" id="sdot"></div>&nbsp;<span id="stxt">Ready</span></div>
+          <div class="last-sync" id="last-sync"></div>
         </div>
-        <a class="nexus-btn" href="/" id="nexus-link">← Revenue Pulse</a>
+        <select class="period-sel" id="month-sel"></select>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync()">⟳ Refresh</button>
+        <a class="nexus-btn" href="/" id="nexus-link">↗ Revenue Pulse</a>
       </div>
     </div>
   </div>
-</div>
-<div class="yellow-rule"></div>
 
-<!-- ════ NAV STRIP ════ -->
-<div class="nav-strip" id="nav-strip" style="display:none">
-  <div class="nav-strip-in">
-    <span class="nav-tab-active" id="nav-label">Achievement Desk</span>
-    <div class="nav-strip-right">
-      <select class="period-sel" id="month-sel"></select>
-      <button class="rfbtn" id="rfbtn" onclick="doSync()">⟳ Sync</button>
+  <!-- Nav tabs -->
+  <div class="nav-tabs-bar">
+    <div class="nav-in">
+      <div class="nav-left">
+        <span class="module-lbl" id="module-lbl">Achievement Desk</span>
+        <div class="nav-divider"></div>
+        <button class="nav-tab active" id="tab-overall"  onclick="switchTab('overall')">Overall</button>
+        <button class="nav-tab"        id="tab-digital"  onclick="switchTab('digital')">Digital BU</button>
+        <button class="nav-tab"        id="tab-martech"  onclick="switchTab('martech')">MarTech BU</button>
+      </div>
+      <div class="nav-right"></div>
     </div>
   </div>
+  <div class="yellow-rule"></div>
 </div>
 
-<div class="err-bar" id="err-bar"></div>
+<div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Error:</strong> <span id="err-msg"></span></div></div>
 
 <!-- ════ MAIN ════ -->
 <div class="main" id="main-content" style="display:none">
 
-  <!-- DIGITAL BU -->
-  <section class="bu-section" id="section-digital">
-    <div class="bu-label">Digital BU</div>
-    <div class="bu-panels">
-      <div class="panel" id="digital-overall"><div class="ph">Syncing…</div></div>
-      <div class="panel" id="digital-individual"><div class="ph">Syncing…</div></div>
-      <div class="panel" id="digital-service"><div class="ph">Syncing…</div></div>
+  <!-- ── OVERALL TAB ── -->
+  <div class="tab-panel active" id="panel-overall">
+    <div class="view-bar">
+      <span class="view-lbl">View</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="tog-ov-digital" onclick="setOverallToggle('digital')">Digital BU</button>
+        <button class="toggle-btn"        id="tog-ov-martech" onclick="setOverallToggle('martech')">MarTech BU</button>
+      </div>
     </div>
-  </section>
-
-  <!-- MARTECH BU -->
-  <section class="bu-section" id="section-martech">
-    <div class="bu-label">MarTech BU</div>
-    <div class="bu-panels">
-      <div class="panel" id="martech-overall"><div class="ph">Syncing…</div></div>
-      <div class="panel" id="martech-individual"><div class="ph">Syncing…</div></div>
-      <div class="panel" id="martech-service"><div class="ph">Syncing…</div></div>
+    <div class="ach-card">
+      <div class="ach-card-title">Overall Achievement</div>
+      <div id="ov-digital-view"><div class="ph">Syncing…</div></div>
+      <div id="ov-martech-view" style="display:none"><div class="ph">Syncing…</div></div>
     </div>
-  </section>
+  </div>
 
-</div><!-- /main -->
+  <!-- ── DIGITAL BU TAB ── -->
+  <div class="tab-panel" id="panel-digital">
+    <div class="view-bar">
+      <span class="view-lbl">View</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="tog-dig-owners"  onclick="setDigitalToggle('owners')">Owners</button>
+        <button class="toggle-btn"        id="tog-dig-service" onclick="setDigitalToggle('service')">Service</button>
+      </div>
+    </div>
+    <div class="ach-card">
+      <div class="ach-card-title" id="dig-card-title">Individual Owner Achievement · Digital BU</div>
+      <div id="dig-owners-view"><div class="ph">Syncing…</div></div>
+      <div id="dig-service-view" style="display:none"><div class="ph">Syncing…</div></div>
+    </div>
+  </div>
+
+  <!-- ── MARTECH BU TAB ── -->
+  <div class="tab-panel" id="panel-martech">
+    <div class="view-bar">
+      <span class="view-lbl">View</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="tog-mt-owners"  onclick="setMartechToggle('owners')">Owners</button>
+        <button class="toggle-btn"        id="tog-mt-service" onclick="setMartechToggle('service')">Service</button>
+      </div>
+    </div>
+    <div class="ach-card">
+      <div class="ach-card-title" id="mt-card-title">Individual Owner Achievement · MarTech BU</div>
+      <div id="mt-owners-view"><div class="ph">Syncing…</div></div>
+      <div id="mt-service-view" style="display:none"><div class="ph">Syncing…</div></div>
+    </div>
+  </div>
+
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+</div>
 
 <script src="/registry-client.js"></script>
 <script>
 'use strict';
+function $(id){return document.getElementById(id);}
 
 /* ═══════════════════════════════════════════════════════════════
-   HELPERS
+   AUTH
 ═══════════════════════════════════════════════════════════════ */
-function $(id){ return document.getElementById(id); }
-
-/* ═══════════════════════════════════════════════════════════════
-   AUTH — localStorage pattern, matches portfolio.html exactly
-═══════════════════════════════════════════════════════════════ */
-const CLONE_HEAD = (new URLSearchParams(location.search).get('head') || '').toLowerCase().trim();
-
-function getAuthKey(head) {
-  return head ? `nexus_auth_${head}` : 'nexus_auth';
-}
-
-function checkSSO() {
-  const key = getAuthKey(CLONE_HEAD);
-  if (localStorage.getItem(key) === '1') { $('login-overlay').style.display = 'none'; return true; }
-  // Nevilson uses master password — also accept master auth token
-  if (CLONE_HEAD === 'nevilson' && localStorage.getItem('nexus_auth') === '1') {
-    $('login-overlay').style.display = 'none'; return true;
-  }
+const CLONE_HEAD=(new URLSearchParams(location.search).get('head')||'').toLowerCase().trim();
+function getAuthKey(h){return h?`nexus_auth_${h}`:'nexus_auth';}
+function checkSSO(){
+  if(localStorage.getItem(getAuthKey(CLONE_HEAD))==='1'){$('login-overlay').style.display='none';return true;}
+  if(CLONE_HEAD==='nevilson'&&localStorage.getItem('nexus_auth')==='1'){$('login-overlay').style.display='none';return true;}
   return false;
 }
-
-async function doLogin() {
-  const btn = $('login-btn'), err = $('login-err'), pw = $('pw-input').value.trim();
-  if (!pw) { err.textContent = 'Please enter the access password.'; return; }
-  btn.disabled = true; btn.textContent = 'Verifying…'; err.textContent = '';
-  try {
-    const res  = await fetch('/achievement-desk-auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw, head: CLONE_HEAD })
-    });
-    const data = await res.json();
-    if (data.success) {
-      localStorage.setItem(getAuthKey(CLONE_HEAD), '1');
-      $('login-overlay').style.display = 'none';
+async function doLogin(){
+  const btn=$('login-btn'),err=$('login-err'),pw=$('pw-input').value.trim();
+  if(!pw){err.textContent='Please enter the access password.';return;}
+  btn.disabled=true;btn.textContent='Verifying…';err.textContent='';
+  try{
+    const res=await fetch('/achievement-desk-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,head:CLONE_HEAD})});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem(getAuthKey(CLONE_HEAD),'1');
+      $('login-overlay').style.display='none';
       doSync(true);
-    } else if (res.status === 500 || data.error) {
-      err.textContent = 'Server config error. Contact Mayur.';
-    } else {
-      err.textContent = 'Incorrect password. Please try again.';
-      $('pw-input').value = ''; $('pw-input').focus();
+    }else if(res.status===500||data.error){
+      err.textContent='Server config error. Contact Mayur.';
+    }else{
+      err.textContent='Incorrect password. Please try again.';
+      $('pw-input').value='';$('pw-input').focus();
     }
-  } catch(e) {
-    err.textContent = 'Connection error. Check your network.';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Access Dashboard';
-  }
+  }catch(e){err.textContent='Connection error. Check your network.';}
+  finally{btn.disabled=false;btn.textContent='Access Dashboard';}
 }
 
 /* ═══════════════════════════════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════════════════════════════ */
-const FY_YEAR  = 2026;
-const FY_MONTH = 3; // April = index 3
-const PRATIVA_ID = '82663745'; // string — registry-client.js keys are strings
+const FY_YEAR=2026,FY_MONTH=3,PRATIVA_ID='82663745';
 
-const OWNER_DISPLAY = {
-  107178262:'Chintan',   17738843:'Jaydeep',    34140174:'Mrugesh',
-  90736668:'Matt Kelly', 41490632:'Mukund',
-  467997340:'Karan',     82911376:'Divya',       82030736:'Sakshi',
-  93107638:'Ayush D',    46153051:'Ayush R',     86147905:'Preeti',
-  85767516:'Rupali',     89530815:'Vinita',
+const OWNER_DISPLAY={
+  107178262:'Chintan',  17738843:'Jaydeep',   34140174:'Mrugesh',
+  90736668:'Matt Kelly',41490632:'Mukund',
+  467997340:'Karan',    82911376:'Divya',      82030736:'Sakshi',
+  93107638:'Ayush D',   46153051:'Ayush R',    86147905:'Preeti',
+  85767516:'Rupali',    89530815:'Vinita',
   916030451:'Kamesh',
-  131779647:'Jiggyasa',  78831011:'Kunal',       94746500:'Manvi',
-  176516495:'Prachi',    263464861:'Saquib',
-  46156316:'Flintoff',   37344296:'Kalgi',        31730801:'Vikram',
-  38568120:'Baspin',     42663191:'Dhaval',       240935328:'Hammad',
-  19799470:'Jebin',      34558123:'Kaustubh',     284770744:'Sourya',
+  131779647:'Jiggyasa', 78831011:'Kunal',      94746500:'Manvi',
+  176516495:'Prachi',   263464861:'Saquib',
+  46156316:'Flintoff',  37344296:'Kalgi',      31730801:'Vikram',
+  38568120:'Baspin',    42663191:'Dhaval',     240935328:'Hammad',
+  19799470:'Jebin',     34558123:'Kaustubh',   284770744:'Sourya',
   557894666:'Sudarshan',
-  86813698:'Aman',       255830830:'Devanshu',    1360061595:'Dhruti',
+  86813698:'Aman',      255830830:'Devanshu',  1360061595:'Dhruti',
   37762663:'Malav',
-  17739548:'Darshan',    79217713:'Krunal',        17739173:'Tanuj',
+  17739548:'Darshan',   79217713:'Krunal',     17739173:'Tanuj',
   82663745:'Prativa'
 };
 
-const DIGITAL_GROUPS = [
-  { key:'Jiggyasa Agrawal',  label:'Jiggyasa' },
-  { key:'Tanuj Gupta (UK)',  label:'Tanuj UK'  },
-  { key:'Tanuj Gupta (US)',  label:'Tanuj US'  },
-  { key:'Nevilson Christan', label:'Nevilson'  }
+const DIGITAL_GROUPS=[
+  {key:'Jiggyasa Agrawal', label:'Jiggyasa'},
+  {key:'Tanuj Gupta (UK)', label:'Tanuj UK'},
+  {key:'Tanuj Gupta (US)', label:'Tanuj US'},
+  {key:'Nevilson Christan',label:'Nevilson'}
 ];
-
-const MARTECH_GROUPS = [
-  { key:'Jaydeep AU',  label:'Jaydeep AU'  },
-  { key:'Jaydeep UK',  label:'Jaydeep UK'  },
-  { key:'Jaydeep US',  label:'Jaydeep US'  },
-  { key:'Jaydeep NBD', label:'Jaydeep NBD' }
+const MARTECH_GROUPS=[
+  {key:'Jaydeep AU', label:'Jaydeep AU'},
+  {key:'Jaydeep UK', label:'Jaydeep UK'},
+  {key:'Jaydeep US', label:'Jaydeep US'},
+  {key:'Jaydeep NBD',label:'Jaydeep NBD'}
 ];
-
-const CLONE_VISIBLE = {
-  jiggyasa: { digital:['Jiggyasa Agrawal'],                          martech:null },
-  tanuj:    { digital:['Tanuj Gupta (UK)','Tanuj Gupta (US)'],        martech:null },
-  nevilson: { digital:['Nevilson Christan'],                          martech:null },
-  jaydeep:  { digital:null, martech:['Jaydeep AU','Jaydeep UK','Jaydeep US','Jaydeep NBD'] }
+const CLONE_VISIBLE={
+  jiggyasa:{digital:['Jiggyasa Agrawal'],                        martech:null},
+  tanuj:   {digital:['Tanuj Gupta (UK)','Tanuj Gupta (US)'],     martech:null},
+  nevilson:{digital:['Nevilson Christan'],                       martech:null},
+  jaydeep: {digital:null,martech:['Jaydeep AU','Jaydeep UK','Jaydeep US','Jaydeep NBD']}
 };
 
-const EXCL_RE = /wallet|special engagement|inboxarmy|uplers|solomax/i;
+/* ═══════════════════════════════════════════════════════════════
+   FORMATTING
+═══════════════════════════════════════════════════════════════ */
+function fm(n){
+  if(!n&&n!==0)return '$0';
+  const a=Math.abs(Math.round(n)),s=n<0?'-':'';
+  if(a>=1000000)return s+'$'+(a/1000000).toFixed(2)+'M';
+  if(a>=1000)return s+'$'+a.toLocaleString('en-US');
+  return s+'$'+a;
+}
+function nc(n){return n<0?' neg':'';}
 
 /* ═══════════════════════════════════════════════════════════════
    CLONE MODE
 ═══════════════════════════════════════════════════════════════ */
-function bootCloneMode() {
-  if (!CLONE_HEAD) return;
-  if (CLONE_HEAD === 'jaydeep') {
-    const el = $('section-digital'); if (el) el.style.display = 'none';
-  } else {
-    const el = $('section-martech'); if (el) el.style.display = 'none';
+function bootCloneMode(){
+  if(!CLONE_HEAD)return;
+  if(CLONE_HEAD==='jaydeep'){
+    $('tab-digital').style.display='none';
+    // Overall defaults to MarTech toggle
+    setOverallToggle('martech');
+  }else{
+    $('tab-martech').style.display='none';
   }
-  const LABELS = {
-    jiggyasa:'Jiggyasa · Achievement Desk',
-    tanuj:'Tanuj · Achievement Desk',
-    nevilson:'Nevilson · Achievement Desk',
-    jaydeep:'Jaydeep · Achievement Desk'
-  };
-  const label = LABELS[CLONE_HEAD] || 'Achievement Desk';
-  const first = CLONE_HEAD.charAt(0).toUpperCase() + CLONE_HEAD.slice(1);
-  document.title = label + ' · Mavlers';
-  const ht = $('hdr-title'); if (ht) ht.textContent = label;
-  const nl = $('nav-label'); if (nl) nl.textContent = label;
-  const le = $('login-eyebrow'); if (le) le.textContent = `Mavlers · ${first}'s Dashboard`;
-  const nx = $('nexus-link'); if (nx && CLONE_HEAD) nx.href = `/?head=${CLONE_HEAD}`;
+  const LABELS={jiggyasa:'Jiggyasa · Achievement Desk',tanuj:'Tanuj · Achievement Desk',
+                nevilson:'Nevilson · Achievement Desk',jaydeep:'Jaydeep · Achievement Desk'};
+  const first=CLONE_HEAD.charAt(0).toUpperCase()+CLONE_HEAD.slice(1);
+  document.title=(LABELS[CLONE_HEAD]||'Achievement Desk')+' · Mavlers';
+  $('login-eyebrow').textContent=`Mavlers · ${first}'s Dashboard`;
+  const nx=$('nexus-link');if(nx)nx.href=`/?head=${CLONE_HEAD}`;
+}
+
+function visKeys(bu){
+  if(!CLONE_HEAD)return null;
+  const cfg=CLONE_VISIBLE[CLONE_HEAD];if(!cfg)return null;
+  return cfg[bu]||null;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAB & TOGGLE SWITCHING
+═══════════════════════════════════════════════════════════════ */
+function switchTab(tab){
+  ['overall','digital','martech'].forEach(t=>{
+    $('tab-'+t).classList.toggle('active',t===tab);
+    $('panel-'+t).classList.toggle('active',t===tab);
+  });
+}
+
+function setOverallToggle(val){
+  $('tog-ov-digital').classList.toggle('active',val==='digital');
+  $('tog-ov-martech').classList.toggle('active',val==='martech');
+  $('ov-digital-view').style.display=val==='digital'?'':'none';
+  $('ov-martech-view').style.display=val==='martech'?'':'none';
+}
+
+function setDigitalToggle(val){
+  $('tog-dig-owners').classList.toggle('active',val==='owners');
+  $('tog-dig-service').classList.toggle('active',val==='service');
+  $('dig-owners-view').style.display=val==='owners'?'':'none';
+  $('dig-service-view').style.display=val==='service'?'':'none';
+  $('dig-card-title').textContent=val==='owners'
+    ?'Individual Owner Achievement · Digital BU'
+    :'Service Vertical Achievement · Digital BU';
+}
+
+function setMartechToggle(val){
+  $('tog-mt-owners').classList.toggle('active',val==='owners');
+  $('tog-mt-service').classList.toggle('active',val==='service');
+  $('mt-owners-view').style.display=val==='owners'?'':'none';
+  $('mt-service-view').style.display=val==='service'?'':'none';
+  $('mt-card-title').textContent=val==='owners'
+    ?'Individual Owner Achievement · MarTech BU'
+    :'Service Vertical Achievement · MarTech BU';
 }
 
 /* ═══════════════════════════════════════════════════════════════
    MONTH SELECTOR
 ═══════════════════════════════════════════════════════════════ */
-function populateMonthSelector() {
-  const sel = $('month-sel');
-  const now = new Date();
-  const months = [];
-  const cursor = new Date(FY_YEAR, FY_MONTH, 1);
-  while (cursor.getFullYear() < now.getFullYear() ||
-    (cursor.getFullYear() === now.getFullYear() && cursor.getMonth() <= now.getMonth())) {
-    const mn  = cursor.toLocaleString('en-US',{month:'long'});
-    months.push({ val:`${mn.toLowerCase()}-${cursor.getFullYear()}`, lbl:`${mn} ${cursor.getFullYear()}` });
+function populateMonthSelector(){
+  const sel=$('month-sel'),now=new Date(),months=[];
+  const cursor=new Date(FY_YEAR,FY_MONTH,1);
+  while(cursor.getFullYear()<now.getFullYear()||(cursor.getFullYear()===now.getFullYear()&&cursor.getMonth()<=now.getMonth())){
+    const mn=cursor.toLocaleString('en-US',{month:'long'});
+    months.push({val:`${mn.toLowerCase()}-${cursor.getFullYear()}`,lbl:`📅 ${mn} ${cursor.getFullYear()}`});
     cursor.setMonth(cursor.getMonth()+1);
   }
-  months.forEach(m => {
-    const o = document.createElement('option');
-    o.value = m.val; o.textContent = m.lbl; sel.appendChild(o);
-  });
-  // Default: last closed month
-  const prev = new Date(now.getFullYear(), now.getMonth()-1, 1);
-  const prevVal = `${prev.toLocaleString('en-US',{month:'long'}).toLowerCase()}-${prev.getFullYear()}`;
-  sel.value = months.find(m => m.val === prevVal) ? prevVal : months[months.length-1].val;
+  months.forEach(m=>{const o=document.createElement('option');o.value=m.val;o.textContent=m.lbl;sel.appendChild(o);});
+  const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const prevVal=`${prev.toLocaleString('en-US',{month:'long'}).toLowerCase()}-${prev.getFullYear()}`;
+  sel.value=months.find(m=>m.val===prevVal)?prevVal:months[months.length-1].val;
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   LINE ITEM CLASSIFIER
-═══════════════════════════════════════════════════════════════ */
-function classifyLI(raw) {
-  const n = (raw||'').toLowerCase().trim();
-  if (/^campaign\s*-/.test(n)||n.includes('campaign manager')||n.includes('campaign operation specialist')||n.includes('sfmc'))
-    return {svc:'Campaign'};
-  if (n==='design - email') return {svc:'Design'};
-  if (n.includes('development - email')||n.includes('email coding')) return {svc:'Email'};
-  if (n==='design - asset'||/^development\s*-\s*(web|lp|hub|mobile app)/.test(n)||
-      n.includes('ai & automation - web')||n.includes('dot-net development')||
-      n.includes('operational service - data entry')||/^landing page/.test(n))
-    return {svc:'Web'};
-  if (/^search\s*-/.test(n)||n.includes('consultancy fees')) return {svc:'Search'};
-  if (/^design\s*-/.test(n)) return {svc:'Design'};
-  return {svc:null};
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   FORMAT
-═══════════════════════════════════════════════════════════════ */
-function fmt(n){ return '$'+Math.round(n||0).toLocaleString('en-US'); }
 
 /* ═══════════════════════════════════════════════════════════════
    API CALLS
 ═══════════════════════════════════════════════════════════════ */
-async function fetchDeals(month) {
-  const props = [
-    'dealname','amount_in_home_currency','hubspot_owner_id',
+async function fetchDeals(month){
+  const props=['dealname','amount_in_home_currency','hubspot_owner_id',
     'invoice_booking_month__invoice_app_','geo__invoice_app_',
-    'user_role_invoice_app','business_unit_invoice_app',
-    'closedate','createdate'
+    'user_role_invoice_app','business_unit_invoice_app','closedate','createdate'];
+  const filters=[
+    {propertyName:'pipeline',  operator:'EQ',value:'115832232'},
+    {propertyName:'dealstage', operator:'EQ',value:'205348626'},
+    {propertyName:'invoice_booking_month__invoice_app_',operator:'EQ',value:month},
+    {propertyName:'engagement_model__invoice_app_',operator:'NOT_IN',values:['Wallet','Special Engagement']},
+    {propertyName:'company_name__invoice_app_',    operator:'NOT_IN',values:['InboxArmy','Uplers','Solomax']}
   ];
-  const filters = [
-    {propertyName:'pipeline',  operator:'EQ', value:'115832232'},
-    {propertyName:'dealstage', operator:'EQ', value:'205348626'},
-    {propertyName:'invoice_booking_month__invoice_app_', operator:'EQ', value:month},
-    {propertyName:'engagement_model__invoice_app_', operator:'NOT_IN', values:['Wallet','Special Engagement']},
-    {propertyName:'company_name__invoice_app_',     operator:'NOT_IN', values:['InboxArmy','Uplers','Solomax']}
-  ];
-  const fetched=[]; let after=null;
-  do {
+  const fetched=[];let after=null;
+  do{
     const body={filterGroups:[{filters}],properties:props,limit:200};
-    if (after) body.after=after;
+    if(after)body.after=after;
     const res=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if (!res.ok) throw new Error('/api '+res.status);
+    if(!res.ok)throw new Error('/api '+res.status);
     const data=await res.json();
     (data.results||[]).forEach(r=>{
       const p=r.properties||{};
       fetched.push({
-        id:                        String(r.id),
-        dealname:                  p.dealname||'',
-        amount:                    parseFloat(p.amount_in_home_currency||0)||0,
-        hubspot_owner_id:          p.hubspot_owner_id||'',
-        invoice_booking_month:     (p.invoice_booking_month__invoice_app_||'').toLowerCase().trim(),
-        geo__invoice_app_:         (p.geo__invoice_app_||'').trim(),
-        user_role_invoice_app:     (p.user_role_invoice_app||'').trim(),
-        business_unit_invoice_app: (p.business_unit_invoice_app||'').trim()
+        id:String(r.id),
+        dealname:p.dealname||'',
+        amount:parseFloat(p.amount_in_home_currency||0)||0,
+        hubspot_owner_id:p.hubspot_owner_id||'',
+        invoice_booking_month:(p.invoice_booking_month__invoice_app_||'').toLowerCase().trim(),
+        geo__invoice_app_:(p.geo__invoice_app_||'').trim(),
+        user_role_invoice_app:(p.user_role_invoice_app||'').trim(),
+        business_unit_invoice_app:(p.business_unit_invoice_app||'').trim()
       });
     });
     after=data.paging?.next?.after||null;
-  } while(after);
+  }while(after);
   return fetched;
 }
-async function fetchLineItems(dealIds) {
-  if (!dealIds.length) return {};
+
+async function fetchLineItems(dealIds){
+  if(!dealIds.length)return{};
   const liMap={};
-  // Chunk at 500 — matches snapshot.html pattern
-  for (let i=0;i<dealIds.length;i+=500) {
+  for(let i=0;i<dealIds.length;i+=500){
     const chunk=dealIds.slice(i,i+500);
-    const resp=await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({dealIds:chunk})});
-    if (!resp.ok) continue;
+    const resp=await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dealIds:chunk})});
+    if(!resp.ok)continue;
     const data=await resp.json();
-    // lineItems.js returns { items: { "dealId": [{name,amount,description,...}] } }
-    Object.entries(data.items||{}).forEach(([did,lis])=>{
-      liMap[did]=lis||[];
-    });
+    Object.entries(data.items||{}).forEach(([did,lis])=>{liMap[did]=lis||[];});
   }
   return liMap;
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   LINE ITEM CLASSIFIER
+═══════════════════════════════════════════════════════════════ */
+function classifyLI(raw){
+  const n=(raw||'').toLowerCase().trim();
+  if(/^campaign\s*-/.test(n)||n.includes('campaign manager')||n.includes('campaign operation specialist')||n.includes('sfmc'))return{svc:'Campaign'};
+  if(n==='design - email')return{svc:'Design'};
+  if(n.includes('development - email')||n.includes('email coding'))return{svc:'Email'};
+  if(n==='design - asset'||/^development\s*-\s*(web|lp|hub|mobile app)/.test(n)||n.includes('ai & automation - web')||n.includes('dot-net development')||n.includes('operational service - data entry')||/^landing page/.test(n))return{svc:'Web'};
+  if(/^search\s*-/.test(n)||n.includes('consultancy fees'))return{svc:'Search'};
+  if(/^design\s*-/.test(n))return{svc:'Design'};
+  return{svc:null};
+}
+
+/* ═══════════════════════════════════════════════════════════════
    ATTRIBUTION
 ═══════════════════════════════════════════════════════════════ */
-function resolveMartechBucket(deal, ownerId) {
-  if (ownerId==='916030451') return 'Jaydeep NBD'; // Kamesh — string comparison
-  if (typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)) { // ownerId is string, Set has strings
-    if ((deal.user_role_invoice_app||'').trim()==='NBD') return 'Jaydeep NBD';
+function resolveMartechBucket(deal,ownerId){
+  if(ownerId==='916030451')return'Jaydeep NBD';
+  if(typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)){
+    if(deal.user_role_invoice_app==='NBD')return'Jaydeep NBD';
   }
-  const rawGeo=(deal.geo__invoice_app_||'').trim();
-  const geo=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||
-            (typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
-  if (geo==='AU') return 'Jaydeep AU';
-  if (geo==='UK') return 'Jaydeep UK';
-  return 'Jaydeep US';
+  const rawGeo=deal.geo__invoice_app_;
+  const geo=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||(typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
+  if(geo==='AU')return'Jaydeep AU';
+  if(geo==='UK')return'Jaydeep UK';
+  return'Jaydeep US';
 }
-function attributeDeals(deals) {
+
+function attributeDeals(deals){
   const seen=new Set();
   deals.forEach(d=>{
-    const amt=d.amount||0;  // pre-parsed float from fetchDeals
-    const name=(d.dealname||'');
-    // Zero-amount deals excluded; negative-amount deals pass through and net against owner revenue
-    // Wallet / SE / InboxArmy / Uplers / Solomax excluded at API level — no client-side name check needed
-    if (amt===0){d._excl=true;return;}
-    const monthVal=(d.invoice_booking_month||'').toLowerCase();
-    const dupKey=`${name}|${amt}|${monthVal}`;
-    if (seen.has(dupKey)){d._excl=true;return;}
+    const amt=d.amount||0;
+    // Zero excluded; negative-amount deals pass through and net against owner revenue
+    if(amt===0){d._excl=true;return;}
+    const monthVal=d.invoice_booking_month;
+    const dupKey=`${d.dealname}|${amt}|${monthVal}`;
+    if(seen.has(dupKey)){d._excl=true;return;}
     seen.add(dupKey);
-    const ownerId=String(d.hubspot_owner_id||''); // string — matches registry-client.js Set/map keys
-    if (ownerId===PRATIVA_ID){
-      d.bu=(d.business_unit_invoice_app||'').trim()==='MarTech'?'MarTech':'Digital';
-    } else {
+    const ownerId=String(d.hubspot_owner_id||'');
+    if(ownerId===PRATIVA_ID){
+      d.bu=d.business_unit_invoice_app==='MarTech'?'MarTech':'Digital';
+    }else{
       d.bu=(typeof MARTECH_OWNER_IDS!=='undefined'&&MARTECH_OWNER_IDS.has(ownerId))?'MarTech':'Digital';
     }
-    const rawGeo=(d.geo__invoice_app_||'').trim();
-    d.region=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||
-             (typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
-    d.head=(typeof OWNER_HEAD_MAP!=='undefined'?OWNER_HEAD_MAP[ownerId]:null)||
-           (typeof headFromRegion!=='undefined'?headFromRegion(d.region,d.bu):null)||'';
-    if (d.bu==='MarTech') d.martechBucket=resolveMartechBucket(d,ownerId);
+    const rawGeo=d.geo__invoice_app_;
+    d.region=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||(typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
+    d.head=(typeof OWNER_HEAD_MAP!=='undefined'?OWNER_HEAD_MAP[ownerId]:null)||(typeof headFromRegion!=='undefined'?headFromRegion(d.region,d.bu):null)||'';
+    if(d.bu==='MarTech')d.martechBucket=resolveMartechBucket(d,ownerId);
     d._amt=amt;
-    // Name resolution: hardcoded display map → registry OWNER_NAMES → 'Other'
-    d._owner=OWNER_DISPLAY[ownerId]||OWNER_DISPLAY[parseInt(ownerId)]||
-             (typeof OWNER_NAMES!=='undefined'?OWNER_NAMES[ownerId]:null)||'Other';
+    d._owner=OWNER_DISPLAY[ownerId]||OWNER_DISPLAY[parseInt(ownerId)]||(typeof OWNER_NAMES!=='undefined'?OWNER_NAMES[ownerId]:null)||'Other';
     d._excl=false;
   });
 }
@@ -484,143 +529,127 @@ function attributeDeals(deals) {
 /* ═══════════════════════════════════════════════════════════════
    DATA BUILDERS
 ═══════════════════════════════════════════════════════════════ */
-function emptyGroups(defs){ const g={}; defs.forEach(({key,label})=>{g[key]={label,owners:{},total:0};}); return g; }
+function emptyGroups(defs){const g={};defs.forEach(({key,label})=>{g[key]={label,owners:{},total:0};});return g;}
 
-function buildBUData(deals, liMap, groupDefs, buVal, keyFn) {
+function buildBUData(deals,liMap,groupDefs,buVal,keyFn){
   const groups=emptyGroups(groupDefs);
   const svcs={Campaign:0,Design:0,Email:0,Search:0,Web:0};
   deals.filter(d=>!d._excl&&d.bu===buVal).forEach(d=>{
-    const gKey=keyFn(d);
-    if (!gKey||!groups[gKey]) return;
+    const gKey=keyFn(d);if(!gKey||!groups[gKey])return;
     const grp=groups[gKey];
     grp.owners[d._owner]=(grp.owners[d._owner]||0)+d._amt;
     grp.total+=d._amt;
-    (liMap[d.id]||[]).forEach(li=>{  // d.id is String, liMap keyed by String — direct match
-      const liAmt=parseFloat(li.amount||0); if (liAmt<=0) return;
-      const {svc}=classifyLI(li.name||li.description||'');
-      if (svc&&Object.prototype.hasOwnProperty.call(svcs,svc)) svcs[svc]+=liAmt;
+    (liMap[d.id]||[]).forEach(li=>{
+      const liAmt=parseFloat(li.amount||0);if(!liAmt)return;
+      const{svc}=classifyLI(li.name||li.description||'');
+      if(svc&&Object.prototype.hasOwnProperty.call(svcs,svc))svcs[svc]+=liAmt;
     });
   });
-  return {groups,svcs};
+  return{groups,svcs};
 }
 
 /* ═══════════════════════════════════════════════════════════════
    RENDER
 ═══════════════════════════════════════════════════════════════ */
-function visKeys(buId){
-  if (!CLONE_HEAD) return null;
-  const cfg=CLONE_VISIBLE[CLONE_HEAD]; if (!cfg) return null;
-  return cfg[buId]||null;
-}
-
-function renderOverall(buId,groups,defs,vis){
+function renderOverall(targetId,groups,defs,vis){
   let grand=0,rows='';
   defs.forEach(({key,label})=>{
-    if (vis&&!vis.includes(key)) return;
-    const g=groups[key]; grand+=g.total;
-    rows+=`<tr><td>${label}</td><td class="rev-cell">${fmt(g.total)}</td></tr>`;
+    if(vis&&!vis.includes(key))return;
+    const g=groups[key];grand+=g.total;
+    rows+=`<tr><td>${label}</td><td class="rev-cell${nc(g.total)}">${fm(g.total)}</td></tr>`;
   });
-  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fmt(grand)}</td></tr>`;
-  $(buId+'-overall').innerHTML=
-    `<div class="panel-title">Overall Achievement</div>
-     <table class="ach-table"><thead><tr><th>Head</th><th class="rev-th">Revenue</th></tr></thead><tbody>${rows}</tbody></table>`;
+  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fm(grand)}</td></tr>`;
+  $(targetId).innerHTML=`<table class="ach-table">
+    <thead><tr><th>Head</th><th class="rev-th">Revenue</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
 }
 
-function renderIndividual(buId,groups,defs,vis){
+function renderOwners(targetId,groups,defs,vis){
   let grand=0,tbody='';
   defs.forEach(({key,label})=>{
-    if (vis&&!vis.includes(key)) return;
-    const g=groups[key]; grand+=g.total;
+    if(vis&&!vis.includes(key))return;
+    const g=groups[key];grand+=g.total;
     tbody+=`<tr class="grp-hdr"><td colspan="3">${label}</td></tr>`;
     Object.entries(g.owners).sort((a,b)=>b[1]-a[1]).forEach(([n,r])=>{
-      tbody+=`<tr><td></td><td class="owner-cell">${n}</td><td class="rev-cell">${fmt(r)}</td></tr>`;
+      tbody+=`<tr><td></td><td class="owner-cell">${n}</td><td class="rev-cell${nc(r)}">${fm(r)}</td></tr>`;
     });
-    tbody+=`<tr class="sub-row"><td></td><td class="sub-lbl">Subtotal</td><td class="rev-cell">${fmt(g.total)}</td></tr>`;
+    tbody+=`<tr class="sub-row"><td></td><td class="sub-lbl">Subtotal</td><td class="rev-cell${nc(g.total)}">${fm(g.total)}</td></tr>`;
   });
-  tbody+=`<tr class="grand-row"><td colspan="2">Grand Total</td><td class="rev-cell">${fmt(grand)}</td></tr>`;
-  $(buId+'-individual').innerHTML=
-    `<div class="panel-title">Individual Owner Achievement</div>
-     <table class="ach-table"><thead><tr><th>Head</th><th>Owner</th><th class="rev-th">Revenue</th></tr></thead><tbody>${tbody}</tbody></table>`;
+  tbody+=`<tr class="grand-row"><td colspan="2">Grand Total</td><td class="rev-cell">${fm(grand)}</td></tr>`;
+  $(targetId).innerHTML=`<table class="ach-table">
+    <thead><tr><th>Head</th><th>Owner</th><th class="rev-th">Revenue</th></tr></thead>
+    <tbody>${tbody}</tbody></table>`;
 }
 
-function renderService(buId,svcs){
+function renderService(targetId,svcs){
   const ORDER=['Campaign','Design','Email','Search','Web'];
   let grand=0,rows='';
-  ORDER.forEach(s=>{ grand+=svcs[s]; rows+=`<tr><td>${s}</td><td class="rev-cell">${fmt(svcs[s])}</td></tr>`; });
-  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fmt(grand)}</td></tr>`;
-  $(buId+'-service').innerHTML=
-    `<div class="panel-title">Service Vertical Achievement</div>
-     <table class="ach-table"><thead><tr><th>Service</th><th class="rev-th">Revenue</th></tr></thead><tbody>${rows}</tbody></table>`;
+  ORDER.forEach(s=>{grand+=svcs[s];rows+=`<tr><td>${s}</td><td class="rev-cell${nc(svcs[s])}">${fm(svcs[s])}</td></tr>`;});
+  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fm(grand)}</td></tr>`;
+  $(targetId).innerHTML=`<table class="ach-table">
+    <thead><tr><th>Service</th><th class="rev-th">Revenue</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
 }
 
-function renderBU(buId,data,defs){
-  const vis=visKeys(buId);
-  renderOverall(buId,data.groups,defs,vis);
-  renderIndividual(buId,data.groups,defs,vis);
-  renderService(buId,data.svcs);
+function renderAll(digitalData,martechData){
+  const dVis=visKeys('digital'),mVis=visKeys('martech');
+  // Overall tab
+  renderOverall('ov-digital-view',digitalData.groups,DIGITAL_GROUPS,dVis);
+  renderOverall('ov-martech-view',martechData.groups,MARTECH_GROUPS,mVis);
+  // Digital BU tab
+  renderOwners('dig-owners-view',digitalData.groups,DIGITAL_GROUPS,dVis);
+  renderService('dig-service-view',digitalData.svcs);
+  // MarTech BU tab
+  renderOwners('mt-owners-view',martechData.groups,MARTECH_GROUPS,mVis);
+  renderService('mt-service-view',martechData.svcs);
 }
 
 /* ═══════════════════════════════════════════════════════════════
    SYNC
 ═══════════════════════════════════════════════════════════════ */
 let isSyncing=false;
-
-async function doSync(initial) {
-  if (isSyncing) return;
-  isSyncing=true;
-  const rfbtn2=$('rfbtn'); if (rfbtn2) rfbtn2.disabled=true;
+async function doSync(initial){
+  if(isSyncing)return;isSyncing=true;
+  const rfbtn2=$('rfbtn');if(rfbtn2)rfbtn2.disabled=true;
   $('lo').classList.add('show');
-  $('sdot').style.background='#FFDA30';
-  $('stxt').textContent='FETCHING…';
-  $('err-bar').classList.remove('show');
-
+  $('sdot').style.background='#FFDA30';$('stxt').textContent='FETCHING…';
+  $('err-bar').style.display='none';
   const month=$('month-sel').value;
-  try {
+  try{
     const deals=await fetchDeals(month);
     attributeDeals(deals);
-    const validIds=deals.filter(d=>!d._excl).map(d=>String(d.id));
+    const validIds=deals.filter(d=>!d._excl).map(d=>d.id);
     const liMap=validIds.length?await fetchLineItems(validIds):{};
-
     const digitalData=buildBUData(deals,liMap,DIGITAL_GROUPS,'Digital',d=>d.head);
     const martechData=buildBUData(deals,liMap,MARTECH_GROUPS,'MarTech',d=>d.martechBucket);
-
-    renderBU('digital',digitalData,DIGITAL_GROUPS);
-    renderBU('martech',martechData,MARTECH_GROUPS);
-
+    renderAll(digitalData,martechData);
     $('main-content').style.display='block';
-    $('nav-strip').style.display='';
-    $('sdot').style.background='#FFDA30';
+    $('sdot').style.background='#0CCE6B';
     const validCount=deals.filter(d=>!d._excl).length;
     const monthLabel=month.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
-    $('stxt').textContent=monthLabel+' · '+validCount+' DEALS';
+    $('stxt').textContent=`${monthLabel} · ${validCount} DEALS`;
     const ts=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    $('sync-ts').textContent='Synced at '+ts;
-  } catch(e) {
+    $('last-sync').textContent='Synced at '+ts;
+  }catch(e){
     console.error('[Achievement Desk]',e);
-    $('sdot').style.background='#E84040';
-    $('stxt').textContent='SYNC FAILED';
-    $('err-bar').textContent='Failed to load: '+e.message;
-    $('err-bar').classList.add('show');
+    $('sdot').style.background='#E84040';$('stxt').textContent='SYNC FAILED';
+    $('err-bar').style.display='block';$('err-msg').textContent=e.message;
     $('main-content').style.display='block';
-    $('nav-strip').style.display='';
-  } finally {
-    isSyncing=false;
-    $('lo').classList.remove('show');
-    if (rfbtn2) rfbtn2.disabled=false;
+  }finally{
+    isSyncing=false;$('lo').classList.remove('show');
+    if(rfbtn2)rfbtn2.disabled=false;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════════
    BOOT
 ═══════════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', async ()=>{
+document.addEventListener('DOMContentLoaded',async()=>{
   bootCloneMode();
   populateMonthSelector();
-  $('month-sel').addEventListener('change', ()=>doSync());
-
+  $('month-sel').addEventListener('change',()=>doSync());
   const authed=checkSSO();
-  if (!authed) return; // Wait for manual login
-
+  if(!authed)return;
   await initRegistry();
   await doSync(true);
 });
