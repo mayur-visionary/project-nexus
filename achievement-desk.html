@@ -491,15 +491,24 @@ async function fetchLineItems(dealIds){
    ATTRIBUTION
 ═══════════════════════════════════════════════════════════════ */
 function resolveMartechBucket(deal,ownerId){
-  if(ownerId==='916030451')return'Jaydeep NBD';
+  // Tier 1: Fixed NBD owner
+  if(ownerId==='916030451') return 'Jaydeep NBD'; // Kamesh Biniwale
+
+  // Tier 2: User Role owners — nature per deal, geo from deal property
+  // (registry OWNER_GEO is null for User Role owners — deal geo is authoritative)
   if(typeof USER_ROLE_IDS!=='undefined'&&USER_ROLE_IDS.has(ownerId)){
-    if((deal.user_role_invoice_app||'').toUpperCase()==='NBD')return'Jaydeep NBD';
+    if((deal.user_role_invoice_app||'').toUpperCase()==='NBD') return 'Jaydeep NBD';
+    const geo=(typeof resolveGeo!=='undefined'?resolveGeo((deal.geo__invoice_app_||'').trim()):null)||'US';
+    if(geo==='AU') return 'Jaydeep AU';
+    if(geo==='UK') return 'Jaydeep UK';
+    return 'Jaydeep US';
   }
-  const rawGeo=deal.geo__invoice_app_;
-  const geo=(typeof resolveGeo!=='undefined'?resolveGeo(rawGeo):null)||(typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
-  if(geo==='AU')return'Jaydeep AU';
-  if(geo==='UK')return'Jaydeep UK';
-  return'Jaydeep US';
+
+  // Tier 3: Fixed AM owners — OWNER_GEO is authoritative, deal geo ignored
+  const geo=(typeof OWNER_GEO!=='undefined'?OWNER_GEO[ownerId]:null)||'US';
+  if(geo==='AU') return 'Jaydeep AU';
+  if(geo==='UK') return 'Jaydeep UK';
+  return 'Jaydeep US';
 }
 
 function attributeDeals(deals){
