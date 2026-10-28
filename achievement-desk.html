@@ -421,7 +421,7 @@ function populateMonthSelector(){
   const cursor=new Date(FY_YEAR,FY_MONTH,1);
   while(cursor.getFullYear()<now.getFullYear()||(cursor.getFullYear()===now.getFullYear()&&cursor.getMonth()<=now.getMonth())){
     const mn=cursor.toLocaleString('en-US',{month:'long'});
-    months.push({val:`${mn.toLowerCase()}-${cursor.getFullYear()}`,lbl:`📅 ${mn} ${cursor.getFullYear()}`});
+    months.push({val:`${mn.toLowerCase()}-${cursor.getFullYear()}`,lbl:`${mn} ${cursor.getFullYear()}`});
     cursor.setMonth(cursor.getMonth()+1);
   }
   months.forEach(m=>{const o=document.createElement('option');o.value=m.val;o.textContent=m.lbl;sel.appendChild(o);});
