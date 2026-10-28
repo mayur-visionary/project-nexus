@@ -187,3 +187,19 @@ function classifyLineItem(name) {
     return { svc: "Search",   bu: "Digital" };
   return null;
 }
+
+// ── engGroupFromLiName ────────────────────────────────────────────────────────
+// Engagement type classifier from LI name prefix.
+// Single source of truth for all Nexus modules — do not redefine per-module.
+// To update engagement rules, edit here only; all modules pick up on next load.
+function engGroupFromLiName(name) {
+  if (!name) return null;
+  const n = name.toLowerCase();
+  if (n.startsWith("dedicated fte"))                              return "Recurring";
+  if (n.startsWith("dedicated pte"))                             return "Recurring";
+  if (n.startsWith("recurring"))                                 return "Recurring";
+  if (n.startsWith("p2p"))                                       return "P2P";
+  if (n.startsWith("time and material") || n.startsWith("t&m")) return "P2P";
+  if (n.includes("email coding"))                                return "P2P";
+  return null;
+}
