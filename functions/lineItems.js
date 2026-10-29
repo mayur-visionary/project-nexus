@@ -20,8 +20,6 @@ export async function onRequestPost(context) {
     };
 
     // Step 1: Batch-fetch associations (deal → line_items) using v3 API
-    // v3 endpoint: POST /crm/v3/associations/deals/line_items/batch/read
-    // Response: { results: [{ from: {id}, to: [{id, type}] }] }
     const assocMap = {};
     const allLineItemIds = new Set();
 
@@ -33,9 +31,7 @@ export async function onRequestPost(context) {
           {
             method: "POST",
             headers: hdrs,
-            body: JSON.stringify({
-              inputs: chunk.map(id => ({ id: String(id) }))
-            })
+            body: JSON.stringify({ inputs: chunk.map(id => ({ id: String(id) })) })
           }
         );
         if (!assocRes.ok) {
@@ -46,7 +42,7 @@ export async function onRequestPost(context) {
         const assocData = await assocRes.json();
         (assocData.results || []).forEach(r => {
           const dealId = String(r.from?.id || "");
-          const liIds = (r.to || []).map(t => String(t.id));
+          const liIds  = (r.to || []).map(t => String(t.id));
           if (dealId && liIds.length) {
             assocMap[dealId] = liIds;
             liIds.forEach(id => allLineItemIds.add(id));
@@ -57,7 +53,7 @@ export async function onRequestPost(context) {
       }
     }
 
-    // Step 2: Batch-fetch line item properties (name + amount)
+    // Step 2: Batch-fetch line item properties
     const liProps = {};
     const liIdArr = [...allLineItemIds];
 
@@ -71,7 +67,12 @@ export async function onRequestPost(context) {
             headers: hdrs,
             body: JSON.stringify({
               inputs: chunk.map(id => ({ id })),
-              properties: ["name", "amount", "description", "start_date", "project_type", "status_1"]
+              // ── CHANGE: project_name added — used as stable EL Recurring key ──
+              // Previously relied on parsing description text via extractLabel().
+              // project_name is the dedicated Invoice App field, consistent across
+              // months (after normalizeProjectName() strips month suffixes in
+              // snapshot.html). project_type gates prevMap EL candidacy (Option B).
+              properties: ["name", "amount", "description", "start_date", "project_type", "status_1", "project_name"]
             })
           }
         );
@@ -83,12 +84,14 @@ export async function onRequestPost(context) {
         const liData = await liRes.json();
         (liData.results || []).forEach(r => {
           liProps[String(r.id)] = {
-            name: r.properties?.name || "",
-            amount: parseFloat(r.properties?.amount || 0) || 0,
-            description: r.properties?.description || "",
-            start_date:   r.properties?.start_date || "",
+            name:         r.properties?.name         || "",
+            amount:       parseFloat(r.properties?.amount || 0) || 0,
+            description:  r.properties?.description  || "",
+            start_date:   r.properties?.start_date   || "",
             project_type: r.properties?.project_type || "",
-            status_1:     r.properties?.status_1 || ""
+            status_1:     r.properties?.status_1     || "",
+            // ── CHANGE: new field ──
+            project_name: r.properties?.project_name || ""
           };
         });
       } catch (e) {
@@ -99,17 +102,15 @@ export async function onRequestPost(context) {
     // Step 3: Build response
     const items = {};
     Object.entries(assocMap).forEach(([dealId, liIds]) => {
-      items[dealId] = liIds
-        .map(id => liProps[id])
-        .filter(Boolean);
+      items[dealId] = liIds.map(id => liProps[id]).filter(Boolean);
     });
 
     return new Response(JSON.stringify({
       items,
       _debug: {
-        dealsRequested: dealIds.length,
-        dealsWithAssoc: Object.keys(assocMap).length,
-        totalLineItems: allLineItemIds.size,
+        dealsRequested:    dealIds.length,
+        dealsWithAssoc:    Object.keys(assocMap).length,
+        totalLineItems:    allLineItemIds.size,
         lineItemsResolved: Object.keys(liProps).length
       }
     }), {
