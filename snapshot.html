@@ -15,9 +15,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── Login ── */
 .login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);text-align:center}
 .login-logo{margin-bottom:22px}
-.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#9A9A9A;text-transform:uppercase;margin-bottom:5px}
 .login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
 .login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
 .login-input:focus{border-color:#FFDA30}
@@ -26,51 +26,69 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .login-btn:hover{background:#FFE870}
 .login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
 .login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
-.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#C0C0C0;letter-spacing:.08em;text-transform:uppercase}
 
-/* ── Header / Nav ── */
+/* ── Header ── */
 .hdr{background:#473400}
-.hdr-in{max-width:1440px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.hdr-logo svg{display:block}
-.hdr-meta{text-align:right}
-.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:.18em;color:rgba(255,218,48,.6);text-transform:uppercase;margin-bottom:2px}
-.hdr-title{font-size:13px;font-weight:800;color:#FFDA30;letter-spacing:.06em;text-transform:uppercase}
-.nav-strip{background:#3A2900;border-bottom:1px solid rgba(255,218,48,.12);display:none}
-.nav-in{max-width:1440px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:0}
-.nav-left{display:flex;align-items:center;gap:0;flex:1}
-.nav-right{display:flex;align-items:center;gap:8px}
-.status-dot{width:7px;height:7px;border-radius:50%;background:#FFDA30;display:inline-block;margin-right:6px;flex-shrink:0}
-.status-txt{font-size:8px;font-weight:800;letter-spacing:.14em;color:rgba(255,255,255,.7);text-transform:uppercase}
-.sync-ts{font-size:8px;font-weight:600;color:rgba(255,255,255,.35);margin-left:10px;letter-spacing:.04em}
-.rfbtn{background:rgba(255,218,48,.12);border:1px solid rgba(255,218,48,.25);color:#FFDA30;font-size:9px;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:5px;cursor:pointer;transition:background .15s}
-.rfbtn:hover{background:rgba(255,218,48,.22)}
-.rfbtn:disabled{opacity:.4;cursor:not-allowed}
-.month-nav{display:flex;align-items:center;gap:6px;padding:6px 0}
-.month-nav-btn{background:rgba(255,218,48,.1);border:1px solid rgba(255,218,48,.2);color:#FFDA30;font-size:11px;font-family:'Montserrat',sans-serif;font-weight:700;width:24px;height:24px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.month-nav-btn:hover:not(:disabled){background:rgba(255,218,48,.22)}
-.month-nav-btn:disabled{opacity:.3;cursor:not-allowed}
-.month-label{font-size:9px;font-weight:800;color:#FFDA30;letter-spacing:.1em;text-transform:uppercase;min-width:72px;text-align:center}
-.month-today-btn{font-size:8px;font-weight:700;color:rgba(255,218,48,.6);background:none;border:none;font-family:'Montserrat',sans-serif;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;padding:0 4px;display:none}
-.month-today-btn:hover{color:#FFDA30}
+.hdr-in{max-width:1480px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-brand svg{transition:opacity .2s}
+.hdr-brand:hover svg{opacity:.85}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
 
-/* ── Loading overlay ── */
-.lo{position:fixed;inset:0;background:rgba(71,52,0,.6);z-index:8000;display:none;align-items:center;justify-content:center}
+/* ── Footer ── */
+.footer{text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+
+/* ── Nav tab strip (below header, above main) ── */
+.nav-strip{background:#333;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-strip-in{max-width:1480px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-tabs{display:flex;align-items:stretch;gap:0}
+.nav-tab-active{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:11px 18px;border-bottom:3px solid transparent;cursor:default}
+.nav-strip-right{display:flex;align-items:center;gap:12px;padding:8px 0}
+.sync-ts{font-size:9px;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:rgba(255,255,255,.75);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+.refresh-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.refresh-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── Month Navigator ── */
+.month-nav{display:flex;align-items:center;gap:0}
+.month-nav-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:26px;height:26px;display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1;padding:0}
+.month-nav-btn:first-child{border-radius:6px 0 0 6px}
+.month-nav-btn:last-child{border-radius:0 6px 6px 0}
+.month-nav-btn:hover:not(:disabled){background:rgba(255,255,255,.14);color:#fff}
+.month-nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.month-nav-label{font-size:10px;font-weight:800;color:#fff;letter-spacing:.08em;text-transform:uppercase;padding:0 10px;background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);height:26px;display:flex;align-items:center;white-space:nowrap}
+.month-today-btn{padding:4px 10px;border-radius:6px;border:1px solid rgba(255,218,48,.4);background:rgba(255,218,48,.1);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.month-today-btn:hover{background:rgba(255,218,48,.2)}
+
+/* ── Loader ── */
+.lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
 .lo.show{display:flex}
-.lo-box{background:#473400;border-radius:12px;padding:28px 36px;text-align:center}
-.lo-spin{width:28px;height:28px;border:3px solid rgba(255,218,48,.3);border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
-.lo-txt{font-size:10px;font-weight:700;color:#FFDA30;letter-spacing:.1em;text-transform:uppercase}
+.spin{width:36px;height:36px;border:3px solid #E2E2E2;border-top-color:#FFDA30;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Error bar ── */
-.err-bar{background:#E84040;color:#fff;font-size:10px;font-weight:700;padding:8px 24px;text-align:center;display:none;letter-spacing:.04em}
+.err-bar{background:#EF2D56;color:#fff;font-size:10px;font-weight:700;padding:10px 28px;letter-spacing:.04em;display:none}
 .err-bar.show{display:block}
 
 /* ── Main ── */
-.main-wrap{max-width:1440px;margin:0 auto;padding:20px 24px 40px}
+.main{max-width:1480px;margin:0 auto;padding:24px 28px 60px}
 
-/* ── Grand Total bar ── */
-.gt-bar{background:#473400;border-radius:12px;padding:18px 22px;margin-bottom:18px;color:#fff}
-.gt-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px}
+/* ── Grand total bar ── */
+.grand-total{background:#473400;border-radius:10px;padding:20px 32px;margin-bottom:20px}
+.gt-row1{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
 .gt-main{display:flex;flex-direction:column;gap:4px}
 .gt-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55)}
 .gt-val{font-size:26px;font-weight:800;color:#FFDA30;line-height:1;letter-spacing:-.01em}
@@ -94,6 +112,8 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* ── BU column ── */
 .bu-col{display:flex;flex-direction:column;gap:10px}
+
+/* ── BU column header ── */
 .bu-col-hdr{background:#473400;border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px}
 .bu-col-hdr-name{font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.08em;flex:1}
 .bu-badge{font-size:8px;font-weight:700;letter-spacing:.06em;color:#473400;background:#FFDA30;border-radius:4px;padding:2px 6px;text-transform:uppercase}
@@ -140,30 +160,27 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .drill-hdr-sub{font-size:9px;font-weight:600;color:rgba(255,218,48,.7);margin-top:4px;letter-spacing:.04em}
 .drill-close{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:16px;font-family:'Montserrat',sans-serif;font-weight:800;cursor:pointer;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
 .drill-close:hover{background:rgba(255,255,255,.22)}
-.drill-kpi{display:flex;gap:20px;padding:14px 18px;background:#FAFAFA;border-bottom:1px solid #EBEBEB;flex-shrink:0}
-.drill-kpi-item{}
-.drill-kpi-lbl{font-size:8px;font-weight:700;color:#9A9A9A;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px}
-.drill-kpi-val{font-size:16px;font-weight:800}
-.drill-body{flex:1;overflow-y:auto;padding:10px 18px}
-.drill-section{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;padding:10px 0 4px;border-bottom:1px solid #F0F0F0;margin-bottom:4px}
-.drill-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #F7F7F7}
+.drill-summary{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid #F0F0F0;background:#FAFAFA;flex-shrink:0}
+.drill-kpi{flex:1;text-align:center}
+.drill-kpi-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9A9A9A;margin-bottom:3px}
+.drill-kpi-val{font-size:15px;font-weight:800;color:#006E5E}
+.drill-body{overflow-y:auto;flex:1;padding:0}
+.drill-section{padding:10px 18px 4px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9A9A9A;background:#F7F7F7;border-bottom:1px solid #EBEBEB;border-top:1px solid #EBEBEB;margin-top:4px}
+.drill-row{display:flex;align-items:flex-start;gap:10px;padding:9px 18px;border-bottom:1px solid #F5F5F5}
 .drill-row:last-child{border-bottom:none}
 .drill-row-left{flex:1;min-width:0}
 .drill-row-name{font-size:10px;font-weight:700;color:#434343;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drill-row-sub{font-size:9px;font-weight:500;color:#9A9A9A;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.drill-row-amt{font-size:11px;font-weight:800;white-space:nowrap}
-.drill-empty{font-size:10px;font-weight:600;color:#C0C0C0;text-align:center;padding:32px 0;letter-spacing:.04em}
-
-/* ── Footer ── */
-.footer{text-align:center;font-size:8px;font-weight:700;letter-spacing:.14em;color:#B0B0B0;text-transform:uppercase;padding:16px 0 8px}
+.drill-row-amt{font-size:10px;font-weight:800;color:#006E5E;flex-shrink:0}
+.drill-empty{padding:32px 18px;text-align:center;color:#C0C0C0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 </style>
 </head>
 <body>
 
-<!-- Login overlay -->
+<!-- Login -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box">
-    <div style="margin-bottom:22px">
+    <div class="login-logo">
       <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
         <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
         <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
@@ -174,204 +191,369 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
     <div class="login-err" id="login-err"></div>
-    <div class="login-footer">Project Nexus · The Live Pulse of Mavlers Revenue</div>
+    <div class="login-footer">The Live Pulse of Mavlers Revenue</div>
   </div>
 </div>
 
-<!-- Loading overlay -->
-<div class="lo" id="lo"><div class="lo-box"><div class="lo-spin"></div><div class="lo-txt" id="lo-txt">Loading…</div></div></div>
-
-<!-- Header -->
-<div class="hdr">
-  <div class="hdr-in">
-    <div class="hdr-logo">
-      <svg width="100" height="26" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
-        <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
-      </svg>
-    </div>
-    <div class="hdr-meta">
-      <div class="hdr-eyebrow">Sales Operations</div>
-      <div class="hdr-title">Project Nexus — BU Scorecard</div>
-    </div>
-  </div>
-</div>
-
-<!-- Nav strip -->
-<div class="nav-strip" id="nav-strip">
-  <div class="nav-in">
-    <div class="nav-left">
-      <span class="status-dot" id="sdot"></span>
-      <span class="status-txt" id="stxt">LOADING…</span>
-      <span class="sync-ts" id="sync-ts"></span>
-    </div>
-    <div class="nav-right">
-      <div class="month-nav">
-        <button class="month-nav-btn" onclick="navigateMonth(-1)" title="Previous month">&#8249;</button>
-        <span class="month-label" id="month-label">—</span>
-        <button class="month-nav-btn" id="month-next" onclick="navigateMonth(1)" title="Next month">&#8250;</button>
-        <button class="month-today-btn" id="month-today-btn" onclick="navigateMonth(0,true)">Today</button>
-      </div>
-      <button class="rfbtn" id="rfbtn" onclick="doSync(true)">↻ Refresh</button>
-    </div>
-  </div>
-</div>
+<!-- Loader -->
+<div class="lo" id="lo"><div class="spin"></div></div>
 
 <!-- Error bar -->
 <div class="err-bar" id="err-bar"></div>
-
-<!-- Main content -->
-<div id="main-content" style="display:none">
-  <div class="main-wrap">
-
-    <!-- Grand Total bar -->
-    <div class="gt-bar">
-      <div class="gt-top">
-        <div class="gt-main">
-          <div class="gt-lbl">Total Booking MTD</div>
-          <div class="gt-val" id="gt-booking">—</div>
-          <div class="gt-sub" id="gt-booking-sub">MTD</div>
-        </div>
-        <div class="gt-splits">
-          <div class="gt-split"><div class="gt-split-lbl">Digital</div><div class="gt-split-val" id="gt-digital">—</div><div class="gt-split-sub">BU Total</div></div>
-          <div class="gt-split"><div class="gt-split-lbl">Inter BU</div><div class="gt-split-val" id="gt-interbu">—</div><div class="gt-split-sub">BU Total</div></div>
-          <div class="gt-split"><div class="gt-split-lbl">MarTech</div><div class="gt-split-val" id="gt-martech">—</div><div class="gt-split-sub">BU Total</div></div>
-        </div>
-      </div>
-      <div class="gt-divider"></div>
-      <div class="gt-row2">
-        <div class="gt-row2-lbl">New Addition MTD</div>
-        <div class="gt-split2"><div class="gt-split2-lbl">Managed</div><div class="gt-split2-val" id="gt-na-managed">—</div><div class="gt-split2-sub" id="gt-na-managed-count">—</div></div>
-        <div class="gt-split2"><div class="gt-split2-lbl">Recurring</div><div class="gt-split2-val" id="gt-na-recurring">—</div><div class="gt-split2-sub" id="gt-na-recurring-count">—</div></div>
-        <div class="gt-split2"><div class="gt-split2-lbl">Total</div><div class="gt-split2-val" id="gt-na-total">—</div><div class="gt-split2-sub" id="gt-na-total-count">—</div></div>
-      </div>
-      <div class="gt-divider"></div>
-      <div class="gt-row2">
-        <div class="gt-row2-lbl" style="color:rgba(255,80,80,.6)">Engagement Lost MTD</div>
-        <div class="gt-split2"><div class="gt-split2-lbl">Managed</div><div class="gt-split2-val" id="gt-el-managed" style="color:#E05050">—</div><div class="gt-split2-sub" id="gt-el-managed-count">—</div></div>
-        <div class="gt-split2"><div class="gt-split2-lbl">Recurring</div><div class="gt-split2-val" id="gt-el-recurring" style="color:#E05050">—</div><div class="gt-split2-sub" id="gt-el-recurring-count">—</div></div>
-        <div class="gt-split2"><div class="gt-split2-lbl">Total</div><div class="gt-split2-val" id="gt-el-total" style="color:#E05050">—</div><div class="gt-split2-sub" id="gt-el-total-count">—</div></div>
-        <div class="gt-split2" style="margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.12)">
-          <div class="gt-split2-lbl">Net Portfolio</div>
-          <div class="gt-split2-val" id="gt-net-portfolio" style="color:#FFDA30">—</div>
-          <div class="gt-split2-sub">NA − EL</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BU Grid -->
-    <div class="bu-grid">
-
-      <!-- Digital BU -->
-      <div class="bu-col">
-        <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span><span class="bu-badge">Search · Web</span></div>
-        <div class="metric-card booking">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Revenue MTD</div><div class="metric-badge" id="digital-rev-badge">MTD</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="digital-rev-body"></tbody></table>
-        </div>
-        <div class="metric-card asof-card">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Contribution to MTD</div><div class="metric-badge" id="digital-asof-badge">—</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="digital-asof-body"></tbody></table>
-        </div>
-        <div class="metric-card new-add">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Count</div><div class="metric-badge na-badge">Status : New</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-na-count-body"></tbody></table>
-        </div>
-        <div class="metric-card new-add">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Amount</div><div class="metric-badge na-badge">Status : New</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-na-amt-body"></tbody></table>
-        </div>
-        <div class="metric-card eng-lost">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Count</div><div class="metric-badge el-badge" id="digital-el-count-badge">vs Prev Month</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-el-count-body"></tbody></table>
-        </div>
-        <div class="metric-card eng-lost">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Amount</div><div class="metric-badge el-badge" id="digital-el-amt-badge">vs Prev Month</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="digital-el-amt-body"></tbody></table>
-        </div>
-      </div>
-
-      <!-- Inter BU -->
-      <div class="bu-col">
-        <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span><span class="bu-badge">Campaign · Email · Design</span></div>
-        <div class="metric-card booking">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Revenue MTD</div><div class="metric-badge" id="interbu-rev-badge">MTD</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="interbu-rev-body"></tbody></table>
-        </div>
-        <div class="metric-card asof-card">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Contribution to MTD</div><div class="metric-badge" id="interbu-asof-badge">—</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="interbu-asof-body"></tbody></table>
-        </div>
-        <div class="metric-card new-add">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Count</div><div class="metric-badge na-badge">Status : New</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-na-count-body"></tbody></table>
-        </div>
-        <div class="metric-card new-add">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Amount</div><div class="metric-badge na-badge">Status : New</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-na-amt-body"></tbody></table>
-        </div>
-        <div class="metric-card eng-lost">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Count</div><div class="metric-badge el-badge" id="interbu-el-count-badge">vs Prev Month</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-el-count-body"></tbody></table>
-        </div>
-        <div class="metric-card eng-lost">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Amount</div><div class="metric-badge el-badge" id="interbu-el-amt-badge">vs Prev Month</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="interbu-el-amt-body"></tbody></table>
-        </div>
-      </div>
-
-      <!-- MarTech BU -->
-      <div class="bu-col">
-        <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span><span class="bu-badge">Jaydeep's Team</span></div>
-        <div class="metric-card booking">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Revenue MTD</div><div class="metric-badge" id="martech-rev-badge">MTD</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="martech-rev-body"></tbody></table>
-        </div>
-        <div class="metric-card asof-card">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Contribution to MTD</div><div class="metric-badge" id="martech-asof-badge">—</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead><tbody id="martech-asof-body"></tbody></table>
-        </div>
-        <div class="metric-card new-add">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Count</div><div class="metric-badge na-badge">Status : New</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-na-count-body"></tbody></table>
-        </div>
-        <div class="metric-card new-add">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">New Addition — Amount</div><div class="metric-badge na-badge">Status : New</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-na-amt-body"></tbody></table>
-        </div>
-        <div class="metric-card eng-lost">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Count</div><div class="metric-badge el-badge" id="martech-el-count-badge">vs Prev Month</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-el-count-body"></tbody></table>
-        </div>
-        <div class="metric-card eng-lost">
-          <div class="metric-card-hdr"><div class="metric-card-ttl">Engagement Lost — Amount</div><div class="metric-badge el-badge" id="martech-el-amt-badge">vs Prev Month</div></div>
-          <table class="snap-tbl"><thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead><tbody id="martech-el-amt-body"></tbody></table>
-        </div>
-      </div>
-
-    </div><!-- /bu-grid -->
-
-    <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
-  </div>
-</div>
 
 <!-- Drill drawer -->
 <div class="drill-overlay" id="drill-overlay" onclick="closeDrill()"></div>
 <div class="drill-panel" id="drill-panel">
   <div class="drill-hdr">
     <div class="drill-hdr-text">
-      <div class="drill-hdr-eyebrow" id="drill-eyebrow"></div>
-      <div class="drill-hdr-title" id="drill-title"></div>
-      <div class="drill-hdr-sub" id="drill-sub"></div>
+      <div class="drill-hdr-eyebrow" id="drill-eyebrow">Deal Breakdown</div>
+      <div class="drill-hdr-title" id="drill-title">—</div>
+      <div class="drill-hdr-sub" id="drill-sub">—</div>
     </div>
     <button class="drill-close" onclick="closeDrill()">✕</button>
   </div>
-  <div class="drill-kpi">
-    <div class="drill-kpi-item"><div class="drill-kpi-lbl">Count</div><div class="drill-kpi-val" id="drill-kpi-count">—</div></div>
-    <div class="drill-kpi-item"><div class="drill-kpi-lbl">Amount</div><div class="drill-kpi-val" id="drill-kpi-amt">—</div></div>
+  <div class="drill-summary">
+    <div class="drill-kpi">
+      <div class="drill-kpi-lbl">Count</div>
+      <div class="drill-kpi-val" id="drill-kpi-count">—</div>
+    </div>
+    <div class="drill-kpi">
+      <div class="drill-kpi-lbl">Total Amount</div>
+      <div class="drill-kpi-val" id="drill-kpi-amt">—</div>
+    </div>
   </div>
   <div class="drill-body" id="drill-body"></div>
 </div>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" href="/" title="Back to Revenue Pulse">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+          <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+          <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+          <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+          <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+          <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+          <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title">Project Nexus</div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><div class="sdot" id="sdot" style="background:#006E5E"></div><span id="stxt">Connecting...</span></div>
+          <div class="sync-ts" id="sync-ts" style="color:rgba(255,255,255,.45);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-top:2px"></div>
+        </div>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync(true)" disabled>⟳ Refresh</button>
+        <a class="nexus-btn" href="/">↗ Revenue Pulse</a>
+      </div>
+    </div>
+  </div>
+  <div class="yellow-rule"></div>
+</div>
+
+<!-- Nav tab strip -->
+<div class="nav-strip" id="nav-strip" style="display:none">
+  <div class="nav-strip-in">
+    <div class="nav-tabs">
+      <div class="nav-tab-active">BU Scorecard</div>
+    </div>
+    <div class="nav-strip-right">
+      <div class="month-nav">
+        <button class="month-nav-btn" id="month-prev" onclick="navigateMonth(-1)">&#8249;</button>
+        <div class="month-nav-label" id="month-label">—</div>
+        <button class="month-nav-btn" id="month-next" onclick="navigateMonth(1)" disabled>&#8250;</button>
+      </div>
+      <button class="month-today-btn" id="month-today-btn" onclick="navigateMonth(0,true)" style="display:none">Today</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main" id="main-content" style="display:none">
+
+  <!-- Grand total bar -->
+  <div class="grand-total">
+    <div class="gt-row1">
+      <div class="gt-main">
+        <div class="gt-lbl">Total Booking MTD</div>
+        <div class="gt-val" id="gt-booking">—</div>
+        <div class="gt-sub" id="gt-booking-sub"></div>
+      </div>
+      <div class="gt-splits">
+        <div class="gt-split">
+          <div class="gt-split-lbl">Digital</div>
+          <div class="gt-split-val" id="gt-digital">—</div>
+          <div class="gt-split-sub">BU Total</div>
+        </div>
+        <div class="gt-split">
+          <div class="gt-split-lbl">Inter BU</div>
+          <div class="gt-split-val" id="gt-interbu">—</div>
+          <div class="gt-split-sub">BU Total</div>
+        </div>
+        <div class="gt-split">
+          <div class="gt-split-lbl">MarTech</div>
+          <div class="gt-split-val" id="gt-martech">—</div>
+          <div class="gt-split-sub">BU Total</div>
+        </div>
+      </div>
+    </div>
+    <div class="gt-divider"></div>
+    <div class="gt-row2">
+      <div class="gt-row2-lbl">New Addition MTD</div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Managed</div>
+        <div class="gt-split2-val" id="gt-na-managed">—</div>
+        <div class="gt-split2-sub" id="gt-na-managed-count">—</div>
+      </div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Recurring</div>
+        <div class="gt-split2-val" id="gt-na-recurring">—</div>
+        <div class="gt-split2-sub" id="gt-na-recurring-count">—</div>
+      </div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Total</div>
+        <div class="gt-split2-val" id="gt-na-total">—</div>
+        <div class="gt-split2-sub" id="gt-na-total-count">—</div>
+      </div>
+    </div>
+    <div class="gt-divider"></div>
+    <div class="gt-row2">
+      <div class="gt-row2-lbl" style="color:rgba(255,80,80,.6)">Engagement Lost MTD</div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Managed</div>
+        <div class="gt-split2-val" id="gt-el-managed" style="color:#E05050">—</div>
+        <div class="gt-split2-sub" id="gt-el-managed-count">—</div>
+      </div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Recurring</div>
+        <div class="gt-split2-val" id="gt-el-recurring" style="color:#E05050">—</div>
+        <div class="gt-split2-sub" id="gt-el-recurring-count">—</div>
+      </div>
+      <div class="gt-split2">
+        <div class="gt-split2-lbl">Total</div>
+        <div class="gt-split2-val" id="gt-el-total" style="color:#E05050">—</div>
+        <div class="gt-split2-sub" id="gt-el-total-count">—</div>
+      </div>
+      <div class="gt-split2" style="margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.12)">
+        <div class="gt-split2-lbl">Net Portfolio</div>
+        <div class="gt-split2-val" id="gt-net-portfolio" style="color:#FFDA30">—</div>
+        <div class="gt-split2-sub">NA − EL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BU Grid -->
+  <div class="bu-grid">
+
+    <!-- Digital BU -->
+    <div class="bu-col">
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Digital BU</span><span class="bu-badge">Search · Web</span></div>
+      <div class="metric-card booking">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Revenue MTD</div>
+          <div class="metric-badge" id="digital-rev-badge">MTD</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-rev-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card asof-card">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Contribution to MTD</div>
+          <div class="metric-badge" id="digital-asof-badge">—</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-asof-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Count</div>
+          <div class="metric-badge na-badge">Status : New</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-na-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Amount</div>
+          <div class="metric-badge na-badge">Status : New</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-na-amt-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Count</div>
+          <div class="metric-badge el-badge" id="digital-el-count-badge">vs Prev Month</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-el-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge el-badge" id="digital-el-amt-badge">vs Prev Month</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="digital-el-amt-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Inter BU -->
+    <div class="bu-col">
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">Inter BU</span><span class="bu-badge">Campaign · Email · Design</span></div>
+      <div class="metric-card booking">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Revenue MTD</div>
+          <div class="metric-badge" id="interbu-rev-badge">MTD</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-rev-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card asof-card">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Contribution to MTD</div>
+          <div class="metric-badge" id="interbu-asof-badge">—</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-asof-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Count</div>
+          <div class="metric-badge na-badge">Status : New</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-na-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Amount</div>
+          <div class="metric-badge na-badge">Status : New</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-na-amt-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Count</div>
+          <div class="metric-badge el-badge" id="interbu-el-count-badge">vs Prev Month</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-el-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge el-badge" id="interbu-el-amt-badge">vs Prev Month</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="interbu-el-amt-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MarTech BU -->
+    <div class="bu-col">
+      <div class="bu-col-hdr"><span class="bu-col-hdr-name">MarTech BU</span><span class="bu-badge">Jaydeep's Team</span></div>
+      <div class="metric-card booking">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Revenue MTD</div>
+          <div class="metric-badge" id="martech-rev-badge">MTD</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-rev-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card asof-card">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Contribution to MTD</div>
+          <div class="metric-badge" id="martech-asof-badge">—</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Recurring</th><th class="num">P2P</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-asof-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Count</div>
+          <div class="metric-badge na-badge">Status : New</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-na-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card new-add">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">New Addition — Amount</div>
+          <div class="metric-badge na-badge">Status : New</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-na-amt-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Count</div>
+          <div class="metric-badge el-badge" id="martech-el-count-badge">vs Prev Month</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-el-count-body"></tbody>
+        </table>
+      </div>
+      <div class="metric-card eng-lost">
+        <div class="metric-card-hdr">
+          <div class="metric-card-ttl">Engagement Lost — Amount</div>
+          <div class="metric-badge el-badge" id="martech-el-amt-badge">vs Prev Month</div>
+        </div>
+        <table class="snap-tbl">
+          <thead><tr><th>Head</th><th class="num">Region</th><th class="num">Managed</th><th class="num">Recurring</th><th class="num">Total</th></tr></thead>
+          <tbody id="martech-el-amt-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /bu-grid -->
+
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+
+</div><!-- /main -->
 
 <script src="/registry-client.js"></script>
 <script>
@@ -384,7 +566,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 //   - Contribution to MTD: today's invoiced deals (invoice_date = todayStr)
 //   - New Addition: status_1="New" (Managed) / project_type="New" (Recurring)
 //       + start_date in current booking month
-//   - Engagement Lost: prev month LI key comparison
+//   - Engagement Lost: prev month LI key comparison (Talent/Project Name + Company)
 //     Full loss: present prev, absent cur → count=headcount, amt=prev amount
 //     Downgrade: FTE→PTE same talent → count=0.5, amt=prev-cur delta
 //
@@ -427,15 +609,16 @@ const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","
 // populated by initRegistry() at boot. No inline copies needed.
 // ════════════════════════════════════════════════════════════════
 
+// ── BU + Region resolved inline at ingestion in fetchDeals() ──
+// OWNER_BU_MAP, OWNER_GEO, GEO_MAP — from initRegistry() via registry-client.js
+
 // Maps an attributed deal → Scorecard row key (AU / UK / US / NBD)
+// NBD_OWNER_IDS and USER_ROLE_IDS provided by registry-client.js
 function getRowKey(d) {
   const oid = String(d.owner_id || "");
-  if (NBD_OWNER_IDS.has(oid)) return "NBD";
-  if (USER_ROLE_IDS.has(oid) && (d.user_role || "").toUpperCase() === "NBD") return "NBD";
-  const reg = (d.region || "").toUpperCase();
-  if (reg === "AU") return "AU";
-  if (reg === "UK") return "UK";
-  return "US";
+  if (NBD_OWNER_IDS.has(oid)) return "NBD"; // isNBD:true — Aman, Devanshu, Malav, Kamesh, Dhruti Dave
+  if (USER_ROLE_IDS.has(oid) && (d.user_role || "").toUpperCase() === "NBD") return "NBD"; // User Role acting as NBD (e.g. Mukund)
+  return d.region || "US";
 }
 
 // classifyLineItem()   — provided by registry-client.js (single source of truth)
@@ -559,51 +742,61 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
     "user_role_invoice_app"          // AM / NBD role for User Role owners (Mukund etc.)
   ];
   const filters = [
-    {propertyName:"pipeline",  operator:"EQ", value:PIPELINE},
-    {propertyName:"dealstage", operator:"EQ", value:STAGE},
+    {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
+    {propertyName:"dealstage", operator:"EQ",     value:STAGE},
     {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
+  // Equal window cutoff — only include deals up to the same day-of-month as current month
   if (cutoffDay) {
-    filters.push({propertyName:"closedate", operator:"LTE", value:cutoffDay});
+    filters.push({propertyName:"closedate", operator:"LTE", value:`${cutoffDay}T23:59:59.000Z`});
   }
-  const fetched = []; let after = null;
+
+  const fetched = [];
+  let after = null;
   do {
     const body = {filterGroups:[{filters}], properties:props, limit:200};
     if (after) body.after = after;
     const res = await fetch("/api", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
-    if (!res.ok) throw new Error("/api " + res.status);
+    if (!res.ok) throw new Error("API " + res.status);
     const data = await res.json();
     (data.results || []).forEach(r => {
       const p = r.properties || {};
-      const bm = (p.invoice_booking_month__invoice_app_ || "").toLowerCase().trim();
-      const oid = String(p.hubspot_owner_id || "");
-      const billing_id  = (p.zoho_billing_id__invoice_app_ || "").trim();
-      const company     = (p.company_name__invoice_app_ || "").trim();
-      const zohoDisplay = (p.zoho_display_name__invoice_app_ || p.contact_name__invoice_app_ || "").trim();
+      const billing_id = (p.zoho_billing_id__invoice_app_ || p.contact_name__invoice_app_ || "").trim();
+      const cn = (p.company_name__invoice_app_ || "").trim();
+      const company = (cn && cn !== "(blank)") ? cn : (p.zoho_display_name__invoice_app_ || p.contact_name__invoice_app_ || "").trim();
       if (!billing_id && !company) return;
       if (company === "(blank)") return;
       const amount = parseFloat(p.amount_in_home_currency || 0) || 0;
+      if (!amount) return; // skip zero-amount deals only; negatives pass through and net
+      // ── Boundary normalisation (mirrors Revenue Pulse doFYSync) ──
+      // month: lowercase; geo/eng_model: trim — JS comparisons are case-sensitive.
+      const bm      = (p.invoice_booking_month__invoice_app_ || "").toLowerCase();
+      const oid     = String(p.hubspot_owner_id     || "");
+      const rawBU   = (p.business_unit_invoice_app  || "").trim();
+      const geoHead = (p.geo_head__invoice_app_     || "").trim();
 
-      // ── BU resolution (3-tier) ──
-      let bu = (p.business_unit_invoice_app || "").trim();
-      if (!bu || bu === "dynamic") {
-        bu = (typeof OWNER_BU_MAP !== "undefined" && OWNER_BU_MAP[oid]) ? OWNER_BU_MAP[oid] : null;
-      }
-      if (!bu) {
-        const gh = (p.geo_head__invoice_app_ || "").toLowerCase();
-        bu = (gh.includes("martech") || gh.includes("email") || gh.includes("campaign")) ? "MarTech" : "Digital";
-      }
+      // ── BU — 3-tier hierarchy ──
+      // Tier 1: Invoice App property (authoritative, set by Invoice App at invoicing time)
+      // Tier 2: Owner registry fallback (OWNER_BU_MAP — from registry-client.js)
+      //         Skip "dynamic" — Prativa Dubey falls through to Tier 3
+      // Tier 3: geo_head derivation (for genuinely unregistered owners)
+      let bu;
+      if      (rawBU === "MarTech BU")                                               bu = "MarTech";
+      else if (rawBU === "Digital BU")                                               bu = "Digital";
+      else if (OWNER_BU_MAP[oid] && OWNER_BU_MAP[oid] !== "dynamic")                bu = OWNER_BU_MAP[oid];
+      else if (geoHead === "Jaydeep Salla" ||
+               (geoHead && geoHead.toLowerCase().includes("mrugesh")))               bu = "MarTech";
+      else if (geoHead === "Jiggyasa Agrawal" ||
+               geoHead === "Tanuj Gupta"      ||
+               geoHead === "Nevilson Christan")                                      bu = "Digital";
+      else                                                                            bu = "Digital"; // true last resort
 
-      // ── Region resolution ──
-      let region = null;
-      if (typeof OWNER_GEO !== "undefined" && OWNER_GEO[oid]) {
-        region = OWNER_GEO[oid];
-      } else {
-        region = (typeof resolveGeo !== "undefined") ? resolveGeo((p.geo__invoice_app_ || "").trim()) : null;
-      }
+      // ── Region — owner registry + geo property fallback ──
+      const region = OWNER_GEO[oid] || GEO_MAP[(p.geo__invoice_app_ || "").trim()] || null;
 
+      const zohoDisplay = (p.zoho_display_name__invoice_app_ || "").trim();
       fetched.push({
         id:           String(r.id),
         owner_id:     oid,
@@ -679,7 +872,8 @@ function emptyBU() {
   };
 }
 
-// ── Drill store — NA + EL ──
+// ── Drill store — NA only ──
+// DRILL_STORE["NA"][bu][rowKey]["Managed"|"Recurring"] = [{label, company, amount, dealId}]
 let DRILL_STORE = {};
 
 function initDrillStore() {
@@ -694,7 +888,7 @@ function initDrillStore() {
   });
 }
 
-// ── Extract talent/project name from LI description (retained for NA drill labels) ──
+// ── Extract talent/project name from LI description ──
 function extractLabel(liName, liDescription, company) {
   const n = liName.toLowerCase();
   if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
@@ -715,14 +909,11 @@ function extractLabel(liName, liDescription, company) {
 // isPrevMap (new param):
 //   true  → prevMap: only project_type="Old" LIs enter as EL candidates (Option B).
 //            Prevents New→Old transition from generating false EL hits.
-//            New engagements are captured by NA logic; they must not
-//            simultaneously appear as losses in the prev→cur comparison.
 //   false → curMap: all types included (needed to check presence/absence).
 //
-// Recurring key now uses:
-//   normalizeProjectName(li.project_name) — dedicated Invoice App field,
-//   month/year suffix stripped — clean, stable cross-month matching.
-//   Replaces extractLabel() which parsed unstructured description text.
+// Recurring key now uses normalizeProjectName(li.project_name) — dedicated
+// Invoice App field, month/year suffix stripped — stable cross-month matching.
+// Replaces extractLabel() which parsed unstructured description text.
 // ════════════════════════════════════════════════════════════════
 function buildLIKeyMap(deals, liMap, isPrevMap) {
   const map = new Map();
@@ -767,9 +958,9 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
         map.get(key).pteCount += 1;
         map.get(key).pteAmt   += amt;
       } else {
-        // SESSION 40 PATCH — Option B: only project_type="Old" enters prevMap
+        // SESSION 40: Option B — only project_type="Old" enters prevMap
         if (isPrevMap && (li.project_type || "").toLowerCase() !== "old") return;
-        // SESSION 40 PATCH — use li.project_name + normalizeProjectName()
+        // SESSION 40: use li.project_name + normalizeProjectName()
         const rawName  = li.project_name || deal.zoho_display || deal.company;
         const projName = normalizeProjectName(rawName);
         const key = `Recurring|${projName}|${zBid}`;
@@ -935,14 +1126,15 @@ function computeSnapshot(deals, liMap, todayStr) {
         const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
         naRow.managed    += headcount;
         naAmtRow.managed += amt;
-        DRILL_STORE.NA[bk][rowKey]["Managed"].push({label, company:deal.company, amount:amt, dealId:deal.id});
       } else {
-        const m = li.description.match(/Project\s+Name\s*:\s*(.+?)(?:[\n\r]|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+        const m = li.description.match(/Project\s+Name\s*:\s*(.+?)(?:\n|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
         if (m) label = m[1].trim();
         naRow.rec    += 1;
         naAmtRow.rec += amt;
-        DRILL_STORE.NA[bk][rowKey]["Recurring"].push({label, company:deal.company, amount:amt, dealId:deal.id});
       }
+      DRILL_STORE.NA[bk][rowKey][naType].push({
+        label, company: deal.zoho_display || deal.company, amount: amt, dealId: deal.id
+      });
     });
   });
 
@@ -952,6 +1144,52 @@ function computeSnapshot(deals, liMap, todayStr) {
 // ══════════════════════════════════════════════
 // RENDER
 // ══════════════════════════════════════════════
+
+function renderELCountTable(tbodyId, elData, rowDefs, buKey) {
+  const tbody = $(tbodyId);
+  if (!tbody) return 0;
+  let totalM = 0, totalR = 0;
+  const rows = rowDefs.map(r => {
+    const d = elData[r.key] || {managed:0, rec:0};
+    const tot = d.managed + d.rec;
+    totalM += d.managed; totalR += d.rec;
+    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
+    const mCell = d.managed > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','${r.key}','Managed')">${d.managed}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','${r.key}','Recurring')">${d.rec}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num drillable" onclick="openDrill('EL','${buKey}','${r.key}','Both')">${tot}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
+  });
+  const grand = totalM + totalR;
+  const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
+  const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
+  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${grand}</td>` : `<td class="num">—</td>`;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
+  tbody.innerHTML = rows.join("");
+  return grand;
+}
+
+function renderELAmtTable(tbodyId, elData, rowDefs, buKey) {
+  const tbody = $(tbodyId);
+  if (!tbody) return 0;
+  let totalM = 0, totalR = 0;
+  const rows = rowDefs.map(r => {
+    const d = elData[r.key] || {managed:0, rec:0};
+    const tot = d.managed + d.rec;
+    totalM += d.managed; totalR += d.rec;
+    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
+    const mCell = d.managed > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>` : `<td class="num dim">—</td>`;
+    const rCell = d.rec     > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`   : `<td class="num dim">—</td>`;
+    const tCell = `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
+    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
+  });
+  const grand = totalM + totalR;
+  const totM = totalM > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num el-val">—</td>`;
+  const totR = totalR > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num el-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>` : `<td class="num el-val">—</td>`;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
+  tbody.innerHTML = rows.join("");
+  return grand;
+}
 
 function renderRevTable(tbodyId, revData, rowDefs) {
   const tbody = $(tbodyId);
@@ -987,7 +1225,7 @@ function renderNACountTable(tbodyId, naData, rowDefs, buKey) {
   const grand = totalM + totalR;
   const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
   const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
-  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${grand}</td>`      : `<td class="num">—</td>`;
+  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${grand}</td>` : `<td class="num">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -1010,53 +1248,7 @@ function renderNAAmtTable(tbodyId, naData, rowDefs, buKey) {
   const grand = totalM + totalR;
   const totM = totalM > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num na-val">—</td>`;
   const totR = totalR > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num na-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>`      : `<td class="num na-val">—</td>`;
-  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
-  tbody.innerHTML = rows.join("");
-  return grand;
-}
-
-function renderELCountTable(tbodyId, elData, rowDefs, buKey) {
-  const tbody = $(tbodyId);
-  if (!tbody) return 0;
-  let totalM = 0, totalR = 0;
-  const rows = rowDefs.map(r => {
-    const d = elData[r.key] || {managed:0, rec:0};
-    const tot = d.managed + d.rec;
-    totalM += d.managed; totalR += d.rec;
-    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    const mCell = d.managed > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Managed')">${d.managed}</td>` : `<td class="num dim">—</td>`;
-    const rCell = d.rec     > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Recurring')">${d.rec}</td>`   : `<td class="num dim">—</td>`;
-    const tCell = `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Both')">${tot}</td>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
-  });
-  const grand = totalM + totalR;
-  const totM = totalM > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num el-val">—</td>`;
-  const totR = totalR > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num el-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${grand}</td>`      : `<td class="num el-val">—</td>`;
-  rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
-  tbody.innerHTML = rows.join("");
-  return grand;
-}
-
-function renderELAmtTable(tbodyId, elData, rowDefs, buKey) {
-  const tbody = $(tbodyId);
-  if (!tbody) return 0;
-  let totalM = 0, totalR = 0;
-  const rows = rowDefs.map(r => {
-    const d = elData[r.key] || {managed:0, rec:0};
-    const tot = d.managed + d.rec;
-    totalM += d.managed; totalR += d.rec;
-    if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
-    const mCell = d.managed > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Managed')">${fmtUSD(d.managed)}</td>` : `<td class="num dim">—</td>`;
-    const rCell = d.rec     > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Recurring')">${fmtUSD(d.rec)}</td>`   : `<td class="num dim">—</td>`;
-    const tCell = `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','${r.key}','Both')">${fmtUSD(tot)}</td>`;
-    return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td>${mCell}${rCell}${tCell}</tr>`;
-  });
-  const grand = totalM + totalR;
-  const totM = totalM > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num el-val">—</td>`;
-  const totR = totalR > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num el-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>`      : `<td class="num el-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>` : `<td class="num na-val">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -1102,13 +1294,12 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
     setText(p + "-el-amt-badge",   elBadge);
   });
 
-  const d  = renderBU("digital", bkt.digital,  DIGITAL_ROWS, todayStr);
-  const ib = renderBU("interbu", bkt.interbu,  DIGITAL_ROWS, todayStr);
-  const mt = renderBU("martech", bkt.martech,  MARTECH_ROWS, todayStr);
+  const d  = renderBU("digital", bkt.digital, DIGITAL_ROWS, todayStr);
+  const ib = renderBU("interbu", bkt.interbu, DIGITAL_ROWS, todayStr);
+  const mt = renderBU("martech", bkt.martech, MARTECH_ROWS, todayStr);
 
   const grandTotal = d.bookTotal + ib.bookTotal + mt.bookTotal;
   const totalNAAmt = d.naAmt + ib.naAmt + mt.naAmt;
-  const totalELAmt = d.elAmt + ib.elAmt + mt.elAmt;
 
   // Grand bar — Revenue row
   setText("gt-booking",     fmtUSD(grandTotal));
@@ -1117,11 +1308,15 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   setText("gt-interbu",     fmtUSD(ib.bookTotal));
   setText("gt-martech",     fmtUSD(mt.bookTotal));
 
-  // Grand bar — NA row
-  const allM    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.managed||0), 0), 0);
-  const allR    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.rec||0),    0), 0);
-  const allAmtM = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.managed||0),  0), 0);
-  const allAmtR = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.rec||0),     0), 0);
+  // Grand bar — NA row: aggregate across all BUs
+  const allM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.managed||0), 0), 0);
+  const allR = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.rec||0), 0), 0);
+  const allAmtM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.managed||0), 0), 0);
+  const allAmtR = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.rec||0), 0), 0);
 
   setText("gt-na-managed",       allAmtM > 0 ? fmtUSD(allAmtM) : "—");
   setText("gt-na-managed-count", allM > 0 ? allM + " talent" + (allM > 1 ? "s" : "") : "—");
@@ -1131,25 +1326,31 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   setText("gt-na-total-count", (allM+allR) > 0 ? (allM+allR) + " new" : "—");
 
   // Grand bar — EL row
-  const allEM    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.managed||0), 0), 0);
-  const allER    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.rec||0),    0), 0);
-  const allElAmtM = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.managed||0),  0), 0);
-  const allElAmtR = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.rec||0),     0), 0);
+  const allEM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.managed||0), 0), 0);
+  const allER = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.rec||0), 0), 0);
+  const allElAmtM = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.managed||0), 0), 0);
+  const allElAmtR = ["digital","interbu","martech"].reduce((s,bu) =>
+    s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.rec||0), 0), 0);
+  const totalELAmt = allElAmtM + allElAmtR;
 
-  setText("gt-el-managed",         allElAmtM > 0 ? fmtUSD(allElAmtM) : "—");
-  setText("gt-el-managed-count",   allEM > 0 ? allEM + " lost" : "—");
-  setText("gt-el-recurring",       allElAmtR > 0 ? fmtUSD(allElAmtR) : "—");
+  setText("gt-el-managed",       allElAmtM > 0 ? fmtUSD(allElAmtM) : "—");
+  setText("gt-el-managed-count", allEM > 0 ? allEM + " lost" : "—");
+  setText("gt-el-recurring",     allElAmtR > 0 ? fmtUSD(allElAmtR) : "—");
   setText("gt-el-recurring-count", allER > 0 ? allER + " lost" : "—");
-  setText("gt-el-total",           totalELAmt > 0 ? fmtUSD(totalELAmt) : "—");
-  setText("gt-el-total-count",     (allEM+allER) > 0 ? (allEM+allER) + " lost" : "—");
+  setText("gt-el-total",         totalELAmt > 0 ? fmtUSD(totalELAmt) : "—");
+  setText("gt-el-total-count",   (allEM+allER) > 0 ? (allEM+allER) + " lost" : "—");
 
   // Net Portfolio Change
   const netAmt = totalNAAmt - totalELAmt;
   const netEl  = $("gt-net-portfolio");
   if (netEl) {
+    netEl.textContent = fmtUSD(Math.abs(netAmt));
+    netEl.style.color = netAmt >= 0 ? "#0CCE6B" : "#E05050";
     const prefix = netAmt >= 0 ? "+" : "-";
     netEl.textContent = prefix + fmtUSD(Math.abs(netAmt));
-    netEl.style.color = netAmt >= 0 ? "#0CCE6B" : "#E05050";
   }
 }
 
@@ -1190,12 +1391,12 @@ function openDrill(type, buKey, rowKey, etFilter) {
   }
   entries.sort((a,b) => b.amount - a.amount);
 
-  const buLabel = buKey  === "ALL_BU" ? "All BUs"     : BU_LABELS[buKey]  || buKey;
-  const rkLabel = rowKey === "ALL"    ? "All Regions" : rowKey;
+  const buLabel = buKey === "ALL_BU" ? "All BUs" : BU_LABELS[buKey] || buKey;
+  const rkLabel = rowKey === "ALL"   ? "All Regions" : rowKey;
   const etLabel = etFilter === "Both" ? "Managed + Recurring" : etFilter;
-  const isNA    = type === "NA";
-  const kpiClr  = isNA ? "#006E5E" : "#C13030";
 
+  const isNA   = type === "NA";
+  const kpiClr = isNA ? "#006E5E" : "#C13030";
   $("drill-eyebrow").textContent = buLabel + " · " + rkLabel;
   $("drill-title").textContent   = (isNA ? "New Addition" : "Engagement Lost") + " — " + etLabel;
   $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs " + (_prevMonthLabel || "Prev Month") + " equal window";
@@ -1211,7 +1412,7 @@ function openDrill(type, buKey, rowKey, etFilter) {
 
   const body = $("drill-body");
   if (!entries.length) {
-    body.innerHTML = `<div class="drill-empty">No entries in this segment</div>`;
+    body.innerHTML = `<div class="drill-empty">No new additions in this segment</div>`;
   } else {
     let html = "";
     const etGroups = etFilter === "Both"
@@ -1225,14 +1426,12 @@ function openDrill(type, buKey, rowKey, etFilter) {
         if (type === "EL" && e._composition && e._composition.length > 0) {
           const parts = [];
           const comp = e._composition;
-          const ftePure = comp.filter(c => c.engType === "FTE");
-          const fteConv = comp.filter(c => c.engType === "FTE→PTE");
-          const pte     = comp.filter(c => c.engType === "PTE");
-          const rec     = comp.filter(c => c.engType === "Recurring");
-          if (ftePure.length) parts.push(ftePure.reduce((s,c)=>s+c.count,0) + " FTE lost");
-          if (fteConv.length) parts.push(fteConv.reduce((s,c)=>s+c.count,0) + " FTE→PTE");
-          if (pte.length)     parts.push(pte.reduce((s,c)=>s+c.count,0) + " PTE lost");
-          if (rec.length)     parts.push(rec.length + " project" + (rec.length > 1 ? "s" : "") + " lost");
+          const ftePure  = comp.filter(c => c.engType === "FTE");
+          const fteConv  = comp.filter(c => c.engType === "FTE→PTE");
+          const pte      = comp.filter(c => c.engType === "PTE");
+          if (ftePure.length)  parts.push(ftePure.reduce((s,c)=>s+c.count,0) + " FTE lost");
+          if (fteConv.length)  parts.push(fteConv.reduce((s,c)=>s+c.count,0) + " FTE→PTE");
+          if (pte.length)      parts.push(pte.reduce((s,c)=>s+c.count,0) + " PTE lost");
           if (parts.length) subLine = parts.join(" · ");
         }
         html += `<div class="drill-row">
@@ -1246,6 +1445,7 @@ function openDrill(type, buKey, rowKey, etFilter) {
     });
     body.innerHTML = html;
   }
+
   $("drill-overlay").classList.add("open");
   $("drill-panel").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -1256,6 +1456,7 @@ function closeDrill() {
   $("drill-panel").classList.remove("open");
   document.body.style.overflow = "";
 }
+
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrill(); });
 
 // ══════════════════════════════════════════════
@@ -1265,7 +1466,7 @@ let selectedMonthOffset = 0;
 let _prevMonthLabel = "";
 
 function updateMonthNavUI() {
-  const now   = new Date();
+  const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
   const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
@@ -1300,7 +1501,7 @@ async function doSync(force = false) {
 
   try {
     const pad = n => String(n).padStart(2,"0");
-    const now   = new Date();
+    const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
@@ -1322,7 +1523,7 @@ async function doSync(force = false) {
     const liMap = await fetchLineItems(deals);
 
     const prevMonthDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
-    const prevMonth     = getMonthStr(prevMonthDate);
+    const prevMonth = getMonthStr(prevMonthDate);
     let prevCutoffDay;
     if (isCurrentMonth) {
       prevCutoffDay = `${prevMonthDate.getFullYear()}-${pad(prevMonthDate.getMonth()+1)}-${pad(today.getDate())}`;
@@ -1340,7 +1541,6 @@ async function doSync(force = false) {
     // SESSION 40 PATCH — isPrevMap drives Option B in buildLIKeyMap
     const curLIKeyMap  = buildLIKeyMap(deals,     liMap,     false); // all types
     const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap, true);  // project_type="Old" only
-
     computeEL(prevLIKeyMap, curLIKeyMap, bkt);
 
     _prevMonthLabel = MSHRT[prevMonthDate.getMonth()] + " " + prevMonthDate.getFullYear();
@@ -1352,9 +1552,9 @@ async function doSync(force = false) {
     $("stxt").textContent = isCurrentMonth
       ? "LIVE · " + deals.length + " DEALS"
       : MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear() + " · " + deals.length + " DEALS";
-    const ts = new Date().toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+    const syncedAt = new Date();
+    const ts = syncedAt.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
     const el = $("sync-ts"); if (el) el.textContent = "Synced at " + ts;
-
   } catch(e) {
     console.error("[BU Scorecard]", e);
     $("sdot").style.background = "#E84040";
