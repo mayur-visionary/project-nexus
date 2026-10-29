@@ -964,7 +964,7 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
         const rawName  = li.project_name || deal.zoho_display || deal.company;
         const projName = normalizeProjectName(rawName);
         const key = `Recurring|${projName}|${zBid}`;
-        if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
+        if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, projName, dealId:deal.id, zBid});
         map.get(key).amount += amt;
       }
     });
@@ -1044,13 +1044,14 @@ function computeEL(prevMap, curMap, bkt) {
   prevMap.forEach((prev, key) => {
     if (prev.slotType !== "Recurring") return;
     if (curMap.has(key)) return;
-    const {bucketKey, rowKey, displayName, dealId, amount} = prev;
+    const {bucketKey, rowKey, displayName, projName, dealId, amount} = prev;
     const row = bkt[bucketKey];
     if (!row) return;
     row.elCount[rowKey].rec += 1;
     row.elAmt[rowKey].rec   += amount;
+    // label = Project Name (primary); company = Zoho Display Name (sub-line)
     DRILL_STORE.EL[bucketKey][rowKey]["Recurring"].push({
-      label:displayName, company:displayName, amount, count:1, dealId, engType:"Recurring"
+      label: projName || displayName, company: displayName, amount, count:1, dealId, engType:"Recurring"
     });
   });
 }
