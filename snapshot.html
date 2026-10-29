@@ -172,6 +172,9 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .drill-row-name{font-size:10px;font-weight:700;color:#434343;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drill-row-sub{font-size:9px;font-weight:500;color:#9A9A9A;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drill-row-amt{font-size:10px;font-weight:800;color:#006E5E;flex-shrink:0}
+.drill-row--slot{padding:6px 18px 2px}
+.drill-row--client-summary{padding:4px 18px 10px;border-top:1px solid #F0F0F0;margin-top:2px}
+.drill-row-name--summary{font-size:8.5px;font-weight:700;color:#B0B0B0;letter-spacing:.03em;text-transform:uppercase}
 .drill-empty{padding:32px 18px;text-align:center;color:#C0C0C0;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 </style>
 </head>
@@ -938,14 +941,18 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
 
       if (isFTE) {
         const key = `FTE|${zBid}`;
-        if (!map.has(key)) map.set(key, {fteCount:0, fteAmt:0, slotType:"FTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
-        map.get(key).fteCount += 1;
-        map.get(key).fteAmt   += amt;
+        if (!map.has(key)) map.set(key, {fteCount:0, fteAmt:0, slotType:"FTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid, slots:[]});
+        const fe = map.get(key);
+        fe.fteCount += 1;
+        fe.fteAmt   += amt;
+        fe.slots.push({talentName: extractLabel(li.name, li.description || "", displayName), amt});
       } else if (isPTE) {
         const key = `PTE|${zBid}`;
-        if (!map.has(key)) map.set(key, {pteCount:0, pteAmt:0, slotType:"PTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
-        map.get(key).pteCount += 1;
-        map.get(key).pteAmt   += amt;
+        if (!map.has(key)) map.set(key, {pteCount:0, pteAmt:0, slotType:"PTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid, slots:[]});
+        const pe = map.get(key);
+        pe.pteCount += 1;
+        pe.pteAmt   += amt;
+        pe.slots.push({talentName: extractLabel(li.name, li.description || "", displayName), amt});
       } else {
         // Session 40: Option B — only project_type="Old" enters prevMap
         if (isPrevMap && (li.project_type || "").toLowerCase() !== "old") return;
@@ -1000,14 +1007,22 @@ function computeEL(prevMap, curMap, bkt) {
     const rawPTELost        = Math.max(0, prevPTE - curPTE);
     const pteLost           = Math.max(0, rawPTELost - fteConvertedToPTE);
 
+    // SESSION 42: Per-slot talent rows + one consolidated client summary footer
+    const managedSlots = [];
+    let managedTotalCount = 0;
+    let managedTotalAmt   = 0;
+
     if (pureFTELost > 0) {
       const c = pureFTELost * 1;
       const a = pureFTELost * avgPrevFTE;
       row.elCount[rowKey].managed += c;
       row.elAmt[rowKey].managed   += a;
-      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
-        label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE"
-      });
+      managedTotalCount += c; managedTotalAmt += a;
+      const slotsLost = (prevFTEe?.slots || []).slice(0, pureFTELost);
+      slotsLost.forEach(s => managedSlots.push({
+        label: s.talentName, company: displayName, amount: avgPrevFTE,
+        count: 1, dealId, engType: "FTE", isSlotRow: true, slotLabel: "1 FTE Lost"
+      }));
     }
 
     if (fteConvertedToPTE > 0) {
@@ -1017,9 +1032,12 @@ function computeEL(prevMap, curMap, bkt) {
         const a = fteConvertedToPTE * delta;
         row.elCount[rowKey].managed += c;
         row.elAmt[rowKey].managed   += a;
-        DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
-          label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE→PTE"
-        });
+        managedTotalCount += c; managedTotalAmt += a;
+        const slotsConv = (prevFTEe?.slots || []).slice(pureFTELost, pureFTELost + fteConvertedToPTE);
+        slotsConv.forEach(s => managedSlots.push({
+          label: s.talentName, company: displayName, amount: delta,
+          count: 0.5, dealId, engType: "FTE→PTE", isSlotRow: true, slotLabel: "0.5 FTE→PTE"
+        }));
       }
     }
 
@@ -1028,8 +1046,19 @@ function computeEL(prevMap, curMap, bkt) {
       const a = pteLost * avgPrevPTE;
       row.elCount[rowKey].managed += c;
       row.elAmt[rowKey].managed   += a;
+      managedTotalCount += c; managedTotalAmt += a;
+      const slotsLostPTE = (prevPTEe?.slots || []).slice(0, pteLost);
+      slotsLostPTE.forEach(s => managedSlots.push({
+        label: s.talentName, company: displayName, amount: avgPrevPTE,
+        count: 0.5, dealId, engType: "PTE", isSlotRow: true, slotLabel: "0.5 PTE Lost"
+      }));
+    }
+
+    if (managedSlots.length > 0) {
+      managedSlots.forEach(s => DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push(s));
       DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
-        label:displayName, company:displayName, amount:a, count:c, dealId, engType:"PTE"
+        label: displayName, company: displayName, amount: managedTotalAmt,
+        count: managedTotalCount, dealId, isClientSummary: true
       });
     }
   });
@@ -1389,8 +1418,13 @@ function openDrill(type, buKey, rowKey, etFilter) {
     });
   });
   if (type === "EL") {
+    // Separate managed (slot rows + client summaries) from recurring
+    const managedRaw   = entries.filter(e => e.et === "Managed");
+    const recurringRaw = entries.filter(e => e.et !== "Managed");
+
+    // Merge recurring entries (existing logic)
     const merged = new Map();
-    entries.forEach(e => {
+    recurringRaw.forEach(e => {
       const k = e.label + "|" + e.et;
       if (!merged.has(k)) {
         merged.set(k, {...e, _composition: [{engType: e.engType, count: e.count || 0, amount: e.amount}]});
@@ -1401,9 +1435,29 @@ function openDrill(type, buKey, rowKey, etFilter) {
         m._composition.push({engType: e.engType, count: e.count || 0, amount: e.amount});
       }
     });
-    entries = Array.from(merged.values());
+    const mergedRecurring = Array.from(merged.values());
+    mergedRecurring.sort((a,b) => b.amount - a.amount);
+
+    // Group managed entries by company; sort client groups by summary amount desc
+    const clientGroups = new Map();
+    managedRaw.forEach(e => {
+      const key = e.company || e.label;
+      if (!clientGroups.has(key)) clientGroups.set(key, []);
+      clientGroups.get(key).push(e);
+    });
+    const managedEntries = [];
+    Array.from(clientGroups.values())
+      .sort((ga, gb) => {
+        const sumA = ga.find(x => x.isClientSummary)?.amount || 0;
+        const sumB = gb.find(x => x.isClientSummary)?.amount || 0;
+        return sumB - sumA;
+      })
+      .forEach(grp => grp.forEach(e => managedEntries.push(e)));
+
+    entries = [...managedEntries, ...mergedRecurring];
+  } else {
+    entries.sort((a,b) => b.amount - a.amount);
   }
-  entries.sort((a,b) => b.amount - a.amount);
 
   const buLabel = buKey === "ALL_BU" ? "All BUs" : BU_LABELS[buKey] || buKey;
   const rkLabel = rowKey === "ALL"   ? "All Regions" : rowKey;
@@ -1415,9 +1469,9 @@ function openDrill(type, buKey, rowKey, etFilter) {
   $("drill-title").textContent   = (isNA ? "New Addition" : "Engagement Lost") + " — " + etLabel;
   $("drill-sub").textContent     = isNA ? "Status : New · Current Month MTD" : "vs " + (_prevMonthLabel || "Prev Month") + " equal window";
 
-  const totalAmt   = entries.reduce((s,e) => s + e.amount, 0);
+  const totalAmt   = entries.filter(e => !e.isSlotRow).reduce((s,e) => s + e.amount, 0);
   const totalCount = type === "EL"
-    ? entries.reduce((s,e) => s + (e.count || 0), 0)
+    ? entries.filter(e => !e.isSlotRow).reduce((s,e) => s + (e.count || 0), 0)
     : entries.length;
   $("drill-kpi-count").textContent = totalCount || "—";
   $("drill-kpi-count").style.color = kpiClr;
@@ -1434,27 +1488,45 @@ function openDrill(type, buKey, rowKey, etFilter) {
       : [[etFilter, entries]];
     etGroups.forEach(([etName, grp]) => {
       if (!grp.length) return;
-      if (etFilter === "Both") html += `<div class="drill-section">${etName} (${grp.length})</div>`;
+      const headerCount = grp.filter(e => !e.isSlotRow).length;
+      if (etFilter === "Both") html += `<div class="drill-section">${etName} (${headerCount})</div>`;
       grp.forEach(e => {
-        let subLine = e.company || "—";
-        if (type === "EL" && e._composition && e._composition.length > 0) {
-          const parts = [];
-          const comp = e._composition;
-          const ftePure  = comp.filter(c => c.engType === "FTE");
-          const fteConv  = comp.filter(c => c.engType === "FTE→PTE");
-          const pte      = comp.filter(c => c.engType === "PTE");
-          if (ftePure.length)  parts.push(ftePure.reduce((s,c)=>s+c.count,0) + " FTE lost");
-          if (fteConv.length)  parts.push(fteConv.reduce((s,c)=>s+c.count,0) + " FTE→PTE");
-          if (pte.length)      parts.push(pte.reduce((s,c)=>s+c.count,0) + " PTE lost");
-          if (parts.length) subLine = parts.join(" · ");
+        if (e.isSlotRow) {
+          html += `<div class="drill-row drill-row--slot">
+            <div class="drill-row-left">
+              <div class="drill-row-name" title="${e.label}">${e.label}</div>
+              <div class="drill-row-sub">${e.slotLabel || ""}</div>
+            </div>
+            <div class="drill-row-amt" style="color:${kpiClr}">${fmtUSD(e.amount)}</div>
+          </div>`;
+        } else if (e.isClientSummary) {
+          const cStr = e.count % 1 === 0 ? e.count.toFixed(0) : e.count.toFixed(1);
+          html += `<div class="drill-row drill-row--client-summary">
+            <div class="drill-row-left">
+              <div class="drill-row-name drill-row-name--summary">${e.label} · ${cStr} Lost</div>
+            </div>
+          </div>`;
+        } else {
+          let subLine = e.company || "—";
+          if (type === "EL" && e._composition && e._composition.length > 0) {
+            const parts = [];
+            const comp = e._composition;
+            const ftePure  = comp.filter(c => c.engType === "FTE");
+            const fteConv  = comp.filter(c => c.engType === "FTE→PTE");
+            const pte      = comp.filter(c => c.engType === "PTE");
+            if (ftePure.length)  parts.push(ftePure.reduce((s,c)=>s+c.count,0) + " FTE lost");
+            if (fteConv.length)  parts.push(fteConv.reduce((s,c)=>s+c.count,0) + " FTE→PTE");
+            if (pte.length)      parts.push(pte.reduce((s,c)=>s+c.count,0) + " PTE lost");
+            if (parts.length) subLine = parts.join(" · ");
+          }
+          html += `<div class="drill-row">
+            <div class="drill-row-left">
+              <div class="drill-row-name" title="${e.label}">${e.label}</div>
+              <div class="drill-row-sub">${subLine}</div>
+            </div>
+            <div class="drill-row-amt" style="color:${kpiClr}">${fmtUSD(e.amount)}</div>
+          </div>`;
         }
-        html += `<div class="drill-row">
-          <div class="drill-row-left">
-            <div class="drill-row-name" title="${e.label}">${e.label}</div>
-            <div class="drill-row-sub">${subLine}</div>
-          </div>
-          <div class="drill-row-amt" style="color:${kpiClr}">${fmtUSD(e.amount)}</div>
-        </div>`;
       });
     });
     body.innerHTML = html;
