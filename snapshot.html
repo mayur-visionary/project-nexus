@@ -559,16 +559,21 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <script>
 // ════════════════════════════════════════════════════════════════
 // BU SCORECARD — MAVLERS · Project Nexus · Session 39
-// (Session 40 patch: Recurring EL key fix — normalizeProjectName + Option B)
+// (Session 40: normalizeProjectName + Option B)
+// (Session 41: Recurring EL accuracy — negative deal skip + two-stage fuzzy rescue)
 //
 // WHAT THIS DOES:
 //   - Revenue MTD: full month, live & rolling, no cutoff
 //   - Contribution to MTD: today's invoiced deals (invoice_date = todayStr)
 //   - New Addition: status_1="New" (Managed) / project_type="New" (Recurring)
 //       + start_date in current booking month
-//   - Engagement Lost: prev month LI key comparison (Talent/Project Name + Company)
-//     Full loss: present prev, absent cur → count=headcount, amt=prev amount
-//     Downgrade: FTE→PTE same talent → count=0.5, amt=prev-cur delta
+//   - Engagement Lost — Recurring (Session 41 fixes):
+//       Fix 1: Negative amount deals skipped in prevMap (BAU adjustments, not active engagements)
+//       Fix 2: Two-stage fuzzy rescue before firing EL:
+//         Stage 1 — project name containment + amount ±2%
+//                   (hyphen drop, scope expansion, client name prepended)
+//         Stage 2 — LI service name exact match + amount ±2%
+//                   (semantic rename, abbreviation, RFQ-to-name, acronym)
 //
 // BU ATTRIBUTION — 3-tier hierarchy, resolved inline at ingestion in fetchDeals():
 //   Tier 1: business_unit_invoice_app (Invoice App stamp — authoritative)
@@ -605,26 +610,15 @@ const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","
 
 // ════════════════════════════════════════════════════════════════
 // ATTRIBUTION ENGINE — via registry-client.js (Session 39)
-// OWNER_BU_MAP, OWNER_GEO, GEO_MAP, NBD_OWNER_IDS, USER_ROLE_IDS
-// populated by initRegistry() at boot. No inline copies needed.
 // ════════════════════════════════════════════════════════════════
 
-// ── BU + Region resolved inline at ingestion in fetchDeals() ──
-// OWNER_BU_MAP, OWNER_GEO, GEO_MAP — from initRegistry() via registry-client.js
-
-// Maps an attributed deal → Scorecard row key (AU / UK / US / NBD)
-// NBD_OWNER_IDS and USER_ROLE_IDS provided by registry-client.js
 function getRowKey(d) {
   const oid = String(d.owner_id || "");
-  if (NBD_OWNER_IDS.has(oid)) return "NBD"; // isNBD:true — Aman, Devanshu, Malav, Kamesh, Dhruti Dave
-  if (USER_ROLE_IDS.has(oid) && (d.user_role || "").toUpperCase() === "NBD") return "NBD"; // User Role acting as NBD (e.g. Mukund)
+  if (NBD_OWNER_IDS.has(oid)) return "NBD";
+  if (USER_ROLE_IDS.has(oid) && (d.user_role || "").toUpperCase() === "NBD") return "NBD";
   return d.region || "US";
 }
 
-// classifyLineItem()   — provided by registry-client.js (single source of truth)
-// engGroupFromLiName() — provided by registry-client.js (single source of truth)
-
-// ── Deal-level eng_model fallback — verbatim from Revenue Pulse ──
 function engGroup(val) {
   if (!val) return null;
   if (val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring") return "Recurring";
@@ -632,48 +626,28 @@ function engGroup(val) {
   return null;
 }
 
-// ── New Addition classifier ──
-// Managed:   Dedicated FTE/PTE + status_1 = "New" (HubSpot LI property) + start_date in current month
-// Recurring: Recurring Services/Recurring + project_type = "New" + start_date in current month
-// Both require start_date to fall within the current booking month (todayStr YYYY-MM-DD)
-// NOTE: status_1 is the canonical signal for Managed — NOT the description text.
-//       The description may contain "Status : New" text for old engagements; status_1 is reliable.
 function naStatus(liName, liStatus1, liStartDate, liProjectType, todayStr) {
   if (!liName) return null;
   const n = liName.toLowerCase();
-
-  // ── start_date gate (applies to both Managed and Recurring) ──
-  // Format from Invoice App: "DD/MM/YYYY HH:MM:SS"
   if (!liStartDate) return null;
   const parts = liStartDate.split(/[\/\s:]/);
   if (parts.length < 3) return null;
   const sdYear  = parseInt(parts[2], 10);
-  const sdMonth = parseInt(parts[1], 10); // 1-based
+  const sdMonth = parseInt(parts[1], 10);
   const [tsYear, tsMonth] = todayStr.split("-").map(Number);
   if (sdYear !== tsYear || sdMonth !== tsMonth) return null;
-
-  // ── Managed: Dedicated FTE/PTE + status_1 = "New" ──
   if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
     return (liStatus1 || "").toLowerCase() === "new" ? "Managed" : null;
   }
-
-  // ── Recurring: Recurring Services/Recurring + project_type = "New" ──
   if (n.startsWith("recurring services") || n.startsWith("recurring")) {
     return (liProjectType || "").toLowerCase() === "new" ? "Recurring" : null;
   }
-
   return null;
 }
 
 // ════════════════════════════════════════════════════════════════
-// SESSION 40 PATCH — normalizeProjectName
-// Strips trailing month/year suffix from li.project_name so the
-// Recurring EL key is stable across months.
-// Examples:
-//   "TLLL SEO Services - October 2026"  → "TLLL SEO Services"
-//   "Project manager August-2026"       → "Project manager"
-//   "ADH - Design, Campaign and Dev"    → unchanged ✓
-//   "GEO/AIO Visibility - Pattern Beauty" → unchanged ✓
+// SESSION 40 — normalizeProjectName
+// Strips trailing month/year suffix for stable cross-month EL keys.
 // ════════════════════════════════════════════════════════════════
 const MONTH_SUFFIX_RX = new RegExp(
   '\\s*[-–]?\\s*' +
@@ -684,6 +658,39 @@ const MONTH_SUFFIX_RX = new RegExp(
 );
 function normalizeProjectName(raw) {
   return (raw || "").replace(MONTH_SUFFIX_RX, "").trim();
+}
+
+// ════════════════════════════════════════════════════════════════
+// SESSION 41 — Recurring EL rescue helpers
+//
+// tokenizeProjectName: strips punctuation, lowercases, splits to word tokens
+// projectNamesContained: checks if every word in the smaller set exists in
+//   the larger — handles hyphen drop, scope addition, name prepending
+// amtWithin2pct: amount tolerance gate — the critical safety net that
+//   prevents fuzzy name matching from merging genuinely different projects
+// ════════════════════════════════════════════════════════════════
+function tokenizeProjectName(name) {
+  return (name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter(w => w.length > 0);
+}
+
+function projectNamesContained(nameA, nameB) {
+  const tokA = new Set(tokenizeProjectName(nameA));
+  const tokB = new Set(tokenizeProjectName(nameB));
+  if (tokA.size === 0 || tokB.size === 0) return false;
+  const smaller = tokA.size <= tokB.size ? tokA : tokB;
+  const larger  = tokA.size <= tokB.size ? tokB : tokA;
+  for (const t of smaller) { if (!larger.has(t)) return false; }
+  return true;
+}
+
+function amtWithin2pct(a, b) {
+  if (a === 0 && b === 0) return true;
+  const ref = Math.max(Math.abs(a), Math.abs(b));
+  return ref > 0 && (Math.abs(a - b) / ref) <= 0.02;
 }
 
 // ── Formatting ──
@@ -709,8 +716,6 @@ function getMonthStr(date) {
 function setText(id, txt) { const e = $(id); if (e) e.textContent = txt; }
 
 function dedup(deals) {
-  // Dedup key mirrors Revenue Pulse: dealname + amount + month
-  // Prevents double-counting when HubSpot pagination returns overlapping results
   const seen = new Set(), out = [];
   deals.forEach(d => {
     const key = d.dealname + "|" + d.amount + "|" + (d.month || "");
@@ -721,10 +726,8 @@ function dedup(deals) {
 
 // ══════════════════════════════════════════════
 // DATA FETCH
-// Live & rolling — no date cutoff on fetch.
-// All deals in the current booking month are fetched.
 // ══════════════════════════════════════════════
-async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if set, only fetch deals with closedate <= cutoffDay (YYYY-MM-DD)
+async function fetchDeals(monthStr, cutoffDay) {
   const props = [
     "dealname",
     "amount_in_home_currency",
@@ -737,9 +740,9 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
     "zoho_billing_id__invoice_app_",
     "contact_name__invoice_app_",
     "geo__invoice_app_",
-    "geo_head__invoice_app_",        // tier 3 BU fallback for unregistered owners
-    "business_unit_invoice_app",     // tier 1 BU — authoritative Invoice App stamp
-    "user_role_invoice_app"          // AM / NBD role for User Role owners (Mukund etc.)
+    "geo_head__invoice_app_",
+    "business_unit_invoice_app",
+    "user_role_invoice_app"
   ];
   const filters = [
     {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
@@ -748,7 +751,6 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
-  // Equal window cutoff — only include deals up to the same day-of-month as current month
   if (cutoffDay) {
     filters.push({propertyName:"closedate", operator:"LTE", value:`${cutoffDay}T23:59:59.000Z`});
   }
@@ -769,19 +771,12 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
       if (!billing_id && !company) return;
       if (company === "(blank)") return;
       const amount = parseFloat(p.amount_in_home_currency || 0) || 0;
-      if (!amount) return; // skip zero-amount deals only; negatives pass through and net
-      // ── Boundary normalisation (mirrors Revenue Pulse doFYSync) ──
-      // month: lowercase; geo/eng_model: trim — JS comparisons are case-sensitive.
+      if (!amount) return;
       const bm      = (p.invoice_booking_month__invoice_app_ || "").toLowerCase();
       const oid     = String(p.hubspot_owner_id     || "");
       const rawBU   = (p.business_unit_invoice_app  || "").trim();
       const geoHead = (p.geo_head__invoice_app_     || "").trim();
 
-      // ── BU — 3-tier hierarchy ──
-      // Tier 1: Invoice App property (authoritative, set by Invoice App at invoicing time)
-      // Tier 2: Owner registry fallback (OWNER_BU_MAP — from registry-client.js)
-      //         Skip "dynamic" — Prativa Dubey falls through to Tier 3
-      // Tier 3: geo_head derivation (for genuinely unregistered owners)
       let bu;
       if      (rawBU === "MarTech BU")                                               bu = "MarTech";
       else if (rawBU === "Digital BU")                                               bu = "Digital";
@@ -791,27 +786,23 @@ async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if se
       else if (geoHead === "Jiggyasa Agrawal" ||
                geoHead === "Tanuj Gupta"      ||
                geoHead === "Nevilson Christan")                                      bu = "Digital";
-      else                                                                            bu = "Digital"; // true last resort
+      else                                                                            bu = "Digital";
 
-      // ── Region — owner registry + geo property fallback ──
       const region = OWNER_GEO[oid] || GEO_MAP[(p.geo__invoice_app_ || "").trim()] || null;
-
       const zohoDisplay = (p.zoho_display_name__invoice_app_ || "").trim();
       fetched.push({
         id:           String(r.id),
         owner_id:     oid,
         billing_id:   billing_id || company,
         company,
-        zoho_display: zohoDisplay || company, // Zoho Display Name — used as EL drill label
+        zoho_display: zohoDisplay || company,
         eng_model:    (p.engagement_model__invoice_app_ || "").trim(),
         dealname:     (p.dealname || "").trim(),
         month:        bm,
         invoice_date: (p.invoice_booking_date_formatted__invoice_app_ || "").split("T")[0],
         geo:          (p.geo__invoice_app_ || "").trim(),
-        user_role:    (p.user_role_invoice_app || "").trim(), // AM/NBD for User Role owners
-        bu,      // resolved: Invoice App → owner registry → geo_head
-        region,  // resolved: owner registry → geo property
-        amount
+        user_role:    (p.user_role_invoice_app || "").trim(),
+        bu, region, amount
       });
     });
     after = data.paging?.next?.after || null;
@@ -837,7 +828,7 @@ async function fetchLineItems(deals) {
           start_date:   li.start_date || "",
           project_type: li.project_type || "",
           status_1:     li.status_1 || "",
-          project_name: li.project_name || ""   // SESSION 40: stable Recurring EL key source
+          project_name: li.project_name || ""
         };
       }).filter(li => li.amount !== 0);
     });
@@ -863,17 +854,15 @@ function emptyNARows() {
 
 function emptyBU() {
   return {
-    booking: emptyRevRows(),  // Revenue MTD
-    asof:    emptyRevRows(),  // Contribution to MTD (today's invoice date)
-    naCount: emptyNARows(),   // New Addition count
-    naAmt:   emptyNARows(),   // New Addition amount
-    elCount: emptyNARows(),   // Engagement Lost count
-    elAmt:   emptyNARows()    // Engagement Lost amount
+    booking: emptyRevRows(),
+    asof:    emptyRevRows(),
+    naCount: emptyNARows(),
+    naAmt:   emptyNARows(),
+    elCount: emptyNARows(),
+    elAmt:   emptyNARows()
   };
 }
 
-// ── Drill store — NA only ──
-// DRILL_STORE["NA"][bu][rowKey]["Managed"|"Recurring"] = [{label, company, amount, dealId}]
 let DRILL_STORE = {};
 
 function initDrillStore() {
@@ -888,11 +877,9 @@ function initDrillStore() {
   });
 }
 
-// ── Extract talent/project name from LI description ──
 function extractLabel(liName, liDescription, company) {
   const n = liName.toLowerCase();
   if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
-    // Multiple talents in one LI description — take first Talent Name
     const m = liDescription.match(/Talent\s+Name\s*:\s*(.+?)(?:\s*Status\s*:|Rate\s*:|$)/i);
     return m ? m[1].trim().split(/\s*-\s*/)[0].trim() : company;
   }
@@ -904,21 +891,23 @@ function extractLabel(liName, liDescription, company) {
 }
 
 // ════════════════════════════════════════════════════════════════
-// buildLIKeyMap — SESSION 40 PATCH
+// buildLIKeyMap — Session 40 + Session 41 patches
 //
-// isPrevMap (new param):
-//   true  → prevMap: only project_type="Old" LIs enter as EL candidates (Option B).
-//            Prevents New→Old transition from generating false EL hits.
-//   false → curMap: all types included (needed to check presence/absence).
-//
-// Recurring key now uses normalizeProjectName(li.project_name) — dedicated
-// Invoice App field, month/year suffix stripped — stable cross-month matching.
-// Replaces extractLabel() which parsed unstructured description text.
+// Session 40: isPrevMap param — Option B (project_type="Old" gate)
+//             project_name field for stable Recurring keys
+// Session 41: Fix 1 — skip negative amount deals in prevMap
+//             liName stored for Stage 2 rescue in computeEL
 // ════════════════════════════════════════════════════════════════
 function buildLIKeyMap(deals, liMap, isPrevMap) {
   const map = new Map();
   deals.forEach(deal => {
     if (!deal.amount) return;
+
+    // SESSION 41 FIX 1: Skip BAU adjustment deals in prevMap.
+    // Negative amount deals are not active engagements — including them
+    // in prevMap creates false EL signals for genuinely lost clients.
+    if (isPrevMap && deal.amount < 0) return;
+
     const lis = liMap[deal.id] || [];
     if (!lis.length) return;
     if (deal.dealname.toUpperCase().startsWith("ON")) return;
@@ -958,13 +947,18 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
         map.get(key).pteCount += 1;
         map.get(key).pteAmt   += amt;
       } else {
-        // SESSION 40: Option B — only project_type="Old" enters prevMap
+        // Session 40: Option B — only project_type="Old" enters prevMap
         if (isPrevMap && (li.project_type || "").toLowerCase() !== "old") return;
-        // SESSION 40: use li.project_name + normalizeProjectName()
+        // Session 40: stable key via project_name + normalizeProjectName
         const rawName  = li.project_name || deal.zoho_display || deal.company;
         const projName = normalizeProjectName(rawName);
         const key = `Recurring|${projName}|${zBid}`;
-        if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, projName, dealId:deal.id, zBid});
+        if (!map.has(key)) map.set(key, {
+          amount:0, slotType:"Recurring", bucketKey, rowKey,
+          displayName, projName,
+          liName: li.name,  // SESSION 41: stored for Stage 2 LI service name rescue
+          dealId:deal.id, zBid
+        });
         map.get(key).amount += amt;
       }
     });
@@ -1041,12 +1035,46 @@ function computeEL(prevMap, curMap, bkt) {
   });
 
   // ── Recurring — project level ──
+  // SESSION 41 FIX 2: Two-stage fuzzy rescue before firing EL.
+  // Stage 1 — project name containment + amount ±2%
+  //   Catches: hyphen drop, scope expansion ("NZ" → "AU & NZ"), client name prepended
+  // Stage 2 — LI service name exact match + amount ±2%
+  //   Catches: semantic rename ("Ongoing SEO" → "Tabin SEO Package"),
+  //            abbreviation ("TLLL" ← "The Live Love Laugh Foundation"),
+  //            RFQ code replaced with real name ("RFQ060426194710" → "Braze 100 hour"),
+  //            acronym compression ("IMG" ← "Intermedia Global")
   prevMap.forEach((prev, key) => {
     if (prev.slotType !== "Recurring") return;
-    if (curMap.has(key)) return;
-    const {bucketKey, rowKey, displayName, projName, dealId, amount} = prev;
+    if (curMap.has(key)) return; // exact match — retained, no EL
+
+    const {bucketKey, rowKey, displayName, projName, liName, dealId, amount, zBid} = prev;
     const row = bkt[bucketKey];
     if (!row) return;
+
+    // Stage 1: project name containment + ±2% amount
+    let rescued = false;
+    curMap.forEach((cur) => {
+      if (rescued || cur.slotType !== "Recurring" || cur.zBid !== zBid) return;
+      if (amtWithin2pct(amount, cur.amount) && projectNamesContained(projName, cur.projName)) {
+        rescued = true;
+      }
+    });
+
+    // Stage 2: LI service name exact match + ±2% amount
+    if (!rescued) {
+      curMap.forEach((cur) => {
+        if (rescued || cur.slotType !== "Recurring" || cur.zBid !== zBid) return;
+        if (amtWithin2pct(amount, cur.amount) &&
+            liName && cur.liName &&
+            liName.toLowerCase() === cur.liName.toLowerCase()) {
+          rescued = true;
+        }
+      });
+    }
+
+    if (rescued) return; // retained — not a genuine loss
+
+    // No rescue found — genuine EL
     row.elCount[rowKey].rec += 1;
     row.elAmt[rowKey].rec   += amount;
     // label = Project Name (primary); company = Zoho Display Name (sub-line)
@@ -1069,8 +1097,6 @@ function computeSnapshot(deals, liMap, todayStr) {
     const lis        = liMap[deal.id] || [];
     const dealAmt    = deal.amount;
 
-    // ── No LIs: deal-level fallback for Revenue only ──
-    // Negative amounts pass through here and net against the bucket (no special branch).
     if (!lis.length) {
       let et;
       if (isOnPrefix) { et = "P2P"; }
@@ -1081,11 +1107,9 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (!bRow) return;
       if (et === "P2P") { bRow.p2p += dealAmt; if (isToday) aRow.p2p += dealAmt; }
       else              { bRow.rec += dealAmt;  if (isToday) aRow.rec += dealAmt; }
-      // No LIs = no NA signal
       return;
     }
 
-    // ── Has LIs: Revenue Pulse scaling (li.amount * dealAmt / liTotal) ──
     const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
     if (!liTotal) return;
     const scale = dealAmt / liTotal;
@@ -1099,9 +1123,8 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (isOnPrefix) { et = "P2P"; }
       else { et = engGroupFromLiName(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
 
-      const amt = li.amount * scale; // Revenue Pulse approach: scale to home currency
+      const amt = li.amount * scale;
 
-      // BU routing: deal-level for MarTech; LI-level for Digital vs InterBU split
       let bk;
       if (deal.bu === "MarTech") { bk = "martech"; }
       else                       { bk = li.bu === "MarTech" ? "interbu" : "digital"; }
@@ -1112,7 +1135,6 @@ function computeSnapshot(deals, liMap, todayStr) {
       if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
       else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
 
-      // ── New Addition ──
       if (isOnPrefix) return;
       const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
       if (!naType) return;
@@ -1256,9 +1278,7 @@ function renderNAAmtTable(tbodyId, naData, rowDefs, buKey) {
 }
 
 function renderBU(prefix, buData, rowDefs, todayStr) {
-  // Revenue MTD
   const bookTotal = renderRevTable(prefix + "-rev-body", buData.booking, rowDefs);
-  // Contribution to MTD — badge = today's date
   setText(prefix + "-asof-badge", fmtDateShort(todayStr));
   const asofTbody = $(prefix + "-asof-body");
   if (asofTbody) {
@@ -1273,10 +1293,8 @@ function renderBU(prefix, buData, rowDefs, todayStr) {
     aRows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${fmtUSD(tR)}</td><td class="num">${fmtUSD(tP)}</td><td class="num">${fmtUSD(tR+tP)}</td></tr>`);
     asofTbody.innerHTML = aRows.join("");
   }
-  // New Addition
   renderNACountTable(prefix + "-na-count-body", buData.naCount, rowDefs, prefix);
   const naAmt = renderNAAmtTable(prefix + "-na-amt-body", buData.naAmt, rowDefs, prefix);
-  // Engagement Lost
   renderELCountTable(prefix + "-el-count-body", buData.elCount, rowDefs, prefix);
   const elAmt = renderELAmtTable(prefix + "-el-amt-body", buData.elAmt, rowDefs, prefix);
   return {bookTotal, naAmt, elAmt};
@@ -1288,7 +1306,6 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
 
   ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
 
-  // ── Stamp all six EL badges with the actual comparison month ──
   const elBadge = "vs " + (prevMonthLabel || "Prev Month");
   ["digital","interbu","martech"].forEach(p => {
     setText(p + "-el-count-badge", elBadge);
@@ -1302,14 +1319,12 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const grandTotal = d.bookTotal + ib.bookTotal + mt.bookTotal;
   const totalNAAmt = d.naAmt + ib.naAmt + mt.naAmt;
 
-  // Grand bar — Revenue row
   setText("gt-booking",     fmtUSD(grandTotal));
   setText("gt-booking-sub", monLabel + " MTD");
   setText("gt-digital",     fmtUSD(d.bookTotal));
   setText("gt-interbu",     fmtUSD(ib.bookTotal));
   setText("gt-martech",     fmtUSD(mt.bookTotal));
 
-  // Grand bar — NA row: aggregate across all BUs
   const allM = ["digital","interbu","martech"].reduce((s,bu) =>
     s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.managed||0), 0), 0);
   const allR = ["digital","interbu","martech"].reduce((s,bu) =>
@@ -1326,7 +1341,6 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   setText("gt-na-total",       totalNAAmt > 0 ? fmtUSD(totalNAAmt) : "—");
   setText("gt-na-total-count", (allM+allR) > 0 ? (allM+allR) + " new" : "—");
 
-  // Grand bar — EL row
   const allEM = ["digital","interbu","martech"].reduce((s,bu) =>
     s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.managed||0), 0), 0);
   const allER = ["digital","interbu","martech"].reduce((s,bu) =>
@@ -1344,7 +1358,6 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   setText("gt-el-total",         totalELAmt > 0 ? fmtUSD(totalELAmt) : "—");
   setText("gt-el-total-count",   (allEM+allER) > 0 ? (allEM+allER) + " lost" : "—");
 
-  // Net Portfolio Change
   const netAmt = totalNAAmt - totalELAmt;
   const netEl  = $("gt-net-portfolio");
   if (netEl) {
@@ -1539,9 +1552,8 @@ async function doSync(force = false) {
 
     const bkt = computeSnapshot(deals, liMap, todayStr);
 
-    // SESSION 40 PATCH — isPrevMap drives Option B in buildLIKeyMap
-    const curLIKeyMap  = buildLIKeyMap(deals,     liMap,     false); // all types
-    const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap, true);  // project_type="Old" only
+    const curLIKeyMap  = buildLIKeyMap(deals,     liMap,     false);
+    const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap, true);
     computeEL(prevLIKeyMap, curLIKeyMap, bkt);
 
     _prevMonthLabel = MSHRT[prevMonthDate.getMonth()] + " " + prevMonthDate.getFullYear();
