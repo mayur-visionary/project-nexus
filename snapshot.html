@@ -233,60 +233,24 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
           <div class="gt-sub" id="gt-booking-sub">MTD</div>
         </div>
         <div class="gt-splits">
-          <div class="gt-split">
-            <div class="gt-split-lbl">Digital</div>
-            <div class="gt-split-val" id="gt-digital">—</div>
-            <div class="gt-split-sub">BU Total</div>
-          </div>
-          <div class="gt-split">
-            <div class="gt-split-lbl">Inter BU</div>
-            <div class="gt-split-val" id="gt-interbu">—</div>
-            <div class="gt-split-sub">BU Total</div>
-          </div>
-          <div class="gt-split">
-            <div class="gt-split-lbl">MarTech</div>
-            <div class="gt-split-val" id="gt-martech">—</div>
-            <div class="gt-split-sub">BU Total</div>
-          </div>
+          <div class="gt-split"><div class="gt-split-lbl">Digital</div><div class="gt-split-val" id="gt-digital">—</div><div class="gt-split-sub">BU Total</div></div>
+          <div class="gt-split"><div class="gt-split-lbl">Inter BU</div><div class="gt-split-val" id="gt-interbu">—</div><div class="gt-split-sub">BU Total</div></div>
+          <div class="gt-split"><div class="gt-split-lbl">MarTech</div><div class="gt-split-val" id="gt-martech">—</div><div class="gt-split-sub">BU Total</div></div>
         </div>
       </div>
       <div class="gt-divider"></div>
       <div class="gt-row2">
         <div class="gt-row2-lbl">New Addition MTD</div>
-        <div class="gt-split2">
-          <div class="gt-split2-lbl">Managed</div>
-          <div class="gt-split2-val" id="gt-na-managed">—</div>
-          <div class="gt-split2-sub" id="gt-na-managed-count">—</div>
-        </div>
-        <div class="gt-split2">
-          <div class="gt-split2-lbl">Recurring</div>
-          <div class="gt-split2-val" id="gt-na-recurring">—</div>
-          <div class="gt-split2-sub" id="gt-na-recurring-count">—</div>
-        </div>
-        <div class="gt-split2">
-          <div class="gt-split2-lbl">Total</div>
-          <div class="gt-split2-val" id="gt-na-total">—</div>
-          <div class="gt-split2-sub" id="gt-na-total-count">—</div>
-        </div>
+        <div class="gt-split2"><div class="gt-split2-lbl">Managed</div><div class="gt-split2-val" id="gt-na-managed">—</div><div class="gt-split2-sub" id="gt-na-managed-count">—</div></div>
+        <div class="gt-split2"><div class="gt-split2-lbl">Recurring</div><div class="gt-split2-val" id="gt-na-recurring">—</div><div class="gt-split2-sub" id="gt-na-recurring-count">—</div></div>
+        <div class="gt-split2"><div class="gt-split2-lbl">Total</div><div class="gt-split2-val" id="gt-na-total">—</div><div class="gt-split2-sub" id="gt-na-total-count">—</div></div>
       </div>
       <div class="gt-divider"></div>
       <div class="gt-row2">
         <div class="gt-row2-lbl" style="color:rgba(255,80,80,.6)">Engagement Lost MTD</div>
-        <div class="gt-split2">
-          <div class="gt-split2-lbl">Managed</div>
-          <div class="gt-split2-val" id="gt-el-managed" style="color:#E05050">—</div>
-          <div class="gt-split2-sub" id="gt-el-managed-count">—</div>
-        </div>
-        <div class="gt-split2">
-          <div class="gt-split2-lbl">Recurring</div>
-          <div class="gt-split2-val" id="gt-el-recurring" style="color:#E05050">—</div>
-          <div class="gt-split2-sub" id="gt-el-recurring-count">—</div>
-        </div>
-        <div class="gt-split2">
-          <div class="gt-split2-lbl">Total</div>
-          <div class="gt-split2-val" id="gt-el-total" style="color:#E05050">—</div>
-          <div class="gt-split2-sub" id="gt-el-total-count">—</div>
-        </div>
+        <div class="gt-split2"><div class="gt-split2-lbl">Managed</div><div class="gt-split2-val" id="gt-el-managed" style="color:#E05050">—</div><div class="gt-split2-sub" id="gt-el-managed-count">—</div></div>
+        <div class="gt-split2"><div class="gt-split2-lbl">Recurring</div><div class="gt-split2-val" id="gt-el-recurring" style="color:#E05050">—</div><div class="gt-split2-sub" id="gt-el-recurring-count">—</div></div>
+        <div class="gt-split2"><div class="gt-split2-lbl">Total</div><div class="gt-split2-val" id="gt-el-total" style="color:#E05050">—</div><div class="gt-split2-sub" id="gt-el-total-count">—</div></div>
         <div class="gt-split2" style="margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.12)">
           <div class="gt-split2-lbl">Net Portfolio</div>
           <div class="gt-split2-val" id="gt-net-portfolio" style="color:#FFDA30">—</div>
@@ -412,19 +376,17 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <script src="/registry-client.js"></script>
 <script>
 // ════════════════════════════════════════════════════════════════
-// BU SCORECARD — MAVLERS · Project Nexus · Session 40
+// BU SCORECARD — MAVLERS · Project Nexus · Session 39
+// (Session 40 patch: Recurring EL key fix — normalizeProjectName + Option B)
 //
 // WHAT THIS DOES:
 //   - Revenue MTD: full month, live & rolling, no cutoff
 //   - Contribution to MTD: today's invoiced deals (invoice_date = todayStr)
 //   - New Addition: status_1="New" (Managed) / project_type="New" (Recurring)
 //       + start_date in current booking month
-//   - Engagement Lost — Recurring (FIXED Session 40):
-//       Key: Recurring | normalizeProjectName(li.project_name) | zBid
-//       Option B: only project_type="Old" LIs enter prevMap as EL candidates.
-//       New→Old transition month produces zero false positives.
-//       Month-suffix risk eliminated via normalizeProjectName().
-//       project_name fetched as dedicated HubSpot field (not parsed from description).
+//   - Engagement Lost: prev month LI key comparison
+//     Full loss: present prev, absent cur → count=headcount, amt=prev amount
+//     Downgrade: FTE→PTE same talent → count=0.5, amt=prev-cur delta
 //
 // BU ATTRIBUTION — 3-tier hierarchy, resolved inline at ingestion in fetchDeals():
 //   Tier 1: business_unit_invoice_app (Invoice App stamp — authoritative)
@@ -465,6 +427,7 @@ const EXCLUDED_LI_NAMES = ["igst","gst","reimbursement","search - media spend","
 // populated by initRegistry() at boot. No inline copies needed.
 // ════════════════════════════════════════════════════════════════
 
+// Maps an attributed deal → Scorecard row key (AU / UK / US / NBD)
 function getRowKey(d) {
   const oid = String(d.owner_id || "");
   if (NBD_OWNER_IDS.has(oid)) return "NBD";
@@ -475,7 +438,10 @@ function getRowKey(d) {
   return "US";
 }
 
-// ── Deal-level eng_model fallback ──
+// classifyLineItem()   — provided by registry-client.js (single source of truth)
+// engGroupFromLiName() — provided by registry-client.js (single source of truth)
+
+// ── Deal-level eng_model fallback — verbatim from Revenue Pulse ──
 function engGroup(val) {
   if (!val) return null;
   if (val==="Dedicated FTE"||val==="Dedicated PTE"||val==="Multiple"||val==="Recurring Services"||val==="Recurring") return "Recurring";
@@ -484,34 +450,48 @@ function engGroup(val) {
 }
 
 // ── New Addition classifier ──
+// Managed:   Dedicated FTE/PTE + status_1 = "New" (HubSpot LI property) + start_date in current month
+// Recurring: Recurring Services/Recurring + project_type = "New" + start_date in current month
+// Both require start_date to fall within the current booking month (todayStr YYYY-MM-DD)
+// NOTE: status_1 is the canonical signal for Managed — NOT the description text.
+//       The description may contain "Status : New" text for old engagements; status_1 is reliable.
 function naStatus(liName, liStatus1, liStartDate, liProjectType, todayStr) {
   if (!liName) return null;
   const n = liName.toLowerCase();
+
+  // ── start_date gate (applies to both Managed and Recurring) ──
+  // Format from Invoice App: "DD/MM/YYYY HH:MM:SS"
   if (!liStartDate) return null;
   const parts = liStartDate.split(/[\/\s:]/);
   if (parts.length < 3) return null;
   const sdYear  = parseInt(parts[2], 10);
-  const sdMonth = parseInt(parts[1], 10);
+  const sdMonth = parseInt(parts[1], 10); // 1-based
   const [tsYear, tsMonth] = todayStr.split("-").map(Number);
   if (sdYear !== tsYear || sdMonth !== tsMonth) return null;
+
+  // ── Managed: Dedicated FTE/PTE + status_1 = "New" ──
   if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
     return (liStatus1 || "").toLowerCase() === "new" ? "Managed" : null;
   }
+
+  // ── Recurring: Recurring Services/Recurring + project_type = "New" ──
   if (n.startsWith("recurring services") || n.startsWith("recurring")) {
     return (liProjectType || "").toLowerCase() === "new" ? "Recurring" : null;
   }
+
   return null;
 }
 
 // ════════════════════════════════════════════════════════════════
-// RECURRING EL KEY HELPERS  (Session 40 — replaces extractLabel)
+// SESSION 40 PATCH — normalizeProjectName
+// Strips trailing month/year suffix from li.project_name so the
+// Recurring EL key is stable across months.
+// Examples:
+//   "TLLL SEO Services - October 2026"  → "TLLL SEO Services"
+//   "Project manager August-2026"       → "Project manager"
+//   "ADH - Design, Campaign and Dev"    → unchanged ✓
+//   "GEO/AIO Visibility - Pattern Beauty" → unchanged ✓
 // ════════════════════════════════════════════════════════════════
-
-// Strip trailing month/year suffix from project names.
-// Handles: "TLLL SEO Services - October 2026"  → "TLLL SEO Services"
-//          "Project manager August-2026"        → "Project manager"
-//          "ADH - Design, Campaign and Dev"     → unchanged  ✓
-//          "GEO/AIO Visibility - Pattern Beauty" → unchanged ✓
 const MONTH_SUFFIX_RX = new RegExp(
   '\\s*[-–]?\\s*' +
   '(?:january|february|march|april|may|june|july|august|september|october|november|december' +
@@ -532,16 +512,22 @@ function fmtUSD(v) {
   if (Math.abs(n) >= 1000000) return "$" + (n/1000000).toFixed(2) + "M";
   return "$" + n.toLocaleString("en-US", {minimumFractionDigits:0, maximumFractionDigits:0});
 }
+
 function fmtDateShort(iso) {
   if (!iso) return "—";
   const [y,m,d] = iso.split("-");
   return d + " " + MSHRT[parseInt(m)-1] + " " + y;
 }
+
 function getMonthStr(date) {
   return MFULL[date.getMonth()] + "-" + date.getFullYear();
 }
+
 function setText(id, txt) { const e = $(id); if (e) e.textContent = txt; }
+
 function dedup(deals) {
+  // Dedup key mirrors Revenue Pulse: dealname + amount + month
+  // Prevents double-counting when HubSpot pagination returns overlapping results
   const seen = new Set(), out = [];
   deals.forEach(d => {
     const key = d.dealname + "|" + d.amount + "|" + (d.month || "");
@@ -552,22 +538,30 @@ function dedup(deals) {
 
 // ══════════════════════════════════════════════
 // DATA FETCH
+// Live & rolling — no date cutoff on fetch.
+// All deals in the current booking month are fetched.
 // ══════════════════════════════════════════════
-async function fetchDeals(monthStr, cutoffDay) {
+async function fetchDeals(monthStr, cutoffDay) { // cutoffDay optional — if set, only fetch deals with closedate <= cutoffDay (YYYY-MM-DD)
   const props = [
-    "dealname", "amount_in_home_currency", "hubspot_owner_id",
+    "dealname",
+    "amount_in_home_currency",
+    "hubspot_owner_id",
     "invoice_booking_date_formatted__invoice_app_",
     "invoice_booking_month__invoice_app_",
     "engagement_model__invoice_app_",
-    "company_name__invoice_app_", "zoho_display_name__invoice_app_",
-    "zoho_billing_id__invoice_app_", "contact_name__invoice_app_",
-    "geo__invoice_app_", "geo_head__invoice_app_",
-    "business_unit_invoice_app", "user_role_invoice_app"
+    "company_name__invoice_app_",
+    "zoho_display_name__invoice_app_",
+    "zoho_billing_id__invoice_app_",
+    "contact_name__invoice_app_",
+    "geo__invoice_app_",
+    "geo_head__invoice_app_",        // tier 3 BU fallback for unregistered owners
+    "business_unit_invoice_app",     // tier 1 BU — authoritative Invoice App stamp
+    "user_role_invoice_app"          // AM / NBD role for User Role owners (Mukund etc.)
   ];
   const filters = [
-    {propertyName:"pipeline",  operator:"EQ",     value:PIPELINE},
-    {propertyName:"dealstage", operator:"EQ",     value:STAGE},
-    {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ", value:monthStr},
+    {propertyName:"pipeline",  operator:"EQ", value:PIPELINE},
+    {propertyName:"dealstage", operator:"EQ", value:STAGE},
+    {propertyName:"invoice_booking_month__invoice_app_", operator:"EQ",     value:monthStr},
     {propertyName:"engagement_model__invoice_app_",      operator:"NOT_IN", values:EXCLUDED_ENG_MODELS},
     {propertyName:"company_name__invoice_app_",          operator:"NOT_IN", values:EXCLUDED_COMPANIES}
   ];
@@ -615,14 +609,16 @@ async function fetchDeals(monthStr, cutoffDay) {
         owner_id:     oid,
         billing_id:   billing_id || company,
         company,
-        zoho_display: zohoDisplay || company,
+        zoho_display: zohoDisplay || company, // Zoho Display Name — used as EL drill label
         eng_model:    (p.engagement_model__invoice_app_ || "").trim(),
         dealname:     (p.dealname || "").trim(),
         month:        bm,
         invoice_date: (p.invoice_booking_date_formatted__invoice_app_ || "").split("T")[0],
         geo:          (p.geo__invoice_app_ || "").trim(),
-        user_role:    (p.user_role_invoice_app || "").trim(),
-        bu, region, amount
+        user_role:    (p.user_role_invoice_app || "").trim(), // AM/NBD for User Role owners
+        bu,      // resolved: Invoice App → owner registry → geo_head
+        region,  // resolved: owner registry → geo property
+        amount
       });
     });
     after = data.paging?.next?.after || null;
@@ -645,11 +641,10 @@ async function fetchLineItems(deals) {
           amount:       li.amount || 0,
           name:         li.name || "",
           description:  li.description || "",
-          // ── CHANGE: project_name now a first-class field ──
-          project_name: li.project_name || "",
           start_date:   li.start_date || "",
           project_type: li.project_type || "",
-          status_1:     li.status_1 || ""
+          status_1:     li.status_1 || "",
+          project_name: li.project_name || ""   // SESSION 40: stable Recurring EL key source
         };
       }).filter(li => li.amount !== 0);
     });
@@ -666,23 +661,27 @@ function emptyRevRows() {
   ["AU","UK","US","NBD"].forEach(k => r[k] = {rec:0, p2p:0});
   return r;
 }
+
 function emptyNARows() {
   const r = {};
   ["AU","UK","US","NBD"].forEach(k => r[k] = {managed:0, rec:0});
   return r;
 }
+
 function emptyBU() {
   return {
-    booking: emptyRevRows(),
-    asof:    emptyRevRows(),
-    naCount: emptyNARows(),
-    naAmt:   emptyNARows(),
-    elCount: emptyNARows(),
-    elAmt:   emptyNARows()
+    booking: emptyRevRows(),  // Revenue MTD
+    asof:    emptyRevRows(),  // Contribution to MTD (today's invoice date)
+    naCount: emptyNARows(),   // New Addition count
+    naAmt:   emptyNARows(),   // New Addition amount
+    elCount: emptyNARows(),   // Engagement Lost count
+    elAmt:   emptyNARows()    // Engagement Lost amount
   };
 }
 
+// ── Drill store — NA + EL ──
 let DRILL_STORE = {};
+
 function initDrillStore() {
   DRILL_STORE = {NA:{}, EL:{}};
   ["digital","interbu","martech"].forEach(bu => {
@@ -695,17 +694,35 @@ function initDrillStore() {
   });
 }
 
+// ── Extract talent/project name from LI description (retained for NA drill labels) ──
+function extractLabel(liName, liDescription, company) {
+  const n = liName.toLowerCase();
+  if (n.startsWith("dedicated fte") || n.startsWith("dedicated pte")) {
+    // Multiple talents in one LI description — take first Talent Name
+    const m = liDescription.match(/Talent\s+Name\s*:\s*(.+?)(?:\s*Status\s*:|Rate\s*:|$)/i);
+    return m ? m[1].trim().split(/\s*-\s*/)[0].trim() : company;
+  }
+  if (n.startsWith("recurring services") || n.startsWith("recurring")) {
+    const m = liDescription.match(/Project\s+Name\s*:\s*(.+?)(?:[\n\r]|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+    return m ? m[1].trim() : company;
+  }
+  return company;
+}
+
 // ════════════════════════════════════════════════════════════════
-// buildLIKeyMap  (Session 40 — Recurring EL key fix)
+// buildLIKeyMap — SESSION 40 PATCH
 //
-// isPrevMap flag enables Option B:
-//   prevMap → only project_type="Old" LIs enter as EL candidates.
-//   curMap  → all types included (needed to detect presence/absence).
+// isPrevMap (new param):
+//   true  → prevMap: only project_type="Old" LIs enter as EL candidates (Option B).
+//            Prevents New→Old transition from generating false EL hits.
+//            New engagements are captured by NA logic; they must not
+//            simultaneously appear as losses in the prev→cur comparison.
+//   false → curMap: all types included (needed to check presence/absence).
 //
-// Recurring key: Recurring | normalizeProjectName(project_name) | zBid
-//   - Uses dedicated project_name field (no description parsing)
-//   - normalizeProjectName() strips month/year suffix
-//   - Clean, stable cross-month matching
+// Recurring key now uses:
+//   normalizeProjectName(li.project_name) — dedicated Invoice App field,
+//   month/year suffix stripped — clean, stable cross-month matching.
+//   Replaces extractLabel() which parsed unstructured description text.
 // ════════════════════════════════════════════════════════════════
 function buildLIKeyMap(deals, liMap, isPrevMap) {
   const map = new Map();
@@ -718,7 +735,7 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
     const rowKey      = getRowKey(deal);
     const zBid        = (deal.billing_id || deal.company || "").trim();
     const displayName = deal.zoho_display || deal.company;
-    const liTotal     = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
+    const liTotal = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
     if (liTotal === 0) return;
     const scale = Math.abs(deal.amount) / liTotal;
 
@@ -750,17 +767,10 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
         map.get(key).pteCount += 1;
         map.get(key).pteAmt   += amt;
       } else {
-        // ── CHANGE: Option B — only project_type="Old" enters prevMap ──
-        // Prevents New→Old transition from generating a false EL hit.
-        // New projects are already captured by NA logic; they must not
-        // simultaneously appear as losses in the prev→cur comparison.
+        // SESSION 40 PATCH — Option B: only project_type="Old" enters prevMap
         if (isPrevMap && (li.project_type || "").toLowerCase() !== "old") return;
-
-        // ── CHANGE: use project_name field + normalizeProjectName() ──
-        // Replaces extractLabel(li.name, li.description, ...) which
-        // parsed unstructured description text and broke on month suffixes.
-        // project_name is the dedicated Invoice App property — clean and reliable.
-        const rawName = li.project_name || deal.zoho_display || deal.company;
+        // SESSION 40 PATCH — use li.project_name + normalizeProjectName()
+        const rawName  = li.project_name || deal.zoho_display || deal.company;
         const projName = normalizeProjectName(rawName);
         const key = `Recurring|${projName}|${zBid}`;
         if (!map.has(key)) map.set(key, {amount:0, slotType:"Recurring", bucketKey, rowKey, displayName, dealId:deal.id, zBid});
@@ -810,8 +820,11 @@ function computeEL(prevMap, curMap, bkt) {
       const a = pureFTELost * avgPrevFTE;
       row.elCount[rowKey].managed += c;
       row.elAmt[rowKey].managed   += a;
-      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE"});
+      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
+        label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE"
+      });
     }
+
     if (fteConvertedToPTE > 0) {
       const delta = avgPrevFTE - avgCurPTE;
       if (delta > 0) {
@@ -819,15 +832,20 @@ function computeEL(prevMap, curMap, bkt) {
         const a = fteConvertedToPTE * delta;
         row.elCount[rowKey].managed += c;
         row.elAmt[rowKey].managed   += a;
-        DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE→PTE"});
+        DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
+          label:displayName, company:displayName, amount:a, count:c, dealId, engType:"FTE→PTE"
+        });
       }
     }
+
     if (pteLost > 0) {
       const c = pteLost * 0.5;
       const a = pteLost * avgPrevPTE;
       row.elCount[rowKey].managed += c;
       row.elAmt[rowKey].managed   += a;
-      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({label:displayName, company:displayName, amount:a, count:c, dealId, engType:"PTE"});
+      DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
+        label:displayName, company:displayName, amount:a, count:c, dealId, engType:"PTE"
+      });
     }
   });
 
@@ -840,7 +858,9 @@ function computeEL(prevMap, curMap, bkt) {
     if (!row) return;
     row.elCount[rowKey].rec += 1;
     row.elAmt[rowKey].rec   += amount;
-    DRILL_STORE.EL[bucketKey][rowKey]["Recurring"].push({label:displayName, company:displayName, amount, count:1, dealId, engType:"Recurring"});
+    DRILL_STORE.EL[bucketKey][rowKey]["Recurring"].push({
+      label:displayName, company:displayName, amount, count:1, dealId, engType:"Recurring"
+    });
   });
 }
 
@@ -858,57 +878,70 @@ function computeSnapshot(deals, liMap, todayStr) {
     const dealAmt    = deal.amount;
 
     // ── No LIs: deal-level fallback for Revenue only ──
+    // Negative amounts pass through here and net against the bucket (no special branch).
     if (!lis.length) {
-      const eg = engGroup(deal.eng_model);
+      let et;
+      if (isOnPrefix) { et = "P2P"; }
+      else { et = engGroup(deal.eng_model); if (!et) return; }
       const bk = deal.bu === "MarTech" ? "martech" : "digital";
-      const row = bkt[bk];
-      if (eg === "Recurring") { row.booking[rowKey].rec += dealAmt; if (isToday) row.asof[rowKey].rec += dealAmt; }
-      if (eg === "P2P" || isOnPrefix) { row.booking[rowKey].p2p += dealAmt; if (isToday) row.asof[rowKey].p2p += dealAmt; }
+      const bRow = bkt[bk].booking[rowKey];
+      const aRow = bkt[bk].asof[rowKey];
+      if (!bRow) return;
+      if (et === "P2P") { bRow.p2p += dealAmt; if (isToday) aRow.p2p += dealAmt; }
+      else              { bRow.rec += dealAmt;  if (isToday) aRow.rec += dealAmt; }
+      // No LIs = no NA signal
       return;
     }
 
-    // ── LI-level accounting ──
-    const liTotal = lis.reduce((s, li) => s + Math.abs(li.amount || 0), 0);
-    if (liTotal === 0) return;
-    const scale = Math.abs(dealAmt) / liTotal;
+    // ── Has LIs: Revenue Pulse scaling (li.amount * dealAmt / liTotal) ──
+    const liTotal = lis.reduce((s, li) => s + (li.amount || 0), 0);
+    if (!liTotal) return;
+    const scale = dealAmt / liTotal;
 
     lis.forEach(li => {
       if (!li.amount || li.amount === 0) return;
       const liNameLower = (li.name || "").toLowerCase();
       if (EXCLUDED_LI_NAMES.some(exc => liNameLower.includes(exc))) return;
 
-      const n = li.name.toLowerCase();
-      const eg = isOnPrefix ? "P2P" :
-                 (n.startsWith("dedicated fte") || n.startsWith("dedicated pte") || n.startsWith("recurring")) ? "Recurring" :
-                 (n.startsWith("p2p") || n.startsWith("time and material") || n.startsWith("t&m")) ? "P2P" : null;
-      if (!eg) return;
+      let et;
+      if (isOnPrefix) { et = "P2P"; }
+      else { et = engGroupFromLiName(li.name); if (!et) { et = engGroup(deal.eng_model); if (!et) return; } }
 
-      const scaledAmt = li.amount * scale;
-      const isMarTech = deal.bu === "MarTech";
-      const liIsMarTech = li.bu === "MarTech";
+      const amt = li.amount * scale; // Revenue Pulse approach: scale to home currency
 
+      // BU routing: deal-level for MarTech; LI-level for Digital vs InterBU split
       let bk;
-      if (isMarTech)      bk = "martech";
-      else if (liIsMarTech) bk = "interbu";
-      else                  bk = "digital";
+      if (deal.bu === "MarTech") { bk = "martech"; }
+      else                       { bk = li.bu === "MarTech" ? "interbu" : "digital"; }
 
-      const row = bkt[bk];
+      const bRow = bkt[bk].booking[rowKey];
+      const aRow = bkt[bk].asof[rowKey];
+      if (!bRow) return;
+      if (et === "P2P") { bRow.p2p += amt; if (isToday) aRow.p2p += amt; }
+      else              { bRow.rec += amt;  if (isToday) aRow.rec += amt; }
 
-      // Revenue MTD
-      if (eg === "Recurring") { row.booking[rowKey].rec += scaledAmt; if (isToday) row.asof[rowKey].rec += scaledAmt; }
-      if (eg === "P2P")       { row.booking[rowKey].p2p += scaledAmt; if (isToday) row.asof[rowKey].p2p += scaledAmt; }
-
-      // New Addition
+      // ── New Addition ──
+      if (isOnPrefix) return;
       const naType = naStatus(li.name, li.status_1, li.start_date, li.project_type, todayStr);
+      if (!naType) return;
+      const naRow    = bkt[bk].naCount[rowKey];
+      const naAmtRow = bkt[bk].naAmt[rowKey];
+      if (!naRow) return;
+
+      let label = deal.zoho_display || deal.company;
       if (naType === "Managed") {
-        row.naCount[rowKey].managed += 1;
-        row.naAmt[rowKey].managed   += scaledAmt;
-        DRILL_STORE.NA[bk][rowKey]["Managed"].push({label: deal.zoho_display || deal.company, company: deal.company, amount: scaledAmt, dealId: deal.id});
-      }
-      if (naType === "Recurring") {
-        row.naCount[rowKey].rec += 1;
-        row.naAmt[rowKey].rec   += scaledAmt;
-        DRILL_STORE.NA[bk][rowKey]["Recurring"].push({label: deal.zoho_display || deal.company, company: deal.company, amount: scaledAmt, dealId: deal.id});
+        const m = li.description.match(/Talent\s+Name\s*:\s*(.+?)(?:\n|Status|Rate|$)/i);
+        if (m) label = m[1].trim();
+        const headcount = li.name.toLowerCase().startsWith("dedicated pte") ? 0.5 : 1;
+        naRow.managed    += headcount;
+        naAmtRow.managed += amt;
+        DRILL_STORE.NA[bk][rowKey]["Managed"].push({label, company:deal.company, amount:amt, dealId:deal.id});
+      } else {
+        const m = li.description.match(/Project\s+Name\s*:\s*(.+?)(?:[\n\r]|Engagement Model|Invoice Type|Work Type|Technology|Talent Name|Note\s*:|PO Number|$)/i);
+        if (m) label = m[1].trim();
+        naRow.rec    += 1;
+        naAmtRow.rec += amt;
+        DRILL_STORE.NA[bk][rowKey]["Recurring"].push({label, company:deal.company, amount:amt, dealId:deal.id});
       }
     });
   });
@@ -931,9 +964,10 @@ function renderRevTable(tbodyId, revData, rowDefs) {
     if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
     return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${fmtUSD(d.rec)}</td><td class="num">${fmtUSD(d.p2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`;
   });
-  rows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${fmtUSD(totalRec)}</td><td class="num">${fmtUSD(totalP2p)}</td><td class="num">${fmtUSD(totalRec+totalP2p)}</td></tr>`);
+  const tot = totalRec + totalP2p;
+  rows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${fmtUSD(totalRec)}</td><td class="num">${fmtUSD(totalP2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`);
   tbody.innerHTML = rows.join("");
-  return totalRec + totalP2p;
+  return tot;
 }
 
 function renderNACountTable(tbodyId, naData, rowDefs, buKey) {
@@ -953,7 +987,7 @@ function renderNACountTable(tbodyId, naData, rowDefs, buKey) {
   const grand = totalM + totalR;
   const totM = totalM > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num">—</td>`;
   const totR = totalR > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num">—</td>`;
-  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${grand}</td>`     : `<td class="num">—</td>`;
+  const totT = grand  > 0 ? `<td class="num drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${grand}</td>`      : `<td class="num">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -976,7 +1010,7 @@ function renderNAAmtTable(tbodyId, naData, rowDefs, buKey) {
   const grand = totalM + totalR;
   const totM = totalM > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num na-val">—</td>`;
   const totR = totalR > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num na-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>`       : `<td class="num na-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num na-val drillable" onclick="openDrill('NA','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>`      : `<td class="num na-val">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -999,7 +1033,7 @@ function renderELCountTable(tbodyId, elData, rowDefs, buKey) {
   const grand = totalM + totalR;
   const totM = totalM > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${totalM}</td>` : `<td class="num el-val">—</td>`;
   const totR = totalR > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${totalR}</td>` : `<td class="num el-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${grand}</td>`       : `<td class="num el-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${grand}</td>`      : `<td class="num el-val">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
@@ -1022,30 +1056,34 @@ function renderELAmtTable(tbodyId, elData, rowDefs, buKey) {
   const grand = totalM + totalR;
   const totM = totalM > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Managed')">${fmtUSD(totalM)}</td>` : `<td class="num el-val">—</td>`;
   const totR = totalR > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Recurring')">${fmtUSD(totalR)}</td>` : `<td class="num el-val">—</td>`;
-  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>`       : `<td class="num el-val">—</td>`;
+  const totT = grand  > 0 ? `<td class="num el-val drillable" onclick="openDrill('EL','${buKey}','ALL','Both')">${fmtUSD(grand)}</td>`      : `<td class="num el-val">—</td>`;
   rows.push(`<tr class="total-row"><td colspan="2">Total</td>${totM}${totR}${totT}</tr>`);
   tbody.innerHTML = rows.join("");
   return grand;
 }
 
 function renderBU(prefix, buData, rowDefs, todayStr) {
-  renderRevTable(prefix + "-rev-body", buData.booking, rowDefs);
-  const bookTotal = Object.values(buData.booking).reduce((s,d) => s + d.rec + d.p2p, 0);
+  // Revenue MTD
+  const bookTotal = renderRevTable(prefix + "-rev-body", buData.booking, rowDefs);
+  // Contribution to MTD — badge = today's date
   setText(prefix + "-asof-badge", fmtDateShort(todayStr));
   const asofTbody = $(prefix + "-asof-body");
   if (asofTbody) {
     let tR = 0, tP = 0;
     const aRows = rowDefs.map(r => {
       const d = buData.asof[r.key] || {rec:0, p2p:0};
-      const tot = d.rec + d.p2p; tR += d.rec; tP += d.p2p;
+      const tot = d.rec + d.p2p;
+      tR += d.rec; tP += d.p2p;
       if (tot === 0) return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num dim">—</td><td class="num dim">—</td><td class="num dim">—</td></tr>`;
       return `<tr><td>${r.head}</td><td class="num reg">${r.region}</td><td class="num">${fmtUSD(d.rec)}</td><td class="num">${fmtUSD(d.p2p)}</td><td class="num">${fmtUSD(tot)}</td></tr>`;
     });
     aRows.push(`<tr class="total-row"><td colspan="2">Total</td><td class="num">${fmtUSD(tR)}</td><td class="num">${fmtUSD(tP)}</td><td class="num">${fmtUSD(tR+tP)}</td></tr>`);
     asofTbody.innerHTML = aRows.join("");
   }
+  // New Addition
   renderNACountTable(prefix + "-na-count-body", buData.naCount, rowDefs, prefix);
   const naAmt = renderNAAmtTable(prefix + "-na-amt-body", buData.naAmt, rowDefs, prefix);
+  // Engagement Lost
   renderELCountTable(prefix + "-el-count-body", buData.elCount, rowDefs, prefix);
   const elAmt = renderELAmtTable(prefix + "-el-amt-body", buData.elAmt, rowDefs, prefix);
   return {bookTotal, naAmt, elAmt};
@@ -1056,6 +1094,8 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const monLabel  = MSHRT[todayDate.getMonth()] + " " + todayDate.getFullYear();
 
   ["digital","interbu","martech"].forEach(p => setText(p + "-rev-badge", monLabel + " MTD"));
+
+  // ── Stamp all six EL badges with the actual comparison month ──
   const elBadge = "vs " + (prevMonthLabel || "Prev Month");
   ["digital","interbu","martech"].forEach(p => {
     setText(p + "-el-count-badge", elBadge);
@@ -1070,12 +1110,14 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   const totalNAAmt = d.naAmt + ib.naAmt + mt.naAmt;
   const totalELAmt = d.elAmt + ib.elAmt + mt.elAmt;
 
+  // Grand bar — Revenue row
   setText("gt-booking",     fmtUSD(grandTotal));
   setText("gt-booking-sub", monLabel + " MTD");
   setText("gt-digital",     fmtUSD(d.bookTotal));
   setText("gt-interbu",     fmtUSD(ib.bookTotal));
   setText("gt-martech",     fmtUSD(mt.bookTotal));
 
+  // Grand bar — NA row
   const allM    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.managed||0), 0), 0);
   const allR    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naCount[rk]?.rec||0),    0), 0);
   const allAmtM = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].naAmt[rk]?.managed||0),  0), 0);
@@ -1088,6 +1130,7 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   setText("gt-na-total",       totalNAAmt > 0 ? fmtUSD(totalNAAmt) : "—");
   setText("gt-na-total-count", (allM+allR) > 0 ? (allM+allR) + " new" : "—");
 
+  // Grand bar — EL row
   const allEM    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.managed||0), 0), 0);
   const allER    = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elCount[rk]?.rec||0),    0), 0);
   const allElAmtM = ["digital","interbu","martech"].reduce((s,bu) => s + ["AU","UK","US","NBD"].reduce((ss,rk) => ss + (bkt[bu].elAmt[rk]?.managed||0),  0), 0);
@@ -1100,6 +1143,7 @@ function populateSnapshot(bkt, todayStr, prevMonthLabel) {
   setText("gt-el-total",           totalELAmt > 0 ? fmtUSD(totalELAmt) : "—");
   setText("gt-el-total-count",     (allEM+allER) > 0 ? (allEM+allER) + " lost" : "—");
 
+  // Net Portfolio Change
   const netAmt = totalNAAmt - totalELAmt;
   const netEl  = $("gt-net-portfolio");
   if (netEl) {
@@ -1134,20 +1178,20 @@ function openDrill(type, buKey, rowKey, etFilter) {
     entries.forEach(e => {
       const k = e.label + "|" + e.et;
       if (!merged.has(k)) {
-        merged.set(k, {...e, _composition:[{engType:e.engType, count:e.count||0, amount:e.amount}]});
+        merged.set(k, {...e, _composition: [{engType: e.engType, count: e.count || 0, amount: e.amount}]});
       } else {
         const m = merged.get(k);
         m.amount += e.amount;
         m.count  += e.count || 0;
-        m._composition.push({engType:e.engType, count:e.count||0, amount:e.amount});
+        m._composition.push({engType: e.engType, count: e.count || 0, amount: e.amount});
       }
     });
     entries = Array.from(merged.values());
   }
   entries.sort((a,b) => b.amount - a.amount);
 
-  const buLabel = buKey  === "ALL_BU" ? "All BUs"      : BU_LABELS[buKey]  || buKey;
-  const rkLabel = rowKey === "ALL"    ? "All Regions"  : rowKey;
+  const buLabel = buKey  === "ALL_BU" ? "All BUs"     : BU_LABELS[buKey]  || buKey;
+  const rkLabel = rowKey === "ALL"    ? "All Regions" : rowKey;
   const etLabel = etFilter === "Both" ? "Managed + Recurring" : etFilter;
   const isNA    = type === "NA";
   const kpiClr  = isNA ? "#006E5E" : "#C13030";
@@ -1158,7 +1202,7 @@ function openDrill(type, buKey, rowKey, etFilter) {
 
   const totalAmt   = entries.reduce((s,e) => s + e.amount, 0);
   const totalCount = type === "EL"
-    ? entries.reduce((s,e) => s + (e.count||0), 0)
+    ? entries.reduce((s,e) => s + (e.count || 0), 0)
     : entries.length;
   $("drill-kpi-count").textContent = totalCount || "—";
   $("drill-kpi-count").style.color = kpiClr;
@@ -1179,7 +1223,8 @@ function openDrill(type, buKey, rowKey, etFilter) {
       grp.forEach(e => {
         let subLine = e.company || "—";
         if (type === "EL" && e._composition && e._composition.length > 0) {
-          const parts = [], comp = e._composition;
+          const parts = [];
+          const comp = e._composition;
           const ftePure = comp.filter(c => c.engType === "FTE");
           const fteConv = comp.filter(c => c.engType === "FTE→PTE");
           const pte     = comp.filter(c => c.engType === "PTE");
@@ -1224,9 +1269,12 @@ function updateMonthNavUI() {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
   const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
-  setText("month-label", MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear());
-  const nextBtn = $("month-next"); if (nextBtn) nextBtn.disabled = isCurrentMonth;
-  const todayBtn = $("month-today-btn"); if (todayBtn) todayBtn.style.display = isCurrentMonth ? "none" : "";
+  const label = MSHRT[viewDate.getMonth()] + " " + viewDate.getFullYear();
+  setText("month-label", label);
+  const nextBtn = $("month-next");
+  if (nextBtn) nextBtn.disabled = isCurrentMonth;
+  const todayBtn = $("month-today-btn");
+  if (todayBtn) todayBtn.style.display = isCurrentMonth ? "none" : "";
 }
 
 function navigateMonth(delta, resetToToday) {
@@ -1254,6 +1302,7 @@ async function doSync(force = false) {
     const pad = n => String(n).padStart(2,"0");
     const now   = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
     const viewDate = new Date(today.getFullYear(), today.getMonth() + selectedMonthOffset, 1);
     const isCurrentMonth = (viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth());
     const curMonth = getMonthStr(viewDate);
@@ -1288,7 +1337,7 @@ async function doSync(force = false) {
 
     const bkt = computeSnapshot(deals, liMap, todayStr);
 
-    // ── CHANGE: isPrevMap param drives Option B filter in buildLIKeyMap ──
+    // SESSION 40 PATCH — isPrevMap drives Option B in buildLIKeyMap
     const curLIKeyMap  = buildLIKeyMap(deals,     liMap,     false); // all types
     const prevLIKeyMap = buildLIKeyMap(prevDeals, prevLiMap, true);  // project_type="Old" only
 
