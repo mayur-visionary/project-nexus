@@ -67,11 +67,10 @@ export async function onRequestPost(context) {
             headers: hdrs,
             body: JSON.stringify({
               inputs: chunk.map(id => ({ id })),
-              // ── CHANGE: project_name added — used as stable EL Recurring key ──
-              // Previously relied on parsing description text via extractLabel().
-              // project_name is the dedicated Invoice App field, consistent across
-              // months (after normalizeProjectName() strips month suffixes in
-              // snapshot.html). project_type gates prevMap EL candidacy (Option B).
+              // ── project_name added (Session 40) ──
+              // Used as the stable Recurring EL key in buildLIKeyMap().
+              // Replaces description-text parsing via extractLabel().
+              // normalizeProjectName() in snapshot.html strips month/year suffixes.
               properties: ["name", "amount", "description", "start_date", "project_type", "status_1", "project_name"]
             })
           }
@@ -90,7 +89,7 @@ export async function onRequestPost(context) {
             start_date:   r.properties?.start_date   || "",
             project_type: r.properties?.project_type || "",
             status_1:     r.properties?.status_1     || "",
-            // ── CHANGE: new field ──
+            // ── Session 40: new field ──
             project_name: r.properties?.project_name || ""
           };
         });
