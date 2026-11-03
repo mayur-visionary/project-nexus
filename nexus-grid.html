@@ -532,7 +532,7 @@ function renderGrid(g){
   html+=`<tr class="bu-row">
     <td>MarTech BU</td>
     ${cell(g.martech.total,'rev-cell')}
-    ${combCell(martechPlusInter,'MarTech BU + Inter')}
+    ${combCell(martechPlusInter,'MarTech BU + Inter BU')}
   </tr>`;
   ['AU','UK','US'].forEach(geo=>{
     if(g.martech[geo]!==0)
@@ -547,7 +547,7 @@ function renderGrid(g){
   html+=`<tr class="bu-row">
     <td>Digital BU</td>
     ${cell(g.digital.total,'rev-cell')}
-    ${combCell(digitalPlusInter,'Digital BU + Inter')}
+    ${combCell(digitalPlusInter,'Digital BU + Inter BU')}
   </tr>`;
   ['AU','UK','US'].forEach(geo=>{
     if(g.digital[geo]!==0)
