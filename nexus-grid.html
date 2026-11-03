@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Grid · Mavlers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1330 55 560 430'%3E%3Cpath fill='%23FFDA30' d='M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z'/%3E%3Cpath fill='%23FFDA30' d='M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:#434343;min-height:100vh;font-size:12px;overflow-x:hidden}
+
+/* ── LOGIN — verbatim from canonical login-block.md ── */
+.login-overlay{position:fixed;inset:0;background:#473400;z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.25);border-top:3px solid #FFDA30;text-align:center}
+.login-logo{margin-bottom:22px}
+.login-eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;color:#473400;text-transform:uppercase;margin-bottom:5px}
+.login-title{font-size:20px;font-weight:800;color:#434343;text-transform:uppercase;letter-spacing:.05em;margin-bottom:26px}
+.login-input{width:100%;padding:12px 16px;border:1.5px solid #E2E2E2;border-radius:8px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:600;color:#434343;outline:none;transition:border-color .2s;text-align:center;letter-spacing:.06em}
+.login-input:focus{border-color:#FFDA30}
+.login-input::placeholder{color:#C0C0C0;font-weight:500;letter-spacing:.02em}
+.login-btn{width:100%;margin-top:12px;padding:13px;background:#FFDA30;border:none;border-radius:8px;font-size:11px;font-weight:800;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;color:#111;transition:background .2s}
+.login-btn:hover{background:#FFE870}
+.login-btn:disabled{background:#F2F2F2;color:#9A9A9A;cursor:not-allowed}
+.login-err{margin-top:10px;font-size:10px;font-weight:700;color:#E84040;letter-spacing:.04em;text-transform:uppercase;min-height:14px}
+.login-footer{margin-top:22px;font-size:9px;font-weight:600;color:#9A9A9A;letter-spacing:.08em;text-transform:uppercase}
+
+/* ── SPINNER ── */
+.lo{position:fixed;inset:0;background:rgba(242,254,220,.82);z-index:8000;display:none;align-items:center;justify-content:center}
+.lo.show{display:flex}
+.spin{width:36px;height:36px;border:3px solid #FFDA30;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── HEADER — identical chrome to Achievement Desk ── */
+.hdr{background:#473400}
+.hdr-in{max-width:1440px;margin:0 auto;padding:16px 28px 0}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer;text-decoration:none}
+.hdr-brand:hover .hdr-title{color:#FFDA30}
+.hdr-brand svg{transition:opacity .2s}
+.hdr-brand:hover svg{opacity:.85}
+.hdr-eyebrow{margin-bottom:4px}
+.hdr-el{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.85);text-transform:uppercase}
+.hdr-title{font-size:21px;font-weight:800;color:#fff;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.hdr-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.1em;margin-top:3px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:10px;padding-top:4px;flex-wrap:wrap;justify-content:flex-end}
+.h-status{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;background:#C0C0C0;flex-shrink:0;transition:background .4s}
+.stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
+.month-badge{display:inline-flex;align-items:center;background:#5c4200;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:20px;min-width:140px;justify-content:center}
+.nav-arrow{padding:5px 9px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:13px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;line-height:1}
+.nav-arrow:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.nav-arrow:disabled{opacity:.3;cursor:not-allowed}
+.refresh-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap}
+.refresh-btn:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
+.refresh-btn:disabled{opacity:.35;cursor:not-allowed}
+.nexus-btn{padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:rgba(255,255,255,.85);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;transition:all .2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nexus-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+
+/* ── NAV TABS BAR ── */
+.nav-tabs-bar{background:#333;border-top:1px solid rgba(255,255,255,.07)}
+.nav-in{max-width:1440px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
+.nav-left{display:flex;align-items:center}
+.module-lbl{color:rgba(255,255,255,.45);font-size:9.5px;font-weight:700;letter-spacing:.08em;padding:9px 16px 9px 0;white-space:nowrap;text-transform:uppercase}
+.nav-divider{width:1px;height:18px;background:rgba(255,255,255,.12);flex-shrink:0;margin:0 4px}
+.yellow-rule{height:3px;background:linear-gradient(90deg,#FFDA30,#FFE870 50%,transparent)}
+
+/* ── ERROR BAR ── */
+.err-wrap{max-width:1440px;margin:0 auto;padding:8px 28px 0}
+.err-bar{background:#2A2A2A;border-bottom:2px solid #FFDA30;padding:10px 14px;font-size:11px;color:#ccc;display:none;border-radius:6px;font-weight:500;margin-bottom:8px}
+.err-bar strong{color:#FFDA30}
+
+/* ── MAIN ── */
+.main{max-width:960px;margin:0 auto;padding:28px 28px 60px}
+
+/* ── TOTAL MAVLERS KPI ── */
+.total-kpi{background:#473400;border-radius:10px;padding:20px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.total-label{font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,218,48,.7)}
+.total-value{font-size:32px;font-weight:800;color:#FFDA30;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.total-sub{font-size:10px;font-weight:600;color:rgba(255,218,48,.5);letter-spacing:.06em;text-transform:uppercase}
+
+/* ── GRID TABLE CARD ── */
+.tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;overflow:hidden;box-shadow:0 2px 12px rgba(67,52,0,.06)}
+.tcard-hdr{padding:14px 18px 12px;border-bottom:1px solid #F2F2F2}
+.tcard-ttl{font-size:11px;font-weight:800;color:#2E2E2E;text-transform:uppercase;letter-spacing:.06em}
+.twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ── GRID TABLE ── */
+.grid-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif}
+.grid-table thead th{padding:8px 18px;background:#3B3561;text-align:left;font-size:10px;font-weight:800;color:#FFDA30;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.grid-table thead th.rev-th{text-align:right}
+.grid-table thead th.comb-th{text-align:right;color:rgba(255,218,48,.65)}
+
+/* BU section header rows */
+.grid-table tr.bu-row td{background:#473400;color:#FFDA30;font-weight:800;font-size:12px;padding:10px 18px;border-top:2px solid rgba(255,218,48,.2)}
+.grid-table tr.bu-row td.rev-cell{text-align:right;font-variant-numeric:tabular-nums}
+.grid-table tr.bu-row td.comb-cell{text-align:right;font-size:10px;font-weight:700;color:rgba(255,218,48,.65);font-variant-numeric:tabular-nums}
+
+/* Geo sub-rows */
+.grid-table tr.geo-row td{padding:8px 18px;border-bottom:1px solid #F0EBE0;color:#434343;font-weight:600;font-size:10.5px}
+.grid-table tr.geo-row td.geo-label{padding-left:36px;color:#696969}
+.grid-table tr.geo-row td.rev-cell{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:#2E2E2E}
+.grid-table tr.geo-row td.comb-cell{text-align:right}
+.grid-table tr.geo-row:hover td{background:#FFFBEA!important}
+.grid-table tr.geo-row:last-child td{border-bottom:none}
+
+/* NBD row — slightly distinct */
+.grid-table tr.nbd-row td{background:#FAFAF5;padding:8px 18px;border-bottom:1px solid #E8E8E8;color:#696969;font-size:10px;font-weight:700}
+.grid-table tr.nbd-row td.geo-label{padding-left:36px;letter-spacing:.06em;text-transform:uppercase}
+.grid-table tr.nbd-row td.rev-cell{text-align:right;font-variant-numeric:tabular-nums;color:#434343}
+.grid-table tr.nbd-row:hover td{background:#FFFBEA!important}
+
+/* Section spacer */
+.grid-table tr.section-gap td{height:8px;background:#F2FEDC;border:none;padding:0}
+
+/* Negative values */
+.neg{color:#CC0033!important;font-weight:800!important}
+
+/* ── FOOTER ── */
+.footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){.hdr-in{padding:14px 18px 0}.main{padding:18px 18px 40px}.nav-in{padding:0 18px}}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN — verbatim from canonical login-block.md ── -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg height="36" viewBox="1330 55 560 430" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#111" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+        <path fill="#111" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+      </svg>
+    </div>
+    <div class="login-eyebrow">Mavlers · Sales-Ops</div>
+    <div class="login-title">Nexus Grid</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Enter access password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Access Dashboard</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">Project Nexus · The Live Pulse of Mavlers Revenue</div>
+  </div>
+</div>
+
+<div class="lo" id="lo"><div class="spin"></div></div>
+
+<!-- ── HEADER ── -->
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-top">
+      <a class="hdr-brand" onclick="location.reload()" title="Reload Nexus Grid" role="button">
+        <svg height="28" viewBox="0 0 1921 533.7" xmlns="http://www.w3.org/2000/svg" aria-label="Mavlers">
+          <polygon fill="#FFDA30" points="257.6 161.1 175.8 299.3 92.6 161.1 50.1 161.1 50.1 383.4 98.3 383.4 98.3 252.8 163.4 359.9 186.5 359.9 251.9 250 252.2 383.4 300.5 383.4 299.9 161.1 257.6 161.1"/>
+          <path fill="#FFDA30" d="M418.6,210.1c-27.3,0-54.9,7.3-73.6,20.6l17.8,34.6c12.4-9.8,31.1-15.9,49.2-15.9,26.7,0,39.4,12.4,39.4,33.6h-39.4c-52.1,0-73.3,20.9-73.3,51.1s23.8,51.7,63.8,51.7,42.8-8.3,52.1-23.8v21.3h46.3v-97.4c0-51.7-30.2-75.9-82.2-75.9h-.1ZM451.3,329.3c-5.7,15.6-20,23.2-36.5,23.2s-27.9-8.3-27.9-20.6,7.3-20,30.5-20h34v17.5h-.1Z"/>
+          <polygon fill="#FFDA30" points="615.4 328.8 568.1 212.6 517 212.6 588.7 383.4 639.8 383.4 711.8 212.6 664.2 212.6 615.4 328.8"/>
+          <rect fill="#FFDA30" x="732.2" y="147.9" width="49.5" height="235.5"/>
+          <path fill="#FFDA30" d="M906.1,210.1c-52.1,0-91.1,36.8-91.1,87.9s38.4,87.9,97.4,87.9,54.6-9.5,70.5-27.6l-26.3-28.6c-11.7,11.1-24.8,16.5-42.8,16.5-26,0-44.1-13-48.9-34.3h129.2c.3-4.1,1-9.5,1-13.3,0-54.9-38.7-88.6-88.9-88.6h-.1ZM864.2,283c3.5-21.9,19.7-35.5,42.2-35.5s38.4,14,41.9,35.5h-84.1Z"/>
+          <path fill="#FFDA30" d="M1075.3,235v-22.5h-47.3v170.8h49.5v-80.6c0-32.7,18.1-47.6,45.4-47.6s7,.3,11.1.6v-45.7c-26.3,0-46.7,8.6-58.7,25.1h0Z"/>
+          <path fill="#FFDA30" d="M1199,263.3c0-8.9,9.5-15.9,31.7-15.9s32.4,3.2,49.2,12.7l16.5-35.2c-16.2-9.5-42.2-14.9-65.7-14.9-49.8,0-79,22.9-79,55.2,0,68.2,103.2,39.7,103.2,67.6s-8.6,15.6-31.4,15.6-44.1-6.7-59.4-16.5l-16.5,35.5c15.9,10.5,45.1,18.4,74,18.4,51.1,0,80.6-22.5,80.6-54.3,0-67.3-103.2-39-103.2-68.2h0Z"/>
+          <path fill="#FFDA30" d="M1358.9,414.3l211.1-211c7.1-7.1,7.1-18.7,0-25.8l-111.4-111.9c-10.1-10.1-27.4-5.2-30.7,8.7l-79.2,334.3c-1.4,6,5.9,10,10.2,5.7Z"/>
+          <path fill="#FFDA30" d="M1870.8,465.7l-93-391.1c-3.4-14.2-21-19.2-31.3-8.9l-396.2,396.2c-4.9,4.9.7,13,7,10l330.4-155.5c7.1-3.3,15.5-1.9,21.1,3.7l151.5,151.5c4.4,4.4,11.9.3,10.4-5.8h0Z"/>
+        </svg>
+        <div>
+          <div class="hdr-eyebrow"><span class="hdr-el">Sales Operations</span></div>
+          <div class="hdr-title">Project Nexus</div>
+          <div class="hdr-sub">The Live Pulse of Mavlers Revenue</div>
+        </div>
+      </a>
+      <div class="hdr-right">
+        <div class="h-status">
+          <div class="stxt"><div class="sdot" id="sdot"></div>&nbsp;<span id="stxt">Ready</span></div>
+          <div class="last-sync" id="last-sync"></div>
+        </div>
+        <button class="nav-arrow" id="month-prev" onclick="navigateMonth(-1)">&#8249;</button>
+        <span class="month-badge" id="month-badge">—</span>
+        <button class="nav-arrow" id="month-next" onclick="navigateMonth(1)">&#8250;</button>
+        <button class="refresh-btn" id="rfbtn" onclick="doSync()">⟳ Refresh</button>
+        <a class="nexus-btn" href="/">↗ Revenue Pulse</a>
+      </div>
+    </div>
+  </div>
+  <!-- Nav bar -->
+  <div class="nav-tabs-bar">
+    <div class="nav-in">
+      <div class="nav-left">
+        <span class="module-lbl">Nexus Grid</span>
+        <div class="nav-divider"></div>
+        <span style="color:rgba(255,255,255,.35);font-size:9px;font-weight:600;letter-spacing:.06em;padding:9px 18px;text-transform:uppercase">BU × Geo Revenue Breakdown</span>
+      </div>
+    </div>
+  </div>
+  <div class="yellow-rule"></div>
+</div>
+
+<div class="err-wrap"><div class="err-bar" id="err-bar"><strong>Error:</strong> <span id="err-msg"></span></div></div>
+
+<!-- ── MAIN ── -->
+<div class="main" id="main-content" style="display:none">
+
+  <!-- Total Mavlers KPI -->
+  <div class="total-kpi">
+    <div>
+      <div class="total-label">Total Mavlers</div>
+      <div class="total-value" id="total-value">—</div>
+    </div>
+    <div style="text-align:right">
+      <div class="total-sub" id="total-sub">—</div>
+    </div>
+  </div>
+
+  <!-- Grid table -->
+  <div class="tcard">
+    <div class="tcard-hdr">
+      <div class="tcard-ttl">Revenue Grid · BU × Geo</div>
+    </div>
+    <div class="twrap">
+      <table class="grid-table">
+        <thead>
+          <tr>
+            <th style="min-width:200px">Segment</th>
+            <th class="rev-th" style="min-width:140px">Revenue</th>
+            <th class="comb-th" style="min-width:160px">+ Inter BU</th>
+          </tr>
+        </thead>
+        <tbody id="grid-body">
+          <tr><td colspan="3" style="padding:48px 20px;text-align:center;color:#bbb;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Syncing…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">PROJECT NEXUS &nbsp;•&nbsp; BY MAYUR DADLANI &nbsp;•&nbsp; A JAM-STACK APPLICATION</div>
+</div>
+
+<script src="/registry-client.js"></script>
+<script>
+'use strict';
+function $(id){return document.getElementById(id);}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH — master only, folds under NEXUS_PASSWORD
+   localStorage key: nexus_auth (same as Revenue Pulse master)
+═══════════════════════════════════════════════════════════════ */
+function checkSSO(){
+  if(localStorage.getItem('nexus_auth')==='1'){
+    $('login-overlay').style.display='none';return true;
+  }
+  return false;
+}
+
+async function doLogin(){
+  const btn=$('login-btn'),err=$('login-err'),pw=$('pw-input').value.trim();
+  if(!pw){err.textContent='Please enter the access password.';return;}
+  btn.disabled=true;btn.textContent='Verifying…';err.textContent='';
+  try{
+    const res=await fetch('/nexus-grid-auth',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:pw})
+    });
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem('nexus_auth','1');
+      $('login-overlay').style.display='none';
+      doSync(true);
+    }else if(res.status===500||data.error){
+      err.textContent='Server config error. Contact Mayur.';
+    }else{
+      err.textContent='Incorrect password. Please try again.';
+      $('pw-input').value='';$('pw-input').focus();
+    }
+  }catch(e){err.textContent='Connection error. Check your network.';}
+  finally{btn.disabled=false;btn.textContent='Access Dashboard';}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════════════════════ */
+const FY_YEAR=2026,FY_MONTH=3; // April 2026
+const EXCL_NAMES=/wallet|special engagement|inboxarmy|uplers|solomax/i;
+const PRATIVA_ID='82663745';
+
+/* ═══════════════════════════════════════════════════════════════
+   FORMAT
+═══════════════════════════════════════════════════════════════ */
+function fm(n){
+  if(!n&&n!==0)return '$0';
+  const a=Math.abs(Math.round(n)),s=n<0?'-':'';
+  if(a>=1000000)return s+'$'+(a/1000000).toFixed(2)+'M';
+  if(a>=1000)return s+'$'+a.toLocaleString('en-US');
+  return s+'$'+a;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MONTH NAVIGATION — same pattern as Achievement Desk
+═══════════════════════════════════════════════════════════════ */
+let FY_MONTHS=[],MONTH_IDX=0;
+
+function buildFYMonths(){
+  const now=new Date(),months=[];
+  const cursor=new Date(FY_YEAR,FY_MONTH,1);
+  while(cursor.getFullYear()<now.getFullYear()||
+       (cursor.getFullYear()===now.getFullYear()&&cursor.getMonth()<=now.getMonth())){
+    const mn=cursor.toLocaleString('en-US',{month:'long'});
+    months.push({val:`${mn.toLowerCase()}-${cursor.getFullYear()}`,lbl:`${mn} ${cursor.getFullYear()}`});
+    cursor.setMonth(cursor.getMonth()+1);
+  }
+  return months;
+}
+
+function updateMonthBadge(){
+  const m=FY_MONTHS[MONTH_IDX];
+  $('month-badge').textContent=m.lbl;
+  $('month-prev').disabled=(MONTH_IDX===0);
+  $('month-next').disabled=(MONTH_IDX===FY_MONTHS.length-1);
+}
+
+function navigateMonth(dir){
+  const next=MONTH_IDX+dir;
+  if(next<0||next>=FY_MONTHS.length)return;
+  MONTH_IDX=next;updateMonthBadge();doSync();
+}
+
+function getCurrentMonth(){return FY_MONTHS[MONTH_IDX]?.val||'';}
+
+function initMonthNav(){
+  FY_MONTHS=buildFYMonths();
+  const now=new Date();
+  const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const prevVal=`${prev.toLocaleString('en-US',{month:'long'}).toLowerCase()}-${prev.getFullYear()}`;
+  MONTH_IDX=FY_MONTHS.findIndex(m=>m.val===prevVal);
+  if(MONTH_IDX<0)MONTH_IDX=FY_MONTHS.length-1;
+  updateMonthBadge();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   API CALLS
+═══════════════════════════════════════════════════════════════ */
+async function fetchDeals(month){
+  const props=[
+    'dealname','amount_in_home_currency','hubspot_owner_id',
+    'invoice_booking_month__invoice_app_','geo__invoice_app_',
+    'user_role_invoice_app','business_unit_invoice_app',
+    'closedate','createdate'
+  ];
+  const filters=[
+    {propertyName:'pipeline',  operator:'EQ',value:'115832232'},
+    {propertyName:'dealstage', operator:'EQ',value:'205348626'},
+    {propertyName:'invoice_booking_month__invoice_app_',operator:'EQ',value:month},
+    {propertyName:'engagement_model__invoice_app_',operator:'NOT_IN',values:['Wallet','Special Engagement']},
+    {propertyName:'company_name__invoice_app_',    operator:'NOT_IN',values:['InboxArmy','Uplers','Solomax']}
+  ];
+  const fetched=[];let after=null;
+  do{
+    const body={filterGroups:[{filters}],properties:props,limit:200};
+    if(after)body.after=after;
+    const res=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error('/api '+res.status);
+    const data=await res.json();
+    (data.results||[]).forEach(r=>{
+      const p=r.properties||{};
+      fetched.push({
+        id:                        String(r.id),
+        dealname:                  p.dealname||'',
+        amount:                    parseFloat(p.amount_in_home_currency||0)||0,
+        hubspot_owner_id:          p.hubspot_owner_id||'',
+        invoice_booking_month:    (p.invoice_booking_month__invoice_app_||'').toLowerCase().trim(),
+        geo__invoice_app_:         (p.geo__invoice_app_||'').trim(),
+        user_role_invoice_app:     (p.user_role_invoice_app||'').trim(),
+        business_unit_invoice_app: (p.business_unit_invoice_app||'').trim()
+      });
+    });
+    after=data.paging?.next?.after||null;
+  }while(after);
+  return fetched;
+}
+
+async function fetchLineItems(dealIds){
+  if(!dealIds.length)return{};
+  const liMap={};
+  for(let i=0;i<dealIds.length;i+=500){
+    const chunk=dealIds.slice(i,i+500);
+    const resp=await fetch('/lineItems',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dealIds:chunk})});
+    if(!resp.ok)continue;
+    const data=await resp.json();
+    Object.entries(data.items||{}).forEach(([did,lis])=>{liMap[did]=lis||[];});
+  }
+  return liMap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ATTRIBUTION
+   Exact logic from index.html:
+   - Digital Pure = Search + Web line item amounts
+   - Inter BU     = Digital deal amount − Digital Pure
+                  (Campaign + Email + Design LI amounts)
+   - Digital NBD  = isNBD Digital owners, all revenue → NBD bucket
+   - MarTech      = geo bucket (OWNER_GEO → fixedGeo | deal geo)
+═══════════════════════════════════════════════════════════════ */
+function geoBucket(ownerId, dealGeoRaw){
+  const fixedGeo=(typeof OWNER_GEO!=='undefined')?OWNER_GEO[ownerId]:null;
+  const geo=fixedGeo||(typeof resolveGeo!=='undefined'?resolveGeo((dealGeoRaw||'').trim()):null)||'US';
+  if(geo==='AU')return'AU';
+  if(geo==='UK')return'UK';
+  return'US';
+}
+
+function buildGridData(deals, liMap){
+  // Structure mirrors the Google Sheets format
+  const g={
+    martech:{ AU:0, UK:0, US:0, total:0 },
+    digital:{ AU:0, UK:0, US:0, NBD:0, total:0 },
+    interbu:{ AU:0, UK:0, US:0, total:0 }
+  };
+
+  // Dedup by dealname + amount + month
+  const seen=new Set();
+  const valid=deals.filter(d=>{
+    if(d.amount===0)return false;
+    const key=`${d.dealname}|${d.amount}|${d.invoice_booking_month}`;
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  });
+
+  valid.forEach(d=>{
+    const ownerId=String(d.hubspot_owner_id||'');
+    const owner=(typeof OWNER_REGISTRY!=='undefined')?OWNER_REGISTRY[ownerId]:null;
+    const isNBD=owner&&owner.isNBD;
+    const geo=geoBucket(ownerId,d.geo__invoice_app_);
+
+    // Determine BU (Prativa: from deal property; others: registry)
+    let bu;
+    if(ownerId===PRATIVA_ID){
+      bu=d.business_unit_invoice_app==='MarTech'?'MarTech':'Digital';
+    }else{
+      bu=(typeof MARTECH_OWNER_IDS!=='undefined'&&MARTECH_OWNER_IDS.has(ownerId))?'MarTech':'Digital';
+    }
+
+    if(bu==='MarTech'){
+      g.martech[geo]+=d.amount;
+      g.martech.total+=d.amount;
+    }else{
+      // Digital
+      if(isNBD){
+        // NBD owners: all revenue to Digital NBD, no Inter BU split
+        g.digital.NBD+=d.amount;
+        g.digital.total+=d.amount;
+      }else{
+        // AM + User Role Digital: split by line items
+        // Digital Pure = Search + Web LI amounts
+        // Inter BU    = deal amount − Digital Pure
+        // (matches index.html buildTrendData exactly)
+        const lis=liMap[d.id]||liMap[String(d.id)]||[];
+        let searchWebAmt=0;
+        lis.forEach(li=>{
+          const liAmt=parseFloat(li.amount||0);if(liAmt===0)return;
+          const cls=(typeof classifyLineItem!=='undefined')?classifyLineItem(li.name||li.description||''):null;
+          if(cls&&(cls.svc==='Search'||cls.svc==='Web'))searchWebAmt+=liAmt;
+        });
+
+        const digitalPureAmt=searchWebAmt;                          // Search + Web
+        const interBUAmt=d.amount-searchWebAmt;                     // Campaign + Email + Design + unclassified
+
+        if(digitalPureAmt!==0){
+          g.digital[geo]+=digitalPureAmt;
+          g.digital.total+=digitalPureAmt;
+        }
+        if(interBUAmt!==0){
+          g.interbu[geo]+=interBUAmt;
+          g.interbu.total+=interBUAmt;
+        }
+      }
+    }
+  });
+
+  return g;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════════════ */
+function nc(n){return n<0?' neg':'';}
+
+function renderGrid(g){
+  const totalMavlers=g.martech.total+g.digital.total+g.interbu.total;
+  const martechPlusInter=g.martech.total+g.interbu.total;
+  const digitalPlusInter=g.digital.total+g.interbu.total;
+
+  // Total Mavlers KPI
+  $('total-value').textContent=fm(totalMavlers);
+  $('total-value').className='total-value'+(totalMavlers<0?' neg':'');
+
+  // Grid table body
+  const cell=(v,cls='')=>`<td class="rev-cell${nc(v)} ${cls}">${fm(v)}</td>`;
+  const combCell=(v,label)=>v?`<td class="comb-cell${nc(v)}"><span style="font-size:8px;opacity:.65;margin-right:4px;text-transform:uppercase;letter-spacing:.06em">${label}</span>${fm(v)}</td>`:
+    `<td class="comb-cell"></td>`;
+
+  let html='';
+
+  // ── MARTECH ──
+  html+=`<tr class="bu-row">
+    <td>MarTech</td>
+    ${cell(g.martech.total,'rev-cell')}
+    ${combCell(martechPlusInter,'MarTech + Inter')}
+  </tr>`;
+  ['AU','UK','US'].forEach(geo=>{
+    if(g.martech[geo]!==0)
+      html+=`<tr class="geo-row"><td class="geo-label">${geo}</td>${cell(g.martech[geo])}<td class="comb-cell"></td></tr>`;
+  });
+
+  html+=`<tr class="section-gap"><td colspan="3"></td></tr>`;
+
+  // ── DIGITAL ──
+  html+=`<tr class="bu-row">
+    <td>Digital</td>
+    ${cell(g.digital.total,'rev-cell')}
+    ${combCell(digitalPlusInter,'Digital + Inter')}
+  </tr>`;
+  ['AU','UK','US'].forEach(geo=>{
+    if(g.digital[geo]!==0)
+      html+=`<tr class="geo-row"><td class="geo-label">${geo}</td>${cell(g.digital[geo])}<td class="comb-cell"></td></tr>`;
+  });
+  if(g.digital.NBD!==0)
+    html+=`<tr class="nbd-row"><td class="geo-label">NBD</td>${cell(g.digital.NBD)}<td class="comb-cell"></td></tr>`;
+
+  html+=`<tr class="section-gap"><td colspan="3"></td></tr>`;
+
+  // ── INTER BU ──
+  html+=`<tr class="bu-row">
+    <td>Inter BU</td>
+    ${cell(g.interbu.total,'rev-cell')}
+    <td class="comb-cell"></td>
+  </tr>`;
+  ['AU','UK','US'].forEach(geo=>{
+    if(g.interbu[geo]!==0)
+      html+=`<tr class="geo-row"><td class="geo-label">${geo}</td>${cell(g.interbu[geo])}<td class="comb-cell"></td></tr>`;
+  });
+
+  $('grid-body').innerHTML=html;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SYNC
+═══════════════════════════════════════════════════════════════ */
+let isSyncing=false;
+
+async function doSync(initial){
+  if(isSyncing)return;isSyncing=true;
+  const rfbtn2=$('rfbtn');if(rfbtn2)rfbtn2.disabled=true;
+  $('lo').classList.add('show');
+  $('sdot').style.background='#FFDA30';$('stxt').textContent='FETCHING…';
+  $('err-bar').style.display='none';
+  $('grid-body').innerHTML=`<tr><td colspan="3" style="padding:48px 20px;text-align:center;color:#bbb;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Syncing…</td></tr>`;
+
+  const month=getCurrentMonth();
+  try{
+    const deals=await fetchDeals(month);
+    const validIds=deals.filter(d=>d.amount!==0).map(d=>d.id);
+    const liMap=validIds.length?await fetchLineItems(validIds):{};
+    const g=buildGridData(deals,liMap);
+    renderGrid(g);
+
+    $('main-content').style.display='block';
+    $('sdot').style.background='#0CCE6B';
+    const validCount=deals.filter(d=>d.amount!==0).length;
+    const monthLabel=month.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase());
+    $('stxt').textContent=`${monthLabel} · ${validCount} DEALS`;
+    const ts=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    $('last-sync').textContent='Synced at '+ts;
+    $('total-sub').textContent=monthLabel;
+  }catch(e){
+    console.error('[Nexus Grid]',e);
+    $('sdot').style.background='#E84040';$('stxt').textContent='SYNC FAILED';
+    $('err-bar').style.display='block';$('err-msg').textContent=e.message;
+    $('main-content').style.display='block';
+    $('grid-body').innerHTML=`<tr><td colspan="3" style="padding:48px 20px;text-align:center;color:#E84040;font-size:11px;font-weight:600">Failed to load. Retry sync.</td></tr>`;
+  }finally{
+    isSyncing=false;$('lo').classList.remove('show');
+    if(rfbtn2)rfbtn2.disabled=false;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',async()=>{
+  initMonthNav();
+  const authed=checkSSO();
+  if(!authed)return;
+  await initRegistry();
+  await doSync(true);
+});
+</script>
+
+</body>
+</html>
