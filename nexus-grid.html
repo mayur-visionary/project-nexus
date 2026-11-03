@@ -51,7 +51,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sdot{width:7px;height:7px;border-radius:50%;background:#C0C0C0;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.55);font-weight:500}
-.month-badge{display:inline-flex;align-items:center;background:#5c4200;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:20px;min-width:140px;justify-content:center}
+.month-badge{display:inline-flex;align-items:center;background:#5c4200;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:6px;min-width:140px;justify-content:center}
 .nav-arrow{padding:5px 9px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:13px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;line-height:1}
 .nav-arrow:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .nav-arrow:disabled{opacity:.3;cursor:not-allowed}
@@ -413,9 +413,9 @@ function geoBucket(ownerId, dealGeoRaw){
 function buildGridData(deals, liMap){
   // Structure mirrors the Google Sheets format
   const g={
-    martech:{ AU:0, UK:0, US:0, total:0 },
+    martech:{ AU:0, UK:0, US:0, NBD:0, total:0 },
     digital:{ AU:0, UK:0, US:0, NBD:0, total:0 },
-    interbu:{ AU:0, UK:0, US:0, total:0 }
+    interbu:{ AU:0, UK:0, US:0, NBD:0, total:0 }
   };
 
   // Dedup by dealname + amount + month
@@ -429,9 +429,26 @@ function buildGridData(deals, liMap){
 
   valid.forEach(d=>{
     const ownerId=String(d.hubspot_owner_id||'');
+    // NBD determination — Achievement Desk breakthrough applied:
+    // Pivot on OWNER_GEO, not on USER_ROLE_IDS or dealIsNBD() alone.
+    //
+    // nature:"NBD"                           → always NBD (Kamesh, Aman, Devanshu, Malav, Dhruti)
+    // nature:"User Role" + fixedGeo non-null → NEVER NBD — fixed-region owner (Karan AU, Divya UK)
+    // nature:"User Role" + fixedGeo null     → check user_role_invoice_app per deal (Chintan, Mukund…)
+    // nature:"AM"                            → never NBD (Sakshi, Ayush D/R, Preeti, Rupali, Vinita)
+    const fixedGeo=(typeof OWNER_GEO!=='undefined')?OWNER_GEO[ownerId]:null;
     const owner=(typeof OWNER_REGISTRY!=='undefined')?OWNER_REGISTRY[ownerId]:null;
-    const isNBD=owner&&owner.isNBD;
-    const geo=geoBucket(ownerId,d.geo__invoice_app_);
+    let isNBD=false;
+    if(owner){
+      if(owner.nature==='NBD') isNBD=true;
+      else if(owner.nature==='User Role'&&!fixedGeo)
+        isNBD=(d.user_role_invoice_app||'').toUpperCase()==='NBD';
+      // nature:"AM" or User Role with fixedGeo → isNBD stays false
+    }
+    // Geo for non-NBD owners: registry fixed-geo first, then deal geo
+    const dealGeo=(typeof resolveGeo!=='undefined')?resolveGeo((d.geo__invoice_app_||'').trim()):null;
+    const rawGeo=fixedGeo||dealGeo||'US';
+    const geo=rawGeo==='AU'?'AU':rawGeo==='UK'?'UK':'US';
 
     // Determine BU (Prativa: from deal property; others: registry)
     let bu;
@@ -442,14 +459,25 @@ function buildGridData(deals, liMap){
     }
 
     if(bu==='MarTech'){
-      g.martech[geo]+=d.amount;
+      const martechBucket=isNBD?'NBD':geo;
+      g.martech[martechBucket]+=d.amount;
       g.martech.total+=d.amount;
     }else{
       // Digital
       if(isNBD){
-        // NBD owners: all revenue to Digital NBD, no Inter BU split
-        g.digital.NBD+=d.amount;
-        g.digital.total+=d.amount;
+        // Digital NBD owners: still split by line items
+        // Search/Web LIs → digital.NBD  |  Campaign/Email/Design LIs → interbu.NBD
+        const lisNBD=liMap[d.id]||liMap[String(d.id)]||[];
+        let swNBD=0;
+        lisNBD.forEach(li=>{
+          const liAmt=parseFloat(li.amount||0);if(liAmt===0)return;
+          const cls=(typeof classifyLineItem!=='undefined')?classifyLineItem(li.name||li.description||''):null;
+          if(cls&&(cls.svc==='Search'||cls.svc==='Web'))swNBD+=liAmt;
+        });
+        const dPureNBD=swNBD;
+        const interNBD=d.amount-swNBD;
+        if(dPureNBD!==0){g.digital.NBD+=dPureNBD;g.digital.total+=dPureNBD;}
+        if(interNBD!==0){g.interbu.NBD+=interNBD;g.interbu.total+=interNBD;}
       }else{
         // AM + User Role Digital: split by line items
         // Digital Pure = Search + Web LI amounts
@@ -492,7 +520,7 @@ function renderGrid(g){
   const digitalPlusInter=g.digital.total+g.interbu.total;
 
   // Total Mavlers KPI
-  $('total-value').textContent=fm(totalMavlers);
+  $('total-value').textContent='$'+Math.round(totalMavlers).toLocaleString('en-US');
   $('total-value').className='total-value'+(totalMavlers<0?' neg':'');
 
   // Grid table body
@@ -504,22 +532,24 @@ function renderGrid(g){
 
   // ── MARTECH ──
   html+=`<tr class="bu-row">
-    <td>MarTech</td>
+    <td>MarTech BU</td>
     ${cell(g.martech.total,'rev-cell')}
-    ${combCell(martechPlusInter,'MarTech + Inter')}
+    ${combCell(martechPlusInter,'MarTech BU + Inter')}
   </tr>`;
   ['AU','UK','US'].forEach(geo=>{
     if(g.martech[geo]!==0)
       html+=`<tr class="geo-row"><td class="geo-label">${geo}</td>${cell(g.martech[geo])}<td class="comb-cell"></td></tr>`;
   });
+  if(g.martech.NBD!==0)
+    html+=`<tr class="nbd-row"><td class="geo-label">NBD</td>${cell(g.martech.NBD)}<td class="comb-cell"></td></tr>`;
 
   html+=`<tr class="section-gap"><td colspan="3"></td></tr>`;
 
   // ── DIGITAL ──
   html+=`<tr class="bu-row">
-    <td>Digital</td>
+    <td>Digital BU</td>
     ${cell(g.digital.total,'rev-cell')}
-    ${combCell(digitalPlusInter,'Digital + Inter')}
+    ${combCell(digitalPlusInter,'Digital BU + Inter')}
   </tr>`;
   ['AU','UK','US'].forEach(geo=>{
     if(g.digital[geo]!==0)
@@ -535,11 +565,13 @@ function renderGrid(g){
     <td>Inter BU</td>
     ${cell(g.interbu.total,'rev-cell')}
     <td class="comb-cell"></td>
-  </tr>`;
+  </tr>`;  // Inter BU — no combined column (it IS the additive component)
   ['AU','UK','US'].forEach(geo=>{
     if(g.interbu[geo]!==0)
       html+=`<tr class="geo-row"><td class="geo-label">${geo}</td>${cell(g.interbu[geo])}<td class="comb-cell"></td></tr>`;
   });
+  if(g.interbu.NBD!==0)
+    html+=`<tr class="nbd-row"><td class="geo-label">NBD</td>${cell(g.interbu.NBD)}<td class="comb-cell"></td></tr>`;
 
   $('grid-body').innerHTML=html;
 }
