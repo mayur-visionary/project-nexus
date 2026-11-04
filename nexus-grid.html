@@ -289,9 +289,9 @@ const PRATIVA_ID='82663745';
    FORMAT
 ═══════════════════════════════════════════════════════════════ */
 function fm(n){
-  if(!n&&n!==0)return '$0.00';
-  const s=n<0?'-':'';const a=Math.abs(n);
-  return s+'$'+a.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(!n&&n!==0)return '$0';
+  const s=n<0?'-':'';const a=Math.round(Math.abs(n));
+  return s+'$'+a.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -518,7 +518,7 @@ function renderGrid(g){
   const digitalPlusInter=g.digital.total+g.interbu.total;
 
   // Total Mavlers KPI
-  $('total-value').textContent='$'+Math.abs(totalMavlers).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  $('total-value').textContent='$'+Math.round(Math.abs(totalMavlers)).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
   $('total-value').className='total-value'+(totalMavlers<0?' neg':'');
 
   // Grid table body
