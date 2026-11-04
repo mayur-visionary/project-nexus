@@ -4,7 +4,7 @@
 // Returns { "Owner Full Name": targetAmount, ... }
 //
 // Sheet ID : 1izx69_aKBF0rRgrXzDwXedPGqR8sCtt4BHLpX8_r2fA
-// Tab      : Target VS achievement FY 26-27  ← verify exact tab name in Sheets if 502
+// Tab      : Target VS achievement||FY 26-27  ← verify exact tab name in Sheets if 502
 // Auth     : GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY
 //            (same env vars as funnel-sheet.js — no new secrets needed)
 //
@@ -22,54 +22,57 @@ const FY_MONTHS = ["april","may","june","july","august","september",
 // Sheet salesperson name (lowercase) → registry canonical full name
 // null = skip (dynamic User Role, historical, or not in registry)
 // Source: registry-client.js REGISTRY_FALLBACK + MD's scope clarification (Session 41)
+// NAME_MAP updated to full names — team updated the sheet (Session 41, Nov 2026)
+// Key  = salesperson name as it appears in the sheet, lowercased
+// Value = registry canonical name (OWNER_NAMES key), or null to skip
 const NAME_MAP = {
   // ── Digital US (Tanuj US) ──────────────────────────────────────────────────
   "kaustubh agrawal" : "Kaustubh Agrawal",
-  "sourya"           : "Sourya Ghosh",
-  "baspin"           : "Baspin Thomas",
-  "jebin"            : "Jebin Joy",
-  "dhaval"           : "Dhaval Damania",
-  "sudarshan"        : "Sudarshan Damani",
-  "hammad"           : "Hammad Bhaldar",
+  "sourya ghosh"     : "Sourya Ghosh",
+  "baspin thomas"    : "Baspin Thomas",
+  "jebin"            : "Jebin Joy",        // still short name in sheet
+  "dhaval damania"   : "Dhaval Damania",
+  "sudarshan"        : "Sudarshan Damani", // still short name in sheet
+  "hammad bhaldar"   : "Hammad Bhaldar",
   // ── Digital UK (Tanuj UK) ──────────────────────────────────────────────────
-  "kalgi"            : "Kalgi Shah",
-  "vikram"           : "Vikram Sahi",
-  "flintoff"         : "Flintoff Mehta",
+  "kalgi shah"       : "Kalgi Shah",
+  "vikram sahi"      : "Vikram Sahi",
+  "flintoff mehta"   : "Flintoff Mehta",
   // ── Digital AU (Jiggyasa) ─────────────────────────────────────────────────
-  "prachi"           : "Prachi Porwal",
-  "saquib"           : "Saquib Khan",
-  "jiggyasa"         : "Jiggyasa Agrawal",
-  "manvi"            : "Manvi Choumal",
-  "kunal"            : "Kunal Gohil",
+  "prachi porwal"    : "Prachi Porwal",
+  "saquib khan"      : "Saquib Khan",
+  "jiggyasa agrawal" : "Jiggyasa Agrawal",
+  "manvi choumal"    : "Manvi Choumal",
+  "kunal gohil"      : "Kunal Gohil",
   // ── Digital NBD (Nevilson — trackable per MD) ─────────────────────────────
-  "malav"            : "Malav Modi",
-  "dhruti"           : "Dhruti Dave",
-  "devanshu"         : "Devanshu Kumar",
-  "aman"             : "Aman Acharya",
+  "malav modi"       : "Malav Modi",
+  "dhruti dave"      : "Dhruti Dave",
+  "devanshu"         : "Devanshu Kumar",   // still short name in sheet
+  "aman"             : "Aman Acharya",     // still short name in sheet
   // ── MarTech AM — fixed-region owners ──────────────────────────────────────
-  "priti"            : "Preeti Thapliyal",   // confirmed by MD
-  "rupali"           : "Rupali Sindhu",
-  "vinita"           : "Vinita Raidu",
-  "ayush r"          : "Ayush Rathi",
-  "ayush d"          : "Ayush Dhupar",
-  "sakshi"           : "Sakshi Bissa",
-  "divya"            : "Divya S",
+  "preeti thapliyal" : "Preeti Thapliyal",
+  "rupali sindhu"    : "Rupali Sindhu",
+  "vinita raidu"     : "Vinita Raidu",
+  "ayush rathi"      : "Ayush Rathi",
+  "ayush dhupar"     : "Ayush Dhupar",
+  "sakshi bissa"     : "Sakshi Bissa",
+  "divya s"          : "Divya S",
   // ── MarTech NBD ───────────────────────────────────────────────────────────
-  "kamesh"           : "Kamesh Biniwale",
+  "kamesh biniwale"  : "Kamesh Biniwale",
   // ── Skip: dynamic User Role (no target differentiation per MD) ────────────
-  "tanuj"            : null,
-  "sheldon"          : null,  // historical=true in registry
+  "tanuj gupta"      : null,
+  "sheldon"          : null,              // historical=true in registry
   "darshan modi"     : null,
-  "karan"            : null,  // User Role, dynamic
-  "mukund"           : null,  // User Role, dynamic
-  "chintan"          : null,  // User Role, dynamic
-  "jaydeep"          : null,  // User Role, dynamic
+  "karan doshi"      : null,              // User Role, dynamic
+  "mukund basita"    : null,              // User Role, dynamic
+  "chintan doshi"    : null,              // User Role, dynamic
+  "jaydeep"          : null,              // User Role, dynamic (still short in sheet)
   "matt kelly"       : null,
   "matt"             : null,
-  "nevilson"         : null,  // head, not an owner revenue line
-  "shradha shah"     : null,  // not in registry
-  "gaurav"           : null,  // not in registry
-  "ajeet dhale"      : null,  // not in registry
+  "nevilson christian": null,             // head, not an owner revenue line
+  "shradha shah"     : null,              // not in registry
+  "gaurav"           : null,              // not in registry
+  "ajeet dhale"      : null,              // not in registry
 };
 
 // ── Column index ──────────────────────────────────────────────────────────────
