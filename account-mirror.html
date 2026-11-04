@@ -794,13 +794,14 @@ function applyFilters(deals){
       if(_lis.length){
         let classified=false,matchAmt=0;
         _lis.forEach(li=>{const eg=engGroupFromLiName(li.name);if(eg){classified=true;if(eg===itype)matchAmt+=li.amount;}});
-        if(!classified){const eg=engGroup(d.eng_model);if(!eg||eg!==itype)return false;}
-        else{if(matchAmt===0)return false;}
+        if(!classified){const eg=engGroup(d.eng_model);if(!eg||eg!==itype)return false;else d._filtAmt=d.amount;}
+        else{if(matchAmt===0)return false;else d._filtAmt=matchAmt;}
       }else{
         // No LIs — fall back to eng_model property
         const eg=engGroup(d.eng_model);if(!eg||eg!==itype)return false;
+        d._filtAmt=d.amount;
       }
-    }
+    }else{d._filtAmt=d.amount;}
     return true;
   });
 }
@@ -830,7 +831,7 @@ function aggregateByClient(deals){
   deals.forEach(d=>{
     if(!d.billing_id||d.amount===0)return;
     if(!m[d.billing_id])m[d.billing_id]={billing_id:d.billing_id,client:d.client||d.billing_id,rev:0,deal_count:0,owner_id:d.owner_id,region:d.region,head:d.head,bu:d.bu};
-    m[d.billing_id].rev+=d.amount;m[d.billing_id].deal_count++;
+    m[d.billing_id].rev+=(d._filtAmt??d.amount);m[d.billing_id].deal_count++;
   });
   return m;
 }
