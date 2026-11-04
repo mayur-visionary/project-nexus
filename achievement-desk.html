@@ -86,7 +86,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
-/* ── Segment control (VIEW toggle) — verbatim from Funnel Desk ── */
+/* ── Segment control ── */
 .seg-wrap{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap;padding-top:20px}
 .seg-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#696969}
 .seg{display:inline-flex;background:#fff;border:1px solid #E2E2E2;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -95,54 +95,40 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .seg-btn:hover{background:#FFFBEA;color:#473400}
 .seg-btn.active{background:#473400;color:#FFDA30}
 
-/* ── Table card — verbatim from Funnel Desk ── */
+/* ── Table card ── */
 .tcard{background:#fff;border-radius:10px;border:1px solid #E2E2E2;border-top:3px solid #FFDA30;overflow:hidden;margin-bottom:24px;box-shadow:0 2px 12px rgba(67,52,0,.06)}
 .tcard-hdr{padding:14px 18px 12px;border-bottom:1px solid #F2F2F2;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .tcard-ttl{font-size:11px;font-weight:800;color:#2E2E2E;text-transform:uppercase;letter-spacing:.06em}
 .twrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
-/* ── Achievement table — Funnel Desk type scale + colours ── */
+/* ── Achievement table ── */
 .ach-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'Montserrat',sans-serif}
-
-/* Table header — Space Indigo + Gold (Funnel Desk premier colours) */
 .ach-table thead th{padding:9px 14px;background:#3B3561;text-align:left;font-size:10px;font-weight:800;color:#FFDA30;text-transform:uppercase;letter-spacing:.06em;border-bottom:none;white-space:nowrap}
 .ach-table thead th.rev-th{text-align:right}
-
-/* Body rows */
 .ach-table tbody tr{border-bottom:1px solid #F5F5F5}
 .ach-table tbody td{padding:8px 14px;color:#434343;font-weight:600;font-size:10.5px;vertical-align:middle}
 .ach-table tbody tr:last-child td{border-bottom:none}
 .ach-table tbody tr:hover td{background:#FFFBEA!important}
-
-/* Group header rows (Jiggyasa / Tanuj UK / etc.) — Funnel Desk sec-hdr */
 .ach-table tr.grp-hdr td{background:#F7F7F7;font-size:8px;font-weight:800;color:#9A9A9A;text-transform:uppercase;letter-spacing:.14em;padding:5px 14px;border-top:2px solid #E8E8E8;border-bottom:1px solid #E8E8E8}
 .ach-table tr.grp-hdr:hover td{background:#F7F7F7!important}
-
-/* Subtotal rows — warm gold tint (Funnel Desk recurring-total style) */
 .ach-table tr.sub-row td{background:#FFFBEA;font-weight:800;color:#2E2E2E;border-top:1px solid #FFE870;font-size:10.5px}
 .ach-table tr.sub-row:hover td{background:#FFF3CC!important}
 .ach-table tr.sub-row td.rev-cell{background:#FFDA30;color:#2E2000}
-
-/* Grand total rows — Funnel Desk row-grand-total */
 .ach-table tr.grand-row td{background:#473400!important;font-weight:800;color:#FFDA30!important;font-size:12px;border-top:2px solid #FFDA30}
 .ach-table tr.grand-row:hover td{background:#5A4200!important}
 .ach-table tr.grand-row td.rev-cell{background:#2E2000!important;color:#FFDA30!important;border-left:1px solid #FFDA30}
-
-/* Cell helpers */
 .rev-cell{text-align:right!important;font-variant-numeric:tabular-nums;font-weight:700}
 .neg{color:#CC0033!important;font-weight:800!important}
 .owner-cell{padding-left:32px!important;color:#696969;font-weight:600}
 .sub-lbl{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#A07A00}
-
-/* Loading state — Funnel Desk state-msg */
 .ph{text-align:center;padding:60px 20px;color:#9A9A9A;font-weight:600;font-size:11px}
 
-/* ── Status badges — Achievement Desk ── */
+/* ── Status badges ── */
 .status-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
-.status-exceeded{background:#0CCE6B;color:#0a3d1f}  /* ≥100% */
-.status-on-track{background:#FFDA30;color:#473400}  /*  ≥90% */
-.status-behind  {background:#E87B00;color:#fff}     /* ≥70%  */
-.status-at-risk {background:#CC0033;color:#fff}     /*  <70% */
+.status-exceeded{background:#0CCE6B;color:#0a3d1f}
+.status-on-track{background:#FFDA30;color:#473400}
+.status-behind{background:#E87B00;color:#fff}
+.status-at-risk{background:#CC0033;color:#fff}
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
@@ -208,8 +194,6 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
       </div>
     </div>
   </div>
-
-  <!-- Nav tabs -->
   <div class="nav-tabs-bar">
     <div class="nav-in">
       <div class="nav-left">
@@ -230,7 +214,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 <!-- ════ MAIN ════ -->
 <div class="main" id="main-content" style="display:none">
 
-  <!-- ── OVERALL TAB ── -->
+  <!-- OVERALL TAB -->
   <div class="tab-panel active" id="panel-overall">
     <div class="seg-wrap">
       <span class="seg-label">View</span>
@@ -248,7 +232,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </div>
   </div>
 
-  <!-- ── DIGITAL BU TAB ── -->
+  <!-- DIGITAL BU TAB -->
   <div class="tab-panel" id="panel-digital">
     <div class="seg-wrap">
       <span class="seg-label">View</span>
@@ -266,7 +250,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
     </div>
   </div>
 
-  <!-- ── MARTECH BU TAB ── -->
+  <!-- MARTECH BU TAB -->
   <div class="tab-panel" id="panel-martech">
     <div class="seg-wrap">
       <span class="seg-label">View</span>
@@ -292,9 +276,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 'use strict';
 function $(id){return document.getElementById(id);}
 
-/* ═══════════════════════════════════════════════════════════════
-   AUTH
-═══════════════════════════════════════════════════════════════ */
+/* ── AUTH ── */
 const CLONE_HEAD=(new URLSearchParams(location.search).get('head')||'').toLowerCase().trim();
 function getAuthKey(h){return h?`nexus_auth_${h}`:'nexus_auth';}
 function checkSSO(){
@@ -309,27 +291,15 @@ async function doLogin(){
   try{
     const res=await fetch('/achievement-desk-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw,head:CLONE_HEAD})});
     const data=await res.json();
-    if(data.success){
-      localStorage.setItem(getAuthKey(CLONE_HEAD),'1');
-      $('login-overlay').style.display='none';
-      doSync(true);
-    }else if(res.status===500||data.error){
-      err.textContent='Server config error. Contact Mayur.';
-    }else{
-      err.textContent='Incorrect password. Please try again.';
-      $('pw-input').value='';$('pw-input').focus();
-    }
+    if(data.success){localStorage.setItem(getAuthKey(CLONE_HEAD),'1');$('login-overlay').style.display='none';doSync(true);}
+    else if(res.status===500||data.error){err.textContent='Server config error. Contact Mayur.';}
+    else{err.textContent='Incorrect password. Please try again.';$('pw-input').value='';$('pw-input').focus();}
   }catch(e){err.textContent='Connection error. Check your network.';}
   finally{btn.disabled=false;btn.textContent='Access Dashboard';}
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   CONSTANTS
-═══════════════════════════════════════════════════════════════ */
+/* ── CONSTANTS ── */
 const FY_YEAR=2026,FY_MONTH=3,PRATIVA_ID='82663745';
-
-// OWNER_NAMES populated by initRegistry() from registry-client.js — no local map needed
-
 const DIGITAL_GROUPS=[
   {key:'Jiggyasa Agrawal', label:'Jiggyasa'},
   {key:'Tanuj Gupta (UK)', label:'Tanuj UK'},
@@ -343,15 +313,13 @@ const MARTECH_GROUPS=[
   {key:'Jaydeep NBD',label:'Jaydeep NBD'}
 ];
 const CLONE_VISIBLE={
-  jiggyasa:{digital:['Jiggyasa Agrawal'],                        martech:null},
-  tanuj:   {digital:['Tanuj Gupta (UK)','Tanuj Gupta (US)'],     martech:null},
-  nevilson:{digital:['Nevilson Christan'],                       martech:null},
+  jiggyasa:{digital:['Jiggyasa Agrawal'],martech:null},
+  tanuj:   {digital:['Tanuj Gupta (UK)','Tanuj Gupta (US)'],martech:null},
+  nevilson:{digital:['Nevilson Christan'],martech:null},
   jaydeep: {digital:null,martech:['Jaydeep AU','Jaydeep UK','Jaydeep US','Jaydeep NBD']}
 };
 
-/* ═══════════════════════════════════════════════════════════════
-   FORMATTING
-═══════════════════════════════════════════════════════════════ */
+/* ── FORMAT ── */
 function fm(n){
   if(!n&&n!==0)return '$0';
   const a=Math.abs(Math.round(n)),s=n<0?'-':'';
@@ -361,18 +329,24 @@ function fm(n){
 }
 function nc(n){return n<0?' neg':'';}
 
-/* ═══════════════════════════════════════════════════════════════
-   CLONE MODE
-═══════════════════════════════════════════════════════════════ */
+/* ── STATUS ── */
+function getStatus(pct){
+  if(pct>=100)return{label:'Exceeded',cls:'status-exceeded'};
+  if(pct>=90) return{label:'On Track',cls:'status-on-track'};
+  if(pct>=70) return{label:'Behind',  cls:'status-behind'};
+  return       {label:'At Risk', cls:'status-at-risk'};
+}
+function statusBadge(pct){
+  if(pct===null)return'—';
+  const s=getStatus(pct);
+  return`<span class="status-badge ${s.cls}">${s.label}</span>`;
+}
+
+/* ── CLONE MODE ── */
 function bootCloneMode(){
   if(!CLONE_HEAD)return;
-  if(CLONE_HEAD==='jaydeep'){
-    $('tab-digital').style.display='none';
-    // Overall defaults to MarTech toggle
-    setOverallToggle('martech');
-  }else{
-    $('tab-martech').style.display='none';
-  }
+  if(CLONE_HEAD==='jaydeep'){$('tab-digital').style.display='none';setOverallToggle('martech');}
+  else{$('tab-martech').style.display='none';}
   const LABELS={jiggyasa:'Jiggyasa · Achievement Desk',tanuj:'Tanuj · Achievement Desk',
                 nevilson:'Nevilson · Achievement Desk',jaydeep:'Jaydeep · Achievement Desk'};
   const first=CLONE_HEAD.charAt(0).toUpperCase()+CLONE_HEAD.slice(1);
@@ -380,61 +354,46 @@ function bootCloneMode(){
   $('login-eyebrow').textContent=`Mavlers · ${first}'s Dashboard`;
   const nx=$('nexus-link');if(nx)nx.href=`/?head=${CLONE_HEAD}`;
 }
-
 function visKeys(bu){
   if(!CLONE_HEAD)return null;
   const cfg=CLONE_VISIBLE[CLONE_HEAD];if(!cfg)return null;
   return cfg[bu]||null;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   TAB & TOGGLE SWITCHING
-═══════════════════════════════════════════════════════════════ */
+/* ── TABS & TOGGLES ── */
 function switchTab(tab){
   ['overall','digital','martech'].forEach(t=>{
     $('tab-'+t).classList.toggle('active',t===tab);
     $('panel-'+t).classList.toggle('active',t===tab);
   });
 }
-
 function setOverallToggle(val){
   $('tog-ov-digital').classList.toggle('active',val==='digital');
   $('tog-ov-martech').classList.toggle('active',val==='martech');
   $('ov-digital-view').style.display=val==='digital'?'':'none';
   $('ov-martech-view').style.display=val==='martech'?'':'none';
 }
-
 function setDigitalToggle(val){
   $('tog-dig-owners').classList.toggle('active',val==='owners');
   $('tog-dig-service').classList.toggle('active',val==='service');
   $('dig-owners-view').style.display=val==='owners'?'':'none';
   $('dig-service-view').style.display=val==='service'?'':'none';
   $('dig-card-title').textContent=val==='owners'
-    ?'Individual Owner Achievement · Digital BU'
-    :'Service Vertical Achievement · Digital BU';
+    ?'Individual Owner Achievement · Digital BU':'Service Vertical Achievement · Digital BU';
 }
-
 function setMartechToggle(val){
   $('tog-mt-owners').classList.toggle('active',val==='owners');
   $('tog-mt-service').classList.toggle('active',val==='service');
   $('mt-owners-view').style.display=val==='owners'?'':'none';
   $('mt-service-view').style.display=val==='service'?'':'none';
   $('mt-card-title').textContent=val==='owners'
-    ?'Individual Owner Achievement · MarTech BU'
-    :'Service Vertical Achievement · MarTech BU';
+    ?'Individual Owner Achievement · MarTech BU':'Service Vertical Achievement · MarTech BU';
 }
-// Note: seg-btn.active class toggled above — no separate toggle-btn references remain
 
-/* ═══════════════════════════════════════════════════════════════
-   MONTH SELECTOR
-═══════════════════════════════════════════════════════════════ */
-// FY month navigation — replaces native <select> with badge + arrows
-let FY_MONTHS=[];   // [{val:'april-2026', lbl:'April 2026'}]
-let MONTH_IDX=0;    // current index into FY_MONTHS
-
+/* ── MONTH NAVIGATION ── */
+let FY_MONTHS=[],MONTH_IDX=0;
 function buildFYMonths(){
-  const now=new Date(),months=[];
-  const cursor=new Date(FY_YEAR,FY_MONTH,1);
+  const now=new Date(),months=[],cursor=new Date(FY_YEAR,FY_MONTH,1);
   while(cursor.getFullYear()<now.getFullYear()||
        (cursor.getFullYear()===now.getFullYear()&&cursor.getMonth()<=now.getMonth())){
     const mn=cursor.toLocaleString('en-US',{month:'long'});
@@ -443,50 +402,38 @@ function buildFYMonths(){
   }
   return months;
 }
-
 function updateMonthBadge(){
   const m=FY_MONTHS[MONTH_IDX];
   $('month-badge').textContent=m.lbl;
   $('month-prev').disabled=(MONTH_IDX===0);
   $('month-next').disabled=(MONTH_IDX===FY_MONTHS.length-1);
 }
-
 function navigateMonth(dir){
   const next=MONTH_IDX+dir;
   if(next<0||next>=FY_MONTHS.length)return;
-  MONTH_IDX=next;
-  updateMonthBadge();
-  doSync();
+  MONTH_IDX=next;updateMonthBadge();doSync();
 }
-
-function getCurrentMonth(){
-  return FY_MONTHS[MONTH_IDX]?.val||'';
-}
-
+function getCurrentMonth(){return FY_MONTHS[MONTH_IDX]?.val||'';}
 function initMonthNav(){
   FY_MONTHS=buildFYMonths();
-  // Default: last closed month
-  const now=new Date();
-  const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const now=new Date(),prev=new Date(now.getFullYear(),now.getMonth()-1,1);
   const prevVal=`${prev.toLocaleString('en-US',{month:'long'}).toLowerCase()}-${prev.getFullYear()}`;
   MONTH_IDX=FY_MONTHS.findIndex(m=>m.val===prevVal);
   if(MONTH_IDX<0)MONTH_IDX=FY_MONTHS.length-1;
   updateMonthBadge();
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   API CALLS
-═══════════════════════════════════════════════════════════════ */
+/* ── API CALLS ── */
 async function fetchDeals(month){
   const props=['dealname','amount_in_home_currency','hubspot_owner_id',
     'invoice_booking_month__invoice_app_','geo__invoice_app_',
     'user_role_invoice_app','business_unit_invoice_app','closedate','createdate'];
   const filters=[
-    {propertyName:'pipeline',  operator:'EQ',value:'115832232'},
-    {propertyName:'dealstage', operator:'EQ',value:'205348626'},
+    {propertyName:'pipeline',operator:'EQ',value:'115832232'},
+    {propertyName:'dealstage',operator:'EQ',value:'205348626'},
     {propertyName:'invoice_booking_month__invoice_app_',operator:'EQ',value:month},
     {propertyName:'engagement_model__invoice_app_',operator:'NOT_IN',values:['Wallet','Special Engagement']},
-    {propertyName:'company_name__invoice_app_',    operator:'NOT_IN',values:['InboxArmy','Uplers','Solomax']}
+    {propertyName:'company_name__invoice_app_',operator:'NOT_IN',values:['InboxArmy','Uplers','Solomax']}
   ];
   const fetched=[];let after=null;
   do{
@@ -498,8 +445,7 @@ async function fetchDeals(month){
     (data.results||[]).forEach(r=>{
       const p=r.properties||{};
       fetched.push({
-        id:String(r.id),
-        dealname:p.dealname||'',
+        id:String(r.id),dealname:p.dealname||'',
         amount:parseFloat(p.amount_in_home_currency||0)||0,
         hubspot_owner_id:p.hubspot_owner_id||'',
         invoice_booking_month:(p.invoice_booking_month__invoice_app_||'').toLowerCase().trim(),
@@ -526,25 +472,6 @@ async function fetchLineItems(dealIds){
   return liMap;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   LINE ITEM CLASSIFIER
-═══════════════════════════════════════════════════════════════ */
-// classifyLineItem() is provided by registry-client.js — single source of truth
-
-/* ── Status helper ── */
-function getStatus(pct){
-  if(pct>=100) return{label:'Exceeded',cls:'status-exceeded'};
-  if(pct>=90)  return{label:'On Track',cls:'status-on-track'};
-  if(pct>=70)  return{label:'Behind',  cls:'status-behind'  };
-  return        {label:'At Risk', cls:'status-at-risk' };
-}
-function statusBadge(pct){
-  if(pct===null)return'—';
-  const s=getStatus(pct);
-  return`<span class="status-badge ${s.cls}">${s.label}</span>`;
-}
-
-/* ── Targets fetch ── */
 async function fetchTargets(month){
   try{
     const res=await fetch(`/targets?month=${encodeURIComponent(month)}`);
@@ -557,42 +484,30 @@ async function fetchTargets(month){
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ATTRIBUTION
-═══════════════════════════════════════════════════════════════ */
-function resolveMartechBucket(deal,ownerId){
-  // Tier 1: Kamesh — fixed NBD, hardcoded
-  if(ownerId==='916030451') return 'Jaydeep NBD';
+/* ── ATTRIBUTION ── */
+// classifyLineItem() from registry-client.js — single source of truth
 
-  // Tier 2: Registry fixed-region owners — OWNER_GEO non-null means region is explicit
-  // in the registry (applies to AM owners AND User Role owners with a fixed region,
-  // e.g. Karan Doshi region:"AU", Divya S region:"UK").
-  // Deal geo property is never consulted for these owners.
+function resolveMartechBucket(deal,ownerId){
+  if(ownerId==='916030451')return'Jaydeep NBD';
   const fixedGeo=(typeof OWNER_GEO!=='undefined')?OWNER_GEO[ownerId]:null;
   if(fixedGeo){
-    if(fixedGeo==='AU') return 'Jaydeep AU';
-    if(fixedGeo==='UK') return 'Jaydeep UK';
-    if(fixedGeo==='US') return 'Jaydeep US';
+    if(fixedGeo==='AU')return'Jaydeep AU';
+    if(fixedGeo==='UK')return'Jaydeep UK';
+    if(fixedGeo==='US')return'Jaydeep US';
   }
-
-  // Tier 3: Dynamic owners — OWNER_GEO is null (region:"geo" in registry:
-  // Chintan, Jaydeep Salla, Mrugesh, Matt Kelly, Mukund).
-  // Consult deal properties: NBD flag first, then geo__invoice_app_.
-  if((deal.user_role_invoice_app||'').toUpperCase()==='NBD') return 'Jaydeep NBD';
+  if((deal.user_role_invoice_app||'').toUpperCase()==='NBD')return'Jaydeep NBD';
   const dealGeo=(typeof resolveGeo!=='undefined')?resolveGeo((deal.geo__invoice_app_||'').trim()):null;
-  if(dealGeo==='AU') return 'Jaydeep AU';
-  if(dealGeo==='UK') return 'Jaydeep UK';
-  return 'Jaydeep US';
+  if(dealGeo==='AU')return'Jaydeep AU';
+  if(dealGeo==='UK')return'Jaydeep UK';
+  return'Jaydeep US';
 }
 
 function attributeDeals(deals){
   const seen=new Set();
   deals.forEach(d=>{
     const amt=d.amount||0;
-    // Zero excluded; negative-amount deals pass through and net against owner revenue
     if(amt===0){d._excl=true;return;}
-    const monthVal=d.invoice_booking_month;
-    const dupKey=`${d.dealname}|${amt}|${monthVal}`;
+    const dupKey=`${d.dealname}|${amt}|${d.invoice_booking_month}`;
     if(seen.has(dupKey)){d._excl=true;return;}
     seen.add(dupKey);
     const ownerId=String(d.hubspot_owner_id||'');
@@ -606,14 +521,12 @@ function attributeDeals(deals){
     d.head=(typeof OWNER_HEAD_MAP!=='undefined'?OWNER_HEAD_MAP[ownerId]:null)||(typeof headFromRegion!=='undefined'?headFromRegion(d.region,d.bu):null)||'';
     if(d.bu==='MarTech')d.martechBucket=resolveMartechBucket(d,ownerId);
     d._amt=amt;
-    d._owner=OWNER_NAMES[ownerId]||'Other'; // OWNER_NAMES populated by initRegistry() from registry-client.js
+    d._owner=(typeof OWNER_NAMES!=='undefined'?OWNER_NAMES[ownerId]:null)||'Other';
     d._excl=false;
   });
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   DATA BUILDERS
-═══════════════════════════════════════════════════════════════ */
+/* ── DATA BUILDERS ── */
 function emptyGroups(defs){const g={};defs.forEach(({key,label})=>{g[key]={label,owners:{},total:0};});return g;}
 
 function buildBUData(deals,liMap,groupDefs,buVal,keyFn){
@@ -626,66 +539,56 @@ function buildBUData(deals,liMap,groupDefs,buVal,keyFn){
     grp.total+=d._amt;
     (liMap[d.id]||[]).forEach(li=>{
       const liAmt=parseFloat(li.amount||0);if(!liAmt)return;
-      const{svc}=classifyLineItem(li.name||li.description||'')||{svc:null};
+      const cls=(typeof classifyLineItem!=='undefined')?classifyLineItem(li.name||li.description||''):null;
+      const svc=cls?.svc||null;
       if(svc&&Object.prototype.hasOwnProperty.call(svcs,svc))svcs[svc]+=liAmt;
     });
   });
   return{groups,svcs};
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   RENDER
-═══════════════════════════════════════════════════════════════ */
-/* ── consolidateGroups ───────────────────────────────────────────
-   Dynamic User Role owners (Chintan, Mukund, Jaydeep Salla, etc.)
-   can appear across multiple MarTech buckets depending on deal geo/role.
-   For the incentive view each owner must appear ONCE with their TOTAL
-   cumulative achievement across all buckets.
-   Algorithm:
-     1. Find every owner → sum their revenue per group
-     2. Pick their primary group (highest absolute revenue)
-     3. Place their TOTAL revenue in the primary group only
-     4. Recalculate group totals accordingly
-   Called by renderOwners only — renderOverall works at head level
-   so group subtotals there are already independent per head. ──── */
-function consolidateGroups(groups) {
-  // Step 1: map every owner → { groupKey: revenue }
-  const ownerMap = {};
-  for (const [gk, g] of Object.entries(groups)) {
-    for (const [owner, rev] of Object.entries(g.owners)) {
-      if (!ownerMap[owner]) ownerMap[owner] = {};
-      ownerMap[owner][gk] = (ownerMap[owner][gk] || 0) + rev;
+/* ── CONSOLIDATE ──
+   Owners appearing across multiple MarTech buckets (e.g. Chintan in UK + NBD)
+   are collapsed into one row under their primary bucket (highest revenue).
+   Called by renderOwners only. ── */
+function consolidateGroups(groups){
+  const ownerMap={};
+  for(const[gk,g]of Object.entries(groups)){
+    for(const[owner,rev]of Object.entries(g.owners)){
+      if(!ownerMap[owner])ownerMap[owner]={};
+      ownerMap[owner][gk]=(ownerMap[owner][gk]||0)+rev;
     }
   }
-
-  // Step 2: build clean consolidated groups
-  const out = {};
-  for (const [gk, g] of Object.entries(groups)) {
-    out[gk] = { label: g.label, owners: {}, total: 0 };
+  const out={};
+  for(const[gk,g]of Object.entries(groups))out[gk]={label:g.label,owners:{},total:0};
+  for(const[owner,groupRevs]of Object.entries(ownerMap)){
+    const totalRev=Object.values(groupRevs).reduce((s,r)=>s+r,0);
+    const primaryGk=Object.entries(groupRevs).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]))[0][0];
+    out[primaryGk].owners[owner]=totalRev;
+    out[primaryGk].total+=totalRev;
   }
-
-  for (const [owner, groupRevs] of Object.entries(ownerMap)) {
-    const totalRev = Object.values(groupRevs).reduce((s, r) => s + r, 0);
-    // Primary group = highest absolute revenue
-    const primaryGk = Object.entries(groupRevs)
-      .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0][0];
-    out[primaryGk].owners[owner] = totalRev;
-    out[primaryGk].total += totalRev;
-  }
-
   return out;
 }
 
+/* ── RENDER ──
+   Strike rate is SYMMETRIC: numerator and denominator both use only
+   the same set of tracked owners (those with a target > 0).
+   Full group revenue always shows in the Achieved column.
+   This prevents inflated percentages when only some owners have targets. ── */
+
 function renderOverall(targetId,groups,defs,vis,T){
   T=T||{};
-  let grandRev=0,grandTgt=0,rows='';
+  let grandRev=0,grandTgt=0,grandAchTracked=0,rows='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
     const g=groups[key];grandRev+=g.total;
-    // Head target = sum of individual owner targets in this group
-    const headTgt=Object.keys(g.owners).reduce((s,n)=>s+(T[n]||0),0);
-    grandTgt+=headTgt;
-    const sr=headTgt>0?Math.round((g.total/headTgt)*100):null;
+    let headTgt=0,headAchTracked=0;
+    Object.entries(g.owners).forEach(([n,r])=>{
+      const tgt=T[n]||0;
+      if(tgt>0){headTgt+=tgt;headAchTracked+=r;}
+    });
+    grandTgt+=headTgt;grandAchTracked+=headAchTracked;
+    const sr=headTgt>0?Math.round((headAchTracked/headTgt)*100):null;
     rows+=`<tr>
       <td>${label}</td>
       <td class="rev-cell">${headTgt>0?fm(headTgt):'—'}</td>
@@ -694,7 +597,7 @@ function renderOverall(targetId,groups,defs,vis,T){
       <td style="padding:6px 14px;text-align:center">${statusBadge(sr)}</td>
     </tr>`;
   });
-  const grandSR=grandTgt>0?Math.round((grandRev/grandTgt)*100):null;
+  const grandSR=grandTgt>0?Math.round((grandAchTracked/grandTgt)*100):null;
   rows+=`<tr class="grand-row">
     <td>Grand Total</td>
     <td class="rev-cell">${grandTgt>0?fm(grandTgt):'—'}</td>
@@ -712,17 +615,16 @@ function renderOverall(targetId,groups,defs,vis,T){
 
 function renderOwners(targetId,groups,defs,vis,T){
   T=T||{};
-  // Collapse multi-bucket owners into one row with cumulative achievement
   groups=consolidateGroups(groups);
-  let grandRev=0,grandTgt=0,tbody='';
+  let grandRev=0,grandTgt=0,grandAchTracked=0,tbody='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
     const g=groups[key];grandRev+=g.total;
-    let groupTgt=0;
+    let groupTgt=0,groupAchTracked=0;
     tbody+=`<tr class="grp-hdr"><td colspan="6">${label}</td></tr>`;
     Object.entries(g.owners).sort((a,b)=>b[1]-a[1]).forEach(([n,r])=>{
       const tgt=T[n]||0;
-      groupTgt+=tgt;
+      if(tgt>0){groupTgt+=tgt;groupAchTracked+=r;}
       const sr=tgt>0?Math.round((r/tgt)*100):null;
       tbody+=`<tr>
         <td></td>
@@ -733,8 +635,8 @@ function renderOwners(targetId,groups,defs,vis,T){
         <td style="padding:6px 14px;text-align:center">${statusBadge(sr)}</td>
       </tr>`;
     });
-    grandTgt+=groupTgt;
-    const groupSR=groupTgt>0?Math.round((g.total/groupTgt)*100):null;
+    grandTgt+=groupTgt;grandAchTracked+=groupAchTracked;
+    const groupSR=groupTgt>0?Math.round((groupAchTracked/groupTgt)*100):null;
     tbody+=`<tr class="sub-row">
       <td></td><td class="sub-lbl">Subtotal</td>
       <td class="rev-cell">${groupTgt>0?fm(groupTgt):'—'}</td>
@@ -743,7 +645,7 @@ function renderOwners(targetId,groups,defs,vis,T){
       <td style="padding:4px 14px;text-align:center">${statusBadge(groupSR)}</td>
     </tr>`;
   });
-  const grandSR=grandTgt>0?Math.round((grandRev/grandTgt)*100):null;
+  const grandSR=grandTgt>0?Math.round((grandAchTracked/grandTgt)*100):null;
   tbody+=`<tr class="grand-row">
     <td colspan="2">Grand Total</td>
     <td class="rev-cell">${grandTgt>0?fm(grandTgt):'—'}</td>
@@ -779,9 +681,7 @@ function renderAll(digitalData,martechData,T){
   renderService('mt-service-view', martechData.svcs);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   SYNC
-═══════════════════════════════════════════════════════════════ */
+/* ── SYNC ── */
 let isSyncing=false;
 async function doSync(initial){
   if(isSyncing)return;isSyncing=true;
@@ -794,7 +694,6 @@ async function doSync(initial){
     const deals=await fetchDeals(month);
     attributeDeals(deals);
     const validIds=deals.filter(d=>!d._excl).map(d=>d.id);
-    // Fetch line items and targets in parallel — independent data sources
     const[liMap,targets]=await Promise.all([
       validIds.length?fetchLineItems(validIds):Promise.resolve({}),
       fetchTargets(month)
@@ -820,9 +719,7 @@ async function doSync(initial){
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   BOOT
-═══════════════════════════════════════════════════════════════ */
+/* ── BOOT ── */
 document.addEventListener('DOMContentLoaded',async()=>{
   bootCloneMode();
   initMonthNav();
