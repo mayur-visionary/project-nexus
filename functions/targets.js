@@ -4,15 +4,14 @@
 // Returns { "Owner Full Name": targetAmount, ... }
 //
 // Sheet ID : 1izx69_aKBF0rRgrXzDwXedPGqR8sCtt4BHLpX8_r2fA
-// Tab      : Target VS achievement||FY 26-27  ← verify exact tab name in Sheets if 502
+// Tab      : Target VS achievement||FY 26-27
 // Auth     : GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY
 //            (same env vars as funnel-sheet.js — no new secrets needed)
 //
 // Column layout (0-indexed):
 //   0: BU label   1: Team Head   2: Salesperson
-//   3: Apr target  4: Apr achieved  5: Apr %
-//   6: May target  7: May achieved  8: May %
-//   ...target col = 3 + (monthIdx × 3), where April = 0
+//   3: Apr target  6: May target  9: Jun target ...
+//   formula: target col = 3 + (monthIdx × 3), April = idx 0
 
 const SHEET_ID  = "1izx69_aKBF0rRgrXzDwXedPGqR8sCtt4BHLpX8_r2fA";
 const TAB       = "Target VS achievement||FY 26-27";
@@ -21,35 +20,31 @@ const FY_MONTHS = ["april","may","june","july","august","september",
 
 // Sheet salesperson name (lowercase) → registry canonical full name
 // null = skip (dynamic User Role, historical, or not in registry)
-// Source: registry-client.js REGISTRY_FALLBACK + MD's scope clarification (Session 41)
-// NAME_MAP updated to full names — team updated the sheet (Session 41, Nov 2026)
-// Key  = salesperson name as it appears in the sheet, lowercased
-// Value = registry canonical name (OWNER_NAMES key), or null to skip
 const NAME_MAP = {
-  // ── Digital US (Tanuj US) ──────────────────────────────────────────────────
+  // ── Digital US ────────────────────────────────────────────────────────────
   "kaustubh agrawal" : "Kaustubh Agrawal",
   "sourya ghosh"     : "Sourya Ghosh",
   "baspin thomas"    : "Baspin Thomas",
-  "jebin"            : "Jebin Joy",        // still short name in sheet
+  "jebin"            : "Jebin Joy",
   "dhaval damania"   : "Dhaval Damania",
-  "sudarshan"        : "Sudarshan Damani", // still short name in sheet
+  "sudarshan"        : "Sudarshan Damani",
   "hammad bhaldar"   : "Hammad Bhaldar",
-  // ── Digital UK (Tanuj UK) ──────────────────────────────────────────────────
+  // ── Digital UK ────────────────────────────────────────────────────────────
   "kalgi shah"       : "Kalgi Shah",
   "vikram sahi"      : "Vikram Sahi",
   "flintoff mehta"   : "Flintoff Mehta",
-  // ── Digital AU (Jiggyasa) ─────────────────────────────────────────────────
+  // ── Digital AU (Jiggyasa) ────────────────────────────────────────────────
   "prachi porwal"    : "Prachi Porwal",
   "saquib khan"      : "Saquib Khan",
   "jiggyasa agrawal" : "Jiggyasa Agrawal",
   "manvi choumal"    : "Manvi Choumal",
   "kunal gohil"      : "Kunal Gohil",
-  // ── Digital NBD (Nevilson — trackable per MD) ─────────────────────────────
+  // ── Digital NBD ───────────────────────────────────────────────────────────
   "malav modi"       : "Malav Modi",
   "dhruti dave"      : "Dhruti Dave",
-  "devanshu"         : "Devanshu Kumar",   // still short name in sheet
-  "aman"             : "Aman Acharya",     // still short name in sheet
-  // ── MarTech AM — fixed-region owners ──────────────────────────────────────
+  "devanshu"         : "Devanshu Kumar",
+  "aman"             : "Aman Acharya",
+  // ── MarTech AM ────────────────────────────────────────────────────────────
   "preeti thapliyal" : "Preeti Thapliyal",
   "rupali sindhu"    : "Rupali Sindhu",
   "vinita raidu"     : "Vinita Raidu",
@@ -59,50 +54,44 @@ const NAME_MAP = {
   "divya s"          : "Divya S",
   // ── MarTech NBD ───────────────────────────────────────────────────────────
   "kamesh biniwale"  : "Kamesh Biniwale",
-  // ── Skip: dynamic User Role (no target differentiation per MD) ────────────
-  "tanuj gupta"      : null,
-  "sheldon"          : null,              // historical=true in registry
+  // ── Fixed group assignments for Achievement Desk (per MD, Nov 2026) ─────────
+  "tanuj gupta"      : "Tanuj Gupta",    // Tanuj US
+  "karan doshi"      : "Karan Doshi",    // Jaydeep AU
+  "mukund basita"    : "Mukund Basita",  // Jaydeep NBD
+  "chintan doshi"    : "Chintan Doshi",  // Jaydeep UK
+  "jaydeep"          : "Jaydeep Salla",  // Jaydeep UK (still short name in sheet)
+  // ── Skip (historical / not in registry) ───────────────────────────────────
+  "sheldon"          : null,
   "darshan modi"     : null,
-  "karan doshi"      : null,              // User Role, dynamic
-  "mukund basita"    : null,              // User Role, dynamic
-  "chintan doshi"    : null,              // User Role, dynamic
-  "jaydeep"          : null,              // User Role, dynamic (still short in sheet)
   "matt kelly"       : null,
   "matt"             : null,
-  "nevilson christian": null,             // head, not an owner revenue line
-  "shradha shah"     : null,              // not in registry
-  "gaurav"           : null,              // not in registry
-  "ajeet dhale"      : null,              // not in registry
+  "nevilson christian": null,
+  "shradha shah"     : null,
+  "gaurav"           : null,
+  "ajeet dhale"      : null,
 };
 
-// ── Column index ──────────────────────────────────────────────────────────────
 function targetColIdx(monthStr) {
   const name = (monthStr || "").split("-")[0].toLowerCase();
   const idx  = FY_MONTHS.indexOf(name);
   return idx < 0 ? -1 : 3 + idx * 3;
 }
 
-// ── Row parser ────────────────────────────────────────────────────────────────
-// Accumulates targets per canonical owner name.
-// Owners appearing in multiple sheet sections (e.g. Dhruti in AU NBD + Digital)
-// are summed — matching how Achievement Desk rolls up all their deals.
 function parseTargets(rows, colIdx) {
   const out = {};
   for (const row of rows) {
     const person = (row[2] || "").trim();
     if (!person) continue;
     const pLow = person.toLowerCase();
-    // Skip header, total, and section-label rows
     if (pLow === "salesperson" || pLow.startsWith("total") || pLow === "nbd") continue;
     const canonical = NAME_MAP[pLow];
-    if (!canonical) continue;             // null or undefined → skip
+    if (!canonical) continue;
     const val = parseFloat(row[colIdx]) || 0;
     if (val > 0) out[canonical] = (out[canonical] || 0) + val;
   }
   return out;
 }
 
-// ── Handler ───────────────────────────────────────────────────────────────────
 export async function onRequestGet(context) {
   try {
     const url   = new URL(context.request.url);
@@ -133,7 +122,7 @@ function resp(body, status) {
     status,
     headers: {
       "Content-Type"  : "application/json",
-      "Cache-Control" : "max-age=1800"   // 30 min cache — targets don't change intraday
+      "Cache-Control" : "no-store"  // never cache — stale empty responses were breaking targets
     }
   });
 }
