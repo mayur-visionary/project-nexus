@@ -50,7 +50,7 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 .sdot{width:7px;height:7px;border-radius:50%;background:#C0C0C0;flex-shrink:0;transition:background .4s}
 .stxt{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px}
 .last-sync{font-size:9px;color:rgba(255,255,255,.45);font-weight:500}
-.month-badge{display:inline-flex;align-items:center;background:#5c4200;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:6px;min-width:140px;justify-content:center}
+.month-badge{display:inline-flex;align-items:center;background:#5c4200;color:#FFDA30;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:20px;min-width:140px;justify-content:center}
 .nav-arrow{padding:5px 9px;border-radius:6px;border:1px solid rgba(255,218,48,.3);background:rgba(255,218,48,.08);color:#FFDA30;font-size:13px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;line-height:1}
 .nav-arrow:hover{background:rgba(255,218,48,.18);border-color:rgba(255,218,48,.55)}
 .nav-arrow:disabled{opacity:.3;cursor:not-allowed}
@@ -136,6 +136,13 @@ body{font-family:'Montserrat',-apple-system,sans-serif;background:#F2FEDC;color:
 
 /* Loading state — Funnel Desk state-msg */
 .ph{text-align:center;padding:60px 20px;color:#9A9A9A;font-weight:600;font-size:11px}
+
+/* ── Status badges — Achievement Desk ── */
+.status-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.status-exceeded{background:#0CCE6B;color:#0a3d1f}  /* ≥100% */
+.status-on-track{background:#FFDA30;color:#473400}  /*  ≥90% */
+.status-behind  {background:#E87B00;color:#fff}     /* ≥70%  */
+.status-at-risk {background:#CC0033;color:#fff}     /*  <70% */
 
 /* ── Footer ── */
 .footer{text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #E2E2E2;font-size:10px;font-weight:800;color:#434343;letter-spacing:.12em;text-transform:uppercase}
@@ -524,6 +531,32 @@ async function fetchLineItems(dealIds){
 ═══════════════════════════════════════════════════════════════ */
 // classifyLineItem() is provided by registry-client.js — single source of truth
 
+/* ── Status helper ── */
+function getStatus(pct){
+  if(pct>=100) return{label:'Exceeded',cls:'status-exceeded'};
+  if(pct>=90)  return{label:'On Track',cls:'status-on-track'};
+  if(pct>=70)  return{label:'Behind',  cls:'status-behind'  };
+  return        {label:'At Risk', cls:'status-at-risk' };
+}
+function statusBadge(pct){
+  if(pct===null)return'—';
+  const s=getStatus(pct);
+  return`<span class="status-badge ${s.cls}">${s.label}</span>`;
+}
+
+/* ── Targets fetch ── */
+async function fetchTargets(month){
+  try{
+    const res=await fetch(`/targets?month=${encodeURIComponent(month)}`);
+    if(!res.ok)return{};
+    const data=await res.json();
+    return data.error?{}:data;
+  }catch(e){
+    console.warn('[Achievement Desk] /targets failed:',e.message);
+    return{};
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    ATTRIBUTION
 ═══════════════════════════════════════════════════════════════ */
@@ -603,34 +636,85 @@ function buildBUData(deals,liMap,groupDefs,buVal,keyFn){
 /* ═══════════════════════════════════════════════════════════════
    RENDER
 ═══════════════════════════════════════════════════════════════ */
-function renderOverall(targetId,groups,defs,vis){
-  let grand=0,rows='';
+function renderOverall(targetId,groups,defs,vis,T){
+  T=T||{};
+  let grandRev=0,grandTgt=0,rows='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
-    const g=groups[key];grand+=g.total;
-    rows+=`<tr><td>${label}</td><td class="rev-cell${nc(g.total)}">${fm(g.total)}</td></tr>`;
+    const g=groups[key];grandRev+=g.total;
+    // Head target = sum of individual owner targets in this group
+    const headTgt=Object.keys(g.owners).reduce((s,n)=>s+(T[n]||0),0);
+    grandTgt+=headTgt;
+    const sr=headTgt>0?Math.round((g.total/headTgt)*100):null;
+    rows+=`<tr>
+      <td>${label}</td>
+      <td class="rev-cell">${headTgt>0?fm(headTgt):'—'}</td>
+      <td class="rev-cell${nc(g.total)}">${fm(g.total)}</td>
+      <td class="rev-cell">${sr!==null?sr+'%':'—'}</td>
+      <td style="padding:6px 14px;text-align:center">${statusBadge(sr)}</td>
+    </tr>`;
   });
-  rows+=`<tr class="grand-row"><td>Grand Total</td><td class="rev-cell">${fm(grand)}</td></tr>`;
+  const grandSR=grandTgt>0?Math.round((grandRev/grandTgt)*100):null;
+  rows+=`<tr class="grand-row">
+    <td>Grand Total</td>
+    <td class="rev-cell">${grandTgt>0?fm(grandTgt):'—'}</td>
+    <td class="rev-cell">${fm(grandRev)}</td>
+    <td class="rev-cell">${grandSR!==null?grandSR+'%':'—'}</td>
+    <td style="padding:6px 14px;text-align:center">${statusBadge(grandSR)}</td>
+  </tr>`;
   $(targetId).innerHTML=`<table class="ach-table">
-    <thead><tr><th>Head</th><th class="rev-th">Revenue</th></tr></thead>
-    <tbody>${rows}</tbody></table>`;
+    <thead><tr>
+      <th>Head</th><th class="rev-th">Target</th>
+      <th class="rev-th">Achieved</th><th class="rev-th">Strike Rate</th>
+      <th style="text-align:center">Status</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function renderOwners(targetId,groups,defs,vis){
-  let grand=0,tbody='';
+function renderOwners(targetId,groups,defs,vis,T){
+  T=T||{};
+  let grandRev=0,grandTgt=0,tbody='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
-    const g=groups[key];grand+=g.total;
-    tbody+=`<tr class="grp-hdr"><td colspan="3">${label}</td></tr>`;
+    const g=groups[key];grandRev+=g.total;
+    let groupTgt=0;
+    tbody+=`<tr class="grp-hdr"><td colspan="6">${label}</td></tr>`;
     Object.entries(g.owners).sort((a,b)=>b[1]-a[1]).forEach(([n,r])=>{
-      tbody+=`<tr><td></td><td class="owner-cell">${n}</td><td class="rev-cell${nc(r)}">${fm(r)}</td></tr>`;
+      const tgt=T[n]||0;
+      groupTgt+=tgt;
+      const sr=tgt>0?Math.round((r/tgt)*100):null;
+      tbody+=`<tr>
+        <td></td>
+        <td class="owner-cell">${n}</td>
+        <td class="rev-cell">${tgt>0?fm(tgt):'—'}</td>
+        <td class="rev-cell${nc(r)}">${fm(r)}</td>
+        <td class="rev-cell">${sr!==null?sr+'%':'—'}</td>
+        <td style="padding:6px 14px;text-align:center">${statusBadge(sr)}</td>
+      </tr>`;
     });
-    tbody+=`<tr class="sub-row"><td></td><td class="sub-lbl">Subtotal</td><td class="rev-cell${nc(g.total)}">${fm(g.total)}</td></tr>`;
+    grandTgt+=groupTgt;
+    const groupSR=groupTgt>0?Math.round((g.total/groupTgt)*100):null;
+    tbody+=`<tr class="sub-row">
+      <td></td><td class="sub-lbl">Subtotal</td>
+      <td class="rev-cell">${groupTgt>0?fm(groupTgt):'—'}</td>
+      <td class="rev-cell${nc(g.total)}">${fm(g.total)}</td>
+      <td class="rev-cell">${groupSR!==null?groupSR+'%':'—'}</td>
+      <td style="padding:4px 14px;text-align:center">${statusBadge(groupSR)}</td>
+    </tr>`;
   });
-  tbody+=`<tr class="grand-row"><td colspan="2">Grand Total</td><td class="rev-cell">${fm(grand)}</td></tr>`;
+  const grandSR=grandTgt>0?Math.round((grandRev/grandTgt)*100):null;
+  tbody+=`<tr class="grand-row">
+    <td colspan="2">Grand Total</td>
+    <td class="rev-cell">${grandTgt>0?fm(grandTgt):'—'}</td>
+    <td class="rev-cell">${fm(grandRev)}</td>
+    <td class="rev-cell">${grandSR!==null?grandSR+'%':'—'}</td>
+    <td style="padding:6px 14px;text-align:center">${statusBadge(grandSR)}</td>
+  </tr>`;
   $(targetId).innerHTML=`<table class="ach-table">
-    <thead><tr><th>Head</th><th>Owner</th><th class="rev-th">Revenue</th></tr></thead>
-    <tbody>${tbody}</tbody></table>`;
+    <thead><tr>
+      <th style="width:140px">Head</th><th>Owner</th>
+      <th class="rev-th">Target</th><th class="rev-th">Achieved</th>
+      <th class="rev-th">Strike Rate</th><th style="text-align:center">Status</th>
+    </tr></thead><tbody>${tbody}</tbody></table>`;
 }
 
 function renderService(targetId,svcs){
@@ -643,17 +727,14 @@ function renderService(targetId,svcs){
     <tbody>${rows}</tbody></table>`;
 }
 
-function renderAll(digitalData,martechData){
+function renderAll(digitalData,martechData,T){
   const dVis=visKeys('digital'),mVis=visKeys('martech');
-  // Overall tab
-  renderOverall('ov-digital-view',digitalData.groups,DIGITAL_GROUPS,dVis);
-  renderOverall('ov-martech-view',martechData.groups,MARTECH_GROUPS,mVis);
-  // Digital BU tab
-  renderOwners('dig-owners-view',digitalData.groups,DIGITAL_GROUPS,dVis);
+  renderOverall('ov-digital-view',digitalData.groups,DIGITAL_GROUPS,dVis,T);
+  renderOverall('ov-martech-view',martechData.groups,MARTECH_GROUPS,mVis,T);
+  renderOwners('dig-owners-view', digitalData.groups,DIGITAL_GROUPS,dVis,T);
   renderService('dig-service-view',digitalData.svcs);
-  // MarTech BU tab
-  renderOwners('mt-owners-view',martechData.groups,MARTECH_GROUPS,mVis);
-  renderService('mt-service-view',martechData.svcs);
+  renderOwners('mt-owners-view',  martechData.groups,MARTECH_GROUPS,mVis,T);
+  renderService('mt-service-view', martechData.svcs);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -671,10 +752,14 @@ async function doSync(initial){
     const deals=await fetchDeals(month);
     attributeDeals(deals);
     const validIds=deals.filter(d=>!d._excl).map(d=>d.id);
-    const liMap=validIds.length?await fetchLineItems(validIds):{};
+    // Fetch line items and targets in parallel — independent data sources
+    const[liMap,targets]=await Promise.all([
+      validIds.length?fetchLineItems(validIds):Promise.resolve({}),
+      fetchTargets(month)
+    ]);
     const digitalData=buildBUData(deals,liMap,DIGITAL_GROUPS,'Digital',d=>d.head);
     const martechData=buildBUData(deals,liMap,MARTECH_GROUPS,'MarTech',d=>d.martechBucket);
-    renderAll(digitalData,martechData);
+    renderAll(digitalData,martechData,targets);
     $('main-content').style.display='block';
     $('sdot').style.background='#0CCE6B';
     const validCount=deals.filter(d=>!d._excl).length;
