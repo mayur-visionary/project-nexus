@@ -636,6 +636,46 @@ function buildBUData(deals,liMap,groupDefs,buVal,keyFn){
 /* ═══════════════════════════════════════════════════════════════
    RENDER
 ═══════════════════════════════════════════════════════════════ */
+/* ── consolidateGroups ───────────────────────────────────────────
+   Dynamic User Role owners (Chintan, Mukund, Jaydeep Salla, etc.)
+   can appear across multiple MarTech buckets depending on deal geo/role.
+   For the incentive view each owner must appear ONCE with their TOTAL
+   cumulative achievement across all buckets.
+   Algorithm:
+     1. Find every owner → sum their revenue per group
+     2. Pick their primary group (highest absolute revenue)
+     3. Place their TOTAL revenue in the primary group only
+     4. Recalculate group totals accordingly
+   Called by renderOwners only — renderOverall works at head level
+   so group subtotals there are already independent per head. ──── */
+function consolidateGroups(groups) {
+  // Step 1: map every owner → { groupKey: revenue }
+  const ownerMap = {};
+  for (const [gk, g] of Object.entries(groups)) {
+    for (const [owner, rev] of Object.entries(g.owners)) {
+      if (!ownerMap[owner]) ownerMap[owner] = {};
+      ownerMap[owner][gk] = (ownerMap[owner][gk] || 0) + rev;
+    }
+  }
+
+  // Step 2: build clean consolidated groups
+  const out = {};
+  for (const [gk, g] of Object.entries(groups)) {
+    out[gk] = { label: g.label, owners: {}, total: 0 };
+  }
+
+  for (const [owner, groupRevs] of Object.entries(ownerMap)) {
+    const totalRev = Object.values(groupRevs).reduce((s, r) => s + r, 0);
+    // Primary group = highest absolute revenue
+    const primaryGk = Object.entries(groupRevs)
+      .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0][0];
+    out[primaryGk].owners[owner] = totalRev;
+    out[primaryGk].total += totalRev;
+  }
+
+  return out;
+}
+
 function renderOverall(targetId,groups,defs,vis,T){
   T=T||{};
   let grandRev=0,grandTgt=0,rows='';
@@ -672,6 +712,8 @@ function renderOverall(targetId,groups,defs,vis,T){
 
 function renderOwners(targetId,groups,defs,vis,T){
   T=T||{};
+  // Collapse multi-bucket owners into one row with cumulative achievement
+  groups=consolidateGroups(groups);
   let grandRev=0,grandTgt=0,tbody='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
