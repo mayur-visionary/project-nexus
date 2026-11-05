@@ -1081,9 +1081,45 @@ function computeEL(prevMap, curMap, bkt) {
       lostPTEs.push(pPTE);
     });
 
+    // ── Step 1b: Service-level talent replacement pass ──
+    // If a lost FTE's service matches an unmatched cur FTE's service, the engagement
+    // slot is retained via talent substitution — no EL fires for that slot.
+    // Insider Inc (Annam→Aswini) and Lingo US Inc (Sudhir→Saqib) are both handled here.
+    // Same logic for lost PTEs vs unmatched cur PTEs.
+    // Service-replaced entries are also excluded from netting in Step 2.
+    const unMatchedCurFTEIdxPool = new Set(curFTEs.map((_,i) => i).filter(i => !matchedCurFTE.has(i)));
+    const unMatchedCurPTEIdxPool = new Set(curPTEs.map((_,i) => i).filter(i => !matchedCurPTE.has(i)));
+    const replacedLostFTEIdx = new Set();
+    const replacedLostPTEIdx = new Set();
+
+    lostFTEs.forEach((pFTE, li) => {
+      const svc = pFTE.liService || "";
+      if (!svc) return;
+      for (const ci of unMatchedCurFTEIdxPool) {
+        if ((curFTEs[ci].liService || "") === svc) {
+          replacedLostFTEIdx.add(li);
+          unMatchedCurFTEIdxPool.delete(ci);
+          break;
+        }
+      }
+    });
+
+    lostPTEs.forEach((pPTE, li) => {
+      const svc = pPTE.liService || "";
+      if (!svc) return;
+      for (const ci of unMatchedCurPTEIdxPool) {
+        if ((curPTEs[ci].liService || "") === svc) {
+          replacedLostPTEIdx.add(li);
+          unMatchedCurPTEIdxPool.delete(ci);
+          break;
+        }
+      }
+    });
+
     // ── Step 2: Client-level netting ──
     // A downgraded FTE absorbs a lost PTE only when the downgraded talent's new PTE
     // service matches the lost PTE's service (same role substitution).
+    // Service-replaced PTEs (Step 1b) are excluded from netting.
     const absorbedLostPTEIdx = new Set();
     const nettedFTEs = [];          // → 1 FTE lost at prev FTE rate
     const unmatchedDowngrades = []; // → 0.5 FTE→PTE delta
@@ -1091,7 +1127,7 @@ function computeEL(prevMap, curMap, bkt) {
     downgradedFTEs.forEach(({prev:pFTE, cur:cPTE}) => {
       const cService = cPTE.liService || "";
       const idx = lostPTEs.findIndex((pPTE, i) =>
-        !absorbedLostPTEIdx.has(i) && (pPTE.liService || "") === cService
+        !absorbedLostPTEIdx.has(i) && !replacedLostPTEIdx.has(i) && (pPTE.liService || "") === cService
       );
       if (idx !== -1) { absorbedLostPTEIdx.add(idx); nettedFTEs.push(pFTE); }
       else { unmatchedDowngrades.push({prev:pFTE, cur:cPTE}); }
@@ -1109,8 +1145,9 @@ function computeEL(prevMap, curMap, bkt) {
       managedSlots.push({label:pFTE.talentName, company:displayName, amount:a, count:c, dealId, engType:"FTE", isSlotRow:true, slotLabel:"1 FTE Lost"});
     });
 
-    // Fully lost FTEs: 1 FTE lost at prev FTE actual amount
-    lostFTEs.forEach(pFTE => {
+    // Fully lost FTEs (not service-replaced in Step 1b): 1 FTE lost at prev FTE actual amount
+    lostFTEs.forEach((pFTE, i) => {
+      if (replacedLostFTEIdx.has(i)) return;
       const c = 1, a = pFTE.amt;
       row.elCount[rowKey].managed += c; row.elAmt[rowKey].managed += a;
       managedTotalCount += c; managedTotalAmt += a;
@@ -1127,9 +1164,10 @@ function computeEL(prevMap, curMap, bkt) {
       managedSlots.push({label:pFTE.talentName, company:displayName, amount:a, count:c, dealId, engType:"FTE→PTE", isSlotRow:true, slotLabel:"0.5 FTE→PTE"});
     });
 
-    // Lost PTEs not absorbed by netting: 0.5 at prev PTE actual amount
+    // Lost PTEs not absorbed by netting or service replacement: 0.5 at prev PTE actual amount
     lostPTEs.forEach((pPTE, i) => {
       if (absorbedLostPTEIdx.has(i)) return;
+      if (replacedLostPTEIdx.has(i)) return;
       const c = 0.5, a = pPTE.amt;
       row.elCount[rowKey].managed += c; row.elAmt[rowKey].managed += a;
       managedTotalCount += c; managedTotalAmt += a;
