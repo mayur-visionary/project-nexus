@@ -696,6 +696,24 @@ function amtWithin2pct(a, b) {
   return ref > 0 && (Math.abs(a - b) / ref) <= 0.02;
 }
 
+// ── Session 43: Managed EL helpers ──
+// extractLIService: strips "Dedicated FTE/PTE - " prefix → canonical service string
+// Used for netting role-match check (FTE downgrade absorbs same-service lost PTE only)
+function extractLIService(liName) {
+  return (liName || "").replace(/^dedicated\s+(fte|pte)\s*[-–]\s*/i, "").trim().toLowerCase();
+}
+// talentNamesMatch: containment-based name match — handles "Harsh" vs "Harsh Patel"
+function talentNamesMatch(normA, normB) {
+  if (!normA || !normB) return false;
+  if (normA === normB) return true;
+  const tokA = normA.split(" ").filter(Boolean);
+  const tokB = normB.split(" ").filter(Boolean);
+  if (!tokA.length || !tokB.length) return false;
+  const smaller = tokA.length <= tokB.length ? tokA : tokB;
+  const larger  = new Set(tokA.length <= tokB.length ? tokB : tokA);
+  return smaller.every(t => larger.has(t));
+}
+
 // ── Formatting ──
 function fmtUSD(v) {
   if (!v && v !== 0) return "—";
@@ -940,19 +958,19 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
       const amt = Math.abs(li.amount) * scale;
 
       if (isFTE) {
-        const key = `FTE|${zBid}`;
-        if (!map.has(key)) map.set(key, {fteCount:0, fteAmt:0, slotType:"FTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid, slots:[]});
-        const fe = map.get(key);
-        fe.fteCount += 1;
-        fe.fteAmt   += amt;
-        fe.slots.push({talentName: extractLabel(li.name, li.description || "", displayName), amt});
+        // SESSION 43: one entry per talent per client — accumulates amount across weekly LIs
+        const talentName = extractLabel(li.name, li.description || "", displayName);
+        const normTalent = tokenizeProjectName(talentName).join(" ");
+        const key = `FTE|${normTalent || displayName.toLowerCase()}|${zBid}`;
+        if (!map.has(key)) map.set(key, {amt:0, slotType:"FTE", bucketKey, rowKey, displayName, talentName, normTalent, liService:extractLIService(li.name), dealId:deal.id, zBid});
+        map.get(key).amt += amt;
       } else if (isPTE) {
-        const key = `PTE|${zBid}`;
-        if (!map.has(key)) map.set(key, {pteCount:0, pteAmt:0, slotType:"PTE", bucketKey, rowKey, displayName, dealId:deal.id, zBid, slots:[]});
-        const pe = map.get(key);
-        pe.pteCount += 1;
-        pe.pteAmt   += amt;
-        pe.slots.push({talentName: extractLabel(li.name, li.description || "", displayName), amt});
+        // SESSION 43: one entry per talent per client — accumulates amount across weekly LIs
+        const talentName = extractLabel(li.name, li.description || "", displayName);
+        const normTalent = tokenizeProjectName(talentName).join(" ");
+        const key = `PTE|${normTalent || displayName.toLowerCase()}|${zBid}`;
+        if (!map.has(key)) map.set(key, {amt:0, slotType:"PTE", bucketKey, rowKey, displayName, talentName, normTalent, liService:extractLIService(li.name), dealId:deal.id, zBid});
+        map.get(key).amt += amt;
       } else {
         // Session 40: Option B — only project_type="Old" enters prevMap
         if (isPrevMap && (li.project_type || "").toLowerCase() !== "old") return;
@@ -975,90 +993,127 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
 
 // ── Compute Engagement Lost ──
 function computeEL(prevMap, curMap, bkt) {
-  // ── Managed (FTE/PTE slots per client) ──
+  // ── Managed — talent-level diff per client (Session 43 redesign) ──
+  // Rules:
+  //   FTE→FTE, PTE→PTE, PTE→FTE(upgrade): retained — no EL
+  //   FTE absent:               1 FTE lost  · prev FTE actual amount
+  //   PTE absent:               0.5 PTE lost · prev PTE actual amount
+  //   FTE→PTE (downgrade):      check netting first (see below)
+  //     Netting: if the downgraded talent's new PTE service === an absent PTE's service
+  //              → 1 FTE lost at prev FTE amount (role absorbed); absent PTE consumed
+  //     No netting: 0.5 FTE→PTE lost · delta (prev FTE amt − cur PTE amt), only if > 0
+  //                 + absent PTE fires independently as 0.5 PTE lost
   const zBids = new Set();
-  prevMap.forEach(v => { if (v.zBid) zBids.add(v.zBid); });
+  prevMap.forEach(v => { if (v.zBid && (v.slotType === "FTE" || v.slotType === "PTE")) zBids.add(v.zBid); });
 
   zBids.forEach(zBid => {
-    const prevFTEe = prevMap.get(`FTE|${zBid}`);
-    const prevPTEe = prevMap.get(`PTE|${zBid}`);
-    const curFTEe  = curMap.get(`FTE|${zBid}`);
-    const curPTEe  = curMap.get(`PTE|${zBid}`);
+    // Collect all prev and cur FTE/PTE entries for this client
+    const prevFTEs = [], prevPTEs = [], curFTEs = [], curPTEs = [];
+    prevMap.forEach(v => {
+      if (v.zBid !== zBid) return;
+      if (v.slotType === "FTE") prevFTEs.push(v);
+      else if (v.slotType === "PTE") prevPTEs.push(v);
+    });
+    curMap.forEach(v => {
+      if (v.zBid !== zBid) return;
+      if (v.slotType === "FTE") curFTEs.push(v);
+      else if (v.slotType === "PTE") curPTEs.push(v);
+    });
 
-    const entry = prevFTEe || prevPTEe;
-    if (!entry) return;
-    const {bucketKey, rowKey, displayName, dealId} = entry;
+    const refEntry = prevFTEs[0] || prevPTEs[0];
+    if (!refEntry) return;
+    const {bucketKey, rowKey, displayName, dealId} = refEntry;
     const row = bkt[bucketKey];
     if (!row) return;
 
-    const prevFTE = prevFTEe ? prevFTEe.fteCount : 0;
-    const prevPTE = prevPTEe ? prevPTEe.pteCount : 0;
-    const curFTE  = curFTEe  ? curFTEe.fteCount  : 0;
-    const curPTE  = curPTEe  ? curPTEe.pteCount  : 0;
+    // ── Step 1: Talent-level diff ──
+    const matchedCurFTE = new Set();
+    const matchedCurPTE = new Set();
+    const downgradedFTEs = []; // FTE→PTE: {prev, cur}
+    const lostFTEs = [];       // FTE→absent
 
-    const avgPrevFTE = prevFTE > 0 ? prevFTEe.fteAmt / prevFTE : 0;
-    const avgPrevPTE = prevPTE > 0 ? prevPTEe.pteAmt / prevPTE : 0;
-    const avgCurPTE  = curPTE  > 0 ? curPTEe.pteAmt  / curPTE  : 0;
+    prevFTEs.forEach(pFTE => {
+      // FTE→FTE retained?
+      const fi = curFTEs.findIndex((c, i) => !matchedCurFTE.has(i) && talentNamesMatch(pFTE.normTalent, c.normTalent));
+      if (fi !== -1) { matchedCurFTE.add(fi); return; }
+      // FTE→PTE downgrade?
+      const pi = curPTEs.findIndex((c, i) => !matchedCurPTE.has(i) && talentNamesMatch(pFTE.normTalent, c.normTalent));
+      if (pi !== -1) { matchedCurPTE.add(pi); downgradedFTEs.push({prev:pFTE, cur:curPTEs[pi]}); return; }
+      lostFTEs.push(pFTE);
+    });
 
-    const fteLost           = Math.max(0, prevFTE - curFTE);
-    const pteGained         = Math.max(0, curPTE  - prevPTE);
-    const fteConvertedToPTE = Math.min(fteLost, pteGained);
-    const pureFTELost       = fteLost - fteConvertedToPTE;
-    const rawPTELost        = Math.max(0, prevPTE - curPTE);
-    const pteLost           = Math.max(0, rawPTELost - fteConvertedToPTE);
+    const lostPTEs = []; // PTE→absent
 
-    // SESSION 42: Per-slot talent rows + one consolidated client summary footer
+    prevPTEs.forEach(pPTE => {
+      // PTE→FTE upgrade retained?
+      const fi = curFTEs.findIndex((c, i) => !matchedCurFTE.has(i) && talentNamesMatch(pPTE.normTalent, c.normTalent));
+      if (fi !== -1) { matchedCurFTE.add(fi); return; }
+      // PTE→PTE retained?
+      const pi = curPTEs.findIndex((c, i) => !matchedCurPTE.has(i) && talentNamesMatch(pPTE.normTalent, c.normTalent));
+      if (pi !== -1) { matchedCurPTE.add(pi); return; }
+      lostPTEs.push(pPTE);
+    });
+
+    // ── Step 2: Client-level netting ──
+    // A downgraded FTE absorbs a lost PTE only when the downgraded talent's new PTE
+    // service matches the lost PTE's service (same role substitution).
+    const absorbedLostPTEIdx = new Set();
+    const nettedFTEs = [];          // → 1 FTE lost at prev FTE rate
+    const unmatchedDowngrades = []; // → 0.5 FTE→PTE delta
+
+    downgradedFTEs.forEach(({prev:pFTE, cur:cPTE}) => {
+      const cService = cPTE.liService || "";
+      const idx = lostPTEs.findIndex((pPTE, i) =>
+        !absorbedLostPTEIdx.has(i) && (pPTE.liService || "") === cService
+      );
+      if (idx !== -1) { absorbedLostPTEIdx.add(idx); nettedFTEs.push(pFTE); }
+      else { unmatchedDowngrades.push({prev:pFTE, cur:cPTE}); }
+    });
+
+    // ── Step 3: Fire EL events ──
     const managedSlots = [];
-    let managedTotalCount = 0;
-    let managedTotalAmt   = 0;
+    let managedTotalCount = 0, managedTotalAmt = 0;
 
-    if (pureFTELost > 0) {
-      const c = pureFTELost * 1;
-      const a = pureFTELost * avgPrevFTE;
-      row.elCount[rowKey].managed += c;
-      row.elAmt[rowKey].managed   += a;
+    // Netted FTEs: 1 FTE lost at prev FTE actual amount
+    nettedFTEs.forEach(pFTE => {
+      const c = 1, a = pFTE.amt;
+      row.elCount[rowKey].managed += c; row.elAmt[rowKey].managed += a;
       managedTotalCount += c; managedTotalAmt += a;
-      const slotsLost = (prevFTEe?.slots || []).slice(0, pureFTELost);
-      slotsLost.forEach(s => managedSlots.push({
-        label: s.talentName, company: displayName, amount: avgPrevFTE,
-        count: 1, dealId, engType: "FTE", isSlotRow: true, slotLabel: "1 FTE Lost"
-      }));
-    }
+      managedSlots.push({label:pFTE.talentName, company:displayName, amount:a, count:c, dealId, engType:"FTE", isSlotRow:true, slotLabel:"1 FTE Lost"});
+    });
 
-    if (fteConvertedToPTE > 0) {
-      const delta = avgPrevFTE - avgCurPTE;
-      if (delta > 0) {
-        const c = fteConvertedToPTE * 0.5;
-        const a = fteConvertedToPTE * delta;
-        row.elCount[rowKey].managed += c;
-        row.elAmt[rowKey].managed   += a;
-        managedTotalCount += c; managedTotalAmt += a;
-        const slotsConv = (prevFTEe?.slots || []).slice(pureFTELost, pureFTELost + fteConvertedToPTE);
-        slotsConv.forEach(s => managedSlots.push({
-          label: s.talentName, company: displayName, amount: delta,
-          count: 0.5, dealId, engType: "FTE→PTE", isSlotRow: true, slotLabel: "0.5 FTE→PTE"
-        }));
-      }
-    }
-
-    if (pteLost > 0) {
-      const c = pteLost * 0.5;
-      const a = pteLost * avgPrevPTE;
-      row.elCount[rowKey].managed += c;
-      row.elAmt[rowKey].managed   += a;
+    // Fully lost FTEs: 1 FTE lost at prev FTE actual amount
+    lostFTEs.forEach(pFTE => {
+      const c = 1, a = pFTE.amt;
+      row.elCount[rowKey].managed += c; row.elAmt[rowKey].managed += a;
       managedTotalCount += c; managedTotalAmt += a;
-      const slotsLostPTE = (prevPTEe?.slots || []).slice(0, pteLost);
-      slotsLostPTE.forEach(s => managedSlots.push({
-        label: s.talentName, company: displayName, amount: avgPrevPTE,
-        count: 0.5, dealId, engType: "PTE", isSlotRow: true, slotLabel: "0.5 PTE Lost"
-      }));
-    }
+      managedSlots.push({label:pFTE.talentName, company:displayName, amount:a, count:c, dealId, engType:"FTE", isSlotRow:true, slotLabel:"1 FTE Lost"});
+    });
+
+    // Unmatched FTE downgrades: 0.5 at delta (only when prev amt > cur amt)
+    unmatchedDowngrades.forEach(({prev:pFTE, cur:cPTE}) => {
+      const delta = pFTE.amt - cPTE.amt;
+      if (delta <= 0) return;
+      const c = 0.5, a = delta;
+      row.elCount[rowKey].managed += c; row.elAmt[rowKey].managed += a;
+      managedTotalCount += c; managedTotalAmt += a;
+      managedSlots.push({label:pFTE.talentName, company:displayName, amount:a, count:c, dealId, engType:"FTE→PTE", isSlotRow:true, slotLabel:"0.5 FTE→PTE"});
+    });
+
+    // Lost PTEs not absorbed by netting: 0.5 at prev PTE actual amount
+    lostPTEs.forEach((pPTE, i) => {
+      if (absorbedLostPTEIdx.has(i)) return;
+      const c = 0.5, a = pPTE.amt;
+      row.elCount[rowKey].managed += c; row.elAmt[rowKey].managed += a;
+      managedTotalCount += c; managedTotalAmt += a;
+      managedSlots.push({label:pPTE.talentName, company:displayName, amount:a, count:c, dealId, engType:"PTE", isSlotRow:true, slotLabel:"0.5 PTE Lost"});
+    });
 
     if (managedSlots.length > 0) {
       managedSlots.forEach(s => DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push(s));
       DRILL_STORE.EL[bucketKey][rowKey]["Managed"].push({
-        label: displayName, company: displayName, amount: managedTotalAmt,
-        count: managedTotalCount, dealId, isClientSummary: true
+        label:displayName, company:displayName, amount:managedTotalAmt,
+        count:managedTotalCount, dealId, isClientSummary:true
       });
     }
   });
