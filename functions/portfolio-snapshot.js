@@ -1,23 +1,37 @@
 // functions/portfolio-snapshot.js
-// Portfolio Health — Sept 30, 2026 baseline snapshot proxy
-// GET — returns { companies: [{ id, status, bu, region, head, inter_bu }] }
+// Portfolio Health — monthly snapshot proxy
+// GET — returns { companies: [{ id, status, bu, region, head, inter_bu }], snapshot_date, tab }
 //
-// Sheet : Project Nexus — Portfolio Snapshots
-// ID    : 1oNuwfzQbN25dVJ5BpUEJAY-mKzYWB1FM3MOsfVhDKj0
-// Tab   : Sep. 2026
+// Sheet : Project Nexus | Portfolio Health
+// ID    : 1rTfqKIF7j_5vcsEXKPr5ukbR7Q_ae58KsYl5vidGI2M
+// Tabs  : Oct. 2026 · Nov. 2026 · Dec. 2026 · … (one tab per month, added by doPortfolioSnapshot.gs)
 // Cols  : snapshot_date | company_id | company_name | hubspot_owner_id | owner_name |
 //         recent_deal_close_date | days_since_deal | status | bu | region | head |
 //         inter_bu | createdate
 //
 // Auth  : GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY
 //         (same env vars as funnel-sheet.js — no new secrets needed)
-// Route : /portfolio-snapshot (GET)
+// Route : /portfolio-snapshot?tab=Oct.+2026   (tab param optional — defaults to Oct. 2026)
 
-const SHEET_ID = "1oNuwfzQbN25dVJ5BpUEJAY-mKzYWB1FM3MOsfVhDKj0";
-const TAB      = "Sep. 2026";
+const SHEET_ID = "1rTfqKIF7j_5vcsEXKPr5ukbR7Q_ae58KsYl5vidGI2M";
+
+// Tab → last day of month (snapshot_date returned in response)
+const TAB_DATES = {
+  "Sep. 2026": "2026-09-30",
+  "Oct. 2026": "2026-10-31",
+  "Nov. 2026": "2026-11-30",
+  "Dec. 2026": "2026-12-31",
+  "Jan. 2027": "2027-01-31",
+  "Feb. 2027": "2027-02-28",
+  "Mar. 2027": "2027-03-31"
+};
 
 export async function onRequestGet(context) {
   try {
+    // ── Dynamic tab — ?tab=Oct.+2026 · defaults to latest captured snapshot ──
+    const reqUrl = new URL(context.request.url);
+    const TAB    = reqUrl.searchParams.get("tab") || "Oct. 2026";
+
     const SA_EMAIL = context.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     const SA_KEY   = context.env.GOOGLE_PRIVATE_KEY;
     if (!SA_EMAIL || !SA_KEY) return resp({ error: "Missing env vars: GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY" }, 500);
@@ -48,7 +62,8 @@ export async function onRequestGet(context) {
       };
     }).filter(Boolean);
 
-    return resp({ companies, snapshot_date: "2026-09-30", tab: TAB }, 200);
+    const snapshot_date = TAB_DATES[TAB] || TAB;
+    return resp({ companies, snapshot_date, tab: TAB }, 200);
 
   } catch (e) {
     return resp({ error: e.message }, 500);
