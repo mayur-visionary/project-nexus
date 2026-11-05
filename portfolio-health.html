@@ -472,32 +472,32 @@ tbody td.num{text-align:right;font-weight:700}
     <div class="kpi k-sToA" id="kpi-sToA" onclick="openDrill('sToA')" style="cursor:pointer">
       <div class="kpi-lbl">Silent &rarr; Active</div>
       <div class="kpi-val" id="k-sToA" style="color:#006E5E">—</div>
-      <div class="kpi-sub">Silent Sep 30 &middot; Active today</div>
+      <div class="kpi-sub" id="sub-sToA">Silent — · Active today</div>
     </div>
     <div class="kpi k-iToA" id="kpi-iToA" onclick="openDrill('iToA')" style="cursor:pointer">
       <div class="kpi-lbl">Inactive &rarr; Active</div>
       <div class="kpi-val" id="k-iToA" style="color:#006E5E">—</div>
-      <div class="kpi-sub">Inactive Sep 30 &middot; Active today</div>
+      <div class="kpi-sub" id="sub-iToA">Inactive — · Active today</div>
     </div>
     <div class="kpi k-lToA" id="kpi-lToA" onclick="openDrill('lToA')" style="cursor:pointer">
       <div class="kpi-lbl">Lost &rarr; Active</div>
       <div class="kpi-val" id="k-lToA" style="color:#006E5E">—</div>
-      <div class="kpi-sub">Org. Lost Sep 30 &middot; Active today</div>
+      <div class="kpi-sub" id="sub-lToA">Org. Lost — · Active today</div>
     </div>
     <div class="kpi k-aToS" id="kpi-aToS" onclick="openDrill('aToS')" style="cursor:pointer">
       <div class="kpi-lbl">Active &rarr; Silent</div>
       <div class="kpi-val" id="k-aToS" style="color:#A07A00">—</div>
-      <div class="kpi-sub">Active Sep 30 &middot; Silent today</div>
+      <div class="kpi-sub" id="sub-aToS">Active — · Silent today</div>
     </div>
     <div class="kpi k-sToI" id="kpi-sToI" onclick="openDrill('sToI')" style="cursor:pointer">
       <div class="kpi-lbl">Silent &rarr; Inactive</div>
       <div class="kpi-val" id="k-sToI" style="color:#C0143C">—</div>
-      <div class="kpi-sub">Silent Sep 30 &middot; Inactive today</div>
+      <div class="kpi-sub" id="sub-sToI">Silent — · Inactive today</div>
     </div>
     <div class="kpi k-iToL" id="kpi-iToL" onclick="openDrill('iToL')" style="cursor:pointer">
       <div class="kpi-lbl">Inactive &rarr; Lost</div>
       <div class="kpi-val" id="k-iToL" style="color:#696969">—</div>
-      <div class="kpi-sub">Inactive Sep 30 &middot; Org. Lost today</div>
+      <div class="kpi-sub" id="sub-iToL">Inactive — · Org. Lost today</div>
     </div>
   </div>
 
@@ -1056,11 +1056,11 @@ function renderMovementKPIs(classified){
 // ════ BASELINE SNAPSHOT ════
 async function fetchBaselineSnapshot(){
   try{
-    const res=await fetch("/portfolio-snapshot");
-    if(!res.ok){console.warn(`[Portfolio] Snapshot fetch ${res.status}`);return[];}
+    const res=await fetch("/portfolio-snapshot?tab=Oct.+2026");
+    if(!res.ok){console.warn(`[Portfolio] Snapshot fetch ${res.status}`);return{companies:[],snapshot_date:null};}
     const d=await res.json();
-    return d.companies||[];
-  }catch(e){console.warn("[Portfolio] Snapshot fetch error:",e.message);return[];}
+    return{companies:d.companies||[],snapshot_date:d.snapshot_date||null};
+  }catch(e){console.warn("[Portfolio] Snapshot fetch error:",e.message);return{companies:[],snapshot_date:null};}
 }
 
 function buildBaselineMap(snapshotCompanies){
@@ -1096,9 +1096,22 @@ async function doSync(force=false){
   ["k-total","k-active","k-silent","k-inactive","k-lost"].forEach(id=>{const el=$(id);if(el)el.textContent="…";});
   try{
     $("stxt").textContent="SYNCING...";
-    const [fetchedKitty,snapshotData]=await Promise.all([fetchKittyCompanies(),fetchBaselineSnapshot()]);
+    const [fetchedKitty,snapshotResult]=await Promise.all([fetchKittyCompanies(),fetchBaselineSnapshot()]);
     kittyCompanies=fetchedKitty;
-    buildBaselineMap(snapshotData);
+    buildBaselineMap(snapshotResult.companies);
+    // ── Update movement KPI sub-labels with actual baseline date ──
+    if(snapshotResult.snapshot_date){
+      const sd=new Date(snapshotResult.snapshot_date+"T00:00:00");
+      const mo=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const lbl=`${mo[sd.getMonth()]} ${sd.getDate()}`;
+      const sub=(id,txt)=>{const el=$(id);if(el)el.textContent=txt;};
+      sub("sub-sToA",`Silent ${lbl} · Active today`);
+      sub("sub-iToA",`Inactive ${lbl} · Active today`);
+      sub("sub-lToA",`Org. Lost ${lbl} · Active today`);
+      sub("sub-aToS",`Active ${lbl} · Silent today`);
+      sub("sub-sToI",`Silent ${lbl} · Inactive today`);
+      sub("sub-iToL",`Inactive ${lbl} · Org. Lost today`);
+    }
     console.log(`[Portfolio] ${kittyCompanies.length} kitty companies loaded | baseline: ${Object.keys(baselineMap).length} records`);
     renderAll();
     $("sdot").style.background="#FFDA30";
