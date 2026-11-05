@@ -998,9 +998,13 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
         // Session 43 Fix 1: project_type gate removed — any Recurring LI in prevMap
         // anchors EL detection regardless of project_type. A client billed last month
         // that doesn't return this month is a loss whether their Sep LI was "New" or "Old".
+        // Session 43 Fix 4: lowercase key — project name case drift between months
+        // ("for" vs "For") must not break the direct key match.
+        // projName retains original case for display; keyName is lowercased for the map key.
         const rawName  = li.project_name || deal.zoho_display || deal.company;
         const projName = normalizeProjectName(rawName);
-        const key = `Recurring|${projName}|${zBid}`;
+        const keyName  = projName.toLowerCase();
+        const key = `Recurring|${keyName}|${zBid}`;
         if (!map.has(key)) map.set(key, {
           amount:0, slotType:"Recurring", bucketKey, rowKey,
           displayName, projName,
