@@ -656,7 +656,7 @@ const MONTH_SUFFIX_RX = new RegExp(
   '\\s*[-–]?\\s*' +
   '(?:january|february|march|april|may|june|july|august|september|october|november|december' +
   '|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)' +
-  "[\\s'\\-]*\\d{2,4}\\s*$",
+  "[\\s'\\-]*(?:\\d{2,4})?\\s*$",  // Session 43: year now optional — strips "- November" and "- Nov 2026"
   'i'
 );
 function normalizeProjectName(raw) {
@@ -911,6 +911,20 @@ function extractLabel(liName, liDescription, company) {
   return company;
 }
 
+// Session 43 Fix 3: extract every talent name from a multi-talent LI description.
+// Returns array in original case. Used for sorted, order-independent map keys
+// so that talent order swaps between months don't fire false EL signals.
+function extractAllTalentNames(description) {
+  const names = [];
+  const rx = /Talent\s+Name\s*:\s*([^\n\r]+)/gi;
+  let m;
+  while ((m = rx.exec(description)) !== null) {
+    const raw = m[1].trim().split(/\s*[-–]\s*/)[0].trim();
+    if (raw) names.push(raw);
+  }
+  return [...new Set(names)]; // deduplicate
+}
+
 // ════════════════════════════════════════════════════════════════
 // buildLIKeyMap — Session 40 + Session 41 patches
 //
@@ -958,23 +972,32 @@ function buildLIKeyMap(deals, liMap, isPrevMap) {
       const amt = Math.abs(li.amount) * scale;
 
       if (isFTE) {
-        // SESSION 43: one entry per talent per client — accumulates amount across weekly LIs
-        const talentName = extractLabel(li.name, li.description || "", displayName);
-        const normTalent = tokenizeProjectName(talentName).join(" ");
+        // SESSION 43 Fix 3: sorted all-talent key — order-independent across months
+        const allTalents = extractAllTalentNames(li.description || "");
+        const keyStr = allTalents.length > 0
+          ? allTalents.map(t => t.toLowerCase()).sort().join("+")
+          : (extractLabel(li.name, li.description || "", displayName) || displayName);
+        const normTalent = tokenizeProjectName(keyStr).join(" ");
+        const talentName = allTalents[0] || extractLabel(li.name, li.description || "", displayName);
         const key = `FTE|${normTalent || displayName.toLowerCase()}|${zBid}`;
         if (!map.has(key)) map.set(key, {amt:0, slotType:"FTE", bucketKey, rowKey, displayName, talentName, normTalent, liService:extractLIService(li.name), dealId:deal.id, zBid});
         map.get(key).amt += amt;
       } else if (isPTE) {
-        // SESSION 43: one entry per talent per client — accumulates amount across weekly LIs
-        const talentName = extractLabel(li.name, li.description || "", displayName);
-        const normTalent = tokenizeProjectName(talentName).join(" ");
+        // SESSION 43 Fix 3: sorted all-talent key — order-independent across months
+        const allTalents = extractAllTalentNames(li.description || "");
+        const keyStr = allTalents.length > 0
+          ? allTalents.map(t => t.toLowerCase()).sort().join("+")
+          : (extractLabel(li.name, li.description || "", displayName) || displayName);
+        const normTalent = tokenizeProjectName(keyStr).join(" ");
+        const talentName = allTalents[0] || extractLabel(li.name, li.description || "", displayName);
         const key = `PTE|${normTalent || displayName.toLowerCase()}|${zBid}`;
         if (!map.has(key)) map.set(key, {amt:0, slotType:"PTE", bucketKey, rowKey, displayName, talentName, normTalent, liService:extractLIService(li.name), dealId:deal.id, zBid});
         map.get(key).amt += amt;
       } else {
-        // Session 40: Option B — only project_type="Old" enters prevMap
-        if (isPrevMap && (li.project_type || "").toLowerCase() !== "old") return;
         // Session 40: stable key via project_name + normalizeProjectName
+        // Session 43 Fix 1: project_type gate removed — any Recurring LI in prevMap
+        // anchors EL detection regardless of project_type. A client billed last month
+        // that doesn't return this month is a loss whether their Sep LI was "New" or "Old".
         const rawName  = li.project_name || deal.zoho_display || deal.company;
         const projName = normalizeProjectName(rawName);
         const key = `Recurring|${projName}|${zBid}`;
