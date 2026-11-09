@@ -56,19 +56,22 @@ const NAME_MAP = {
   "kamesh biniwale"  : "Kamesh Biniwale",
   // ── Fixed group assignments for Achievement Desk (per MD, Nov 2026) ─────────
   "tanuj gupta"      : "Tanuj Gupta",    // Tanuj US
-  "karan doshi"      : "Karan Doshi",    // Jaydeep AU
+  "karan"            : "Karan Doshi",    // Jaydeep AU — short name in new sheet format
+  "karan doshi"      : "Karan Doshi",    // fallback if full name returns
   "mukund basita"    : "Mukund Basita",  // Jaydeep NBD
   "chintan doshi"    : "Chintan Doshi",  // Jaydeep UK
-  "jaydeep"          : "Jaydeep Salla",  // Jaydeep UK (still short name in sheet)
-  // ── Skip (historical / not in registry) ───────────────────────────────────
-  "sheldon"          : null,
-  "darshan modi"     : null,
-  "matt kelly"       : null,
-  "matt"             : null,
-  "nevilson christian": null,
-  "shradha shah"     : null,
-  "gaurav"           : null,
-  "ajeet dhale"      : null,
+  "jaydeep"           : "Jaydeep Soni",        // Jaydeep UK — HubSpot name updated
+  // ── Now tracked (per MD, Nov 2026) ────────────────────────────────────────
+  "sheldon"           : "Sheldon Fernandes",   // Tanuj UK (historical but show if active)
+  "darshan modi"      : "Darshan Modi",        // Tanuj US
+  "matt kelly"        : "Matt Kelly",          // Jaydeep NBD — both IDs in registry
+  "nevilson christian": "Nevilson Christian",  // Nevilson group
+  "shradha shah"      : "Shradha Shah",        // Jaydeep NBD
+  "gaurav"            : "Gaurang Padhi",       // Nevilson — sheet typo for Gaurang Padhi
+  "gaurang padhi"     : "Gaurang Padhi",       // once sheet spelling is corrected
+  "ajeet dhale"       : "Ajeet Dhale",         // Jaydeep NBD
+  // ── Skip ──────────────────────────────────────────────────────────────────
+  "matt"              : null,
 };
 
 function targetColIdx(monthStr) {
