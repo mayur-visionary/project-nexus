@@ -319,6 +319,112 @@ const CLONE_VISIBLE={
   jaydeep: {digital:null,martech:['Jaydeep AU','Jaydeep UK','Jaydeep US','Jaydeep NBD']}
 };
 
+/* ── Achievement Desk registry extension ────────────────────────────────────
+   Injects owners that are scoped to Achievement Desk only.
+   Called AFTER initRegistry() so the base registry is already populated.
+   These owners DO NOT appear in Revenue Pulse, BU Scorecard, or any other module —
+   only in this page's browser session.
+   Also overrides Jaydeep's display name (HubSpot updated: Salla → Soni)
+   without touching registry-client.js. ── */
+function extendRegistryForAchievementDesk() {
+  const EXT = [
+    // id,          name,                  bu,         head,       nature,       isNBD
+    ["86940863",  "Nevilson Christian",  "Digital",  "Nevilson", "NBD",        true ],
+    ["96640304",  "Matt Kelly",          "MarTech",  "Jaydeep",  "User Role",  false],
+    ["94360991",  "Ajeet Dhale",         "MarTech",  "Jaydeep",  "NBD",        true ],
+    ["91863235",  "Shradha Shah",        "MarTech",  "Jaydeep",  "NBD",        true ],
+    ["97348184",  "Gaurang Padhi",       "Digital",  "Nevilson", "NBD",        true ],
+  ];
+
+  for (const [id, name, bu, head, nature, isNBD] of EXT) {
+    OWNER_REGISTRY[id]  = { id, name, bu, region:"geo", head, nature, isNBD, nbdIsGrowth:false, historical:false };
+    OWNER_BU_MAP[id]    = bu;
+    OWNER_GEO[id]       = null;                // region:"geo" — determined per deal
+    OWNER_HEAD_MAP[id]  = _fullHead(head);     // "Nevilson Christan" or "Jaydeep Salla"
+    OWNER_NAMES[id]     = name;
+    if (isNBD)                   NBD_OWNER_IDS.add(id);
+    if (nature==="User Role")    USER_ROLE_IDS.add(id);
+    if (isNBD||nature==="User Role") EXISTING_EXCLUDE.add(id);
+    if (bu==="MarTech")          MARTECH_OWNER_IDS.add(id);
+    if (bu==="Digital")          DIGITAL_OWNER_IDS.add(id);
+  }
+
+  // Jaydeep display name correction — HubSpot name is now "Jaydeep Soni"
+  // Applied here only so other modules are unaffected
+  if (OWNER_NAMES["17738843"]) OWNER_NAMES["17738843"] = "Jaydeep Soni";
+}
+
+/* ── TARGET GROUP MAP ──
+   Maps canonical owner name (from OWNER_NAMES) → Achievement Desk group key.
+   Used by mergeTargetOwners() to inject target-holders with no deals as $0
+   achievement rows — ensuring every person with a target always appears.
+   Group keys must match DIGITAL_GROUPS / MARTECH_GROUPS key values exactly. ── */
+const TARGET_GROUP_MAP = {
+  // ── Digital: Jiggyasa ──────────────────────────────────────────────────────
+  "Jiggyasa Agrawal"  : "Jiggyasa Agrawal",
+  "Kunal Gohil"       : "Jiggyasa Agrawal",
+  "Manvi Choumal"     : "Jiggyasa Agrawal",
+  "Prachi Porwal"     : "Jiggyasa Agrawal",
+  "Saquib Khan"       : "Jiggyasa Agrawal",
+  // ── Digital: Tanuj UK ─────────────────────────────────────────────────────
+  "Flintoff Mehta"    : "Tanuj Gupta (UK)",
+  "Kalgi Shah"        : "Tanuj Gupta (UK)",
+  "Sheldon Fernandes" : "Tanuj Gupta (UK)",
+  "Vikram Sahi"       : "Tanuj Gupta (UK)",
+  // ── Digital: Tanuj US ─────────────────────────────────────────────────────
+  "Tanuj Gupta"       : "Tanuj Gupta (US)",
+  "Darshan Modi"      : "Tanuj Gupta (US)",
+  "Kaustubh Agrawal"  : "Tanuj Gupta (US)",
+  "Baspin Thomas"     : "Tanuj Gupta (US)",
+  "Dhaval Damania"    : "Tanuj Gupta (US)",
+  "Hammad Bhaldar"    : "Tanuj Gupta (US)",
+  "Jebin Joy"         : "Tanuj Gupta (US)",
+  "Sourya Ghosh"      : "Tanuj Gupta (US)",
+  "Sudarshan Damani"  : "Tanuj Gupta (US)",
+  // ── Digital: Nevilson ─────────────────────────────────────────────────────
+  "Nevilson Christian": "Nevilson Christan",   // group key uses internal spelling
+  "Aman Acharya"      : "Nevilson Christan",
+  "Devanshu Kumar"    : "Nevilson Christan",
+  "Dhruti Dave"       : "Nevilson Christan",
+  "Gaurang Padhi"     : "Nevilson Christan",
+  "Malav Modi"        : "Nevilson Christan",
+  // ── MarTech: Jaydeep AU ───────────────────────────────────────────────────
+  "Karan Doshi"       : "Jaydeep AU",
+  // ── MarTech: Jaydeep UK ───────────────────────────────────────────────────
+  "Chintan Doshi"     : "Jaydeep UK",
+  "Jaydeep Soni"      : "Jaydeep UK",
+  "Divya S"           : "Jaydeep UK",
+  "Sakshi Bissa"      : "Jaydeep UK",
+  // ── MarTech: Jaydeep US ───────────────────────────────────────────────────
+  "Ayush Rathi"       : "Jaydeep US",
+  "Ayush Dhupar"      : "Jaydeep US",
+  "Preeti Thapliyal"  : "Jaydeep US",
+  "Rupali Sindhu"     : "Jaydeep US",
+  "Vinita Raidu"      : "Jaydeep US",
+  // ── MarTech: Jaydeep NBD ──────────────────────────────────────────────────
+  "Matt Kelly"        : "Jaydeep NBD",
+  "Ajeet Dhale"       : "Jaydeep NBD",
+  "Kamesh Biniwale"   : "Jaydeep NBD",
+  "Mukund Basita"     : "Jaydeep NBD",
+  "Shradha Shah"      : "Jaydeep NBD",
+};
+
+/* ── mergeTargetOwners ──
+   Injects owners who have a target in the selected period but zero deals.
+   They appear as a row with Achieved = $0 and their target showing.
+   Called before rendering in both renderOverall and renderOwners. ── */
+function mergeTargetOwners(groups, T) {
+  for (const [ownerName, tgt] of Object.entries(T)) {
+    if (!tgt || tgt <= 0) continue;
+    const groupKey = TARGET_GROUP_MAP[ownerName];
+    if (!groupKey || !groups[groupKey]) continue;
+    if (!(ownerName in groups[groupKey].owners)) {
+      groups[groupKey].owners[ownerName] = 0; // $0 achievement — no deals this period
+    }
+  }
+  return groups;
+}
+
 /* ── FORMAT ── */
 function fm(n){
   if(!n&&n!==0)return '$0';
@@ -488,7 +594,9 @@ async function fetchTargets(month){
 // classifyLineItem() from registry-client.js — single source of truth
 
 function resolveMartechBucket(deal,ownerId){
-  if(ownerId==='916030451')return'Jaydeep NBD';
+  // Tier 1: any MarTech owner with isNBD:true → always Jaydeep NBD
+  // Covers Kamesh (base registry) + Ajeet Dhale, Shradha Shah (extension)
+  if(NBD_OWNER_IDS.has(ownerId)&&MARTECH_OWNER_IDS.has(ownerId))return'Jaydeep NBD';
   const fixedGeo=(typeof OWNER_GEO!=='undefined')?OWNER_GEO[ownerId]:null;
   if(fixedGeo){
     if(fixedGeo==='AU')return'Jaydeep AU';
@@ -578,6 +686,7 @@ function consolidateGroups(groups){
 
 function renderOverall(targetId,groups,defs,vis,T){
   T=T||{};
+  groups=mergeTargetOwners(groups,T); // ensure target-only owners count in head totals
   let grandRev=0,grandTgt=0,grandAchTracked=0,rows='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
@@ -616,6 +725,7 @@ function renderOverall(targetId,groups,defs,vis,T){
 function renderOwners(targetId,groups,defs,vis,T){
   T=T||{};
   groups=consolidateGroups(groups);
+  groups=mergeTargetOwners(groups,T); // inject target-holders with no deals as $0 rows
   let grandRev=0,grandTgt=0,grandAchTracked=0,tbody='';
   defs.forEach(({key,label})=>{
     if(vis&&!vis.includes(key))return;
@@ -726,6 +836,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const authed=checkSSO();
   if(!authed)return;
   await initRegistry();
+  extendRegistryForAchievementDesk(); // Achievement Desk-only owners — no impact on other modules
   await doSync(true);
 });
 </script>
